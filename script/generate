@@ -8,8 +8,13 @@ mkdir -p .tmp/generation-profiles
 
 lock="$root/.tmp/generation-profiles/lock"
 if ! mkdir "$lock" 2> /dev/null; then
-  echo "Generation lock exists: $lock" >&2
-  echo "Wait for the active build. If it was killed, stop its remaining processes, then run: rmdir '$lock'" >&2
+  if [[ -d $lock ]]; then
+    echo "Generation lock exists: $lock" >&2
+    echo "Wait for the active build. If it was killed, stop its remaining processes, then run: rmdir '$lock'" >&2
+  else
+    # Another failure, such as an unwritable directory: repeat it so that mkdir reports the cause.
+    mkdir "$lock" || true
+  fi
   exit 1
 fi
 trap 'rmdir "$lock"' EXIT
