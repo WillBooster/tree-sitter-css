@@ -12,7 +12,8 @@ to its authors and contributors. This is not an official release of that project
 
 This fork keeps the grammar of upstream's version 0.23.2 and generates the parser with the
 [WillBooster/tree-sitter](https://github.com/WillBooster/tree-sitter) generator at ABI 16, whose compact parse tables
-need that fork's runtime.
+need that fork's runtime. It parses as upstream's parser does, with one exception: a NUL character inside a token such
+as a string or a comment is part of that token, where upstream's lexer reports an error.
 
 ## Usage
 
