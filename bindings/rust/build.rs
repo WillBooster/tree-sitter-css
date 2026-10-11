@@ -3,7 +3,11 @@ fn main() {
     println!("cargo:rerun-if-changed={}", src_dir.display());
 
     let mut c_config = cc::Build::new();
-    c_config.std("c11").include(src_dir);
+    // The scanner, kept identical to upstream's file, leaves parameters of the scanner API unused.
+    c_config
+        .std("c11")
+        .include(src_dir)
+        .flag_if_supported("-Wno-unused-parameter");
 
     #[cfg(target_env = "msvc")]
     c_config.flag("-utf-8");
