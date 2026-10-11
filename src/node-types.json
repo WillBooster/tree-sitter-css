@@ -2124,7 +2124,8 @@
   },
   {
     "type": "comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "escape_sequence",
@@ -2156,7 +2157,8 @@
   },
   {
     "type": "js_comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "keyframes_name",
