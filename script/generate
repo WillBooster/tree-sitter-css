@@ -12,8 +12,12 @@ if ! mkdir "$lock" 2> /dev/null; then
     echo "Generation lock exists: $lock" >&2
     echo "Wait for the active build. If it was killed, stop its remaining processes, then run: rmdir '$lock'" >&2
   else
-    # Another failure, such as an unwritable directory: repeat it so that mkdir reports the cause.
-    mkdir "$lock" || true
+    # Another failure, such as an unwritable directory: repeat it so that mkdir reports the cause. The repeat succeeds
+    # only when a lock released in between caused the first failure.
+    if mkdir "$lock"; then
+      rmdir "$lock"
+      echo "The generation lock was released meanwhile; run again." >&2
+    fi
   fi
   exit 1
 fi
