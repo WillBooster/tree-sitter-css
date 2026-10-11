@@ -71,7 +71,8 @@ $RECYCLE.BIN/
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -522,6 +523,11 @@ node_modules/
 *.wasm
 *.obj
 *.o
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
 
 # Archives
 *.tar.gz
