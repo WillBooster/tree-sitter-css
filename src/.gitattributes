@@ -1,0 +1,5 @@
+# script/generate writes these files, so GitHub collapses their diffs and leaves them out of the language statistics.
+# Kept here because the root .gitattributes is generated.
+*.c linguist-generated
+*.h linguist-generated
+*.json linguist-generated
