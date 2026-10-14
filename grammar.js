@@ -147,7 +147,7 @@ module.exports = grammar({
 
     _selector: $ => choice(
       $.universal_selector,
-      alias(choice($.identifier, $._escaped_identifier), $.tag_name),
+      alias($.identifier, $.tag_name),
       $.class_selector,
       $.nesting_selector,
       $.pseudo_class_selector,
@@ -227,13 +227,26 @@ module.exports = grammar({
     attribute_selector: $ => seq(
       optional($._selector),
       token(prec(1, '[')),
-      alias(choice($.identifier, $._escaped_identifier, $.namespace_selector), $.attribute_name),
+      alias(choice($.identifier, $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
       optional(seq(
         choice('=', '~=', '^=', '|=', '*=', '$='),
         $._value,
         optional($.attribute_flag),
       )),
       ']',
+    ),
+
+    _escaped_attribute_namespace: $ => choice(
+      seq(
+        alias($._escaped_identifier, $.tag_name),
+        '|',
+        choice($._selector, alias($._escaped_identifier, $.tag_name)),
+      ),
+      seq(
+        optional($._selector),
+        '|',
+        alias($._escaped_identifier, $.tag_name),
+      ),
     ),
 
     attribute_flag: _ => /[iIsS]/,

@@ -20,7 +20,7 @@ rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensit
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
 Class names accept digit- or hyphen-starting continuations after escape sequences.
 Nesting selectors may follow descendant combinators, as in `b &`.
-Type and attribute names accept CSS escape sequences, including namespaced attributes.
+Attribute names accept CSS escape sequences, including namespace prefixes and local names.
 Custom-property declaration names accept CSS escape sequences.
 Blocks accept empty statements before, between, and after declarations.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer

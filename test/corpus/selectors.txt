@@ -567,7 +567,7 @@ Escaped attribute names
 =========================
 
 [wire\:id], *[wire\:id], [\31 23], [-\:state], [--x\:y], [a\ b], [wire\:id="x" I],
-custom\-tag[wire\:id]:hover {}
+custom-tag[wire\:id]:hover {}
 
 ---
 
@@ -602,27 +602,6 @@ Escaped attribute namespaces
     (block)))
 
 =========================
-Escaped type names
-=========================
-
-custom\-tag, \31 23, --x\:y, n\73|t\61 g, .--x\:y {}
-a { --x\:y {} }
-
----
-
-(stylesheet
-  (rule_set
-    (selectors
-      (tag_name)
-      (tag_name)
-      (tag_name)
-      (namespace_selector (tag_name) (tag_name))
-      (class_selector (class_name (identifier) (escape_sequence) (identifier))))
-    (block))
-  (rule_set (selectors (tag_name))
-    (block (rule_set (selectors (tag_name)) (block)))))
-
-=========================
 Attribute name rejects separated escape components
 :error
 =========================
@@ -646,30 +625,33 @@ b] {}
 (ERROR)
 
 =========================
-Escaped type names after descendant combinators
+Escaped attribute names in selector arguments
 =========================
 
-a \62 {}
-a \62:hover {}
-a \6e s|tag {}
-a { b \62 {} }
+:is([wire\:id]), :not([n\73|wire\:id]) {}
 
 ---
 
 (stylesheet
-  (rule_set (selectors (descendant_selector (tag_name) (tag_name))) (block))
-  (rule_set (selectors (pseudo_class_selector (descendant_selector (tag_name) (tag_name)) (class_name (identifier)))) (block))
-  (rule_set (selectors (namespace_selector (descendant_selector (tag_name) (tag_name)) (tag_name))) (block))
-  (rule_set (selectors (tag_name)) (block (rule_set (selectors (descendant_selector (tag_name) (tag_name))) (block)))))
+  (rule_set
+    (selectors
+      (pseudo_class_selector (class_name) (arguments (attribute_selector (attribute_name))))
+      (pseudo_class_selector (class_name) (arguments (attribute_selector (attribute_name (tag_name) (tag_name))))))
+    (block)))
 
 =========================
-Descendant type name rejects a backslash-newline escape
-:error
+Generic pseudo arguments preserve escaped plain values
 =========================
 
-a \
-b {}
+:lang(a\:b), ::part(foo\:bar), :foo(a\:b c), :foo(a\31 b) {}
 
 ---
 
-(ERROR)
+(stylesheet
+  (rule_set
+    (selectors
+      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value)))
+      (pseudo_element_selector (tag_name) (arguments (plain_value)))
+      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value)))
+      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value))))
+    (block)))

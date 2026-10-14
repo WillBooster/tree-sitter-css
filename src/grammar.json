@@ -565,17 +565,8 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_escaped_identifier"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "identifier"
           },
           "named": true,
           "value": "tag_name"
@@ -936,6 +927,10 @@
               {
                 "type": "SYMBOL",
                 "name": "namespace_selector"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_escaped_attribute_namespace"
               }
             ]
           },
@@ -1003,6 +998,77 @@
         {
           "type": "STRING",
           "value": "]"
+        }
+      ]
+    },
+    "_escaped_attribute_namespace": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_escaped_identifier"
+              },
+              "named": true,
+              "value": "tag_name"
+            },
+            {
+              "type": "STRING",
+              "value": "|"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_selector"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_escaped_identifier"
+                  },
+                  "named": true,
+                  "value": "tag_name"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_selector"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": "|"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_escaped_identifier"
+              },
+              "named": true,
+              "value": "tag_name"
+            }
+          ]
         }
       ]
     },
