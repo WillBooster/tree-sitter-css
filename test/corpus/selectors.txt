@@ -426,3 +426,132 @@ a { --foo { color: red } --foo:hover { color: red } }
       (rule_set
         (selectors (pseudo_class_selector (tag_name) (class_name (identifier))))
         (block (declaration (property_name) (plain_value)))))))
+
+=========================
+Digits after class-name escapes
+=========================
+
+.a\.5 {}
+.w-1\/2 {}
+.\31 0 {}
+.\0000310 {}
+.a\.5\+2:hover {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (class_selector (class_name (identifier) (identifier))))
+    (block))
+  (rule_set
+    (selectors (class_selector (class_name (identifier) (identifier))))
+    (block))
+  (rule_set
+    (selectors (class_selector (class_name (identifier))))
+    (block))
+  (rule_set
+    (selectors (class_selector (class_name (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (pseudo_class_selector
+        (class_selector (class_name (identifier) (identifier) (identifier)))
+        (class_name (identifier))))
+    (block)))
+
+=========================
+Class name cannot start with an unescaped digit
+:error
+=========================
+
+.5foo {}
+
+---
+
+(ERROR)
+
+=========================
+Comment cannot introduce a numeric class-name component
+:error
+=========================
+
+.a/*c*/5 {}
+
+---
+
+(ERROR)
+
+=========================
+Comment cannot extend an escaped numeric class name
+:error
+=========================
+
+.a\.5/*c*/6 {}
+
+---
+
+(ERROR)
+
+=========================
+Negative numeric suffixes after class-name escapes
+=========================
+
+.a\.-5 {}
+.a\31 -5 {}
+.\000031-5 {}
+.\31-5 {}
+.top-\[-10px\] {}
+.m-\[-1\.5rem\] {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (escape_sequence)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier) (escape_sequence)))) (block)))
+
+=========================
+Hyphen continuations after class-name escapes
+=========================
+
+.a\.- {}
+.a\.-\.5 {}
+.m-\[-\.5rem\] {}
+.a\.-b {}
+.a\.--5 {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier) (escape_sequence)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier)))) (block)))
+
+=========================
+Class-name hexadecimal escape with CRLF terminator
+=========================
+
+.\31
+-5 {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block)))
+
+=========================
+Class name rejects a backslash-newline escape
+:error
+=========================
+
+.a\
+5 {}
+
+---
+
+(ERROR)

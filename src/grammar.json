@@ -2304,6 +2304,15 @@
           {
             "type": "SYMBOL",
             "name": "escape_sequence"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_class_name_escape_with_suffix"
+            },
+            "named": true,
+            "value": "identifier"
           }
         ]
       }
@@ -2429,6 +2438,10 @@
     {
       "type": "SYMBOL",
       "name": "__error_recovery"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_class_name_escape_with_suffix"
     }
   ],
   "inline": [
