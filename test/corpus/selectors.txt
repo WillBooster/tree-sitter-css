@@ -561,3 +561,97 @@ Class name rejects a backslash-newline escape
 ---
 
 (ERROR)
+
+=========================
+Escaped attribute names
+=========================
+
+[wire\:id], *[wire\:id], [\31 23], [-\:state], [--x\:y], [a\ b], [wire\:id="x" I],
+custom-tag[wire\:id]:hover {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (attribute_selector (attribute_name))
+      (attribute_selector (universal_selector) (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name) (string_value (string_content)) (attribute_flag))
+      (pseudo_class_selector (attribute_selector (tag_name) (attribute_name)) (class_name (identifier))))
+    (block)))
+
+=========================
+Escaped attribute namespaces
+=========================
+
+[ns|wire\:id], [n\73|name], [*|\31 23], [|wire\:id] {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (attribute_selector (attribute_name (tag_name) (tag_name)))
+      (attribute_selector (attribute_name (tag_name) (tag_name)))
+      (attribute_selector (attribute_name (universal_selector) (tag_name)))
+      (attribute_selector (attribute_name (tag_name))))
+    (block)))
+
+=========================
+Attribute name rejects separated escape components
+:error
+=========================
+
+[a/*c*/\:id] {}
+
+---
+
+(ERROR)
+
+=========================
+Attribute name rejects a backslash-newline escape
+:error
+=========================
+
+[a\
+b] {}
+
+---
+
+(ERROR)
+
+=========================
+Escaped attribute names in selector arguments
+=========================
+
+:is([wire\:id]), :not([n\73|wire\:id]) {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (pseudo_class_selector (class_name) (arguments (attribute_selector (attribute_name))))
+      (pseudo_class_selector (class_name) (arguments (attribute_selector (attribute_name (tag_name) (tag_name))))))
+    (block)))
+
+=========================
+Generic pseudo arguments preserve escaped plain values
+=========================
+
+:lang(a\:b), ::part(foo\:bar), :foo(a\:b c), :foo(a\31 b) {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value)))
+      (pseudo_element_selector (tag_name) (arguments (plain_value)))
+      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value)))
+      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value))))
+    (block)))
