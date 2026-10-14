@@ -21,6 +21,7 @@ module.exports = grammar({
     $._descendant_operator,
     $._pseudo_class_selector_colon,
     $.__error_recovery,
+    $._class_name_escape_with_suffix,
   ],
 
   inline: $ => [
@@ -467,17 +468,7 @@ module.exports = grammar({
     class_name: $ => repeat1(choice(
       $.identifier,
       $.escape_sequence,
-      alias($._class_name_numeric_escape, $.identifier),
-    )),
-
-    _class_name_numeric_escape: _ => token(seq(
-      '\\',
-      choice(
-        seq(/[^0-9a-fA-F\n\r\f]/, /[0-9]/),
-        seq(/[0-9a-fA-F]{6}/, /[0-9]/),
-        seq(/[0-9a-fA-F]{1,6}/, choice('\r\n', /[ \t\n\r\f]/), /[0-9]/),
-      ),
-      /[-a-zA-Z0-9_\xA0-\xFF]*/,
+      alias($._class_name_escape_with_suffix, $.identifier),
     )),
 
     identifier: _ => /(--|-?[a-zA-Z_\xA0-\xFF])[a-zA-Z0-9-_\xA0-\xFF]*/,

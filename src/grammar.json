@@ -2309,83 +2309,10 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_class_name_numeric_escape"
+              "name": "_class_name_escape_with_suffix"
             },
             "named": true,
             "value": "identifier"
-          }
-        ]
-      }
-    },
-    "_class_name_numeric_escape": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "\\"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "[^0-9a-fA-F\\n\\r\\f]"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[0-9]"
-                  }
-                ]
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "[0-9a-fA-F]{6}"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[0-9]"
-                  }
-                ]
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "[0-9a-fA-F]{1,6}"
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": "\r\n"
-                      },
-                      {
-                        "type": "PATTERN",
-                        "value": "[ \\t\\n\\r\\f]"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[0-9]"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "PATTERN",
-            "value": "[-a-zA-Z0-9_\\xA0-\\xFF]*"
           }
         ]
       }
@@ -2511,6 +2438,10 @@
     {
       "type": "SYMBOL",
       "name": "__error_recovery"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_class_name_escape_with_suffix"
     }
   ],
   "inline": [

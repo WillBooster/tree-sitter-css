@@ -35,4 +35,7 @@
 *.py text eol=lf
 *.md text eol=lf
 
+# Corpus inputs contain significant line endings.
+test/corpus/*.txt -text
+
 dist/** linguist-generated=true

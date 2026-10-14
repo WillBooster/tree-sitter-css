@@ -6,11 +6,19 @@ enum TokenType {
     DESCENDANT_OP,
     PSEUDO_CLASS_SELECTOR_COLON,
     ERROR_RECOVERY,
+    CLASS_NAME_ESCAPE_WITH_SUFFIX,
 };
 
-static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
-
-static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
+static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
+static bool scan_escape(TSLexer *lexer);
+static bool scan_descendant_operator(TSLexer *lexer);
+static bool scan_pseudo_class_selector_colon(TSLexer *lexer);
+static bool is_name_character(int32_t character);
+static bool is_name_start(int32_t character);
+static bool is_hex_digit(int32_t character);
+static bool is_digit(int32_t character);
+static void advance(TSLexer *lexer);
+static void skip(TSLexer *lexer);
 
 void *tree_sitter_css_external_scanner_create() { return NULL; }
 
@@ -24,63 +32,129 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
-
+    if (valid_symbols[CLASS_NAME_ESCAPE_WITH_SUFFIX] && lexer->lookahead == '\\') {
+        return scan_class_name_escape_with_suffix(lexer);
+    }
     if (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP]) {
-        lexer->result_symbol = DESCENDANT_OP;
-
-        skip(lexer);
-        while (iswspace(lexer->lookahead)) {
-            skip(lexer);
-        }
-        lexer->mark_end(lexer);
-
-        if (lexer->lookahead == '#' || lexer->lookahead == '.' || lexer->lookahead == '[' || lexer->lookahead == '-' ||
-            lexer->lookahead == '*' || iswalnum(lexer->lookahead)) {
-            return true;
-        }
-
-        if (lexer->lookahead == ':') {
-            advance(lexer);
-            if (iswspace(lexer->lookahead)) {
-                return false;
-            }
-            for (;;) {
-                if (lexer->lookahead == ';' || lexer->lookahead == '}' || lexer->eof(lexer)) {
-                    return false;
-                }
-                if (lexer->lookahead == '{') {
-                    return true;
-                }
-                advance(lexer);
-            }
-        }
+        return scan_descendant_operator(lexer);
     }
-
     if (valid_symbols[PSEUDO_CLASS_SELECTOR_COLON]) {
-        while (iswspace(lexer->lookahead)) {
-            skip(lexer);
-        }
-        if (lexer->lookahead == ':') {
-            advance(lexer);
-            if (lexer->lookahead == ':') {
-                return false;
-            }
-            lexer->mark_end(lexer);
-            lexer->result_symbol = PSEUDO_CLASS_SELECTOR_COLON;
-            // We need a { to be a pseudo class selector, a ; indicates a property
-            while (lexer->lookahead != ';' && lexer->lookahead != '}' && !lexer->eof(lexer)) {
-                advance(lexer);
-                if (lexer->lookahead == '{') {
-                    return true;
-                }
-            }
-
-            // If we're at eof, and we happened to *not* find an opening brace to indicate we have a pseudo class
-            // selector, we should *still* return one at EOF. This will improve error recovery, and the malformed code
-            // can be parsed as an erroneous pseudo-class selector, rather than an erroneous property.
-            return lexer->eof(lexer);
-        }
+        return scan_pseudo_class_selector_colon(lexer);
     }
-
     return false;
 }
+
+static bool scan_class_name_escape_with_suffix(TSLexer *lexer) {
+    if (!scan_escape(lexer)) {
+        return false;
+    }
+    if (lexer->lookahead == '-') {
+        advance(lexer);
+        if (is_name_start(lexer->lookahead) || lexer->lookahead == '-') {
+            return false;
+        }
+    } else if (!is_digit(lexer->lookahead)) {
+        return false;
+    }
+    while (is_name_character(lexer->lookahead)) {
+        advance(lexer);
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = CLASS_NAME_ESCAPE_WITH_SUFFIX;
+    return true;
+}
+
+static bool scan_escape(TSLexer *lexer) {
+    advance(lexer);
+    if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f') {
+        return false;
+    }
+    if (!is_hex_digit(lexer->lookahead)) {
+        advance(lexer);
+        return true;
+    }
+    unsigned digits = 0;
+    while (digits < 6 && is_hex_digit(lexer->lookahead)) {
+        advance(lexer);
+        digits++;
+    }
+    if (lexer->lookahead == '\r') {
+        advance(lexer);
+        if (lexer->lookahead == '\n') {
+            advance(lexer);
+        }
+    } else if (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\n' || lexer->lookahead == '\f') {
+        advance(lexer);
+    }
+    return true;
+}
+
+static bool scan_descendant_operator(TSLexer *lexer) {
+    lexer->result_symbol = DESCENDANT_OP;
+    skip(lexer);
+    while (iswspace(lexer->lookahead)) {
+        skip(lexer);
+    }
+    lexer->mark_end(lexer);
+    if (lexer->lookahead == '#' || lexer->lookahead == '.' || lexer->lookahead == '[' || lexer->lookahead == '-' ||
+        lexer->lookahead == '*' || iswalnum(lexer->lookahead)) {
+        return true;
+    }
+    if (lexer->lookahead != ':') {
+        return false;
+    }
+    advance(lexer);
+    if (iswspace(lexer->lookahead)) {
+        return false;
+    }
+    for (;;) {
+        if (lexer->lookahead == ';' || lexer->lookahead == '}' || lexer->eof(lexer)) {
+            return false;
+        }
+        if (lexer->lookahead == '{') {
+            return true;
+        }
+        advance(lexer);
+    }
+}
+
+static bool scan_pseudo_class_selector_colon(TSLexer *lexer) {
+    while (iswspace(lexer->lookahead)) {
+        skip(lexer);
+    }
+    if (lexer->lookahead != ':') {
+        return false;
+    }
+    advance(lexer);
+    if (lexer->lookahead == ':') {
+        return false;
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = PSEUDO_CLASS_SELECTOR_COLON;
+    while (lexer->lookahead != ';' && lexer->lookahead != '}' && !lexer->eof(lexer)) {
+        advance(lexer);
+        if (lexer->lookahead == '{') {
+            return true;
+        }
+    }
+    return lexer->eof(lexer);
+}
+
+static bool is_name_character(int32_t character) {
+    return is_name_start(character) || is_digit(character) || character == '-';
+}
+
+static bool is_name_start(int32_t character) {
+    return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || character == '_' ||
+           (character >= 0xA0 && character <= 0xFF);
+}
+
+static bool is_hex_digit(int32_t character) {
+    return is_digit(character) || (character >= 'a' && character <= 'f') || (character >= 'A' && character <= 'F');
+}
+
+static bool is_digit(int32_t character) { return character >= '0' && character <= '9'; }
+
+static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
+
+static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
