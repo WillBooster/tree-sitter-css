@@ -363,3 +363,33 @@ a { color: red !important; }
 ---
 
 (ERROR)
+
+=========================
+Empty statements in blocks
+=========================
+
+a { ; color: red;; margin: 0; ; }
+b { ; ; }
+c { color: red; ; padding: 0 }
+@media screen { ; a { ; color: blue;; } ; }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (integer_value))))
+  (rule_set (selectors (tag_name)) (block))
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (integer_value))))
+  (media_statement
+    (keyword_query)
+    (block
+      (rule_set
+        (selectors (tag_name))
+        (block (declaration (property_name) (plain_value)))))))
