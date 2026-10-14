@@ -25,6 +25,7 @@ module.exports = grammar({
   ],
 
   inline: $ => [
+    $._escaped_identifier,
     $._top_level_item,
     $._block_item,
   ],
@@ -146,7 +147,7 @@ module.exports = grammar({
 
     _selector: $ => choice(
       $.universal_selector,
-      alias($.identifier, $.tag_name),
+      alias(choice($.identifier, $._escaped_identifier), $.tag_name),
       $.class_selector,
       $.nesting_selector,
       $.pseudo_class_selector,
@@ -226,7 +227,7 @@ module.exports = grammar({
     attribute_selector: $ => seq(
       optional($._selector),
       token(prec(1, '[')),
-      alias(choice($.identifier, $.namespace_selector), $.attribute_name),
+      alias(choice($.identifier, $._escaped_identifier, $.namespace_selector), $.attribute_name),
       optional(seq(
         choice('=', '~=', '^=', '|=', '*=', '$='),
         $._value,
@@ -310,18 +311,15 @@ module.exports = grammar({
       optional($.important),
     )),
 
-    _custom_property_name: _ => token(seq(
-      '--',
-      /[-a-zA-Z0-9_\xA0-\xFF]*/,
-      repeat1(seq(
-        '\\',
-        choice(
-          /[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?/,
-          /[^0-9a-fA-F\n\r\f]/,
-        ),
-        /[-a-zA-Z0-9_\xA0-\xFF]*/,
-      )),
-    )),
+    _custom_property_name: _ => escapedIdentifier(seq('--', /[-a-zA-Z0-9_\xA0-\xFF]*/)),
+
+    _escaped_identifier: $ => choice(
+      $._custom_property_name,
+      escapedIdentifier(optional(choice(
+        '-',
+        /-?[a-zA-Z_\xA0-\xFF][a-zA-Z0-9-_\xA0-\xFF]*/,
+      ))),
+    ),
 
     important: _ => /![ \t\n\r\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]/,
 
@@ -496,6 +494,21 @@ module.exports = grammar({
     )),
   },
 });
+
+/** @param {RuleOrLiteral} prefix */
+function escapedIdentifier(prefix) {
+  return token(seq(
+    prefix,
+    repeat1(seq(
+      '\\',
+      choice(
+        /[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?/,
+        /[^0-9a-fA-F\n\r\f]/,
+      ),
+      /[-a-zA-Z0-9_\xA0-\xFF]*/,
+    )),
+  ));
+}
 
 /**
  * Creates a rule to optionally match one or more of the rules separated by `separator`

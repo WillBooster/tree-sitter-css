@@ -561,3 +561,86 @@ Class name rejects a backslash-newline escape
 ---
 
 (ERROR)
+
+=========================
+Escaped attribute names
+=========================
+
+[wire\:id], *[wire\:id], [\31 23], [-\:state], [--x\:y], [a\ b], [wire\:id="x" I],
+custom\-tag[wire\:id]:hover {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (attribute_selector (attribute_name))
+      (attribute_selector (universal_selector) (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name))
+      (attribute_selector (attribute_name) (string_value (string_content)) (attribute_flag))
+      (pseudo_class_selector (attribute_selector (tag_name) (attribute_name)) (class_name (identifier))))
+    (block)))
+
+=========================
+Escaped attribute namespaces
+=========================
+
+[ns|wire\:id], [n\73|name], [*|\31 23], [|wire\:id] {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (attribute_selector (attribute_name (tag_name) (tag_name)))
+      (attribute_selector (attribute_name (tag_name) (tag_name)))
+      (attribute_selector (attribute_name (universal_selector) (tag_name)))
+      (attribute_selector (attribute_name (tag_name))))
+    (block)))
+
+=========================
+Escaped type names
+=========================
+
+custom\-tag, \31 23, --x\:y, n\73|t\61 g, .--x\:y {}
+a { --x\:y {} }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (tag_name)
+      (tag_name)
+      (tag_name)
+      (namespace_selector (tag_name) (tag_name))
+      (class_selector (class_name (identifier) (escape_sequence) (identifier))))
+    (block))
+  (rule_set (selectors (tag_name))
+    (block (rule_set (selectors (tag_name)) (block)))))
+
+=========================
+Attribute name rejects separated escape components
+:error
+=========================
+
+[a/*c*/\:id] {}
+
+---
+
+(ERROR)
+
+=========================
+Attribute name rejects a backslash-newline escape
+:error
+=========================
+
+[a\
+b] {}
+
+---
+
+(ERROR)
