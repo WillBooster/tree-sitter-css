@@ -441,21 +441,21 @@ Digits after class-name escapes
 
 (stylesheet
   (rule_set
-    (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier))))
+    (selectors (class_selector (class_name (identifier) (identifier))))
     (block))
   (rule_set
-    (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier))))
+    (selectors (class_selector (class_name (identifier) (identifier))))
     (block))
   (rule_set
-    (selectors (class_selector (class_name (escape_sequence) (identifier))))
+    (selectors (class_selector (class_name (identifier))))
     (block))
   (rule_set
-    (selectors (class_selector (class_name (escape_sequence) (identifier))))
+    (selectors (class_selector (class_name (identifier))))
     (block))
   (rule_set
     (selectors
       (pseudo_class_selector
-        (class_selector (class_name (identifier) (escape_sequence) (identifier) (escape_sequence) (identifier)))
+        (class_selector (class_name (identifier) (identifier) (identifier)))
         (class_name (identifier))))
     (block)))
 
@@ -465,6 +465,28 @@ Class name cannot start with an unescaped digit
 =========================
 
 .5foo {}
+
+---
+
+(ERROR)
+
+=========================
+Comment cannot introduce a numeric class-name component
+:error
+=========================
+
+.a/*c*/5 {}
+
+---
+
+(ERROR)
+
+=========================
+Comment cannot extend an escaped numeric class name
+:error
+=========================
+
+.a\.5/*c*/6 {}
 
 ---
 
