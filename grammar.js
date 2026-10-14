@@ -309,7 +309,7 @@ module.exports = grammar({
       optional($.important),
     )),
 
-    important: _ => '!important',
+    important: _ => /![ \t\n\r\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]/,
 
     // Media queries
 

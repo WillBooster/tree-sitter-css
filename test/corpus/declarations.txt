@@ -331,3 +331,35 @@ PostCSS
             (grid_value (integer_value (unit)))
             (plain_value)
             (important)))))))
+
+=========================
+Important keyword whitespace and case
+=========================
+
+a {
+  color: red ! important;
+  margin: 0 !	IMPORTANT;
+  padding: 1px !
+    ImPoRtAnT
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value) (important))
+      (declaration (property_name) (integer_value) (important))
+      (declaration (property_name) (integer_value (unit)) (important)))))
+
+=========================
+Important rejects vertical tab
+:error
+=========================
+
+a { color: red !important; }
+
+---
+
+(ERROR)
