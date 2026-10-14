@@ -229,9 +229,12 @@ module.exports = grammar({
       optional(seq(
         choice('=', '~=', '^=', '|=', '*=', '$='),
         $._value,
+        optional($.attribute_flag),
       )),
       ']',
     ),
+
+    attribute_flag: _ => /[iIsS]/,
 
     child_selector: $ => prec.left(seq(optional($._selector), '>', $._selector)),
 

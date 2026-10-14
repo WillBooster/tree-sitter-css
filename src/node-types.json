@@ -292,6 +292,10 @@
           "named": true
         },
         {
+          "type": "attribute_flag",
+          "named": true
+        },
+        {
           "type": "attribute_name",
           "named": true
         },
@@ -2124,6 +2128,10 @@
   },
   {
     "type": "at_keyword",
+    "named": true
+  },
+  {
+    "type": "attribute_flag",
     "named": true
   },
   {
