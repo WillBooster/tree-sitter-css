@@ -33,6 +33,7 @@
 (feature_name) @property
 
 (attribute_name) @attribute
+(attribute_flag) @keyword
 
 (function_name) @function
 
