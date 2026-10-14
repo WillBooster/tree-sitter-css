@@ -287,7 +287,7 @@ module.exports = grammar({
     // Declarations
 
     declaration: $ => seq(
-      alias($.identifier, $.property_name),
+      alias(choice($.identifier, $._custom_property_name), $.property_name),
       ':',
       $._value,
       repeat(seq(
@@ -299,7 +299,7 @@ module.exports = grammar({
     ),
 
     last_declaration: $ => prec(1, seq(
-      alias($.identifier, $.property_name),
+      alias(choice($.identifier, $._custom_property_name), $.property_name),
       ':',
       $._value,
       repeat(seq(
@@ -307,6 +307,19 @@ module.exports = grammar({
         $._value,
       )),
       optional($.important),
+    )),
+
+    _custom_property_name: _ => token(seq(
+      '--',
+      /[-a-zA-Z0-9_\xA0-\xFF]*/,
+      repeat1(seq(
+        '\\',
+        choice(
+          /[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?/,
+          /[^0-9a-fA-F\n\r\f]/,
+        ),
+        /[-a-zA-Z0-9_\xA0-\xFF]*/,
+      )),
     )),
 
     important: _ => /![ \t\n\r\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]/,
