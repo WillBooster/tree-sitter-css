@@ -137,6 +137,7 @@ static bool scan_pseudo_class_selector_colon(TSLexer *lexer) {
             return true;
         }
     }
+    // At EOF, keep truncated input on the pseudo-class recovery path instead of reinterpreting it as a property.
     return lexer->eof(lexer);
 }
 
