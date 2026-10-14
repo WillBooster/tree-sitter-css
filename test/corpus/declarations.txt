@@ -393,3 +393,44 @@ c { color: red; ; padding: 0 }
       (rule_set
         (selectors (tag_name))
         (block (declaration (property_name) (plain_value)))))))
+
+=========================
+Escaped custom property names
+=========================
+
+:root {
+  --spacing-1\.5: 0.375rem;
+  --size\:small: 1px;
+  --\31 0: 2px;
+  --\0000310: 3px;
+  --plain: 4px;
+  --\31
+0: 6px;
+  --trailing\+: 5px
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (pseudo_class_selector (class_name (identifier))))
+    (block
+      (declaration (property_name) (float_value (unit)))
+      (declaration (property_name) (integer_value (unit)))
+      (declaration (property_name) (integer_value (unit)))
+      (declaration (property_name) (integer_value (unit)))
+      (declaration (property_name) (integer_value (unit)))
+      (declaration (property_name) (integer_value (unit)))
+      (declaration (property_name) (integer_value (unit))))))
+
+=========================
+Custom property name rejects escaped newline
+:error
+=========================
+
+a { --bad\
+name: 1px; }
+
+---
+
+(ERROR)
