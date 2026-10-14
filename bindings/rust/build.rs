@@ -3,7 +3,7 @@ fn main() {
     println!("cargo:rerun-if-changed={}", src_dir.display());
 
     let mut c_config = cc::Build::new();
-    // The scanner, kept identical to upstream's file, leaves parameters of the scanner API unused.
+    // The scanner API requires parameters that this stateless scanner does not use.
     c_config
         .std("c11")
         .include(src_dir)
