@@ -123,7 +123,7 @@ module.exports = grammar({
 
     block: $ => seq(
       '{',
-      repeat($._block_item),
+      repeat(choice(';', $._block_item)),
       optional(alias($.last_declaration, $.declaration)),
       '}',
     ),

@@ -68,8 +68,6 @@ examples/wordpress/wp-admin/css/revisions-rtl.css
 examples/wordpress/wp-admin/css/revisions-rtl.min.css
 examples/wordpress/wp-admin/css/revisions.css
 examples/wordpress/wp-admin/css/revisions.min.css
-examples/wordpress/wp-admin/css/site-icon-rtl.css
-examples/wordpress/wp-admin/css/site-icon.css
 examples/wordpress/wp-admin/css/themes-rtl.css
 examples/wordpress/wp-admin/css/themes-rtl.min.css
 examples/wordpress/wp-admin/css/themes.css
@@ -89,15 +87,10 @@ examples/wordpress/wp-content/themes/twentythirteen/genericons/genericons.css
 examples/wordpress/wp-content/themes/twentytwenty/assets/css/font-inter.css
 examples/wordpress/wp-content/themes/twentytwenty/style-rtl.css
 examples/wordpress/wp-content/themes/twentytwenty/style.css
-examples/wordpress/wp-includes/blocks/comments-pagination/style-rtl.css
-examples/wordpress/wp-includes/blocks/post-navigation-link/style-rtl.css
-examples/wordpress/wp-includes/blocks/query-pagination/style-rtl.css
 examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.css
 examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.min.css
 examples/wordpress/wp-includes/css/dist/block-editor/content.css
 examples/wordpress/wp-includes/css/dist/block-editor/content.min.css
-examples/wordpress/wp-includes/css/dist/block-editor/style-rtl.css
-examples/wordpress/wp-includes/css/dist/block-library/style-rtl.css
 examples/wordpress/wp-includes/css/media-views-rtl.css
 examples/wordpress/wp-includes/css/media-views-rtl.min.css
 examples/wordpress/wp-includes/css/media-views.css
