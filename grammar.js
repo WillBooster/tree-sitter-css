@@ -384,7 +384,6 @@ module.exports = grammar({
     _value: $ => prec(-1, choice(
       alias($.identifier, $.plain_value),
       $.plain_value,
-      alias($._syntax_type, $.plain_value),
       $.color_value,
       $.integer_value,
       $.float_value,
@@ -395,8 +394,6 @@ module.exports = grammar({
       $.call_expression,
       $.important,
     )),
-
-    _syntax_type: _ => /<[a-zA-Z-]+>[+#]?/,
 
     parenthesized_value: $ => seq(
       '(',
@@ -497,16 +494,19 @@ module.exports = grammar({
       '/',
     )),
 
-    plain_value: _ => token(seq(
-      repeat(choice(
-        /[-_]/,
-        /\/[^\*\s,;!{}()\[\]]/, // Slash not followed by a '*' (which would be a comment)
-      )),
-      /[a-zA-Z]/,
-      repeat(choice(
-        /[^/\s,;!{}()\[\]]/, // Not a slash, not a delimiter character
-        /\/[^\*\s,;!{}()\[\]]/, // Slash not followed by a '*' (which would be a comment)
-      )),
+    plain_value: _ => token(choice(
+      /<[a-zA-Z-]+>[+#]?/,
+      seq(
+        repeat(choice(
+          /[-_]/,
+          /\/[^\*\s,;!{}()\[\]]/,
+        )),
+        /[a-zA-Z]/,
+        repeat(choice(
+          /[^/\s,;!{}()\[\]]/,
+          /\/[^\*\s,;!{}()\[\]]/,
+        )),
+      ),
     )),
   },
 });
