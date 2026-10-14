@@ -1933,6 +1933,15 @@
             "name": "plain_value"
           },
           {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_syntax_type"
+            },
+            "named": true,
+            "value": "plain_value"
+          },
+          {
             "type": "SYMBOL",
             "name": "color_value"
           },
@@ -1970,6 +1979,10 @@
           }
         ]
       }
+    },
+    "_syntax_type": {
+      "type": "PATTERN",
+      "value": "<[a-zA-Z-]+>[+#]?"
     },
     "parenthesized_value": {
       "type": "SEQ",

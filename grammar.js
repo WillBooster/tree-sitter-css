@@ -384,6 +384,7 @@ module.exports = grammar({
     _value: $ => prec(-1, choice(
       alias($.identifier, $.plain_value),
       $.plain_value,
+      alias($._syntax_type, $.plain_value),
       $.color_value,
       $.integer_value,
       $.float_value,
@@ -394,6 +395,8 @@ module.exports = grammar({
       $.call_expression,
       $.important,
     )),
+
+    _syntax_type: _ => /<[a-zA-Z-]+>[+#]?/,
 
     parenthesized_value: $ => seq(
       '(',

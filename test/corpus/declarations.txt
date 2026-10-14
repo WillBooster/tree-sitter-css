@@ -434,3 +434,46 @@ name: 1px; }
 ---
 
 (ERROR)
+
+=========================
+Typed attribute angle-bracket names and list multipliers
+=========================
+
+a {
+  --number: attr(foo type(<number>), 0);
+  --length: attr(foo type(<length-percentage>), 0px);
+  --colors: attr(foo type(<color>#), red);
+  --transforms: attr(foo type(<transform-function>+), none);
+}
+
+---
+
+(stylesheet
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value) (call_expression (function_name) (arguments (plain_value))) (integer_value))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value) (call_expression (function_name) (arguments (plain_value))) (integer_value (unit)))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value) (call_expression (function_name) (arguments (plain_value))) (plain_value))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value) (call_expression (function_name) (arguments (plain_value))) (plain_value)))))))
+
+=========================
+Type name rejects internal whitespace
+:error
+=========================
+
+a { --x: attr(foo type(< number>), 0); }
+
+---
+
+(ERROR)
+
+=========================
+Type name requires a closing angle bracket
+:error
+=========================
+
+a { --x: attr(foo type(<number), 0); }
+
+---
+
+(ERROR)
