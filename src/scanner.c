@@ -97,7 +97,7 @@ static bool scan_descendant_operator(TSLexer *lexer) {
     }
     lexer->mark_end(lexer);
     if (lexer->lookahead == '#' || lexer->lookahead == '.' || lexer->lookahead == '[' || lexer->lookahead == '-' ||
-        lexer->lookahead == '*' || iswalnum(lexer->lookahead)) {
+        lexer->lookahead == '*' || lexer->lookahead == '&' || iswalnum(lexer->lookahead)) {
         return true;
     }
     if (lexer->lookahead != ':') {
