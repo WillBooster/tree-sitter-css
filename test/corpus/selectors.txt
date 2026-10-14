@@ -644,3 +644,32 @@ b] {}
 ---
 
 (ERROR)
+
+=========================
+Escaped type names after descendant combinators
+=========================
+
+a \62 {}
+a \62:hover {}
+a \6e s|tag {}
+a { b \62 {} }
+
+---
+
+(stylesheet
+  (rule_set (selectors (descendant_selector (tag_name) (tag_name))) (block))
+  (rule_set (selectors (pseudo_class_selector (descendant_selector (tag_name) (tag_name)) (class_name (identifier)))) (block))
+  (rule_set (selectors (namespace_selector (descendant_selector (tag_name) (tag_name)) (tag_name))) (block))
+  (rule_set (selectors (tag_name)) (block (rule_set (selectors (descendant_selector (tag_name) (tag_name))) (block)))))
+
+=========================
+Descendant type name rejects a backslash-newline escape
+:error
+=========================
+
+a \
+b {}
+
+---
+
+(ERROR)
