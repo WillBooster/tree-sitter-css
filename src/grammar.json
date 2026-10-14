@@ -1526,8 +1526,8 @@
       }
     },
     "important": {
-      "type": "STRING",
-      "value": "!important"
+      "type": "PATTERN",
+      "value": "![ \\t\\n\\r\\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]"
     },
     "_query": {
       "type": "CHOICE",
