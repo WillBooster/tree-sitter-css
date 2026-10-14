@@ -15,7 +15,7 @@ to its authors and contributors. This is not an official release of that project
 This fork is based on upstream's version 0.23.2 grammar and generates the parser with the
 [WillBooster/tree-sitter](https://github.com/WillBooster/tree-sitter) generator. The parser carries that fork's own ABI
 number (`0x57420001`) and loads only with that fork's runtime, version 2.0.0 or later: upstream's tree-sitter runtime
-rejects it. This grammar accepts fractional percentages and comma-separated keyframe selectors that upstream 0.23.2
+rejects it. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
 
