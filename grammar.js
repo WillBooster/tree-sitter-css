@@ -311,12 +311,14 @@ module.exports = grammar({
 
     _custom_property_name: _ => token(seq(
       '--',
-      repeat(choice(
-        /[-a-zA-Z0-9_\xA0-\xFF]/,
-        seq('\\', choice(
+      /[-a-zA-Z0-9_\xA0-\xFF]*/,
+      repeat1(seq(
+        '\\',
+        choice(
           /[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?/,
           /[^0-9a-fA-F\n\r\f]/,
-        )),
+        ),
+        /[-a-zA-Z0-9_\xA0-\xFF]*/,
       )),
     )),
 
