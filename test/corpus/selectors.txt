@@ -382,3 +382,24 @@ Escape sequences
         (property_name)
         (string_value
           (escape_sequence))))))
+
+=========================
+Attribute case flags
+=========================
+
+[a="" s] {}
+[href$=".pdf" i] {}
+[type=button S] {}
+[data-name=VALUE I] {}
+[title="value"i] {}
+[data-name=buttoni] {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (attribute_selector (attribute_name) (string_value) (attribute_flag))) (block))
+  (rule_set (selectors (attribute_selector (attribute_name) (string_value (string_content)) (attribute_flag))) (block))
+  (rule_set (selectors (attribute_selector (attribute_name) (plain_value) (attribute_flag))) (block))
+  (rule_set (selectors (attribute_selector (attribute_name) (plain_value) (attribute_flag))) (block))
+  (rule_set (selectors (attribute_selector (attribute_name) (string_value (string_content)) (attribute_flag))) (block))
+  (rule_set (selectors (attribute_selector (attribute_name) (plain_value))) (block)))

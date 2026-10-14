@@ -958,6 +958,18 @@
                 {
                   "type": "SYMBOL",
                   "name": "_value"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "attribute_flag"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
                 }
               ]
             },
@@ -971,6 +983,10 @@
           "value": "]"
         }
       ]
+    },
+    "attribute_flag": {
+      "type": "PATTERN",
+      "value": "[iIsS]"
     },
     "child_selector": {
       "type": "PREC_LEFT",
