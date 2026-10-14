@@ -22,5 +22,8 @@ trim_trailing_whitespace = false
 end_of_line = unset
 trim_trailing_whitespace = false
 
+[test/corpus/*.txt]
+end_of_line = unset
+
 [{Makefile,*.mk}]
 indent_style = tab
