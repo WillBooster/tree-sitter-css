@@ -22,15 +22,10 @@ examples/bulma/docs/vendor/fontawesome-free-5.15.2-web/css/all.min.css
 examples/bulma/docs/vendor/fontawesome-free-5.15.2-web/css/brands.min.css
 examples/bulma/docs/vendor/fontawesome-free-5.15.2-web/css/regular.min.css
 examples/bulma/docs/vendor/fontawesome-free-5.15.2-web/css/solid.min.css
-examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/all.css
 examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/all.min.css
 examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/brands.min.css
-examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/fontawesome.css
-examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/fontawesome.min.css
 examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/regular.min.css
 examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/solid.min.css
-examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/svg-with-js.css
-examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/svg-with-js.min.css
 examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/v4-font-face.min.css
 examples/bulma/docs/vendor/fontawesome-free-6.5.2-web/css/v5-font-face.min.css
 examples/wordpress/wp-admin/css/about-rtl.css
@@ -41,10 +36,6 @@ examples/wordpress/wp-admin/css/common-rtl.css
 examples/wordpress/wp-admin/css/common-rtl.min.css
 examples/wordpress/wp-admin/css/common.css
 examples/wordpress/wp-admin/css/common.min.css
-examples/wordpress/wp-admin/css/customize-controls-rtl.css
-examples/wordpress/wp-admin/css/customize-controls-rtl.min.css
-examples/wordpress/wp-admin/css/customize-controls.css
-examples/wordpress/wp-admin/css/customize-controls.min.css
 examples/wordpress/wp-admin/css/deprecated-media-rtl.css
 examples/wordpress/wp-admin/css/deprecated-media-rtl.min.css
 examples/wordpress/wp-admin/css/deprecated-media.css
@@ -101,10 +92,6 @@ examples/wordpress/wp-content/themes/twentytwenty/style.css
 examples/wordpress/wp-includes/blocks/comments-pagination/style-rtl.css
 examples/wordpress/wp-includes/blocks/post-navigation-link/style-rtl.css
 examples/wordpress/wp-includes/blocks/query-pagination/style-rtl.css
-examples/wordpress/wp-includes/css/customize-preview-rtl.css
-examples/wordpress/wp-includes/css/customize-preview-rtl.min.css
-examples/wordpress/wp-includes/css/customize-preview.css
-examples/wordpress/wp-includes/css/customize-preview.min.css
 examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.css
 examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.min.css
 examples/wordpress/wp-includes/css/dist/block-editor/content.css

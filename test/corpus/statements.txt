@@ -168,3 +168,37 @@ Other at-statements
         (call_expression (function_name) (arguments (string_value (string_content))))
         (call_expression (function_name) (arguments (string_value (string_content))))
         (call_expression (function_name) (arguments (string_value (string_content))))))))
+
+========================================
+Fractional and grouped keyframe selectors
+========================================
+
+@keyframes blink {
+  0%, 24.99% { visibility: visible; }
+  25%, 100% { visibility: hidden; }
+  .5% { opacity: .5; }
+  from, 50.5%, to { opacity: 1; }
+}
+
+---
+
+(stylesheet
+  (keyframes_statement
+    (keyframes_name)
+    (keyframe_block_list
+      (keyframe_block
+        (integer_value (unit))
+        (float_value (unit))
+        (block (declaration (property_name) (plain_value))))
+      (keyframe_block
+        (integer_value (unit))
+        (integer_value (unit))
+        (block (declaration (property_name) (plain_value))))
+      (keyframe_block
+        (float_value (unit))
+        (block (declaration (property_name) (float_value))))
+      (keyframe_block
+        (from)
+        (float_value (unit))
+        (to)
+        (block (declaration (property_name) (integer_value)))))))
