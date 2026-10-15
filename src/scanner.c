@@ -185,7 +185,7 @@ static void scan_comment(TSLexer *lexer) {
 static void scan_string(TSLexer *lexer) {
     int32_t quote = lexer->lookahead;
     advance(lexer);
-    while (!lexer->eof(lexer) && lexer->lookahead != '\n') {
+    while (!lexer->eof(lexer)) {
         if (lexer->lookahead == quote) {
             advance(lexer);
             return;

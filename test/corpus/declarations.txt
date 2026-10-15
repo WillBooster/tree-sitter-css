@@ -540,3 +540,29 @@ a {
       (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
       (declaration (property_name) (plain_value))
       (js_comment))))
+
+=========================
+Multiline strings preserve following declarations and rules
+=========================
+
+a {
+  content: "x
+";
+  --single: 'x
+';
+  --parts: "x
+y";
+  color: red;
+}
+d:hover {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (string_value (string_content)))
+      (declaration (property_name) (string_value (string_content)))
+      (declaration (property_name) (string_value (string_content) (string_content)))
+      (declaration (property_name) (plain_value))))
+  (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier)))) (block)))
