@@ -520,3 +520,23 @@ a { content: "{; }
 ---
 
 (ERROR)
+
+=========================
+Slash values and trailing line-comment quotes preserve declaration parsing
+=========================
+
+a {
+  --x: foo//bar;
+  background: url(http://example.org/a.png);
+  color: red // it's red
+}
+
+---
+
+(stylesheet
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
+      (declaration (property_name) (plain_value))
+      (js_comment))))

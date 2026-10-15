@@ -700,3 +700,18 @@ a:foo\{bar {}
   (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier) (escape_sequence) (identifier)))) (block))
   (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier) (escape_sequence) (identifier)))) (block))
   (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier) (escape_sequence) (identifier)))) (block)))
+
+=========================
+Line-comment text does not start lookahead strings or block comments
+=========================
+
+a :hover// "
+{}
+a :hover// /*
+{}
+
+---
+
+(stylesheet
+  (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier))))) (js_comment) (block))
+  (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier))))) (js_comment) (block)))

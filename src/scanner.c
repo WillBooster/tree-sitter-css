@@ -145,6 +145,12 @@ static bool scan_block_start(TSLexer *lexer) {
                 advance(lexer);
                 if (lexer->lookahead == '*') {
                     scan_comment(lexer);
+                } else if (lexer->lookahead == '/') {
+                    // Both plain values and low-priority line comments accept //, so retain their delimiter handling.
+                    while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '{' &&
+                           lexer->lookahead != ';' && lexer->lookahead != '}') {
+                        advance(lexer);
+                    }
                 }
                 break;
             case '\'':
@@ -179,7 +185,7 @@ static void scan_comment(TSLexer *lexer) {
 static void scan_string(TSLexer *lexer) {
     int32_t quote = lexer->lookahead;
     advance(lexer);
-    while (!lexer->eof(lexer)) {
+    while (!lexer->eof(lexer) && lexer->lookahead != '\n') {
         if (lexer->lookahead == quote) {
             advance(lexer);
             return;
