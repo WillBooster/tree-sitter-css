@@ -477,3 +477,46 @@ a { --x: attr(foo type(<number), 0); }
 ---
 
 (ERROR)
+
+=========================
+Declaration lookahead ignores comment and string braces
+=========================
+
+& {
+  position: /*${}*/ relative;
+  content: "{";
+  --double: "\"{";
+  --single: '\'{';
+}
+
+---
+
+(stylesheet
+  (rule_set (selectors (nesting_selector))
+    (block
+      (declaration (property_name) (comment) (plain_value))
+      (declaration (property_name) (string_value (string_content)))
+      (declaration (property_name) (string_value (escape_sequence) (string_content)))
+      (declaration (property_name) (string_value (escape_sequence) (string_content))))))
+
+=========================
+Unterminated comment remains an error during declaration lookahead
+:error
+=========================
+
+a { color: /* { ; }
+
+---
+
+(ERROR)
+
+=========================
+Unterminated string remains an error during declaration lookahead
+:error
+=========================
+
+a { content: "{; }
+
+---
+
+(ERROR)

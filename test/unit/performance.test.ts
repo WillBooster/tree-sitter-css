@@ -31,9 +31,12 @@ test('uses a Wasm build built from the current parser', () => {
 // background threads, which compile the Wasm build and collect garbage during the parses. 2,000 and 20,000 lines are
 // measured after warm-up parses and in alternation, each keeping its fastest run; their ratio is about 10 locally, and
 // 18 leaves a margin over that while failing for growth faster than about n^1.25.
-test('recovers from an error on each line in linear time', { timeout: 60_000 }, () => {
-  const small = 'a { b: ) }\n'.repeat(2000);
-  const large = 'a { b: ) }\n'.repeat(20_000);
+test.each([
+  ['unexpected value punctuation', 'a { b: ) }\n'],
+  ['comment punctuation before an invalid value', 'a { b: /* }; : { */ ? }\n'],
+])('recovers from %s in linear time', { timeout: 60_000 }, (_name, source) => {
+  const small = source.repeat(2000);
+  const large = source.repeat(20_000);
   parseCpuTime(large);
   parseCpuTime(large);
   let smallFastest = Infinity;

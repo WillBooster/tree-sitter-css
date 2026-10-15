@@ -13,6 +13,9 @@ static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer);
 static bool scan_pseudo_class_selector_colon(TSLexer *lexer);
+static bool scan_block_start(TSLexer *lexer);
+static void scan_comment(TSLexer *lexer);
+static void scan_string(TSLexer *lexer);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
 static bool is_hex_digit(int32_t character);
@@ -107,15 +110,7 @@ static bool scan_descendant_operator(TSLexer *lexer) {
     if (iswspace(lexer->lookahead)) {
         return false;
     }
-    for (;;) {
-        if (lexer->lookahead == ';' || lexer->lookahead == '}' || lexer->eof(lexer)) {
-            return false;
-        }
-        if (lexer->lookahead == '{') {
-            return true;
-        }
-        advance(lexer);
-    }
+    return scan_block_start(lexer);
 }
 
 static bool scan_pseudo_class_selector_colon(TSLexer *lexer) {
@@ -131,14 +126,72 @@ static bool scan_pseudo_class_selector_colon(TSLexer *lexer) {
     }
     lexer->mark_end(lexer);
     lexer->result_symbol = PSEUDO_CLASS_SELECTOR_COLON;
-    while (lexer->lookahead != ';' && lexer->lookahead != '}' && !lexer->eof(lexer)) {
-        advance(lexer);
-        if (lexer->lookahead == '{') {
-            return true;
-        }
+    if (scan_block_start(lexer)) {
+        return true;
     }
     // At EOF, keep truncated input on the pseudo-class recovery path instead of reinterpreting it as a property.
     return lexer->eof(lexer);
+}
+
+static bool scan_block_start(TSLexer *lexer) {
+    while (!lexer->eof(lexer)) {
+        switch (lexer->lookahead) {
+            case '{':
+                return true;
+            case ';':
+            case '}':
+                return false;
+            case '/':
+                advance(lexer);
+                if (lexer->lookahead == '*') {
+                    scan_comment(lexer);
+                }
+                break;
+            case '\'':
+            case '"':
+                scan_string(lexer);
+                break;
+            case '\\':
+                scan_escape(lexer);
+                break;
+            default:
+                advance(lexer);
+        }
+    }
+    return false;
+}
+
+static void scan_comment(TSLexer *lexer) {
+    advance(lexer);
+    while (!lexer->eof(lexer)) {
+        if (lexer->lookahead == '*') {
+            advance(lexer);
+            if (lexer->lookahead == '/') {
+                advance(lexer);
+                return;
+            }
+        } else {
+            advance(lexer);
+        }
+    }
+}
+
+static void scan_string(TSLexer *lexer) {
+    int32_t quote = lexer->lookahead;
+    advance(lexer);
+    while (!lexer->eof(lexer)) {
+        if (lexer->lookahead == quote) {
+            advance(lexer);
+            return;
+        }
+        if (lexer->lookahead == '\\') {
+            advance(lexer);
+            if (lexer->eof(lexer)) {
+                return;
+            }
+        }
+        advance(lexer);
+    }
 }
 
 static bool is_name_character(int32_t character) {

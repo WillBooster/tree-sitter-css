@@ -17,3 +17,22 @@ test('preserves empty-value recovery and the following declaration', async () =>
     parser.delete();
   }
 });
+
+test.each([
+  ['a:hover', '(stylesheet (ERROR (pseudo_class_selector (tag_name) (class_name (identifier)))))'],
+  [
+    'a { b:hover',
+    '(stylesheet (ERROR (selectors (tag_name)) (pseudo_class_selector (tag_name) (class_name (identifier)))))',
+  ],
+])('preserves pseudo-class recovery at EOF for %s', async (source, expected) => {
+  await Parser.init();
+  const parser = new Parser();
+  parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
+  const tree = parser.parse(source);
+  try {
+    expect(tree?.rootNode.toString()).toBe(expected);
+  } finally {
+    tree?.delete();
+    parser.delete();
+  }
+});
