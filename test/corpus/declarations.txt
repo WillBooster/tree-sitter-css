@@ -477,3 +477,209 @@ a { --x: attr(foo type(<number), 0); }
 ---
 
 (ERROR)
+
+=========================
+Block comments and quoted comment markers preserve declaration parsing
+=========================
+
+& {
+  position: /*${}*/ relative;
+  content: "/*";
+  --double: "\"/*";
+  --single: '\'/*';
+}
+
+---
+
+(stylesheet
+  (rule_set (selectors (nesting_selector))
+    (block
+      (declaration (property_name) (comment) (plain_value))
+      (declaration (property_name) (string_value (string_content)))
+      (declaration (property_name) (string_value (escape_sequence) (string_content)))
+      (declaration (property_name) (string_value (escape_sequence) (string_content))))))
+
+=========================
+Unterminated block comment remains an error
+:error
+=========================
+
+a { color: /* { ; }
+
+---
+
+(ERROR)
+
+=========================
+Unterminated string remains an error
+:error
+=========================
+
+a { content: "{; }
+
+---
+
+(ERROR)
+
+=========================
+Slash values and trailing line-comment quotes preserve declaration parsing
+=========================
+
+a {
+  --x: foo//bar;
+  background: url(http://example.org/a.png);
+  color: red // it's red
+}
+
+---
+
+(stylesheet
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
+      (declaration (property_name) (plain_value))
+      (js_comment))))
+
+=========================
+Multiline strings preserve following declarations and rules
+=========================
+
+a {
+  content: "x
+";
+  --single: 'x
+';
+  --parts: "x
+y";
+  color: red;
+}
+d:hover {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (string_value (string_content)))
+      (declaration (property_name) (string_value (string_content)))
+      (declaration (property_name) (string_value (string_content) (string_content)))
+      (declaration (property_name) (plain_value))))
+  (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier)))) (block)))
+
+=========================
+Quotes and backslashes embedded in plain values preserve token boundaries
+=========================
+
+a {
+  --quoted: foo";
+  --single: foo';
+  --equal: foo=";
+  --slash: /"foo;
+  --numeric: 1px";
+  --identifier: _2foo"/*";
+  --backslash: foo\;
+}
+b {}
+c { value: foo\} d {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (integer_value) (plain_value))
+      (declaration (property_name) (plain_value) (string_value (string_content)))
+      (declaration (property_name) (plain_value))))
+  (rule_set (selectors (tag_name)) (block))
+  (rule_set (selectors (tag_name)) (block (declaration (property_name) (plain_value))))
+  (rule_set (selectors (tag_name)) (block)))
+
+=========================
+Slash-containing plain values preserve following multiline strings
+=========================
+
+a {
+  x: foo//bar "x
+/*"; color: red;
+  y: foo//bar 'x
+/*'; color: blue;
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value) (string_value (string_content) (string_content)))
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (plain_value) (string_value (string_content) (string_content)))
+      (declaration (property_name) (plain_value)))))
+
+=========================
+Raw backslashes in plain values preserve following block comments
+=========================
+
+a { x: foo\/* { */ red; }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value) (comment) (plain_value)))))
+
+=========================
+Comment punctuation before quoted braces preserves declarations
+=========================
+
+a { content: /*;*/ "{" }
+a { content: /*}*/ "{" }
+a { content: /*;*/ url("{") }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (comment) (string_value (string_content)))))
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (comment) (string_value (string_content)))))
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (comment) (call_expression (function_name) (arguments (string_value (string_content))))))))
+
+=========================
+Completed declarations retain their boundary before nested selectors
+=========================
+
+a { x: foo\; b {} }
+a { x: foo\; b:hover {} }
+a { x: foo\; /* comment */ b {} }
+
+---
+
+(stylesheet
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (rule_set (selectors (tag_name)) (block))))
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier)))) (block))))
+  (rule_set (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value))
+      (comment)
+      (rule_set (selectors (tag_name)) (block)))))

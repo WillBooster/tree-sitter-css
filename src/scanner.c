@@ -4,7 +4,6 @@
 
 enum TokenType {
     DESCENDANT_OP,
-    PSEUDO_CLASS_SELECTOR_COLON,
     ERROR_RECOVERY,
     CLASS_NAME_ESCAPE_WITH_SUFFIX,
 };
@@ -12,7 +11,6 @@ enum TokenType {
 static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer);
-static bool scan_pseudo_class_selector_colon(TSLexer *lexer);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
 static bool is_hex_digit(int32_t character);
@@ -37,9 +35,6 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     }
     if (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP]) {
         return scan_descendant_operator(lexer);
-    }
-    if (valid_symbols[PSEUDO_CLASS_SELECTOR_COLON]) {
-        return scan_pseudo_class_selector_colon(lexer);
     }
     return false;
 }
@@ -100,45 +95,7 @@ static bool scan_descendant_operator(TSLexer *lexer) {
         lexer->lookahead == '*' || lexer->lookahead == '&' || iswalnum(lexer->lookahead)) {
         return true;
     }
-    if (lexer->lookahead != ':') {
-        return false;
-    }
-    advance(lexer);
-    if (iswspace(lexer->lookahead)) {
-        return false;
-    }
-    for (;;) {
-        if (lexer->lookahead == ';' || lexer->lookahead == '}' || lexer->eof(lexer)) {
-            return false;
-        }
-        if (lexer->lookahead == '{') {
-            return true;
-        }
-        advance(lexer);
-    }
-}
-
-static bool scan_pseudo_class_selector_colon(TSLexer *lexer) {
-    while (iswspace(lexer->lookahead)) {
-        skip(lexer);
-    }
-    if (lexer->lookahead != ':') {
-        return false;
-    }
-    advance(lexer);
-    if (lexer->lookahead == ':') {
-        return false;
-    }
-    lexer->mark_end(lexer);
-    lexer->result_symbol = PSEUDO_CLASS_SELECTOR_COLON;
-    while (lexer->lookahead != ';' && lexer->lookahead != '}' && !lexer->eof(lexer)) {
-        advance(lexer);
-        if (lexer->lookahead == '{') {
-            return true;
-        }
-    }
-    // At EOF, keep truncated input on the pseudo-class recovery path instead of reinterpreting it as a property.
-    return lexer->eof(lexer);
+    return lexer->lookahead == ':';
 }
 
 static bool is_name_character(int32_t character) {

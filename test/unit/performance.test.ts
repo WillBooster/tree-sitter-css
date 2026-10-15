@@ -24,16 +24,20 @@ test('uses a Wasm build built from the current parser', () => {
   ).toBe(false);
 });
 
-// Consumers parse files being edited, so recovering from many errors must stay linear: ten times the lines take about
+// Consumers parse files being edited, so recovering from many errors must stay linear: ten times the input takes about
 // ten times as long, against a hundred times for quadratic recovery. The ratio catches a cost that grows faster than
 // the input even on a slow CI runner. The parses are timed in the CPU time of the thread that runs them: wall-clock
 // time is inflated unevenly by the test files running alongside, and the process's CPU time also counts the engine's
-// background threads, which compile the Wasm build and collect garbage during the parses. 2,000 and 20,000 lines are
+// background threads, which compile the Wasm build and collect garbage during the parses. 2,000 and 20,000 repetitions are
 // measured after warm-up parses and in alternation, each keeping its fastest run; their ratio is about 10 locally, and
 // 18 leaves a margin over that while failing for growth faster than about n^1.25.
-test('recovers from an error on each line in linear time', { timeout: 60_000 }, () => {
-  const small = 'a { b: ) }\n'.repeat(2000);
-  const large = 'a { b: ) }\n'.repeat(20_000);
+test.each([
+  ['unexpected value punctuation', 'a { b: ) }\n', '', ''],
+  ['comment punctuation before an invalid value', 'a { b: /* }; : { */ ? }\n', '', ''],
+  ['comment braces inside one malformed block', 'b:/*{*/?', 'a{', '}'],
+])('recovers from %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix) => {
+  const small = prefix + source.repeat(2000) + suffix;
+  const large = prefix + source.repeat(20_000) + suffix;
   parseCpuTime(large);
   parseCpuTime(large);
   let smallFastest = Infinity;

@@ -655,3 +655,97 @@ Generic pseudo arguments preserve escaped plain values
       (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value)))
       (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value))))
     (block)))
+
+=========================
+Pseudo-class selectors ignore comment punctuation
+=========================
+
+a:hover/* ; } { */ {}
+a :hover/* ; */ {}
+a { b:hover/* } */ {} }
+a:hover/***/ /* ; */ {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier)))) (comment) (block))
+  (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier))))) (comment) (block))
+  (rule_set (selectors (tag_name)) (block (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier)))) (comment) (block))))
+  (rule_set (selectors (pseudo_class_selector (tag_name) (class_name (identifier)))) (comment) (comment) (block)))
+
+=========================
+Quoted attribute values protect comment markers
+=========================
+
+a:has([data-value="/*"]) {}
+a :has([data-value="/*"]) {}
+
+---
+
+(stylesheet
+  (rule_set (selectors (pseudo_class_selector (tag_name) (class_name) (arguments (attribute_selector (attribute_name) (string_value (string_content)))))) (block))
+  (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name) (arguments (attribute_selector (attribute_name) (string_value (string_content))))))) (block)))
+
+=========================
+Line-comment punctuation preserves the following selector block
+=========================
+
+a :hover// "
+{}
+a :hover// /*
+{}
+
+---
+
+(stylesheet
+  (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier))))) (js_comment) (block))
+  (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier))))) (js_comment) (block)))
+
+==================
+Escaped attribute-name slash before a match operator
+==================
+
+a :has([foo\/*=x]) {}
+a:has([foo\/*=x]) {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (descendant_selector
+        (tag_name)
+        (pseudo_class_selector
+          (class_name)
+          (arguments
+            (attribute_selector
+              (attribute_name)
+              (plain_value))))))
+    (block))
+  (rule_set
+    (selectors
+      (pseudo_class_selector
+        (tag_name)
+        (class_name)
+        (arguments
+          (attribute_selector
+            (attribute_name)
+            (plain_value)))))
+    (block)))
+
+=========================
+Line-comment quotes preserve the following block comment
+=========================
+
+a :hover// "
+/* ; */ {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier)))))
+    (js_comment)
+    (comment)
+    (block)))
