@@ -15,7 +15,8 @@ static bool scan_descendant_operator(TSLexer *lexer);
 static bool scan_pseudo_class_selector_colon(TSLexer *lexer);
 static bool scan_block_start(TSLexer *lexer);
 static void scan_block_comment(TSLexer *lexer);
-static void scan_quoted_text(TSLexer *lexer);
+static void scan_line_comment(TSLexer *lexer);
+static bool scan_quoted_text(TSLexer *lexer);
 static bool is_lookahead_delimiter(int32_t character);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
@@ -142,16 +143,18 @@ static bool scan_block_start(TSLexer *lexer) {
             case ';':
             case '}':
                 return false;
+            case '\\':
+                advance(lexer);
+                if (!lexer->eof(lexer) && !is_lookahead_delimiter(lexer->lookahead)) {
+                    advance(lexer);
+                }
+                break;
             case '/':
                 advance(lexer);
                 if (lexer->lookahead == '*') {
                     scan_block_comment(lexer);
                 } else if (lexer->lookahead == '/') {
-                    // Both plain values and low-priority line comments accept //, so retain their delimiter handling.
-                    while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '{' &&
-                           lexer->lookahead != ';' && lexer->lookahead != '}') {
-                        advance(lexer);
-                    }
+                    scan_line_comment(lexer);
                 }
                 break;
             case '\'':
@@ -180,23 +183,39 @@ static void scan_block_comment(TSLexer *lexer) {
     }
 }
 
-static void scan_quoted_text(TSLexer *lexer) {
+static void scan_line_comment(TSLexer *lexer) {
+    // Both plain values and low-priority line comments accept //, including quotes that open multiline string values.
+    while (!lexer->eof(lexer) && lexer->lookahead != '\n' && !is_lookahead_delimiter(lexer->lookahead)) {
+        if (lexer->lookahead == '\'' || lexer->lookahead == '"') {
+            if (scan_quoted_text(lexer)) {
+                break;
+            }
+        } else {
+            advance(lexer);
+        }
+    }
+}
+
+static bool scan_quoted_text(TSLexer *lexer) {
     int32_t quote = lexer->lookahead;
+    bool crossed_line = false;
     advance(lexer);
     // Quotes can also be embedded in plain_value, so they cannot hide braces or semicolons.
     while (!lexer->eof(lexer) && !is_lookahead_delimiter(lexer->lookahead)) {
         if (lexer->lookahead == quote) {
             advance(lexer);
-            return;
+            return crossed_line;
         }
         if (lexer->lookahead == '\\') {
             advance(lexer);
             if (lexer->eof(lexer) || is_lookahead_delimiter(lexer->lookahead)) {
-                return;
+                return crossed_line;
             }
         }
+        crossed_line |= lexer->lookahead == '\n';
         advance(lexer);
     }
+    return crossed_line;
 }
 
 static bool is_lookahead_delimiter(int32_t character) {

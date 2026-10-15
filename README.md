@@ -26,7 +26,8 @@ Custom-property declaration names accept CSS escape sequences.
 Blocks accept empty statements before, between, and after declarations.
 Selector lookahead skips braces and semicolons inside block comments.
 Quoted text protects comment markers, while braces and semicolons still delimit lookahead inside it.
-After `//`, quotes and `/*` are plain text until a brace, semicolon, or line feed.
+Backslash-escaped slashes do not start lookahead comments. After `//`, quoted text can continue across a line feed;
+other comment markers remain plain text until that line ends.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
 
