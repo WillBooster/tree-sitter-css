@@ -494,16 +494,19 @@ module.exports = grammar({
       '/',
     )),
 
-    plain_value: _ => token(seq(
-      repeat(choice(
-        /[-_]/,
-        /\/[^\*\s,;!{}()\[\]]/, // Slash not followed by a '*' (which would be a comment)
-      )),
-      /[a-zA-Z]/,
-      repeat(choice(
-        /[^/\s,;!{}()\[\]]/, // Not a slash, not a delimiter character
-        /\/[^\*\s,;!{}()\[\]]/, // Slash not followed by a '*' (which would be a comment)
-      )),
+    plain_value: _ => token(choice(
+      /<[a-zA-Z-]+>[+#]?/,
+      seq(
+        repeat(choice(
+          /[-_]/,
+          /\/[^\*\s,;!{}()\[\]]/,
+        )),
+        /[a-zA-Z]/,
+        repeat(choice(
+          /[^/\s,;!{}()\[\]]/,
+          /\/[^\*\s,;!{}()\[\]]/,
+        )),
+      ),
     )),
   },
 });
