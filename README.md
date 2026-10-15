@@ -24,7 +24,8 @@ Attribute names accept CSS escape sequences, including namespace prefixes and lo
 Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, including `+` and `#` list multipliers.
 Custom-property declaration names accept CSS escape sequences.
 Blocks accept empty statements before, between, and after declarations.
-Selector lookahead handles punctuation inside block comments, quoted strings, and escape sequences while preserving existing `//` handling.
+Selector lookahead skips braces and semicolons inside block comments, quoted strings, and escape sequences.
+After `//`, quotes and `/*` are plain text until a brace, semicolon, or line feed.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
 
