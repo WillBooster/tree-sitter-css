@@ -122,8 +122,8 @@ and the release build regenerate the parsers before compiling them.
   `script/parse-examples`. After a grammar change or a moved pin alters that list, `script/parse-examples` rewrites it;
   review its diff before committing;
 - a recovery check (`test/unit/recovery.test.ts`) for empty declarations;
-- performance checks (`test/unit/performance.test.ts`) for linear recovery on repeated invalid-value lines, including
-  punctuation inside closed comments. These load the Wasm build through @willbooster/web-tree-sitter;
+- performance checks (`test/unit/performance.test.ts`) for linear recovery on independent invalid-value lines and
+  repeated invalid values inside one block, including punctuation inside closed comments. These load the Wasm build through @willbooster/web-tree-sitter;
 - a check (`test/unit/runtimeVersion.test.ts`) that `@willbooster/web-tree-sitter` in `package.json` and
   `willbooster-tree-sitter` in `Cargo.lock` are the same version, since the Wasm tests run on the former and the Rust
   tests, the fuzzer, and the CLI on the latter;

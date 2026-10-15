@@ -634,3 +634,27 @@ a { x: foo\/* { */ red; }
     (selectors (tag_name))
     (block
       (declaration (property_name) (plain_value) (comment) (plain_value)))))
+
+=========================
+Comment punctuation before quoted braces preserves declarations
+=========================
+
+a { content: /*;*/ "{" }
+a { content: /*}*/ "{" }
+a { content: /*;*/ url("{") }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (comment) (string_value (string_content)))))
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (comment) (string_value (string_content)))))
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (comment) (call_expression (function_name) (arguments (string_value (string_content))))))))

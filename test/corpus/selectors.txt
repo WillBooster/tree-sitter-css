@@ -732,3 +732,20 @@ a:has([foo\/*=x]) {}
             (attribute_name)
             (plain_value)))))
     (block)))
+
+=========================
+Line-comment quotes preserve the following block comment
+=========================
+
+a :hover// "
+/* ; */ {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier)))))
+    (js_comment)
+    (comment)
+    (block)))
