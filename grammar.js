@@ -288,7 +288,7 @@ module.exports = grammar({
       ')',
     ),
 
-    declaration: $ => seq(
+    declaration: $ => prec.dynamic(1, seq(
       alias(choice($.identifier, $._custom_property_name), $.property_name),
       optional($._descendant_operator),
       ':',
@@ -299,7 +299,7 @@ module.exports = grammar({
       )),
       optional($.important),
       ';',
-    ),
+    )),
 
     last_declaration: $ => prec.dynamic(1, seq(
       alias(choice($.identifier, $._custom_property_name), $.property_name),
