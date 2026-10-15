@@ -4,7 +4,6 @@
 
 enum TokenType {
     DESCENDANT_OP,
-    PSEUDO_CLASS_SELECTOR_COLON,
     ERROR_RECOVERY,
     CLASS_NAME_ESCAPE_WITH_SUFFIX,
 };
@@ -12,12 +11,6 @@ enum TokenType {
 static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer);
-static bool scan_pseudo_class_selector_colon(TSLexer *lexer);
-static bool scan_block_start(TSLexer *lexer);
-static void scan_block_comment(TSLexer *lexer);
-static void scan_line_comment(TSLexer *lexer);
-static bool scan_quoted_text(TSLexer *lexer);
-static bool is_lookahead_delimiter(int32_t character);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
 static bool is_hex_digit(int32_t character);
@@ -42,9 +35,6 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     }
     if (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP]) {
         return scan_descendant_operator(lexer);
-    }
-    if (valid_symbols[PSEUDO_CLASS_SELECTOR_COLON]) {
-        return scan_pseudo_class_selector_colon(lexer);
     }
     return false;
 }
@@ -105,121 +95,7 @@ static bool scan_descendant_operator(TSLexer *lexer) {
         lexer->lookahead == '*' || lexer->lookahead == '&' || iswalnum(lexer->lookahead)) {
         return true;
     }
-    if (lexer->lookahead != ':') {
-        return false;
-    }
-    advance(lexer);
-    if (iswspace(lexer->lookahead)) {
-        return false;
-    }
-    return scan_block_start(lexer);
-}
-
-static bool scan_pseudo_class_selector_colon(TSLexer *lexer) {
-    while (iswspace(lexer->lookahead)) {
-        skip(lexer);
-    }
-    if (lexer->lookahead != ':') {
-        return false;
-    }
-    advance(lexer);
-    if (lexer->lookahead == ':') {
-        return false;
-    }
-    lexer->mark_end(lexer);
-    lexer->result_symbol = PSEUDO_CLASS_SELECTOR_COLON;
-    if (scan_block_start(lexer)) {
-        return true;
-    }
-    // At EOF, keep truncated input on the pseudo-class recovery path instead of reinterpreting it as a property.
-    return lexer->eof(lexer);
-}
-
-static bool scan_block_start(TSLexer *lexer) {
-    while (!lexer->eof(lexer)) {
-        switch (lexer->lookahead) {
-            case '{':
-                return true;
-            case ';':
-            case '}':
-                return false;
-            case '\\':
-                advance(lexer);
-                if (!lexer->eof(lexer) && !is_lookahead_delimiter(lexer->lookahead)) {
-                    advance(lexer);
-                }
-                break;
-            case '/':
-                advance(lexer);
-                if (lexer->lookahead == '*') {
-                    scan_block_comment(lexer);
-                } else if (lexer->lookahead == '/') {
-                    scan_line_comment(lexer);
-                }
-                break;
-            case '\'':
-            case '"':
-                scan_quoted_text(lexer);
-                break;
-            default:
-                advance(lexer);
-        }
-    }
-    return false;
-}
-
-static void scan_block_comment(TSLexer *lexer) {
-    advance(lexer);
-    while (!lexer->eof(lexer)) {
-        if (lexer->lookahead == '*') {
-            advance(lexer);
-            if (lexer->lookahead == '/') {
-                advance(lexer);
-                return;
-            }
-        } else {
-            advance(lexer);
-        }
-    }
-}
-
-static void scan_line_comment(TSLexer *lexer) {
-    // Both plain values and low-priority line comments accept //, including quotes that open multiline string values.
-    while (!lexer->eof(lexer) && lexer->lookahead != '\n' && !is_lookahead_delimiter(lexer->lookahead)) {
-        if (lexer->lookahead == '\'' || lexer->lookahead == '"') {
-            if (scan_quoted_text(lexer)) {
-                break;
-            }
-        } else {
-            advance(lexer);
-        }
-    }
-}
-
-static bool scan_quoted_text(TSLexer *lexer) {
-    int32_t quote = lexer->lookahead;
-    bool crossed_line = false;
-    advance(lexer);
-    // Quotes can also be embedded in plain_value, so they cannot hide braces or semicolons.
-    while (!lexer->eof(lexer) && !is_lookahead_delimiter(lexer->lookahead)) {
-        if (lexer->lookahead == quote) {
-            advance(lexer);
-            return crossed_line;
-        }
-        if (lexer->lookahead == '\\') {
-            advance(lexer);
-            if (lexer->eof(lexer) || is_lookahead_delimiter(lexer->lookahead)) {
-                return crossed_line;
-            }
-        }
-        crossed_line |= lexer->lookahead == '\n';
-        advance(lexer);
-    }
-    return crossed_line;
-}
-
-static bool is_lookahead_delimiter(int32_t character) {
-    return character == '{' || character == ';' || character == '}';
+    return lexer->lookahead == ':';
 }
 
 static bool is_name_character(int32_t character) {

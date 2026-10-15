@@ -19,7 +19,6 @@ module.exports = grammar({
 
   externals: $ => [
     $._descendant_operator,
-    $._pseudo_class_selector_colon,
     $.__error_recovery,
     $._class_name_escape_with_suffix,
   ],
@@ -28,6 +27,11 @@ module.exports = grammar({
     $._escaped_identifier,
     $._top_level_item,
     $._block_item,
+  ],
+
+  conflicts: $ => [
+    [$._selector, $.declaration],
+    [$._selector, $.declaration, $.last_declaration],
   ],
 
   rules: {
@@ -44,8 +48,6 @@ module.exports = grammar({
       $.supports_statement,
       $.at_rule,
     ),
-
-    // Statements
 
     import_statement: $ => seq(
       '@import',
@@ -114,8 +116,6 @@ module.exports = grammar({
       choice(';', $.block),
     ),
 
-    // Rule sets
-
     rule_set: $ => seq(
       $.selectors,
       $.block,
@@ -142,8 +142,6 @@ module.exports = grammar({
       $.postcss_statement,
       $.at_rule,
     ),
-
-    // Selectors
 
     _selector: $ => choice(
       $.universal_selector,
@@ -174,9 +172,8 @@ module.exports = grammar({
 
     pseudo_class_selector: $ => seq(
       optional($._selector),
-      alias($._pseudo_class_selector_colon, ':'),
+      ':',
       choice(
-        // Either a specific pseudo-class that can only accept a selector…
         seq(
           alias(
             choice('has', 'not', 'is', 'where', 'host', 'host-context'),
@@ -185,24 +182,17 @@ module.exports = grammar({
           alias($.pseudo_class_with_selector_arguments, $.arguments),
         ),
 
-        // …or an `nth-child` or `nth-last-child` selector (which can
-        // optionally accept a selector)…
         $._nth_child_pseudo_class_selector,
 
-        // …or any other pseudo-class (for which we'll allow a more diverse set
-        // of arguments).
         seq(
           $.class_name,
           optional(alias($.pseudo_class_arguments, $.arguments)),
         ),
 
-        // …or a standalone `host` pseudo-class (as `:host` doesn't require arguments).
         alias('host', $.class_name),
       ),
     ),
 
-    // Only `nth-child`/`nth-last-child`, not `nth-of-type`/`nth-last-of-type`,
-    // allows an optional filtering selector as a parameter.
     _nth_child_pseudo_class_selector: $ => seq(
       alias(
         choice('nth-child', 'nth-last-child'),
@@ -290,7 +280,6 @@ module.exports = grammar({
       ')',
     )),
 
-    // An+B notation for `nth-child`/`nth-last-child`.
     _nth_functional_notation: _ => /-?(\d)*n\s*(\+\s*\d+)?/,
 
     pseudo_element_arguments: $ => seq(
@@ -299,10 +288,9 @@ module.exports = grammar({
       ')',
     ),
 
-    // Declarations
-
     declaration: $ => seq(
       alias(choice($.identifier, $._custom_property_name), $.property_name),
+      optional($._descendant_operator),
       ':',
       $._value,
       repeat(seq(
@@ -313,8 +301,9 @@ module.exports = grammar({
       ';',
     ),
 
-    last_declaration: $ => prec(1, seq(
+    last_declaration: $ => prec.dynamic(1, seq(
       alias(choice($.identifier, $._custom_property_name), $.property_name),
+      optional($._descendant_operator),
       ':',
       $._value,
       repeat(seq(
@@ -335,8 +324,6 @@ module.exports = grammar({
     ),
 
     important: _ => /![ \t\n\r\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]/,
-
-    // Media queries
 
     _query: $ => choice(
       alias($.identifier, $.keyword_query),
@@ -378,8 +365,6 @@ module.exports = grammar({
       $._selector,
       ')',
     ),
-
-    // Property Values
 
     _value: $ => prec(-1, choice(
       alias($.identifier, $.plain_value),

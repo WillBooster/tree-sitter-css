@@ -657,7 +657,7 @@ Generic pseudo arguments preserve escaped plain values
     (block)))
 
 =========================
-Pseudo-class lookahead ignores comment punctuation
+Pseudo-class selectors ignore comment punctuation
 =========================
 
 a:hover/* ; } { */ {}
@@ -687,7 +687,7 @@ a :has([data-value="/*"]) {}
   (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name) (arguments (attribute_selector (attribute_name) (string_value (string_content))))))) (block)))
 
 =========================
-Line-comment text does not start lookahead strings or block comments
+Line-comment punctuation preserves the following selector block
 =========================
 
 a :hover// "
@@ -702,7 +702,7 @@ a :hover// /*
   (rule_set (selectors (descendant_selector (tag_name) (pseudo_class_selector (class_name (identifier))))) (js_comment) (block)))
 
 ==================
-Escaped selector punctuation does not open a lookahead comment
+Escaped attribute-name slash before a match operator
 ==================
 
 a :has([foo\/*=x]) {}

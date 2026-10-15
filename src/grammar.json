@@ -674,12 +674,7 @@
           ]
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_pseudo_class_selector_colon"
-          },
-          "named": false,
+          "type": "STRING",
           "value": ":"
         },
         {
@@ -1511,6 +1506,18 @@
           "value": "property_name"
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_descendant_operator"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "STRING",
           "value": ":"
         },
@@ -1561,7 +1568,7 @@
       ]
     },
     "last_declaration": {
-      "type": "PREC",
+      "type": "PREC_DYNAMIC",
       "value": 1,
       "content": {
         "type": "SEQ",
@@ -1583,6 +1590,18 @@
             },
             "named": true,
             "value": "property_name"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_descendant_operator"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "STRING",
@@ -2584,16 +2603,22 @@
       "name": "js_comment"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "_selector",
+      "declaration"
+    ],
+    [
+      "_selector",
+      "declaration",
+      "last_declaration"
+    ]
+  ],
   "precedences": [],
   "externals": [
     {
       "type": "SYMBOL",
       "name": "_descendant_operator"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_pseudo_class_selector_colon"
     },
     {
       "type": "SYMBOL",

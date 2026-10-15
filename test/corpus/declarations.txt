@@ -500,7 +500,7 @@ Block comments and quoted comment markers preserve declaration parsing
       (declaration (property_name) (string_value (escape_sequence) (string_content))))))
 
 =========================
-Unterminated comment remains an error during declaration lookahead
+Unterminated block comment remains an error
 :error
 =========================
 
@@ -511,7 +511,7 @@ a { color: /* { ; }
 (ERROR)
 
 =========================
-Unterminated string remains an error during declaration lookahead
+Unterminated string remains an error
 :error
 =========================
 
@@ -620,3 +620,17 @@ a {
       (declaration (property_name) (plain_value))
       (declaration (property_name) (plain_value) (string_value (string_content) (string_content)))
       (declaration (property_name) (plain_value)))))
+
+=========================
+Raw backslashes in plain values preserve following block comments
+=========================
+
+a { x: foo\/* { */ red; }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (plain_value) (comment) (plain_value)))))

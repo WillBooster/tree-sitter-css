@@ -24,10 +24,7 @@ Attribute names accept CSS escape sequences, including namespace prefixes and lo
 Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, including `+` and `#` list multipliers.
 Custom-property declaration names accept CSS escape sequences.
 Blocks accept empty statements before, between, and after declarations.
-Selector lookahead skips braces and semicolons inside block comments.
-Quoted text protects comment markers, while braces and semicolons still delimit lookahead inside it.
-Backslash-escaped slashes do not start lookahead comments. After `//`, quoted text can continue across a line feed;
-other comment markers remain plain text until that line ends.
+Braces and semicolons inside comments do not change whether a construct is a declaration or a selector.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
 
@@ -124,10 +121,9 @@ and the release build regenerate the parsers before compiling them.
   parse exactly as listed in `script/known-failures.txt`. The first run clones the repositories. The example repositories are pinned to commits in
   `script/parse-examples`. After a grammar change or a moved pin alters that list, `script/parse-examples` rewrites it;
   review its diff before committing;
-- recovery checks (`test/unit/recovery.test.ts`) for empty declarations and truncated pseudo-class selectors;
+- a recovery check (`test/unit/recovery.test.ts`) for empty declarations;
 - performance checks (`test/unit/performance.test.ts`) for linear recovery on repeated invalid-value lines, including
-  punctuation inside closed comments. These load the Wasm build through @willbooster/web-tree-sitter. Repeated
-  unterminated block comments remain a quadratic recovery case; comment-aware lookahead adds scanning work there;
+  punctuation inside closed comments. These load the Wasm build through @willbooster/web-tree-sitter;
 - a check (`test/unit/runtimeVersion.test.ts`) that `@willbooster/web-tree-sitter` in `package.json` and
   `willbooster-tree-sitter` in `Cargo.lock` are the same version, since the Wasm tests run on the former and the Rust
   tests, the fuzzer, and the CLI on the latter;
