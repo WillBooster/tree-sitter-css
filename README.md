@@ -25,6 +25,8 @@ Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, i
 Custom-property declaration names accept CSS escape sequences.
 Blocks and inline declaration lists accept empty statements before, between, and after declarations.
 A stylesheet may end with a declaration without a trailing semicolon, as in inline style content such as `color: red`.
+Malformed nested blocks, such as `@media screen { a { color: red`, can produce an `ERROR` root;
+consumers parsing incomplete input must handle it as well as `stylesheet`.
 Braces and semicolons inside comments do not change whether a construct is a declaration or a selector.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
