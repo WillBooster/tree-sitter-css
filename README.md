@@ -23,7 +23,7 @@ Nesting selectors may follow descendant combinators, as in `b &`.
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
 Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, including `+` and `#` list multipliers.
 Custom-property declaration names accept CSS escape sequences.
-Blocks and inline declaration lists accept empty statements before, between, and after declarations.
+Blocks, inline declaration lists, and stylesheets accept empty semicolon statements, including between top-level rules.
 A stylesheet may end with a declaration without a trailing semicolon, as in inline style content such as `color: red`.
 Malformed nested blocks, such as `@media screen { a { color: red`, can produce an `ERROR` root;
 consumers parsing incomplete input must handle it as well as `stylesheet`.
