@@ -23,7 +23,11 @@ Nesting selectors may follow descendant combinators, as in `b &`.
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
 Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, including `+` and `#` list multipliers.
 Custom-property declaration names accept CSS escape sequences.
-Blocks accept empty statements before, between, and after declarations.
+Blocks, inline declaration lists, and stylesheets accept empty semicolon statements, including between top-level rules.
+A stylesheet may end with a declaration without a trailing semicolon, as in inline style content such as `color: red`.
+Incomplete input can produce an `ERROR` root instead of `stylesheet`, including a single block with an
+unterminated string (`a { content: "x`) and nested unclosed blocks. Consumers must handle
+error roots during editing; recovery structure is not guaranteed for arbitrary incomplete input.
 Braces and semicolons inside comments do not change whether a construct is a declaration or a selector.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
@@ -121,7 +125,7 @@ and the release build regenerate the parsers before compiling them.
   parse exactly as listed in `script/known-failures.txt`. The first run clones the repositories. The example repositories are pinned to commits in
   `script/parse-examples`. After a grammar change or a moved pin alters that list, `script/parse-examples` rewrites it;
   review its diff before committing;
-- a recovery check (`test/unit/recovery.test.ts`) for empty declarations;
+- recovery checks (`test/unit/recovery.test.ts`) for empty declaration values and complete declarations inside unclosed blocks;
 - performance checks (`test/unit/performance.test.ts`) for linear recovery on independent invalid-value lines and
   repeated invalid values inside one block, including punctuation inside closed comments. These load the Wasm build through @willbooster/web-tree-sitter;
 - a check (`test/unit/runtimeVersion.test.ts`) that `@willbooster/web-tree-sitter` in `package.json` and
