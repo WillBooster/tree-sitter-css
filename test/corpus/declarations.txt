@@ -683,3 +683,38 @@ a { x: foo\; /* comment */ b {} }
       (declaration (property_name) (plain_value))
       (comment)
       (rule_set (selectors (tag_name)) (block)))))
+
+=========================
+Inline style without a trailing semicolon
+=========================
+
+color: red
+
+---
+
+(stylesheet
+  (declaration (property_name) (plain_value)))
+
+=========================
+Inline style list without a trailing semicolon
+=========================
+
+color: red; font-size: 14px !important /* final comment */
+
+---
+
+(stylesheet
+  (declaration (property_name) (plain_value))
+  (declaration (property_name) (integer_value (unit)) (important))
+  (comment))
+
+=========================
+Inline custom property without a trailing semicolon
+=========================
+
+--theme: "dark"
+
+---
+
+(stylesheet
+  (declaration (property_name) (string_value (string_content))))
