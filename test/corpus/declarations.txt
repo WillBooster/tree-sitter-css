@@ -718,3 +718,27 @@ Inline custom property without a trailing semicolon
 
 (stylesheet
   (declaration (property_name) (string_value (string_content))))
+
+=========================
+Inline styles with empty declarations
+=========================
+
+;color: red;;font-size:14px;;
+
+---
+
+(stylesheet
+  (declaration (property_name) (plain_value))
+  (declaration (property_name) (integer_value (unit))))
+
+=========================
+Inline empty declarations before a final declaration
+=========================
+
+;color: red;;font-size:14px
+
+---
+
+(stylesheet
+  (declaration (property_name) (plain_value))
+  (declaration (property_name) (integer_value (unit))))

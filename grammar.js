@@ -36,7 +36,7 @@ module.exports = grammar({
 
   rules: {
     stylesheet: $ => seq(
-      repeat($._top_level_item),
+      repeat(choice(';', $._top_level_item)),
       optional(alias($.last_declaration, $.declaration)),
     ),
 

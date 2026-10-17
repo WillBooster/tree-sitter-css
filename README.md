@@ -23,7 +23,7 @@ Nesting selectors may follow descendant combinators, as in `b &`.
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
 Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, including `+` and `#` list multipliers.
 Custom-property declaration names accept CSS escape sequences.
-Blocks accept empty statements before, between, and after declarations.
+Blocks and inline declaration lists accept empty statements before, between, and after declarations.
 A stylesheet may end with a declaration without a trailing semicolon, as in inline style content such as `color: red`.
 Braces and semicolons inside comments do not change whether a construct is a declaration or a selector.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
