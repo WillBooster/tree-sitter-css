@@ -432,7 +432,7 @@ URL token boundaries preserve following declarations
   @custom +url(a[b) .url(a}b) !url(a/*b) &u\72l(a]b);
   @apply p-4 https://cdn.example/x;
   color: red;
-  @custom (https://cdn.example/x) [git+ssh://host/path];
+  @custom (https://cdn.example/x) [git+ssh.foo-bar://host/path];
 }
 
 ---
@@ -457,6 +457,7 @@ URL token boundaries preserve following declarations
       (at_rule
         (at_keyword)
         (at_rule_value)
+        (at_rule_value)
         (at_rule_url))
       (declaration
         (property_name)
@@ -464,8 +465,14 @@ URL token boundaries preserve following declarations
       (at_rule
         (at_keyword)
         (at_rule_parenthesized
+          (at_rule_value)
           (at_rule_url))
         (at_rule_bracketed
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_value)
           (at_rule_url))))))
 
 ========================================
