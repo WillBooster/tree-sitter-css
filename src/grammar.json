@@ -224,6 +224,10 @@
             {
               "type": "SYMBOL",
               "name": "call_expression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "url_value"
             }
           ]
         },
@@ -399,7 +403,7 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "identifier"
+                  "name": "at_rule_value"
                 },
                 "named": true,
                 "value": "container_name"
@@ -2295,17 +2299,8 @@
                 {
                   "type": "ALIAS",
                   "content": {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "identifier"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_custom_property_name"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "at_rule_value"
                   },
                   "named": true,
                   "value": "feature_name"
@@ -2385,6 +2380,10 @@
           {
             "type": "SYMBOL",
             "name": "call_expression"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "url_value"
           },
           {
             "type": "SYMBOL",
@@ -2745,6 +2744,58 @@
         }
       ]
     },
+    "url_value": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "(?:[uU]|\\\\(?:[uU]|0{0,4}[57]5(?:[ \\t\\n\\f]|\\r\\n?)?))"
+          },
+          {
+            "type": "PATTERN",
+            "value": "(?:[rR]|\\\\(?:[rR]|0{0,4}[57]2(?:[ \\t\\n\\f]|\\r\\n?)?))"
+          },
+          {
+            "type": "PATTERN",
+            "value": "(?:[lL]|\\\\(?:[lL]|0{0,4}[46][cC](?:[ \\t\\n\\f]|\\r\\n?)?))"
+          },
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "PATTERN",
+            "value": "[ \\t\\n\\r\\f]*"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[^\\x00-\\x20\\x7F\"'()\\\\]"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                }
+              ]
+            }
+          },
+          {
+            "type": "PATTERN",
+            "value": "[ \\t\\n\\r\\f]*"
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      }
+    },
     "call_expression": {
       "type": "SEQ",
       "members": [
@@ -3007,6 +3058,10 @@
     }
   ],
   "conflicts": [
+    [
+      "container_statement",
+      "_at_rule_component"
+    ],
     [
       "_selector",
       "declaration"

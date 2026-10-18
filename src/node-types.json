@@ -165,6 +165,10 @@
         {
           "type": "universal_selector",
           "named": true
+        },
+        {
+          "type": "url_value",
+          "named": true
         }
       ]
     }
@@ -508,6 +512,10 @@
         {
           "type": "universal_selector",
           "named": true
+        },
+        {
+          "type": "url_value",
+          "named": true
         }
       ]
     }
@@ -558,6 +566,10 @@
         },
         {
           "type": "string_value",
+          "named": true
+        },
+        {
+          "type": "url_value",
           "named": true
         }
       ]
@@ -718,6 +730,10 @@
         },
         {
           "type": "string_value",
+          "named": true
+        },
+        {
+          "type": "url_value",
           "named": true
         }
       ]
@@ -983,6 +999,10 @@
         {
           "type": "string_value",
           "named": true
+        },
+        {
+          "type": "url_value",
+          "named": true
         }
       ]
     }
@@ -1105,6 +1125,10 @@
         {
           "type": "string_value",
           "named": true
+        },
+        {
+          "type": "url_value",
+          "named": true
         }
       ]
     }
@@ -1170,6 +1194,10 @@
         },
         {
           "type": "string_value",
+          "named": true
+        },
+        {
+          "type": "url_value",
           "named": true
         }
       ]
@@ -1320,6 +1348,10 @@
         },
         {
           "type": "unary_query",
+          "named": true
+        },
+        {
+          "type": "url_value",
           "named": true
         }
       ]
@@ -1538,6 +1570,10 @@
         {
           "type": "string_value",
           "named": true
+        },
+        {
+          "type": "url_value",
+          "named": true
         }
       ]
     }
@@ -1627,6 +1663,10 @@
         },
         {
           "type": "string_value",
+          "named": true
+        },
+        {
+          "type": "url_value",
           "named": true
         }
       ]
@@ -2463,6 +2503,10 @@
   },
   {
     "type": "unit",
+    "named": true
+  },
+  {
+    "type": "url_value",
     "named": true
   },
   {
