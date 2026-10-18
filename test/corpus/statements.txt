@@ -467,3 +467,57 @@ URL token boundaries preserve following declarations
           (at_rule_url))
         (at_rule_bracketed
           (at_rule_url))))))
+
+========================================
+Supplementary characters remain inside component names
+========================================
+
+@custom 🌈url(a[b]);
+@custom 1🌈url(a[b]);
+
+---
+
+(stylesheet
+  (at_rule (at_keyword) (at_rule_value)
+    (at_rule_parenthesized (at_rule_value) (at_rule_bracketed (at_rule_value))))
+  (at_rule (at_keyword) (at_rule_value)
+    (at_rule_parenthesized (at_rule_value) (at_rule_bracketed (at_rule_value)))))
+
+========================================
+Supplementary function names require balanced components
+:error
+========================================
+
+@custom 🌈url(a[b);
+
+---
+
+(stylesheet)
+
+========================================
+Protocol-relative preludes and spaced line comments
+========================================
+
+.a {
+  @apply p-4 //cdn.example.com/img.png;
+  color: red;
+  @source //cdn.example.com/a.css;
+  color: blue;
+  @custom //comment;
+  @custom value // comment ) ; }
+  ;
+  color: green;
+}
+
+---
+
+(stylesheet
+  (rule_set (selectors (class_selector (class_name (identifier))))
+    (block
+      (at_rule (at_keyword) (at_rule_value) (at_rule_url))
+      (declaration (property_name) (plain_value))
+      (at_rule (at_keyword) (at_rule_url))
+      (declaration (property_name) (plain_value))
+      (at_rule (at_keyword) (at_rule_url))
+      (at_rule (at_keyword) (at_rule_value) (js_comment))
+      (declaration (property_name) (plain_value)))))

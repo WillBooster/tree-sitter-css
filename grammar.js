@@ -138,13 +138,13 @@ module.exports = grammar({
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
 
     at_rule_value: _ => token(choice(
-      seq(optional(/[#@]/), repeat1(choice(/[-\w\u0080-\uFFFF]/, /\\[^\n\r\f]/))),
-      /[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:[-\w\u0080-\uFFFF]*|%)/,
+      seq(optional(/[#@]/), repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, /\\[^\n\r\f]/))),
+      /[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:[-\w\u0080-\u{10FFFF}]*|%)/u,
       /[^\s(){}\[\];,:"'\\/]/,
     )),
 
     at_rule_url: _ => token(choice(
-      /[a-zA-Z][a-zA-Z0-9+.-]*:\/\/[^\s(){}\[\];,"'\\]+/,
+      /(?:[a-zA-Z][a-zA-Z0-9+.-]*:)?\/\/[^\s(){}\[\];,"'\\]+/,
       seq(
         /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
         /(?:[rR]|\\(?:[rR]|0{0,4}[57]2(?:[ \t\n\f]|\r\n?)?))/,
