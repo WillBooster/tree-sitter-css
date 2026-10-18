@@ -291,8 +291,7 @@ module.exports = grammar({
 
     id_selector: $ => seq(
       optional($._selector),
-      token(prec(1, '#')),
-      alias(token(idName), $.id_name),
+      alias(token(seq('#', idName)), $.id_name),
     ),
 
     attribute_selector: $ => seq(

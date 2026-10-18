@@ -44,7 +44,7 @@ test('scope limits retain selector fields and highlights when a start is inserte
           .captures(changedScope)
           .filter(({ name }) => name === 'property')
           .map(({ node }) => node.text)
-      ).toEqual(['card', 'article', 'limit', 'content', 'color']);
+      ).toEqual(['card', '#article', 'limit', 'content', 'color']);
       expect(
         query
           .captures(changedScope)
@@ -134,13 +134,13 @@ test.each([
     const scope = tree.rootNode.firstNamedChild!;
     expect(scope.type).toBe('scope_statement');
     const boundary = scope.childForFieldName('start')!;
-    expect(boundary.descendantsOfType('id_name').map((node) => node.text)).toEqual([name]);
+    expect(boundary.descendantsOfType('id_name').map((node) => node.text)).toEqual([`#${name}`]);
     expect(
       query
         .captures(boundary)
         .filter(({ name }) => name === 'property')
         .map(({ node }) => node.text)
-    ).toEqual([name]);
+    ).toEqual([`#${name}`]);
   } finally {
     tree.delete();
     query.delete();
@@ -155,7 +155,7 @@ test.each(['日本語', '𐐀'])('a Unicode ID boundary retains its selector and
   try {
     expect(tree.rootNode.hasError).toBe(false);
     expect(tree.rootNode.firstNamedChild?.type).toBe('scope_statement');
-    expect(tree.rootNode.descendantsOfType('id_name').map((node) => node.text)).toEqual([name]);
+    expect(tree.rootNode.descendantsOfType('id_name').map((node) => node.text)).toEqual([`#${name}`]);
     expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
   } finally {
@@ -173,6 +173,8 @@ test.each([
   '(.a) to (.b) to (.c)',
   '(.card) topic (.limit)',
   '(.card) today',
+  '(#123)',
+  '(#foo%)',
   '(a b / c)',
   '(a b !important)',
   '(a b "x")',
