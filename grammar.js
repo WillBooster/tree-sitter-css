@@ -49,6 +49,7 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.container_statement, $._at_rule_component],
+    [$._at_rule_component, $.style_feature],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
   ],
@@ -129,8 +130,8 @@ module.exports = grammar({
 
     container_statement: $ => prec.dynamic(1, seq(
       '@container',
-      optional(alias($.at_rule_value, $.container_name)),
-      $._query,
+      optional(alias(choice($.at_rule_value, 'style'), $.container_name)),
+      $._container_query,
       $.block,
     )),
 
@@ -390,7 +391,6 @@ module.exports = grammar({
       $.binary_query,
       $.unary_query,
       $.selector_query,
-      $.style_query,
       $.parenthesized_query,
     ),
 
@@ -426,15 +426,52 @@ module.exports = grammar({
       ')',
     ),
 
+    _container_query: $ => choice(
+      alias($.identifier, $.keyword_query),
+      $.feature_query,
+      $.style_query,
+      alias($._container_binary_query, $.binary_query),
+      alias($._container_unary_query, $.unary_query),
+      alias($._container_parenthesized_query, $.parenthesized_query),
+    ),
+
+    _container_binary_query: $ => prec.left(seq(
+      $._container_query,
+      choice('and', 'or'),
+      $._container_query,
+    )),
+
+    _container_unary_query: $ => prec(1, seq('not', $._container_query)),
+
+    _container_parenthesized_query: $ => seq('(', $._container_query, ')'),
+
     style_query: $ => seq(
-      'style',
-      token.immediate('('),
-      choice(
-        seq(alias($.at_rule_value, $.feature_name), ':', repeat($._at_rule_nested_component)),
-        $._query,
-      ),
+      'style', token.immediate('('),
+      choice($._style_condition, repeat($._at_rule_nested_component)),
       ')',
     ),
+
+    _style_condition: $ => choice(
+      $.style_feature,
+      alias($._style_parenthesized_query, $.parenthesized_query),
+      alias($._style_binary_query, $.binary_query),
+      alias($._style_unary_query, $.unary_query),
+    ),
+
+    style_feature: $ => prec.dynamic(1, seq(
+      alias($.at_rule_value, $.feature_name),
+      optional(seq(':', repeat($._at_rule_nested_component))),
+    )),
+
+    _style_parenthesized_query: $ => seq('(', $._style_condition, ')'),
+
+    _style_binary_query: $ => prec.left(seq(
+      $._style_parenthesized_query,
+      choice('and', 'or'),
+      choice($._style_parenthesized_query, $._style_binary_query),
+    )),
+
+    _style_unary_query: $ => seq('not', $._style_parenthesized_query),
 
     _value: $ => prec(-1, choice(
       alias($.identifier, $.plain_value),

@@ -28,3 +28,21 @@ test('semantic prelude highlights do not cross delimiter components', () => {
   ]);
   tree.delete();
 });
+
+test('container style queries expose and highlight property references', () => {
+  const source = '@container card style((--theme: dark) and (--accent: fn(red, blue))) { a { color: red; } }';
+  const tree = parser.parse(source);
+  if (!tree) throw new Error('The parser returned no tree');
+  expect(tree.rootNode.hasError).toBe(false);
+  expect(tree.rootNode.descendantsOfType('style_query')).toHaveLength(1);
+  expect(tree.rootNode.descendantsOfType('feature_name').map((node) => node.text)).toEqual(['--theme', '--accent']);
+  const captures = query.captures(tree.rootNode).filter(({ name }) => name === 'property' || name === 'function');
+  expect(captures.map(({ name, node }) => [name, node.text])).toEqual([
+    ['property', 'card'],
+    ['function', 'style'],
+    ['property', '--theme'],
+    ['property', '--accent'],
+    ['property', 'color'],
+  ]);
+  tree.delete();
+});
