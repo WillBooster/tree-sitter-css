@@ -8,6 +8,9 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
+const genericName = repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape));
+
 module.exports = grammar({
   name: 'css',
 
@@ -21,6 +24,7 @@ module.exports = grammar({
     $._descendant_operator,
     $.__error_recovery,
     $._class_name_escape_with_suffix,
+    $._at_rule_slash,
   ],
 
   inline: $ => [
@@ -107,17 +111,58 @@ module.exports = grammar({
       $.block,
     ),
 
-    postcss_statement: $ => prec(-1, seq(
-      $.at_keyword,
-      repeat($._value),
-      ';',
-    )),
-
     at_rule: $ => seq(
       $.at_keyword,
-      sep(',', $._query),
+      repeat($._at_rule_component),
       choice(';', $.block),
     ),
+
+    _at_rule_component: $ => choice(
+      $.at_rule_value,
+      alias($._at_rule_slash, $.at_rule_value),
+      $.at_rule_url,
+      $.string_value,
+      $.at_rule_delimiter,
+      $.at_rule_parenthesized,
+      $.at_rule_bracketed,
+    ),
+
+    _at_rule_nested_component: $ => choice(
+      $._at_rule_component,
+      $.at_rule_braced,
+      alias(';', $.at_rule_delimiter),
+    ),
+
+    at_rule_delimiter: _ => choice(',', ':'),
+
+    at_rule_parenthesized: $ => seq('(', repeat($._at_rule_nested_component), ')'),
+
+    at_rule_bracketed: $ => seq('[', repeat($._at_rule_nested_component), ']'),
+
+    at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
+
+    at_rule_value: _ => token(seq(choice(
+      seq(optional(/[#@]/), genericName),
+      seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
+      /[^\s(){}\[\];,:"'\\/]/,
+    ), repeat('//'))),
+
+    at_rule_url: _ => token(choice(
+      /\/\/[^\s(){}\[\];,"'\\]+/,
+      seq(
+        /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
+        /(?:[rR]|\\(?:[rR]|0{0,4}[57]2(?:[ \t\n\f]|\r\n?)?))/,
+        /(?:[lL]|\\(?:[lL]|0{0,4}[46][cC](?:[ \t\n\f]|\r\n?)?))/,
+        '(',
+        /[ \t\n\r\f]*/,
+        repeat(choice(
+          /[^\x00-\x20\x7F"'()\\]/,
+          cssEscape,
+        )),
+        /[ \t\n\r\f]*/,
+        ')',
+      ),
+    )),
 
     rule_set: $ => seq(
       $.selectors,
@@ -142,7 +187,6 @@ module.exports = grammar({
       $.namespace_statement,
       $.keyframes_statement,
       $.supports_statement,
-      $.postcss_statement,
       $.at_rule,
     ),
 
@@ -515,8 +559,6 @@ function escapedIdentifier(prefix) {
 }
 
 /**
- * Creates a rule to optionally match one or more of the rules separated by `separator`
- *
  * @param {RuleOrLiteral} separator
  *
  * @param {RuleOrLiteral} rule
@@ -528,8 +570,6 @@ function sep(separator, rule) {
 }
 
 /**
- * Creates a rule to match one or more of the rules separated by `separator`
- *
  * @param {RuleOrLiteral} separator
  *
  * @param {RuleOrLiteral} rule

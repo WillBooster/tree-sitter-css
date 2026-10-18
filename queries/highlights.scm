@@ -63,3 +63,26 @@
 "#" @punctuation.delimiter
 "," @punctuation.delimiter
 ":" @punctuation.delimiter
+
+(at_rule_url) @string.special
+(at_rule_delimiter) @punctuation.delimiter
+
+((at_rule_value) @variable
+ (#match? @variable "^--"))
+
+((at_rule_value) @number
+ (#match? @number "^[+-]?([0-9]+(\\.[0-9]+)?|\\.[0-9]+)([eE][+-]?[0-9]+)?([a-zA-Z]+|%)?$"))
+
+(at_rule_parenthesized
+ (at_rule_value) @property
+ . (at_rule_delimiter) @_colon
+ . (_) @_feature_value
+ (#eq? @_colon ":")
+ (#not-match? @_feature_value "^//")
+ (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
+
+(
+ (at_rule_value) @_bang @keyword
+ . (at_rule_value) @_important @keyword
+ (#eq? @_bang "!")
+ (#match? @_important "^[iI][mM][pP][oO][rR][tT][aA][nN][tT]$"))

@@ -202,3 +202,479 @@ Fractional and grouped keyframe selectors
         (float_value (unit))
         (to)
         (block (declaration (property_name) (integer_value)))))))
+
+========================================
+Generic at-rule component preludes
+========================================
+
+@source "./src/**/*.tsx";
+@custom-variant dark (&:is(.dark *));
+@tailwind base;
+@custom foo(bar([baz=";}"] {value: nested(x;y)})) {
+  color: red;
+}
+.card {
+  @source "nested.css";
+  @apply text-blue-500 !custom;
+  @custom [a /* ] } ; */ b] ("quoted )" /path\;name);
+  display: block;
+}
+@empty () [];
+@custom url(https://example.com/a) \} \; \(;
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (string_value
+      (string_content)))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_delimiter)
+      (at_rule_value)
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_parenthesized
+        (at_rule_bracketed
+          (at_rule_value)
+          (at_rule_value)
+          (string_value
+            (string_content)))
+        (at_rule_braced
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_value)
+          (at_rule_parenthesized
+            (at_rule_value)
+            (at_rule_delimiter)
+            (at_rule_value)))))
+    (block
+      (declaration
+        (property_name)
+        (plain_value))))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (at_rule
+        (at_keyword)
+        (string_value
+          (string_content)))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_bracketed
+          (at_rule_value)
+          (comment)
+          (at_rule_value))
+        (at_rule_parenthesized
+          (string_value
+            (string_content))
+          (at_rule_value)
+          (at_rule_value)))
+      (declaration
+        (property_name)
+        (plain_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_parenthesized)
+    (at_rule_bracketed))
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_value)
+    (at_rule_value)
+    (at_rule_value)))
+
+========================================
+Unbalanced generic at-rule prelude
+:error
+========================================
+
+@custom (name];
+
+---
+
+(stylesheet)
+
+========================================
+Generic at-rule punctuation and comments
+========================================
+
+@layer a,b;
+@layer a, b;
+a {
+  @apply foo // ) ; } "
+  ; color: red;
+  @custom [a // ' ] ;
+    b] (c /* } ); */ / 2);
+}
+@custom url(https://example.com/a[b) URL(../a}b) url(a/*b) url(a\)b);
+@custom url( a\20 b ) url("quoted]");
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_delimiter)
+    (at_rule_value))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_delimiter)
+    (at_rule_value))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (js_comment))
+      (declaration
+        (property_name)
+        (plain_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_bracketed
+          (at_rule_value)
+          (js_comment)
+          (at_rule_value))
+        (at_rule_parenthesized
+          (at_rule_value)
+          (comment)
+          (at_rule_value)
+          (at_rule_value)))))
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_url)
+    (at_rule_url)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (string_value
+        (string_content)))))
+
+========================================
+Generic at-rule unterminated comment
+:error
+========================================
+
+@foo bar /* unclosed;
+a { color: red; }
+
+---
+
+(stylesheet)
+
+========================================
+Escaped URL names preserve URL contents
+========================================
+
+@custom u\72l(a[b) \u\r\l(a}b) \55\52\4c(a/*b);
+@custom \000075\000072\00006C(a]b) \75 rl(a{b);
+@custom u\72
+l(a[b);
+@custom \75	rl(a[b);
+a { color: red; }
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_url)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name)
+        (plain_value)))))
+========================================
+URL token boundaries preserve following declarations
+========================================
+
+.a {
+  @custom +url(a[b) .url(a}b) !url(a/*b) &u\72l(a]b);
+  @apply p-4 https://cdn.example/x;
+  color: red;
+  @custom (https://cdn.example/x) [git+ssh.foo-bar://host/path];
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_url)
+        (at_rule_value)
+        (at_rule_url)
+        (at_rule_value)
+        (at_rule_url)
+        (at_rule_value)
+        (at_rule_url))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_delimiter)
+        (at_rule_url))
+      (declaration
+        (property_name)
+        (plain_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_parenthesized
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_url))
+        (at_rule_bracketed
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_url))))))
+
+========================================
+Supplementary characters remain inside component names
+========================================
+
+@custom 🌈url(a[b]);
+@custom 1🌈url(a[b]);
+
+---
+
+(stylesheet
+  (at_rule (at_keyword) (at_rule_value)
+    (at_rule_parenthesized (at_rule_value) (at_rule_bracketed (at_rule_value))))
+  (at_rule (at_keyword) (at_rule_value)
+    (at_rule_parenthesized (at_rule_value) (at_rule_bracketed (at_rule_value)))))
+
+========================================
+Supplementary function names require balanced components
+:error
+========================================
+
+@custom 🌈url(a[b);
+
+---
+
+(stylesheet)
+
+========================================
+Protocol-relative preludes and spaced line comments
+========================================
+
+.a {
+  @apply p-4 //cdn.example.com/img.png;
+  color: red;
+  @source //cdn.example.com/a.css;
+  color: blue;
+  @custom //comment;
+  @custom value // comment ) ; }
+  ;
+  color: green;
+}
+
+---
+
+(stylesheet
+  (rule_set (selectors (class_selector (class_name (identifier))))
+    (block
+      (at_rule (at_keyword) (at_rule_value) (at_rule_url))
+      (declaration (property_name) (plain_value))
+      (at_rule (at_keyword) (at_rule_url))
+      (declaration (property_name) (plain_value))
+      (at_rule (at_keyword) (at_rule_url))
+      (at_rule (at_keyword) (at_rule_value) (js_comment))
+      (declaration (property_name) (plain_value)))))
+========================================
+Glued slashes and comment boundaries in preludes
+========================================
+
+.a {
+  @custom a//;
+  color: red;
+  @custom a// b;
+  @custom a//(b);
+  @custom a//"x";
+  @custom a//cdn.example/x;
+  @custom value // comment ) ; }
+  ;
+  @custom value/* comment */// comment ) ; }
+  ;
+  color: blue;
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (at_rule
+        (at_keyword)
+        (at_rule_value))
+      (declaration
+        (property_name)
+        (plain_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_parenthesized
+          (at_rule_value)))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (string_value
+          (string_content)))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (js_comment))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (comment)
+        (js_comment))
+      (declaration
+        (property_name)
+        (plain_value)))))
+========================================
+Hexadecimal escape terminators remain inside component names
+========================================
+
+@custom \61 url(a[b]) \000061url(a[b]);
+@custom .1\75 rl(a[b]) +1\75 rl(a[b]) -1.5\75 rl(a[b]);
+@custom \61
+url(a[b]);
+@custom \61  url(a[b);
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value)))
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value)))
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value)))
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_url)))
+
+========================================
+Escaped non-URL names require balanced components
+:error
+========================================
+
+@custom \61 url(a[b);
+
+---
+
+(stylesheet)
+
+========================================
+Escaped numeric units require balanced components
+:error
+========================================
+
+@custom .1\75 rl(a[b);
+
+---
+
+(stylesheet)
