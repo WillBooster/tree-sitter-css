@@ -799,6 +799,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "incomplete_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "rule_set"
         },
         {
@@ -1757,6 +1761,33 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "incomplete_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_custom_property_name"
+              }
+            ]
+          },
+          "named": true,
+          "value": "property_name"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_incomplete_declaration_end"
         }
       ]
     },
@@ -3440,6 +3471,10 @@
     {
       "type": "SYMBOL",
       "name": "_at_rule_slash"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_incomplete_declaration_end"
     }
   ],
   "inline": [

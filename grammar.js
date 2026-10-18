@@ -39,6 +39,7 @@ module.exports = grammar({
     $.__error_recovery,
     $._class_name_escape_with_suffix,
     $._at_rule_slash,
+    $._incomplete_declaration_end,
   ],
 
   inline: $ => [
@@ -184,6 +185,7 @@ module.exports = grammar({
 
     _block_item: $ => choice(
       $.declaration,
+      $.incomplete_declaration,
       $.rule_set,
       $.import_statement,
       $.media_statement,
@@ -337,6 +339,11 @@ module.exports = grammar({
       token.immediate('('),
       sep(',', choice($._selector, repeat1($._value))),
       ')',
+    ),
+
+    incomplete_declaration: $ => seq(
+      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      $._incomplete_declaration_end,
     ),
 
     declaration: $ => prec.dynamic(1, seq(
