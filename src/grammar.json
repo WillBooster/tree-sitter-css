@@ -552,7 +552,19 @@
         "members": [
           {
             "type": "PATTERN",
-            "value": "[uU][rR][lL]\\("
+            "value": "(?:[uU]|\\\\(?:[uU]|0{0,4}[57]5(?:[ \\t\\n\\f]|\\r\\n?)?))"
+          },
+          {
+            "type": "PATTERN",
+            "value": "(?:[rR]|\\\\(?:[rR]|0{0,4}[57]2(?:[ \\t\\n\\f]|\\r\\n?)?))"
+          },
+          {
+            "type": "PATTERN",
+            "value": "(?:[lL]|\\\\(?:[lL]|0{0,4}[46][cC](?:[ \\t\\n\\f]|\\r\\n?)?))"
+          },
+          {
+            "type": "STRING",
+            "value": "("
           },
           {
             "type": "PATTERN",

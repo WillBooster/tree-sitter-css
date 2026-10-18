@@ -384,3 +384,40 @@ a { color: red; }
 ---
 
 (stylesheet)
+
+========================================
+Escaped URL names preserve URL contents
+========================================
+
+@custom u\72l(a[b) \u\r\l(a}b) \55\52\4c(a/*b);
+@custom \000075\000072\00006C(a]b) \75 rl(a{b);
+@custom u\72
+l(a[b);
+@custom \75	rl(a[b);
+a { color: red; }
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_url)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name)
+        (plain_value)))))
