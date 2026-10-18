@@ -113,9 +113,28 @@ module.exports = grammar({
     import_statement: $ => seq(
       '@import',
       $._value,
+      optional($.import_layer),
+      optional($.import_supports),
       sep(',', $._media_query),
       ';',
     ),
+
+    import_layer: $ => seq(
+      alias($._import_layer_keyword, 'layer'),
+      optional(seq(token.immediate('('), optional($.layer_name), ')')),
+    ),
+
+    _import_layer_keyword: _ => cssKeyword('layer'),
+
+    layer_name: $ => sep1('.', alias($._query_identifier, $.identifier)),
+
+    import_supports: $ => seq(
+      alias($._import_supports_start, 'supports('),
+      repeat($._at_rule_nested_component),
+      ')',
+    ),
+
+    _import_supports_start: _ => token(seq(new RegExp(cssKeywordPattern('supports')), '(')),
 
     media_statement: $ => seq(
       '@media',
