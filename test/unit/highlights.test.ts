@@ -199,3 +199,30 @@ test('escaped container query keywords retain source spelling and property captu
     tree.delete();
   }
 });
+
+test('style boolean chains require parentheses when mixing operators', () => {
+  for (const condition of ['(--a: 1) and (--b: 2) or (--c: 3)', '(--a: 1) or (--b: 2) and (--c: 3)']) {
+    const tree = parser.parse(`@container style(${condition}) {} a { color: red; }`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, condition).toBe(false);
+    expect(tree.rootNode.descendantsOfType('binary_query'), condition).toHaveLength(0);
+    expect(tree.rootNode.lastNamedChild?.type, condition).toBe('rule_set');
+    tree.delete();
+  }
+  for (const condition of [
+    '(--a: 1) and (--b: 2) and (--c: 3)',
+    '(--a: 1) or (--b: 2) or (--c: 3)',
+    '((--a: 1) and (--b: 2)) or (--c: 3)',
+    '(--a: 1) and ((--b: 2) or (--c: 3))',
+  ]) {
+    const tree = parser.parse(`@container style(${condition}) {}`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, condition).toBe(false);
+    expect(tree.rootNode.descendantsOfType('binary_query'), condition).toHaveLength(2);
+    expect(
+      tree.rootNode.descendantsOfType('feature_name').map((node) => node.text),
+      condition
+    ).toEqual(['--a', '--b', '--c']);
+    tree.delete();
+  }
+});

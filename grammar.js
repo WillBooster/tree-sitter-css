@@ -496,7 +496,8 @@ module.exports = grammar({
     _style_condition: $ => choice(
       $.style_feature,
       $._style_in_parens,
-      alias($._style_binary_query, $.binary_query),
+      alias($._style_and_query, $.binary_query),
+      alias($._style_or_query, $.binary_query),
       alias($._style_unary_query, $.unary_query),
     ),
 
@@ -524,12 +525,15 @@ module.exports = grammar({
       $.general_enclosed_query,
     ),
 
-    _style_binary_query: $ => prec.left(seq(
-      choice(
-        $._style_in_parens,
-        alias($._style_binary_query, $.binary_query),
-      ),
-      choice(alias($._query_and, 'and'), alias($._query_or, 'or')),
+    _style_and_query: $ => prec.left(seq(
+      choice($._style_in_parens, alias($._style_and_query, $.binary_query)),
+      alias($._query_and, 'and'),
+      $._style_in_parens,
+    )),
+
+    _style_or_query: $ => prec.left(seq(
+      choice($._style_in_parens, alias($._style_or_query, $.binary_query)),
+      alias($._query_or, 'or'),
       $._style_in_parens,
     )),
 

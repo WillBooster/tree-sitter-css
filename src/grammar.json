@@ -2801,7 +2801,16 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_style_binary_query"
+            "name": "_style_and_query"
+          },
+          "named": true,
+          "value": "binary_query"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_style_or_query"
           },
           "named": true,
           "value": "binary_query"
@@ -3065,7 +3074,7 @@
         }
       ]
     },
-    "_style_binary_query": {
+    "_style_and_query": {
       "type": "PREC_LEFT",
       "value": 0,
       "content": {
@@ -3082,7 +3091,7 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_style_binary_query"
+                  "name": "_style_and_query"
                 },
                 "named": true,
                 "value": "binary_query"
@@ -3090,27 +3099,53 @@
             ]
           },
           {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_query_and"
+            },
+            "named": false,
+            "value": "and"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_style_in_parens"
+          }
+        ]
+      }
+    },
+    "_style_or_query": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_query_and"
-                },
-                "named": false,
-                "value": "and"
+                "type": "SYMBOL",
+                "name": "_style_in_parens"
               },
               {
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_query_or"
+                  "name": "_style_or_query"
                 },
-                "named": false,
-                "value": "or"
+                "named": true,
+                "value": "binary_query"
               }
             ]
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_query_or"
+            },
+            "named": false,
+            "value": "or"
           },
           {
             "type": "SYMBOL",
