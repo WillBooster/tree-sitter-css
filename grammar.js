@@ -42,12 +42,14 @@ module.exports = grammar({
   ],
 
   inline: $ => [
+    $._range_comparison,
     $._escaped_identifier,
     $._top_level_item,
     $._block_item,
   ],
 
   conflicts: $ => [
+    [$.range_query, $._range_value],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
   ],
@@ -73,13 +75,13 @@ module.exports = grammar({
     import_statement: $ => seq(
       '@import',
       $._value,
-      sep(',', $._query),
+      sep(',', $._media_query),
       ';',
     ),
 
     media_statement: $ => seq(
       '@media',
-      sep1(',', $._query),
+      sep1(',', $._media_query),
       $.block,
     ),
 
@@ -391,6 +393,49 @@ module.exports = grammar({
       ')',
     ),
 
+    _media_query: $ => choice(
+      alias($.identifier, $.keyword_query),
+      $.feature_query,
+      $.range_query,
+      alias($._media_binary_query, $.binary_query),
+      alias($._media_unary_query, $.unary_query),
+      $.selector_query,
+      alias($._media_parenthesized_query, $.parenthesized_query),
+    ),
+
+    _media_binary_query: $ => prec.left(seq($._media_query, choice('and', 'or'), $._media_query)),
+
+    _media_unary_query: $ => prec(1, seq(choice('not', 'only'), $._media_query)),
+
+    _media_parenthesized_query: $ => seq('(', $._media_query, ')'),
+
+    range_query: $ => seq(
+      '(',
+      choice(
+        prec.dynamic(1, seq(alias(choice($.identifier, $._escaped_identifier), $.feature_name), $._range_comparison, $._range_value)),
+        seq($._range_value, $._range_comparison, alias(choice($.identifier, $._escaped_identifier), $.feature_name)),
+        seq($._range_value, choice('<', '<='), alias(choice($.identifier, $._escaped_identifier), $.feature_name), choice('<', '<='), $._range_value),
+        seq($._range_value, choice('>', '>='), alias(choice($.identifier, $._escaped_identifier), $.feature_name), choice('>', '>='), $._range_value),
+      ),
+      ')',
+    ),
+
+    _range_comparison: _ => choice('<', '<=', '>', '>=', '='),
+
+    _range_value: $ => choice(
+      $.integer_value,
+      $.float_value,
+      alias(choice($.identifier, $._escaped_identifier), $.plain_value),
+      $.ratio_value,
+      $.call_expression,
+    ),
+
+    ratio_value: $ => seq(
+      choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
+      '/',
+      choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
+    ),
+
     parenthesized_query: $ => seq(
       '(',
       $._query,
@@ -465,26 +510,24 @@ module.exports = grammar({
       ),
     )),
 
-    integer_value: $ => seq(
-      token(seq(
-        optional(choice('+', '-')),
-        /\d+/,
-      )),
-      optional($.unit),
-    ),
+    integer_value: $ => seq($._integer, optional($.unit)),
 
-    float_value: $ => seq(
-      token(seq(
-        optional(choice('+', '-')),
-        /\d*/,
-        choice(
-          seq('.', /\d+/),
-          seq(/[eE]/, optional('-'), /\d+/),
-          seq('.', /\d+/, /[eE]/, optional('-'), /\d+/),
-        ),
-      )),
-      optional($.unit),
-    ),
+    float_value: $ => seq($._float, optional($.unit)),
+
+    _integer: _ => token(seq(
+      optional(choice('+', '-')),
+      /\d+/,
+    )),
+
+    _float: _ => token(seq(
+      optional(choice('+', '-')),
+      /\d*/,
+      choice(
+        seq('.', /\d+/),
+        seq(/[eE]/, optional(choice('+', '-')), /\d+/),
+        seq('.', /\d+/, /[eE]/, optional(choice('+', '-')), /\d+/),
+      ),
+    )),
 
     unit: _ => token.immediate(/[a-zA-Z%]+/),
 
