@@ -32,6 +32,7 @@
 (class_name) @property
 (id_name) @property
 (namespace_name) @property
+(container_name) @property
 (property_name) @property
 (feature_name) @property
 
@@ -39,6 +40,7 @@
 (attribute_selector (attribute_flag) @keyword)
 
 (function_name) @function
+(style_query "style" @function)
 
 ((property_name) @variable
  (#match? @variable "^--"))
@@ -47,6 +49,7 @@
 
 "@scope" @keyword
 (scope_statement "to" @keyword)
+"@container" @keyword
 "@media" @keyword
 "@import" @keyword
 "@charset" @keyword
