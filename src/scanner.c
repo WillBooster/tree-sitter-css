@@ -32,22 +32,25 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
-    if (valid_symbols[AT_RULE_SLASH]) {
-        return scan_at_rule_slash(lexer);
-    }
     if (valid_symbols[CLASS_NAME_ESCAPE_WITH_SUFFIX] && lexer->lookahead == '\\') {
         return scan_class_name_escape_with_suffix(lexer);
     }
-    if (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP]) {
-        return scan_descendant_operator(lexer);
+    if (valid_symbols[AT_RULE_SLASH] || (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP])) {
+        bool whitespace = false;
+        while (iswspace(lexer->lookahead)) {
+            whitespace = true;
+            skip(lexer);
+        }
+        lexer->mark_end(lexer);
+        if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
+            return scan_at_rule_slash(lexer);
+        }
+        return whitespace && valid_symbols[DESCENDANT_OP] && scan_descendant_operator(lexer);
     }
     return false;
 }
 
 static bool scan_at_rule_slash(TSLexer *lexer) {
-    while (iswspace(lexer->lookahead)) {
-        skip(lexer);
-    }
     if (lexer->lookahead != '/') {
         return false;
     }
@@ -107,11 +110,6 @@ static bool scan_escape(TSLexer *lexer) {
 
 static bool scan_descendant_operator(TSLexer *lexer) {
     lexer->result_symbol = DESCENDANT_OP;
-    skip(lexer);
-    while (iswspace(lexer->lookahead)) {
-        skip(lexer);
-    }
-    lexer->mark_end(lexer);
     if (lexer->lookahead == '#' || lexer->lookahead == '.' || lexer->lookahead == '[' || lexer->lookahead == '-' ||
         lexer->lookahead == '*' || lexer->lookahead == '&' || iswalnum(lexer->lookahead)) {
         return true;

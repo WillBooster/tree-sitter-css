@@ -62,3 +62,83 @@ test('scope limits retain selector fields and highlights when a start is inserte
     parser.delete();
   }
 });
+
+test.each(['article .card', 'article section'])('scope boundaries retain descendant combinators in %s', (selector) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const tree = parser.parse(`@scope (${selector}) to (${selector}) { .content {} } .after {}`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const scope = tree.rootNode.firstNamedChild!;
+    expect(scope.type).toBe('scope_statement');
+    for (const field of ['start', 'end']) {
+      const boundary = scope.childForFieldName(field)!;
+      expect(boundary.text).toBe(selector);
+      expect(boundary.descendantsOfType('descendant_selector')).toHaveLength(1);
+    }
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(['@scope (.a);', '@scope (.a) to (.b);'])(
+  'a terminated scope prelude preserves the following rule: %s',
+  (prelude) => {
+    const parser = new Parser();
+    parser.setLanguage(language);
+    const tree = parser.parse(`${prelude}\n.after { color: red; }`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.namedChildCount).toBe(2);
+      expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each([String.raw`@scope\74 o`, String.raw`@\73 copeto`])(
+  'an escaped unknown keyword stays a complete at-keyword: %s',
+  (keyword) => {
+    const parser = new Parser();
+    parser.setLanguage(language);
+    const tree = parser.parse(`${keyword} (.limit) {} .after {}`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.firstNamedChild?.type).toBe('at_rule');
+      expect(tree.rootNode.firstNamedChild?.firstNamedChild?.text).toBe(keyword);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(['#card', 'article#card'])('a leading ID boundary keeps its selector and highlight: %s', (selector) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
+  const tree = parser.parse(`@scope (${selector}) {}`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const scope = tree.rootNode.firstNamedChild!;
+    expect(scope.type).toBe('scope_statement');
+    const boundary = scope.childForFieldName('start')!;
+    expect(boundary.descendantsOfType('id_name').map((node) => node.text)).toEqual(['card']);
+    expect(
+      query
+        .captures(boundary)
+        .filter(({ name }) => name === 'property')
+        .map(({ node }) => node.text)
+    ).toEqual(['card']);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});

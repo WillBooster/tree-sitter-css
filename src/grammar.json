@@ -483,8 +483,17 @@
             ]
           },
           {
-            "type": "SYMBOL",
-            "name": "block"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ";"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "block"
+              }
+            ]
           }
         ]
       }
@@ -1175,8 +1184,15 @@
           ]
         },
         {
-          "type": "STRING",
-          "value": "#"
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "STRING",
+              "value": "#"
+            }
+          }
         },
         {
           "type": "ALIAS",
@@ -3431,8 +3447,71 @@
       }
     },
     "at_keyword": {
-      "type": "PATTERN",
-      "value": "@[a-zA-Z-_]+"
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "@"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "--"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "-"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[a-zA-Z_]"
+                      },
+                      {
+                        "type": "PATTERN",
+                        "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[-a-zA-Z0-9_]"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                }
+              ]
+            }
+          }
+        ]
+      }
     },
     "js_comment": {
       "type": "TOKEN",

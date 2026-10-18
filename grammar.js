@@ -139,7 +139,7 @@ module.exports = grammar({
       alias($._scope_keyword, '@scope'),
       optional(seq('(', field('start', $.selectors), ')')),
       optional(seq(alias($._scope_to, 'to'), '(', field('end', $.selectors), ')')),
-      $.block,
+      choice(';', $.block),
     )),
 
     at_rule: $ => seq(
@@ -272,7 +272,7 @@ module.exports = grammar({
 
     id_selector: $ => seq(
       optional($._selector),
-      '#',
+      token(prec(1, '#')),
       alias($.identifier, $.id_name),
     ),
 
@@ -581,7 +581,11 @@ module.exports = grammar({
       /[^\s(){}\[\];,:"'\\/]/,
     ), repeat('//'))),
 
-    at_keyword: _ => /@[a-zA-Z-_]+/,
+    at_keyword: _ => token(seq(
+      '@',
+      choice('--', seq(optional('-'), choice(/[a-zA-Z_]/, cssEscape))),
+      repeat(choice(/[-a-zA-Z0-9_]/, cssEscape)),
+    )),
 
     js_comment: _ => token(prec(-1, seq('//', /.*/))),
 
