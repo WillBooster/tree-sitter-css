@@ -107,17 +107,38 @@ module.exports = grammar({
       $.block,
     ),
 
-    postcss_statement: $ => prec(-1, seq(
-      $.at_keyword,
-      repeat($._value),
-      ';',
-    )),
-
     at_rule: $ => seq(
       $.at_keyword,
-      sep(',', $._query),
+      repeat($._at_rule_component),
       choice(';', $.block),
     ),
+
+    _at_rule_component: $ => choice(
+      $.at_rule_value,
+      $.string_value,
+      $.at_rule_parenthesized,
+      $.at_rule_bracketed,
+    ),
+
+    _at_rule_nested_component: $ => choice(
+      $._at_rule_component,
+      $.at_rule_braced,
+      ';',
+    ),
+
+    at_rule_parenthesized: $ => seq('(', repeat($._at_rule_nested_component), ')'),
+
+    at_rule_bracketed: $ => seq('[', repeat($._at_rule_nested_component), ']'),
+
+    at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
+
+    at_rule_value: _ => token(choice(
+      repeat1(choice(
+        /[^\s(){}\[\];"'\\/]/,
+        /\\[^\n\r\f]/,
+      )),
+      '/',
+    )),
 
     rule_set: $ => seq(
       $.selectors,
@@ -142,7 +163,6 @@ module.exports = grammar({
       $.namespace_statement,
       $.keyframes_statement,
       $.supports_statement,
-      $.postcss_statement,
       $.at_rule,
     ),
 
@@ -515,8 +535,6 @@ function escapedIdentifier(prefix) {
 }
 
 /**
- * Creates a rule to optionally match one or more of the rules separated by `separator`
- *
  * @param {RuleOrLiteral} separator
  *
  * @param {RuleOrLiteral} rule
@@ -528,8 +546,6 @@ function sep(separator, rule) {
 }
 
 /**
- * Creates a rule to match one or more of the rules separated by `separator`
- *
  * @param {RuleOrLiteral} separator
  *
  * @param {RuleOrLiteral} rule

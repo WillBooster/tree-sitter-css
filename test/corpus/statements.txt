@@ -202,3 +202,117 @@ Fractional and grouped keyframe selectors
         (float_value (unit))
         (to)
         (block (declaration (property_name) (integer_value)))))))
+
+========================================
+Generic at-rule component preludes
+========================================
+
+@source "./src/**/*.tsx";
+@custom-variant dark (&:is(.dark *));
+@tailwind base;
+@custom foo(bar([baz=";}"] {value: nested(x;y)})) {
+  color: red;
+}
+.card {
+  @source "nested.css";
+  @apply text-blue-500 !custom;
+  @custom [a /* ] } ; */ b] ("quoted )" /path\;name);
+  display: block;
+}
+@empty () [];
+@custom url(https://example.com/a) \} \; \(;
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (string_value
+      (string_content)))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_parenthesized
+        (at_rule_bracketed
+          (at_rule_value)
+          (string_value
+            (string_content)))
+        (at_rule_braced
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_parenthesized
+            (at_rule_value)
+            (at_rule_value)))))
+    (block
+      (declaration
+        (property_name)
+        (plain_value))))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (at_rule
+        (at_keyword)
+        (string_value
+          (string_content)))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_bracketed
+          (at_rule_value)
+          (comment)
+          (at_rule_value))
+        (at_rule_parenthesized
+          (string_value
+            (string_content))
+          (at_rule_value)
+          (at_rule_value)))
+      (declaration
+        (property_name)
+        (plain_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_parenthesized)
+    (at_rule_bracketed))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_value)
+      (at_rule_value)
+      (at_rule_value)
+      (at_rule_value)
+      (at_rule_value))
+    (at_rule_value)
+    (at_rule_value)
+    (at_rule_value)))
+
+========================================
+Unbalanced generic at-rule prelude
+:error
+========================================
+
+@custom (name];
+
+---
+
+(stylesheet)
