@@ -547,11 +547,19 @@ a {
 ---
 
 (stylesheet
-  (rule_set (selectors (tag_name))
+  (rule_set
+    (selectors
+      (tag_name))
     (block
-      (declaration (property_name) (plain_value))
-      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
-      (declaration (property_name) (plain_value))
+      (declaration
+        (property_name)
+        (plain_value))
+      (declaration
+        (property_name)
+        (url_value))
+      (declaration
+        (property_name)
+        (plain_value))
       (js_comment))))
 
 =========================
@@ -755,3 +763,51 @@ Inline empty declarations before a final declaration
 (stylesheet
   (declaration (property_name) (plain_value))
   (declaration (property_name) (integer_value (unit))))
+==============================
+Unquoted URL tokens
+==============================
+
+a {
+  background: url(../test.png);
+  mask: URL( /icons/a[b].svg );
+  cursor: u\72l(https://example.com/a;b,c.svg);
+  content: url(), url(a\)b), url("quoted.svg");
+}
+@namespace svg url(../svg);
+b { color: red; }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name)
+        (url_value))
+      (declaration
+        (property_name)
+        (url_value))
+      (declaration
+        (property_name)
+        (url_value))
+      (declaration
+        (property_name)
+        (url_value)
+        (url_value)
+        (call_expression
+          (function_name)
+          (arguments
+            (string_value
+              (string_content)))))))
+  (namespace_statement
+    (namespace_name)
+    (url_value))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name)
+        (plain_value)))))

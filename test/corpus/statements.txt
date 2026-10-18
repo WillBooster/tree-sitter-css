@@ -35,13 +35,24 @@ Namespace statements
 
 (stylesheet
   (comment)
-  (namespace_statement (call_expression (function_name) (arguments (plain_value))))
-  (namespace_statement (string_value (string_content)))
-  (namespace_statement (call_expression (function_name) (arguments (plain_value))))
-  (namespace_statement (namespace_name) (call_expression (function_name) (arguments (plain_value))))
+  (namespace_statement
+    (url_value))
+  (namespace_statement
+    (string_value
+      (string_content)))
+  (namespace_statement
+    (url_value))
+  (namespace_statement
+    (namespace_name)
+    (url_value))
   (comment)
-  (namespace_statement (namespace_name) (call_expression (function_name) (arguments (plain_value))))
-  (namespace_statement (namespace_name) (string_value (string_content))))
+  (namespace_statement
+    (namespace_name)
+    (url_value))
+  (namespace_statement
+    (namespace_name)
+    (string_value
+      (string_content))))
 
 ==============================
 Keyframes statements
