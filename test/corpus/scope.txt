@@ -1,0 +1,182 @@
+==============================
+Scope boundaries and selector lists
+==============================
+
+@scope (.card, #article) to (figure, .limit) {
+  :scope > h1 { color: blue; }
+}
+@scope to (.limit) { .content { color: red; } }
+@scope { .content { color: green; } }
+.card {
+  @scope (& > .section) to (:is(.limit, [hidden])) {
+    @scope (.inner) { & .content { color: purple; } }
+  }
+}
+
+---
+
+(stylesheet
+  (scope_statement
+    (selectors
+      (class_selector
+        (class_name
+          (identifier)))
+      (id_selector
+        (id_name)))
+    (selectors
+      (tag_name)
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (rule_set
+        (selectors
+          (child_selector
+            (pseudo_class_selector
+              (class_name
+                (identifier)))
+            (tag_name)))
+        (block
+          (declaration
+            (property_name)
+            (plain_value))))))
+  (scope_statement
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (rule_set
+        (selectors
+          (class_selector
+            (class_name
+              (identifier))))
+        (block
+          (declaration
+            (property_name)
+            (plain_value))))))
+  (scope_statement
+    (block
+      (rule_set
+        (selectors
+          (class_selector
+            (class_name
+              (identifier))))
+        (block
+          (declaration
+            (property_name)
+            (plain_value))))))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (scope_statement
+        (selectors
+          (child_selector
+            (nesting_selector)
+            (class_selector
+              (class_name
+                (identifier)))))
+        (selectors
+          (pseudo_class_selector
+            (class_name)
+            (arguments
+              (class_selector
+                (class_name
+                  (identifier)))
+              (attribute_selector
+                (attribute_name)))))
+        (block
+          (scope_statement
+            (selectors
+              (class_selector
+                (class_name
+                  (identifier))))
+            (block
+              (rule_set
+                (selectors
+                  (descendant_selector
+                    (nesting_selector)
+                    (class_selector
+                      (class_name
+                        (identifier)))))
+                (block
+                  (declaration
+                    (property_name)
+                    (plain_value)))))))))))
+
+==============================
+Scope keyword spelling and comments
+==============================
+
+@ScOpE/**/(.card)/**/TO/**/(.limit) { h1 { color: red; } }
+@\73 cope (.card) t\6f  (.limit) { h1 { color: red; } }
+@scope (to) { to { color: red; } }
+@scope-future (.card) { h1 { color: red; } }
+
+---
+
+(stylesheet
+  (scope_statement
+    (comment)
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (comment)
+    (comment)
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (rule_set
+        (selectors
+          (tag_name))
+        (block
+          (declaration
+            (property_name)
+            (plain_value))))))
+  (scope_statement
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (rule_set
+        (selectors
+          (tag_name))
+        (block
+          (declaration
+            (property_name)
+            (plain_value))))))
+  (scope_statement
+    (selectors
+      (tag_name))
+    (block
+      (rule_set
+        (selectors
+          (tag_name))
+        (block
+          (declaration
+            (property_name)
+            (plain_value))))))
+  (at_rule
+    (at_keyword)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_value))
+    (block
+      (rule_set
+        (selectors
+          (tag_name))
+        (block
+          (declaration
+            (property_name)
+            (plain_value)))))))

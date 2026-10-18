@@ -45,6 +45,8 @@
 ((plain_value) @variable
  (#match? @variable "^--"))
 
+"@scope" @keyword
+(scope_statement "to" @keyword)
 "@media" @keyword
 "@import" @keyword
 "@charset" @keyword

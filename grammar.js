@@ -49,6 +49,9 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.at_rule_delimiter, $.pseudo_class_selector],
+    [$._at_rule_component, $._selector],
+    [$.scope_statement, $.at_rule],
     [$.range_query, $._range_value],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
@@ -69,6 +72,7 @@ module.exports = grammar({
       $.namespace_statement,
       $.keyframes_statement,
       $.supports_statement,
+      $.scope_statement,
       $.at_rule,
     ),
 
@@ -127,13 +131,25 @@ module.exports = grammar({
       $.block,
     ),
 
+    _scope_keyword: _ => cssKeyword('@scope'),
+
+    _scope_to: _ => cssKeyword('to'),
+
+    scope_statement: $ => prec.dynamic(1, seq(
+      alias($._scope_keyword, '@scope'),
+      optional(seq('(', field('start', $.selectors), ')')),
+      optional(seq(alias($._scope_to, 'to'), '(', field('end', $.selectors), ')')),
+      $.block,
+    )),
+
     at_rule: $ => seq(
-      $.at_keyword,
+      choice($.at_keyword, alias($._scope_keyword, $.at_keyword)),
       repeat($._at_rule_component),
       choice(';', $.block),
     ),
 
     _at_rule_component: $ => choice(
+      alias($.identifier, $.at_rule_value),
       $.at_rule_value,
       alias($._at_rule_slash, $.at_rule_value),
       $.at_rule_url,
@@ -156,12 +172,6 @@ module.exports = grammar({
     at_rule_bracketed: $ => seq('[', repeat($._at_rule_nested_component), ']'),
 
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
-
-    at_rule_value: _ => token(seq(choice(
-      seq(optional(/[#@]/), genericName),
-      seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
-      /[^\s(){}\[\];,:"'\\/]/,
-    ), repeat('//'))),
 
     at_rule_url: _ => token(choice(
       /\/\/[^\s(){}\[\];,"'\\]+/,
@@ -191,6 +201,7 @@ module.exports = grammar({
       $.namespace_statement,
       $.keyframes_statement,
       $.supports_statement,
+      $.scope_statement,
       $.at_rule,
     ),
 
@@ -564,6 +575,12 @@ module.exports = grammar({
 
     identifier: _ => /(--|-?[a-zA-Z_\xA0-\xFF])[a-zA-Z0-9-_\xA0-\xFF]*/,
 
+    at_rule_value: _ => token(seq(choice(
+      seq(optional(/[#@]/), genericName),
+      seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
+      /[^\s(){}\[\];,:"'\\/]/,
+    ), repeat('//'))),
+
     at_keyword: _ => /@[a-zA-Z-_]+/,
 
     js_comment: _ => token(prec(-1, seq('//', /.*/))),
@@ -590,6 +607,36 @@ module.exports = grammar({
     )),
   },
 });
+
+function cssKeyword(word) {
+  return token(new RegExp(cssKeywordPattern(word)));
+}
+
+function cssKeywordPattern(word, escapedOnly = false) {
+  if (!word) return '';
+  const character = word[0];
+  const rest = word.slice(1);
+  const suffix = cssKeywordPattern(rest);
+  if (character === '@') return `@${suffix}`;
+  const letters = `[${character}${character.toUpperCase()}]`;
+  const codes = [character, character.toUpperCase()].map(value =>
+    value.charCodeAt(0).toString(16).replace(/[a-f]/g, digit => `[${digit}${digit.toUpperCase()}]`),
+  );
+  const code = `(?:${codes.join('|')})`;
+  const whitespace = String.raw`(?:[ \t\n\f]|\r\n?)`;
+  const alternatives = escapedOnly ? [] : [`${letters}${suffix}`];
+  if (!/[a-f]/.test(character)) alternatives.push(String.raw`\\${letters}${suffix}`);
+  if (rest && /[a-f]/.test(rest[0])) {
+    alternatives.push(
+      String.raw`\\0{4}${code}${whitespace}?${suffix}`,
+      String.raw`\\0{0,3}${code}${whitespace}${suffix}`,
+      String.raw`\\0{0,3}${code}${cssKeywordPattern(rest, true)}`,
+    );
+  } else {
+    alternatives.push(String.raw`\\0{0,4}${code}${whitespace}?${suffix}`);
+  }
+  return `(?:${alternatives.join('|')})`;
+}
 
 /** @param {RuleOrLiteral} prefix */
 function escapedIdentifier(prefix) {

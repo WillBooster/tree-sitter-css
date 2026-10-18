@@ -655,6 +655,10 @@
           "named": true
         },
         {
+          "type": "scope_statement",
+          "named": true
+        },
+        {
           "type": "supports_statement",
           "named": true
         }
@@ -1841,6 +1845,42 @@
     }
   },
   {
+    "type": "scope_statement",
+    "named": true,
+    "fields": {
+      "end": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "selectors",
+            "named": true
+          }
+        ]
+      },
+      "start": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "selectors",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "selector_query",
     "named": true,
     "fields": {},
@@ -2102,6 +2142,10 @@
           "named": true
         },
         {
+          "type": "scope_statement",
+          "named": true
+        },
+        {
           "type": "supports_statement",
           "named": true
         }
@@ -2296,6 +2340,10 @@
     "named": false
   },
   {
+    "type": "@scope",
+    "named": false
+  },
+  {
     "type": "@supports",
     "named": false
   },
@@ -2420,6 +2468,10 @@
   {
     "type": "tag_name",
     "named": true
+  },
+  {
+    "type": "to",
+    "named": false
   },
   {
     "type": "to",
