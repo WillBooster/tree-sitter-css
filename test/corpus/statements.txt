@@ -855,9 +855,8 @@ a { color: red; }
         (feature_name)
         (at_rule_value)))
     (block))
-  (at_rule
-    (at_keyword)
-    (at_rule_value)
+  (container_statement
+    (container_name)
     (block))
   (container_statement
     (general_enclosed_query

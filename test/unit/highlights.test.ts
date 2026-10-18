@@ -273,3 +273,55 @@ test('style ranges preserve balanced declaration-value operands', () => {
     }
   }
 });
+
+test('name-only container conditions preserve style references in sibling conditions', () => {
+  for (const condition of [
+    'card, sidebar style(--theme: dark)',
+    'sidebar style(--theme: dark), card',
+    'card, style(--theme: dark), sidebar',
+  ]) {
+    const tree = parser.parse(`@container ${condition} {}`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, condition).toBe(false);
+    expect(
+      tree.rootNode.descendantsOfType('feature_name').map((node) => node.text),
+      condition
+    ).toEqual(['--theme']);
+    expect(
+      query.captures(tree.rootNode).filter(({ name, node }) => name === 'property' && node.text === '--theme'),
+      condition
+    ).toHaveLength(1);
+    tree.delete();
+  }
+  for (const condition of ['', ', style(--theme: dark)', 'style(--theme: dark),']) {
+    const tree = parser.parse(`@container ${condition} {}`);
+    if (!tree) throw new Error('The parser returned no tree');
+    for (const statement of tree.rootNode.descendantsOfType('container_statement')) {
+      expect(statement.hasError, condition).toBe(true);
+    }
+    tree.delete();
+  }
+});
+
+test('style feature names are identifiers including ordinary supported properties', () => {
+  for (const [value, names] of [
+    ['width', ['width']],
+    ['width: 10px', ['width']],
+    ['--theme', ['--theme']],
+    ['3px', []],
+    ['3px: 1', []],
+    ['-3px', []],
+    ['-', []],
+    ['!', []],
+  ] as const) {
+    const tree = parser.parse(`@container style(${value}) {} a { color: red; }`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, value).toBe(false);
+    expect(
+      tree.rootNode.descendantsOfType('feature_name').map((node) => node.text),
+      value
+    ).toEqual(names);
+    expect(tree.rootNode.lastNamedChild?.type, value).toBe('rule_set');
+    tree.delete();
+  }
+});

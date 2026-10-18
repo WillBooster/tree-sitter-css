@@ -50,17 +50,18 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.at_rule_value, $._style_range_operand],
-    [$._style_range_operand, $._style_range_value],
+    [$._style_range_operand, $._query_identifier],
     [$._at_rule_component, $._style_range_operand],
     [$._style_in_parens, $._style_range_operand],
     [$._at_rule_nested_component, $._style_range_operand],
     [$.container_statement, $._at_rule_component],
+    [$.container_statement, $._style_range_value],
+    [$._container_feature_query, $._style_range_value],
+    [$.style_feature, $._style_range_value],
     [$._container_in_parens, $._at_rule_component],
-    [$._container_feature_query, $._at_rule_component],
     [$._style_unary_query, $._at_rule_component],
     [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
-    [$._at_rule_component, $.style_feature],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
   ],
@@ -151,8 +152,8 @@ module.exports = grammar({
 
     container_statement: $ => prec.dynamic(1, seq(
       alias($._container_keyword, '@container'),
-      sep1(',', seq(
-        optional(alias(choice($.at_rule_value, $._style_keyword), $.container_name)),
+      sep1(',', choice(
+        seq(alias(choice($._query_identifier, $._style_keyword), $.container_name), optional($._container_query)),
         $._container_query,
       )),
       $.block,
@@ -473,7 +474,7 @@ module.exports = grammar({
     ),
 
     _container_feature_query: $ => prec.dynamic(1, seq(
-      '(', alias($.at_rule_value, $.feature_name), ':',
+      '(', alias($._query_identifier, $.feature_name), ':',
       repeat($._at_rule_nested_component), ')',
     )),
 
@@ -518,7 +519,7 @@ module.exports = grammar({
 
     style_feature: $ => prec.dynamic(1, choice(
       seq(
-        alias($.at_rule_value, $.feature_name),
+        alias($._query_identifier, $.feature_name),
         optional(seq(':', repeat($._at_rule_nested_component))),
       ),
       seq($._style_range_operand, choice('<', '<=', '>', '>=', '='), $._style_range_operand),
@@ -541,7 +542,12 @@ module.exports = grammar({
       )),
     ),
 
-    _style_range_value: $ => choice($._custom_property_component, token(seq(choice(
+    _query_identifier: $ => choice($._custom_property_component, token(seq(
+      choice(seq(optional('-'), choice(/[_a-zA-Z\u0080-\u{10FFFF}]/u, cssEscape)), '--'),
+      repeat(genericNameCharacter),
+    ))),
+
+    _style_range_value: $ => choice($._query_identifier, token(seq(choice(
       seq(optional(/[#@]/), genericName),
       seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
       /[^\s(){}\[\];,:"'\\/<>=]/,
