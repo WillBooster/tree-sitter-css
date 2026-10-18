@@ -301,9 +301,7 @@ test('name-only container conditions preserve style references in sibling condit
   for (const condition of ['', ', style(--theme: dark)', 'style(--theme: dark),']) {
     const tree = parser.parse(`@container ${condition} {}`);
     if (!tree) throw new Error('The parser returned no tree');
-    for (const statement of tree.rootNode.descendantsOfType('container_statement')) {
-      expect(statement.hasError, condition).toBe(true);
-    }
+    expect(tree.rootNode.descendantsOfType('container_statement'), condition).toHaveLength(0);
     tree.delete();
   }
 });
