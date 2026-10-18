@@ -529,70 +529,109 @@
     "at_rule_value": {
       "type": "TOKEN",
       "content": {
-        "type": "REPEAT1",
-        "content": {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "[^\\s(){}\\[\\];,:\"'\\\\/]"
-            },
-            {
-              "type": "PATTERN",
-              "value": "\\\\[^\\n\\r\\f]"
-            }
-          ]
-        }
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[#@]"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[-\\w\\u0080-\\uFFFF]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\\\[^\\n\\r\\f]"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "[+-]?(?:[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:[-\\w\\u0080-\\uFFFF]*|%)"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^\\s(){}\\[\\];,:\"'\\\\/]"
+          }
+        ]
       }
     },
     "at_rule_url": {
       "type": "TOKEN",
       "content": {
-        "type": "SEQ",
+        "type": "CHOICE",
         "members": [
           {
             "type": "PATTERN",
-            "value": "(?:[uU]|\\\\(?:[uU]|0{0,4}[57]5(?:[ \\t\\n\\f]|\\r\\n?)?))"
+            "value": "[a-zA-Z][a-zA-Z0-9+.-]*:\\/\\/[^\\s(){}\\[\\];,\"'\\\\]+"
           },
           {
-            "type": "PATTERN",
-            "value": "(?:[rR]|\\\\(?:[rR]|0{0,4}[57]2(?:[ \\t\\n\\f]|\\r\\n?)?))"
-          },
-          {
-            "type": "PATTERN",
-            "value": "(?:[lL]|\\\\(?:[lL]|0{0,4}[46][cC](?:[ \\t\\n\\f]|\\r\\n?)?))"
-          },
-          {
-            "type": "STRING",
-            "value": "("
-          },
-          {
-            "type": "PATTERN",
-            "value": "[ \\t\\n\\r\\f]*"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[^\\x00-\\x20\\x7F\"'()\\\\]"
-                },
-                {
-                  "type": "PATTERN",
-                  "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "(?:[uU]|\\\\(?:[uU]|0{0,4}[57]5(?:[ \\t\\n\\f]|\\r\\n?)?))"
+              },
+              {
+                "type": "PATTERN",
+                "value": "(?:[rR]|\\\\(?:[rR]|0{0,4}[57]2(?:[ \\t\\n\\f]|\\r\\n?)?))"
+              },
+              {
+                "type": "PATTERN",
+                "value": "(?:[lL]|\\\\(?:[lL]|0{0,4}[46][cC](?:[ \\t\\n\\f]|\\r\\n?)?))"
+              },
+              {
+                "type": "STRING",
+                "value": "("
+              },
+              {
+                "type": "PATTERN",
+                "value": "[ \\t\\n\\r\\f]*"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[^\\x00-\\x20\\x7F\"'()\\\\]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                    }
+                  ]
                 }
-              ]
-            }
-          },
-          {
-            "type": "PATTERN",
-            "value": "[ \\t\\n\\r\\f]*"
-          },
-          {
-            "type": "STRING",
-            "value": ")"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[ \\t\\n\\r\\f]*"
+              },
+              {
+                "type": "STRING",
+                "value": ")"
+              }
+            ]
           }
         ]
       }

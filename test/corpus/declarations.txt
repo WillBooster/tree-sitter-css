@@ -318,6 +318,7 @@ PostCSS
         (at_rule_value)
         (at_rule_value)
         (at_rule_value)
+        (at_rule_value)
         (at_rule_value))))
   (at_rule
     (at_keyword)
@@ -337,6 +338,7 @@ PostCSS
             (at_rule_value)
             (at_rule_bracketed
               (at_rule_value))
+            (at_rule_value)
             (at_rule_value)
             (at_rule_value)
             (at_rule_value)

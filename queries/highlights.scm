@@ -77,7 +77,8 @@
 
 (at_rule_parenthesized
  (at_rule_value) @property
- . ":")
+ . ":"
+ (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
 
 (at_rule
  (at_rule_value) @_bang @keyword

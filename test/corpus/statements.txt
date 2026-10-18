@@ -237,6 +237,7 @@ Generic at-rule component preludes
       (at_rule_value)
       (at_rule_parenthesized
         (at_rule_value)
+        (at_rule_value)
         (at_rule_value))))
   (at_rule
     (at_keyword)
@@ -248,6 +249,7 @@ Generic at-rule component preludes
       (at_rule_value)
       (at_rule_parenthesized
         (at_rule_bracketed
+          (at_rule_value)
           (at_rule_value)
           (string_value
             (string_content)))
@@ -273,6 +275,7 @@ Generic at-rule component preludes
           (string_content)))
       (at_rule
         (at_keyword)
+        (at_rule_value)
         (at_rule_value)
         (at_rule_value))
       (at_rule
@@ -421,3 +424,46 @@ a { color: red; }
       (declaration
         (property_name)
         (plain_value)))))
+========================================
+URL token boundaries preserve following declarations
+========================================
+
+.a {
+  @custom +url(a[b) .url(a}b) !url(a/*b) &u\72l(a]b);
+  @apply p-4 https://cdn.example/x;
+  color: red;
+  @custom (https://cdn.example/x) [git+ssh://host/path];
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_url)
+        (at_rule_value)
+        (at_rule_url)
+        (at_rule_value)
+        (at_rule_url)
+        (at_rule_value)
+        (at_rule_url))
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (at_rule_url))
+      (declaration
+        (property_name)
+        (plain_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_parenthesized
+          (at_rule_url))
+        (at_rule_bracketed
+          (at_rule_url))))))
