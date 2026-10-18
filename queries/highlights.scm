@@ -69,9 +69,6 @@
 ((at_rule_value) @variable
  (#match? @variable "^--"))
 
-((at_rule_value) @keyword
- (#match? @keyword "^![iI][mM][pP][oO][rR][tT][aA][nN][tT]$"))
-
 ((at_rule_value) @number
  (#match? @number "^[+-]?([0-9]+(\\.[0-9]+)?|\\.[0-9]+)([eE][+-]?[0-9]+)?([a-zA-Z]+|%)?$"))
 
@@ -82,7 +79,7 @@
  (#not-match? @_feature_value "^//")
  (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
 
-(at_rule
+(
  (at_rule_value) @_bang @keyword
  . (at_rule_value) @_important @keyword
  (#eq? @_bang "!")

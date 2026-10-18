@@ -529,50 +529,62 @@
     "at_rule_value": {
       "type": "TOKEN",
       "content": {
-        "type": "CHOICE",
+        "type": "SEQ",
         "members": [
           {
-            "type": "SEQ",
+            "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
+                "type": "SEQ",
                 "members": [
                   {
-                    "type": "PATTERN",
-                    "value": "[#@]"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[#@]"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
                   },
                   {
-                    "type": "BLANK"
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "PATTERN",
+                          "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                          "flags": "u"
+                        },
+                        {
+                          "type": "PATTERN",
+                          "value": "\\\\[^\\n\\r\\f]"
+                        }
+                      ]
+                    }
                   }
                 ]
               },
               {
-                "type": "REPEAT1",
-                "content": {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "PATTERN",
-                      "value": "[-\\w\\u0080-\\u{10FFFF}]",
-                      "flags": "u"
-                    },
-                    {
-                      "type": "PATTERN",
-                      "value": "\\\\[^\\n\\r\\f]"
-                    }
-                  ]
-                }
+                "type": "PATTERN",
+                "value": "[+-]?(?:[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:[-\\w\\u0080-\\u{10FFFF}]*|%)",
+                "flags": "u"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[^\\s(){}\\[\\];,:\"'\\\\/]"
               }
             ]
           },
           {
-            "type": "PATTERN",
-            "value": "[+-]?(?:[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:[-\\w\\u0080-\\u{10FFFF}]*|%)",
-            "flags": "u"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^\\s(){}\\[\\];,:\"'\\\\/]"
+            "type": "REPEAT",
+            "content": {
+              "type": "STRING",
+              "value": "//"
+            }
           }
         ]
       }

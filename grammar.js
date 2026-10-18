@@ -137,11 +137,11 @@ module.exports = grammar({
 
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
 
-    at_rule_value: _ => token(choice(
+    at_rule_value: _ => token(seq(choice(
       seq(optional(/[#@]/), repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, /\\[^\n\r\f]/))),
       /[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:[-\w\u0080-\u{10FFFF}]*|%)/u,
       /[^\s(){}\[\];,:"'\\/]/,
-    )),
+    ), repeat('//'))),
 
     at_rule_url: _ => token(choice(
       /\/\/[^\s(){}\[\];,"'\\]+/,
