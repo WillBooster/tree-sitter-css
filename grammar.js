@@ -132,24 +132,34 @@ module.exports = grammar({
       $.block,
     ),
 
+    _container_keyword: _ => token(/@[cC][oO][nN][tT][aA][iI][nN][eE][rR]/),
+
+    _style_keyword: _ => token(/[sS][tT][yY][lL][eE]/),
+
+    _query_and: _ => token(/[aA][nN][dD]/),
+
+    _query_or: _ => token(/[oO][rR]/),
+
+    _query_not: _ => token(/[nN][oO][tT]/),
+
     container_statement: $ => prec.dynamic(1, seq(
-      '@container',
+      alias($._container_keyword, '@container'),
       sep1(',', seq(
-        optional(alias(choice($.at_rule_value, 'style'), $.container_name)),
+        optional(alias(choice($.at_rule_value, $._style_keyword), $.container_name)),
         $._container_query,
       )),
       $.block,
     )),
 
     at_rule: $ => seq(
-      choice($.at_keyword, alias('@container', $.at_keyword)),
+      choice($.at_keyword, alias($._container_keyword, $.at_keyword)),
       repeat($._at_rule_component),
       choice(';', $.block),
     ),
 
     _at_rule_component: $ => choice(
       $.at_rule_value,
-      alias(choice('style', 'not', 'and', 'or'), $.at_rule_value),
+      alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
       alias($._at_rule_slash, $.at_rule_value),
       $.at_rule_url,
       $.string_value,
@@ -459,23 +469,23 @@ module.exports = grammar({
 
     _container_binary_query: $ => prec.left(seq(
       $._container_query,
-      choice('and', 'or'),
+      choice(alias($._query_and, 'and'), alias($._query_or, 'or')),
       $._container_query,
     )),
 
-    _container_unary_query: $ => prec(1, seq('not', $._container_query)),
+    _container_unary_query: $ => prec(1, seq(alias($._query_not, 'not'), $._container_query)),
 
     _container_parenthesized_query: $ => seq('(', $._container_query, ')'),
 
     style_query: $ => seq(
-      'style', token.immediate('('),
+      alias($._style_keyword, 'style'), token.immediate('('),
       choice($._style_condition, repeat($._at_rule_nested_component)),
       ')',
     ),
 
     _style_condition: $ => choice(
       $.style_feature,
-      alias($._style_parenthesized_query, $.parenthesized_query),
+      $._style_in_parens,
       alias($._style_binary_query, $.binary_query),
       alias($._style_unary_query, $.unary_query),
     ),
@@ -487,16 +497,21 @@ module.exports = grammar({
 
     _style_parenthesized_query: $ => seq('(', choice($._style_condition, repeat($._at_rule_nested_component)), ')'),
 
+    _style_in_parens: $ => choice(
+      alias($._style_parenthesized_query, $.parenthesized_query),
+      $.general_enclosed_query,
+    ),
+
     _style_binary_query: $ => prec.left(seq(
       choice(
-        alias($._style_parenthesized_query, $.parenthesized_query),
+        $._style_in_parens,
         alias($._style_binary_query, $.binary_query),
       ),
-      choice('and', 'or'),
-      alias($._style_parenthesized_query, $.parenthesized_query),
+      choice(alias($._query_and, 'and'), alias($._query_or, 'or')),
+      $._style_in_parens,
     )),
 
-    _style_unary_query: $ => seq('not', alias($._style_parenthesized_query, $.parenthesized_query)),
+    _style_unary_query: $ => seq(alias($._query_not, 'not'), $._style_in_parens),
 
     _value: $ => prec(-1, choice(
       alias($.identifier, $.plain_value),

@@ -74,3 +74,60 @@ test('mixed container conditions retain style properties in either operand order
     }
   }
 });
+
+test('case-insensitive container keywords preserve features and highlights', () => {
+  for (const [atRule, fn, and, or, not] of [
+    ['@container', 'style', 'and', 'or', 'not'],
+    ['@CONTAINER', 'STYLE', 'AND', 'OR', 'NOT'],
+    ['@CoNtAiNeR', 'StYlE', 'AnD', 'oR', 'NoT'],
+  ]) {
+    const source = `${atRule} Card ${not} (${fn}(${not} (--Theme: dark)) ${or} ${fn}((--Accent: red) ${and} (--Mode))) {} a { color: red; }`;
+    const tree = parser.parse(source);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, source).toBe(false);
+    expect(
+      tree.rootNode.descendantsOfType('feature_name').map((node) => node.text),
+      source
+    ).toEqual(['--Theme', '--Accent', '--Mode']);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'function')
+        .map(({ node }) => node.text),
+      source
+    ).toEqual([fn, fn]);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'operator')
+        .map(({ node }) => node.text),
+      source
+    ).toEqual([not, not, or, and]);
+    expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
+    tree.delete();
+  }
+});
+
+test('style features remain queryable beside general-enclosed operands', () => {
+  for (const condition of [
+    '(--theme: dark) and unknown(foo)',
+    'unknown(foo) or (--theme: dark)',
+    '(not unknown(foo)) and (--theme: dark)',
+    '(--theme: dark) and (unknown(foo) or unknown(bar))',
+  ]) {
+    const source = `@container style(${condition}) {} a { color: red; }`;
+    const tree = parser.parse(source);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, source).toBe(false);
+    expect(
+      tree.rootNode.descendantsOfType('style_feature').map((node) => node.text),
+      source
+    ).toEqual(['--theme: dark']);
+    expect(
+      query.captures(tree.rootNode).filter(({ name, node }) => name === 'property' && node.text === '--theme'),
+      source
+    ).toHaveLength(1);
+    expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
+    tree.delete();
+  }
+});
