@@ -524,8 +524,8 @@ module.exports = grammar({
       /\d*/,
       choice(
         seq('.', /\d+/),
-        seq(/[eE]/, optional('-'), /\d+/),
-        seq('.', /\d+/, /[eE]/, optional('-'), /\d+/),
+        seq(/[eE]/, optional(choice('+', '-')), /\d+/),
+        seq('.', /\d+/, /[eE]/, optional(choice('+', '-')), /\d+/),
       ),
     )),
 

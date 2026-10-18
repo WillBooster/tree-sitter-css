@@ -39,7 +39,7 @@ test('media range queries retain feature highlights and following rules', () => 
 });
 
 test('media ratios use unitless numbers while dimension values retain units', () => {
-  for (const value of ['16/9', '1.5/.5', '1e2/2.5e1']) {
+  for (const value of ['16/9', '1.5/.5', '1e2/2.5e1', '1e+2/2.5E+1']) {
     const tree = parser.parse(`@media (aspect-ratio >= ${value}) { a { width: 16px; opacity: .5; } }`);
     if (!tree) throw new Error('The parser returned no tree');
     expect(tree.rootNode.hasError, value).toBe(false);
@@ -62,6 +62,16 @@ test('media ratios use unitless numbers while dimension values retain units', ()
     const tree = parser.parse(`@media (aspect-ratio >= ${value}) {}`);
     if (!tree) throw new Error('The parser returned no tree');
     expect(tree.rootNode.hasError, value).toBe(true);
+    tree.delete();
+  }
+});
+
+test('media range dimensions retain signed exponents as one numeric operand', () => {
+  for (const value of ['1e+3px', '1E+3px', '1.5e+3px', '1e-3px']) {
+    const tree = parser.parse(`@media (width < ${value}) {}`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, value).toBe(false);
+    expect(tree.rootNode.descendantsOfType('float_value').map((node) => node.text)).toEqual([value]);
     tree.delete();
   }
 });
