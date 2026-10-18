@@ -119,7 +119,12 @@ test.each([String.raw`@scope\74 o`, String.raw`@\73 copeto`])(
   }
 );
 
-test.each(['#card', 'article#card'])('a leading ID boundary keeps its selector and highlight: %s', (selector) => {
+test.each([
+  ['#card', 'card'],
+  ['article#card', 'card'],
+  [String.raw`#\31 foo`, String.raw`\31 foo`],
+  [String.raw`article#\#hash`, String.raw`\#hash`],
+])('an ID boundary keeps its selector and highlight: %s', (selector, name) => {
   const parser = new Parser();
   parser.setLanguage(language);
   const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
@@ -129,13 +134,61 @@ test.each(['#card', 'article#card'])('a leading ID boundary keeps its selector a
     const scope = tree.rootNode.firstNamedChild!;
     expect(scope.type).toBe('scope_statement');
     const boundary = scope.childForFieldName('start')!;
-    expect(boundary.descendantsOfType('id_name').map((node) => node.text)).toEqual(['card']);
+    expect(boundary.descendantsOfType('id_name').map((node) => node.text)).toEqual([name]);
     expect(
       query
         .captures(boundary)
         .filter(({ name }) => name === 'property')
         .map(({ node }) => node.text)
-    ).toEqual(['card']);
+    ).toEqual([name]);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each(['日本語', '𐐀'])('a Unicode ID boundary retains its selector and the following rule: %s', (name) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const tree = parser.parse(`@scope (#${name}) {} .after { color: red; }`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild?.type).toBe('scope_statement');
+    expect(tree.rootNode.descendantsOfType('id_name').map((node) => node.text)).toEqual([name]);
+    expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  '(.a), (.b)',
+  '(.a) foo',
+  '(.a) toa (.b)',
+  String.raw`(.a) t\6fa (.b)`,
+  '(.a) to',
+  '(.a) to (.b) to (.c)',
+  '(.card) topic (.limit)',
+  '(.card) today',
+])('an unrecognized scope prelude remains an at-rule: %s', (prelude) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
+  const tree = parser.parse(`@scope ${prelude} { h1 { color: red; } } .after {}`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild?.type).toBe('at_rule');
+    expect(tree.rootNode.firstNamedChild?.text).toBe(`@scope ${prelude} { h1 { color: red; } }`);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'keyword')
+        .map(({ node }) => node.text)
+    ).not.toContain('to');
   } finally {
     tree.delete();
     query.delete();

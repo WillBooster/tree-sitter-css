@@ -332,6 +332,10 @@
           "named": true
         },
         {
+          "type": "selectors",
+          "named": true
+        },
+        {
           "type": "string_value",
           "named": true
         }

@@ -10,6 +10,11 @@
 
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
 const genericName = repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape));
+const idStart = /[a-zA-Z_\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
+const idName = seq(
+  choice('--', seq(optional('-'), choice(idStart, cssEscape))),
+  repeat(choice(idStart, /[0-9-]/, cssEscape)),
+);
 
 const unquotedUrl = seq(
   /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
@@ -52,6 +57,7 @@ module.exports = grammar({
     [$.at_rule_delimiter, $.pseudo_class_selector],
     [$._at_rule_component, $._selector],
     [$.scope_statement, $.at_rule],
+    [$.scope_statement, $._scope_selector_group],
     [$.range_query, $._range_value],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
@@ -142,11 +148,20 @@ module.exports = grammar({
       choice(';', $.block),
     )),
 
-    at_rule: $ => seq(
-      choice($.at_keyword, alias($._scope_keyword, $.at_keyword)),
-      repeat($._at_rule_component),
-      choice(';', $.block),
+    at_rule: $ => choice(
+      seq($.at_keyword, repeat($._at_rule_component), choice(';', $.block)),
+      seq(
+        alias($._scope_keyword, $.at_keyword),
+        repeat(choice(
+          $._at_rule_component,
+          alias($._scope_to, $.at_rule_value),
+          alias($._scope_selector_group, $.at_rule_parenthesized),
+        )),
+        choice(';', $.block),
+      ),
     ),
+
+    _scope_selector_group: $ => seq('(', $.selectors, ')'),
 
     _at_rule_component: $ => choice(
       alias($.identifier, $.at_rule_value),
@@ -273,7 +288,7 @@ module.exports = grammar({
     id_selector: $ => seq(
       optional($._selector),
       token(prec(1, '#')),
-      alias($.identifier, $.id_name),
+      alias(token(idName), $.id_name),
     ),
 
     attribute_selector: $ => seq(

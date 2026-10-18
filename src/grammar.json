@@ -499,15 +499,40 @@
       }
     },
     "at_rule": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "CHOICE",
+          "type": "SEQ",
           "members": [
             {
               "type": "SYMBOL",
               "name": "at_keyword"
             },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_at_rule_component"
+              }
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "block"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
             {
               "type": "ALIAS",
               "content": {
@@ -516,28 +541,68 @@
               },
               "named": true,
               "value": "at_keyword"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_at_rule_component"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": ";"
             },
             {
-              "type": "SYMBOL",
-              "name": "block"
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_at_rule_component"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_scope_to"
+                    },
+                    "named": true,
+                    "value": "at_rule_value"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_scope_selector_group"
+                    },
+                    "named": true,
+                    "value": "at_rule_parenthesized"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "block"
+                }
+              ]
             }
           ]
+        }
+      ]
+    },
+    "_scope_selector_group": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "selectors"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
         }
       ]
     },
@@ -1197,8 +1262,73 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "TOKEN",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "--"
+                    },
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "-"
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "PATTERN",
+                              "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                              "flags": "u"
+                            },
+                            {
+                              "type": "PATTERN",
+                              "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                        "flags": "u"
+                      },
+                      {
+                        "type": "PATTERN",
+                        "value": "[0-9-]"
+                      },
+                      {
+                        "type": "PATTERN",
+                        "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
           },
           "named": true,
           "value": "id_name"
@@ -3633,6 +3763,10 @@
     [
       "scope_statement",
       "at_rule"
+    ],
+    [
+      "scope_statement",
+      "_scope_selector_group"
     ],
     [
       "range_query",
