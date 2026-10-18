@@ -53,6 +53,7 @@ module.exports = grammar({
       $.namespace_statement,
       $.keyframes_statement,
       $.supports_statement,
+      $.container_statement,
       $.at_rule,
     ),
 
@@ -111,8 +112,15 @@ module.exports = grammar({
       $.block,
     ),
 
+    container_statement: $ => prec.dynamic(1, seq(
+      '@container',
+      optional(alias($.identifier, $.container_name)),
+      $._query,
+      $.block,
+    )),
+
     at_rule: $ => seq(
-      $.at_keyword,
+      choice($.at_keyword, alias('@container', $.at_keyword)),
       repeat($._at_rule_component),
       choice(';', $.block),
     ),
@@ -187,6 +195,7 @@ module.exports = grammar({
       $.namespace_statement,
       $.keyframes_statement,
       $.supports_statement,
+      $.container_statement,
       $.at_rule,
     ),
 
@@ -378,6 +387,7 @@ module.exports = grammar({
       $.binary_query,
       $.unary_query,
       $.selector_query,
+      $.style_query,
       $.parenthesized_query,
     ),
 
@@ -410,6 +420,16 @@ module.exports = grammar({
       'selector',
       '(',
       $._selector,
+      ')',
+    ),
+
+    style_query: $ => seq(
+      'style',
+      token.immediate('('),
+      choice(
+        seq(alias(choice($.identifier, $._custom_property_name), $.feature_name), ':', repeat($._at_rule_nested_component)),
+        $._query,
+      ),
       ')',
     ),
 
