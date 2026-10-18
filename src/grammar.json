@@ -601,6 +601,13 @@
           "name": "selectors"
         },
         {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_at_rule_nested_component"
+          }
+        },
+        {
           "type": "STRING",
           "value": ")"
         }
@@ -1312,13 +1319,18 @@
                     "type": "CHOICE",
                     "members": [
                       {
-                        "type": "PATTERN",
-                        "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
-                        "flags": "u"
-                      },
-                      {
-                        "type": "PATTERN",
-                        "value": "[0-9-]"
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "PATTERN",
+                            "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                            "flags": "u"
+                          },
+                          {
+                            "type": "PATTERN",
+                            "value": "[0-9-]"
+                          }
+                        ]
                       },
                       {
                         "type": "PATTERN",
@@ -2122,8 +2134,21 @@
                 "value": "--"
               },
               {
-                "type": "PATTERN",
-                "value": "[-a-zA-Z0-9_\\xA0-\\xFF]*"
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                      "flags": "u"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "[0-9-]"
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -2150,8 +2175,21 @@
                   ]
                 },
                 {
-                  "type": "PATTERN",
-                  "value": "[-a-zA-Z0-9_\\xA0-\\xFF]*"
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                        "flags": "u"
+                      },
+                      {
+                        "type": "PATTERN",
+                        "value": "[0-9-]"
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -2182,8 +2220,43 @@
                         "value": "-"
                       },
                       {
-                        "type": "PATTERN",
-                        "value": "-?[a-zA-Z_\\xA0-\\xFF][a-zA-Z0-9-_\\xA0-\\xFF]*"
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "STRING",
+                                "value": "-"
+                              },
+                              {
+                                "type": "BLANK"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "PATTERN",
+                            "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                            "flags": "u"
+                          },
+                          {
+                            "type": "REPEAT",
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "PATTERN",
+                                  "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                                  "flags": "u"
+                                },
+                                {
+                                  "type": "PATTERN",
+                                  "value": "[0-9-]"
+                                }
+                              ]
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
@@ -2215,8 +2288,21 @@
                       ]
                     },
                     {
-                      "type": "PATTERN",
-                      "value": "[-a-zA-Z0-9_\\xA0-\\xFF]*"
+                      "type": "REPEAT",
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "PATTERN",
+                            "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                            "flags": "u"
+                          },
+                          {
+                            "type": "PATTERN",
+                            "value": "[0-9-]"
+                          }
+                        ]
+                      }
                     }
                   ]
                 }
@@ -3472,8 +3558,60 @@
       }
     },
     "identifier": {
-      "type": "PATTERN",
-      "value": "(--|-?[a-zA-Z_\\xA0-\\xFF])[a-zA-Z0-9-_\\xA0-\\xFF]*"
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "--"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "-"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                    "flags": "u"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[a-zA-Z_\\u00B7\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u037D\\u037F-\\u1FFF\\u200C\\u200D\\u203F\\u2040\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\u{10000}-\\u{10FFFF}]",
+                  "flags": "u"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "[0-9-]"
+                }
+              ]
+            }
+          }
+        ]
+      }
     },
     "at_rule_value": {
       "type": "TOKEN",
@@ -3752,6 +3890,16 @@
     }
   ],
   "conflicts": [
+    [
+      "selectors"
+    ],
+    [
+      "class_name"
+    ],
+    [
+      "selectors",
+      "pseudo_class_selector"
+    ],
     [
       "at_rule_delimiter",
       "pseudo_class_selector"

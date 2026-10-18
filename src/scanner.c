@@ -111,7 +111,7 @@ static bool scan_escape(TSLexer *lexer) {
 static bool scan_descendant_operator(TSLexer *lexer) {
     lexer->result_symbol = DESCENDANT_OP;
     if (lexer->lookahead == '#' || lexer->lookahead == '.' || lexer->lookahead == '[' || lexer->lookahead == '-' ||
-        lexer->lookahead == '*' || lexer->lookahead == '&' || iswalnum(lexer->lookahead)) {
+        lexer->lookahead == '*' || lexer->lookahead == '&' || is_name_character(lexer->lookahead)) {
         return true;
     }
     return lexer->lookahead == ':';
@@ -122,8 +122,20 @@ static bool is_name_character(int32_t character) {
 }
 
 static bool is_name_start(int32_t character) {
-    return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || character == '_' ||
-           (character >= 0xA0 && character <= 0xFF);
+    static const int32_t ranges[][2] = {
+        {0xB7, 0xB7}, {0xC0, 0xD6}, {0xD8, 0xF6}, {0xF8, 0x37D}, {0x37F, 0x1FFF},
+        {0x200C, 0x200D}, {0x203F, 0x2040}, {0x2070, 0x218F}, {0x2C00, 0x2FEF},
+        {0x3001, 0xD7FF}, {0xF900, 0xFDCF}, {0xFDF0, 0xFFFD}, {0x10000, 0x10FFFF},
+    };
+    if ((character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || character == '_') {
+        return true;
+    }
+    for (unsigned i = 0; i < sizeof(ranges) / sizeof(ranges[0]); i++) {
+        if (character >= ranges[i][0] && character <= ranges[i][1]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool is_hex_digit(int32_t character) {

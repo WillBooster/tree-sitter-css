@@ -173,6 +173,9 @@ test.each([
   '(.a) to (.b) to (.c)',
   '(.card) topic (.limit)',
   '(.card) today',
+  '(a b / c)',
+  '(a b !important)',
+  '(a b "x")',
 ])('an unrecognized scope prelude remains an at-rule: %s', (prelude) => {
   const parser = new Parser();
   parser.setLanguage(language);
@@ -192,6 +195,22 @@ test.each([
   } finally {
     tree.delete();
     query.delete();
+    parser.delete();
+  }
+});
+
+test.each(['a .日本', 'a 日本'])('a Unicode descendant boundary retains selectors: %s', (selector) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const tree = parser.parse(`@scope (${selector}) {} .after {}`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild?.type).toBe('scope_statement');
+    expect(tree.rootNode.firstNamedChild?.childForFieldName('start')?.text).toBe(selector);
+    expect(tree.rootNode.descendantsOfType('descendant_selector')).toHaveLength(1);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
     parser.delete();
   }
 });

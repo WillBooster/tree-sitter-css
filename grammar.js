@@ -10,10 +10,11 @@
 
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
 const genericName = repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape));
-const idStart = /[a-zA-Z_\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
+const nameStart = /[a-zA-Z_\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
+const nameContinue = choice(nameStart, /[0-9-]/);
 const idName = seq(
-  choice('--', seq(optional('-'), choice(idStart, cssEscape))),
-  repeat(choice(idStart, /[0-9-]/, cssEscape)),
+  choice('--', seq(optional('-'), choice(nameStart, cssEscape))),
+  repeat(choice(nameContinue, cssEscape)),
 );
 
 const unquotedUrl = seq(
@@ -54,6 +55,9 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.selectors],
+    [$.class_name],
+    [$.selectors, $.pseudo_class_selector],
     [$.at_rule_delimiter, $.pseudo_class_selector],
     [$._at_rule_component, $._selector],
     [$.scope_statement, $.at_rule],
@@ -161,7 +165,7 @@ module.exports = grammar({
       ),
     ),
 
-    _scope_selector_group: $ => seq('(', $.selectors, ')'),
+    _scope_selector_group: $ => seq('(', $.selectors, repeat($._at_rule_nested_component), ')'),
 
     _at_rule_component: $ => choice(
       alias($.identifier, $.at_rule_value),
@@ -390,13 +394,13 @@ module.exports = grammar({
       optional($.important),
     )),
 
-    _custom_property_name: _ => escapedIdentifier(seq('--', /[-a-zA-Z0-9_\xA0-\xFF]*/)),
+    _custom_property_name: _ => escapedIdentifier(seq('--', repeat(nameContinue))),
 
     _escaped_identifier: $ => choice(
       $._custom_property_name,
       escapedIdentifier(optional(choice(
         '-',
-        /-?[a-zA-Z_\xA0-\xFF][a-zA-Z0-9-_\xA0-\xFF]*/,
+        seq(optional('-'), nameStart, repeat(nameContinue)),
       ))),
     ),
 
@@ -588,7 +592,7 @@ module.exports = grammar({
       alias($._class_name_escape_with_suffix, $.identifier),
     )),
 
-    identifier: _ => /(--|-?[a-zA-Z_\xA0-\xFF])[a-zA-Z0-9-_\xA0-\xFF]*/,
+    identifier: _ => token(seq(choice('--', seq(optional('-'), nameStart)), repeat(nameContinue))),
 
     at_rule_value: _ => token(seq(choice(
       seq(optional(/[#@]/), genericName),
@@ -667,7 +671,7 @@ function escapedIdentifier(prefix) {
         /[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?/,
         /[^0-9a-fA-F\n\r\f]/,
       ),
-      /[-a-zA-Z0-9_\xA0-\xFF]*/,
+      repeat(nameContinue),
     )),
   ));
 }
