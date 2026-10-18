@@ -78,6 +78,8 @@
 (at_rule_parenthesized
  (at_rule_value) @property
  . ":"
+ . (_) @_feature_value
+ (#not-match? @_feature_value "^//")
  (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
 
 (at_rule
