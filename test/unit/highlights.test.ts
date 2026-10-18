@@ -226,3 +226,50 @@ test('style boolean chains require parentheses when mixing operators', () => {
     tree.delete();
   }
 });
+
+test('container boolean chains require parentheses when mixing operators', () => {
+  for (const condition of [
+    '(width > 1px) and style(--a: 1) or (height > 2px)',
+    '(width > 1px) or style(--a: 1) and (height > 2px)',
+    'not style(--a: 1) and (height > 2px)',
+  ]) {
+    const tree = parser.parse(`@container ${condition} {} a { color: red; }`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, condition).toBe(false);
+    expect(tree.rootNode.descendantsOfType('binary_query'), condition).toHaveLength(0);
+    expect(tree.rootNode.lastNamedChild?.type, condition).toBe('rule_set');
+    tree.delete();
+  }
+  for (const condition of [
+    '(width > 1px) and style(--a: 1) and (height > 2px)',
+    '(width > 1px) or style(--a: 1) or (height > 2px)',
+    '((width > 1px) and style(--a: 1)) or (height > 2px)',
+    '(width > 1px) and (style(--a: 1) or (height > 2px))',
+  ]) {
+    const tree = parser.parse(`@container ${condition} {}`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, condition).toBe(false);
+    expect(tree.rootNode.descendantsOfType('binary_query'), condition).toHaveLength(2);
+    expect(
+      tree.rootNode.descendantsOfType('style_feature').map((node) => node.text),
+      condition
+    ).toEqual(['--a: 1']);
+    tree.delete();
+  }
+});
+
+test('style ranges preserve balanced declaration-value operands', () => {
+  for (const operand of ['"10px"', '[10px]', '{10px}', '10px 20px', 'var(--other) 2px', '--other fallback']) {
+    for (const condition of [`--size = ${operand}`, `${operand} < --size`, `0 < --size < ${operand}`]) {
+      const tree = parser.parse(`@container style(${condition}) {} a { color: red; }`);
+      if (!tree) throw new Error('The parser returned no tree');
+      expect(tree.rootNode.hasError, condition).toBe(false);
+      expect(
+        tree.rootNode.descendantsOfType('feature_name').map((node) => node.text),
+        condition
+      ).toEqual(['--size']);
+      expect(tree.rootNode.lastNamedChild?.type, condition).toBe('rule_set');
+      tree.delete();
+    }
+  }
+});

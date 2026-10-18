@@ -50,10 +50,15 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.at_rule_value, $._style_range_operand],
+    [$._style_range_operand, $._style_range_value],
+    [$._at_rule_component, $._style_range_operand],
+    [$._style_in_parens, $._style_range_operand],
+    [$._at_rule_nested_component, $._style_range_operand],
     [$.container_statement, $._at_rule_component],
-    [$._container_query, $._at_rule_component],
+    [$._container_in_parens, $._at_rule_component],
     [$._container_feature_query, $._at_rule_component],
     [$._style_unary_query, $._at_rule_component],
+    [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
     [$._at_rule_component, $.style_feature],
     [$._selector, $.declaration],
@@ -192,11 +197,10 @@ module.exports = grammar({
       ),
     )),
 
-    at_rule_value: $ => choice($._custom_property_component, token(seq(choice(
-      seq(optional(/[#@]/), genericName),
-      seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
-      /[^\s(){}\[\];,:"'\\/]/,
-    ), repeat('//')))),
+    at_rule_value: $ => choice(
+      $._style_range_value,
+      token(seq(/[<>=]/, repeat('//'))),
+    ),
 
     at_rule_url: _ => token(choice(
       /\/\/[^\s(){}\[\];,"'\\]+/,
@@ -454,12 +458,17 @@ module.exports = grammar({
     ),
 
     _container_query: $ => choice(
+      $._container_in_parens,
+      alias($._container_and_query, $.binary_query),
+      alias($._container_or_query, $.binary_query),
+      alias($._container_unary_query, $.unary_query),
+    ),
+
+    _container_in_parens: $ => choice(
       alias($._container_feature_query, $.feature_query),
       $.style_query,
       $.at_rule_parenthesized,
       $.general_enclosed_query,
-      alias($._container_binary_query, $.binary_query),
-      alias($._container_unary_query, $.unary_query),
       alias($._container_parenthesized_query, $.parenthesized_query),
     ),
 
@@ -477,13 +486,19 @@ module.exports = grammar({
       token.immediate('('), repeat($._at_rule_nested_component), ')',
     ),
 
-    _container_binary_query: $ => prec.left(seq(
-      $._container_query,
-      choice(alias($._query_and, 'and'), alias($._query_or, 'or')),
-      $._container_query,
+    _container_and_query: $ => prec.left(seq(
+      choice($._container_in_parens, alias($._container_and_query, $.binary_query)),
+      alias($._query_and, 'and'),
+      $._container_in_parens,
     )),
 
-    _container_unary_query: $ => prec(1, seq(alias($._query_not, 'not'), $._container_query)),
+    _container_or_query: $ => prec.left(seq(
+      choice($._container_in_parens, alias($._container_or_query, $.binary_query)),
+      alias($._query_or, 'or'),
+      $._container_in_parens,
+    )),
+
+    _container_unary_query: $ => seq(alias($._query_not, 'not'), $._container_in_parens),
 
     _container_parenthesized_query: $ => seq('(', $._container_query, ')'),
 
@@ -513,10 +528,24 @@ module.exports = grammar({
 
     _style_range_operand: $ => choice(
       prec.dynamic(1, alias($._custom_property_component, $.feature_name)),
-      $.at_rule_value,
-      $.general_enclosed_query,
-      $.at_rule_parenthesized,
+      repeat1(choice(
+        alias($._style_range_value, $.at_rule_value),
+        $.at_rule_url,
+        $.string_value,
+        $.general_enclosed_query,
+        $.at_rule_parenthesized,
+        $.at_rule_bracketed,
+        $.at_rule_braced,
+        $.at_rule_delimiter,
+        alias($._at_rule_slash, $.at_rule_value),
+      )),
     ),
+
+    _style_range_value: $ => choice($._custom_property_component, token(seq(choice(
+      seq(optional(/[#@]/), genericName),
+      seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
+      /[^\s(){}\[\];,:"'\\/<>=]/,
+    ), repeat('//')))),
 
     _style_parenthesized_query: $ => seq('(', choice($._style_condition, repeat($._at_rule_nested_component)), ')'),
 

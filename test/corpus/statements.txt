@@ -1007,16 +1007,17 @@ Mixed container conditions preserve style queries
           (at_rule_delimiter)
           (at_rule_value))))
     (block))
-  (container_statement
-    (binary_query
-      (unary_query
-        (style_query
-          (style_feature
-            (feature_name))))
-      (at_rule_parenthesized
-        (at_rule_value)
-        (at_rule_value)
-        (at_rule_value)))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value))
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_value)
+      (at_rule_value))
     (block))
   (container_statement
     (binary_query
