@@ -59,7 +59,7 @@ module.exports = grammar({
     [$._container_feature_query, $._style_range_value],
     [$.style_feature, $._style_range_value],
     [$._container_in_parens, $._at_rule_component],
-    [$._style_unary_query, $._at_rule_component],
+    [$._style_unary_query, $._at_rule_component, $._style_range_operand],
     [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
     [$._selector, $.declaration],
@@ -531,6 +531,7 @@ module.exports = grammar({
       prec.dynamic(1, alias($._custom_property_component, $.feature_name)),
       repeat1(choice(
         alias($._style_range_value, $.at_rule_value),
+        alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
         $.at_rule_url,
         $.string_value,
         $.general_enclosed_query,

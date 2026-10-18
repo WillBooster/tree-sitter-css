@@ -3018,6 +3018,32 @@
                 "value": "at_rule_value"
               },
               {
+                "type": "ALIAS",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_style_keyword"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_query_not"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_query_and"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_query_or"
+                    }
+                  ]
+                },
+                "named": true,
+                "value": "at_rule_value"
+              },
+              {
                 "type": "SYMBOL",
                 "name": "at_rule_url"
               },
@@ -4158,7 +4184,8 @@
     ],
     [
       "_style_unary_query",
-      "_at_rule_component"
+      "_at_rule_component",
+      "_style_range_operand"
     ],
     [
       "_container_unary_query",

@@ -325,3 +325,33 @@ test('style feature names are identifiers including ordinary supported propertie
     tree.delete();
   }
 });
+
+test('keyword-spelled range values retain range and sibling style references', () => {
+  for (const name of ['', 'card ']) {
+    for (const value of [
+      'and',
+      'or',
+      'not',
+      'style',
+      'AND',
+      'OR',
+      'NOT',
+      'STYLE',
+      String.raw`\61nd`,
+      String.raw`o\72`,
+      String.raw`\6e ot`,
+      String.raw`st\79le`,
+    ]) {
+      const source = `@container ${name}style((--size = ${value}) and (--theme: dark)) {} a { color: red; }`;
+      const tree = parser.parse(source);
+      if (!tree) throw new Error('The parser returned no tree');
+      expect(tree.rootNode.hasError, source).toBe(false);
+      expect(
+        tree.rootNode.descendantsOfType('feature_name').map((node) => node.text),
+        source
+      ).toEqual(['--size', '--theme']);
+      expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
+      tree.delete();
+    }
+  }
+});
