@@ -122,8 +122,7 @@ module.exports = grammar({
       alias($._at_rule_slash, $.at_rule_value),
       $.at_rule_url,
       $.string_value,
-      ',',
-      ':',
+      $.at_rule_delimiter,
       $.at_rule_parenthesized,
       $.at_rule_bracketed,
     ),
@@ -131,8 +130,10 @@ module.exports = grammar({
     _at_rule_nested_component: $ => choice(
       $._at_rule_component,
       $.at_rule_braced,
-      ';',
+      alias(';', $.at_rule_delimiter),
     ),
+
+    at_rule_delimiter: _ => choice(',', ':'),
 
     at_rule_parenthesized: $ => seq('(', repeat($._at_rule_nested_component), ')'),
 

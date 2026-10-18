@@ -432,12 +432,8 @@
           "name": "string_value"
         },
         {
-          "type": "STRING",
-          "value": ","
-        },
-        {
-          "type": "STRING",
-          "value": ":"
+          "type": "SYMBOL",
+          "name": "at_rule_delimiter"
         },
         {
           "type": "SYMBOL",
@@ -461,8 +457,26 @@
           "name": "at_rule_braced"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": ";"
+          },
+          "named": true,
+          "value": "at_rule_delimiter"
+        }
+      ]
+    },
+    "at_rule_delimiter": {
+      "type": "CHOICE",
+      "members": [
+        {
           "type": "STRING",
-          "value": ";"
+          "value": ","
+        },
+        {
+          "type": "STRING",
+          "value": ":"
         }
       ]
     },

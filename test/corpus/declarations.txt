@@ -334,6 +334,7 @@ PostCSS
             (at_keyword)
             (at_rule_value)
             (at_rule_value)
+            (at_rule_delimiter)
             (at_rule_value)
             (at_rule_value)
             (at_rule_bracketed

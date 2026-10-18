@@ -234,6 +234,7 @@ Generic at-rule component preludes
     (at_rule_value)
     (at_rule_parenthesized
       (at_rule_value)
+      (at_rule_delimiter)
       (at_rule_value)
       (at_rule_parenthesized
         (at_rule_value)
@@ -255,9 +256,11 @@ Generic at-rule component preludes
             (string_content)))
         (at_rule_braced
           (at_rule_value)
+          (at_rule_delimiter)
           (at_rule_value)
           (at_rule_parenthesized
             (at_rule_value)
+            (at_rule_delimiter)
             (at_rule_value)))))
     (block
       (declaration
@@ -335,10 +338,12 @@ a {
   (at_rule
     (at_keyword)
     (at_rule_value)
+    (at_rule_delimiter)
     (at_rule_value))
   (at_rule
     (at_keyword)
     (at_rule_value)
+    (at_rule_delimiter)
     (at_rule_value))
   (rule_set
     (selectors
@@ -458,6 +463,7 @@ URL token boundaries preserve following declarations
         (at_keyword)
         (at_rule_value)
         (at_rule_value)
+        (at_rule_delimiter)
         (at_rule_url))
       (declaration
         (property_name)
@@ -466,6 +472,7 @@ URL token boundaries preserve following declarations
         (at_keyword)
         (at_rule_parenthesized
           (at_rule_value)
+          (at_rule_delimiter)
           (at_rule_url))
         (at_rule_bracketed
           (at_rule_value)
@@ -473,6 +480,7 @@ URL token boundaries preserve following declarations
           (at_rule_value)
           (at_rule_value)
           (at_rule_value)
+          (at_rule_delimiter)
           (at_rule_url))))))
 
 ========================================
