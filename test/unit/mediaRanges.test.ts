@@ -75,3 +75,32 @@ test('media range dimensions retain signed exponents as one numeric operand', ()
     tree.delete();
   }
 });
+
+test('media identifier operands preserve the left feature name and its highlight', () => {
+  for (const [feature, operand, operator] of [
+    ['orientation', 'landscape', '='],
+    ['a', 'b', '<'],
+    [String.raw`\6f rientation`, String.raw`\6c andscape`, '='],
+  ]) {
+    const source = `@media (${feature} ${operator} ${operand}) {} b { display: block; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError, source).toBe(false);
+      const ranges = tree.rootNode.descendantsOfType('range_query');
+      expect(ranges).toHaveLength(1);
+      expect(ranges[0]?.namedChildren.map((node) => [node.type, node.text])).toEqual([
+        ['feature_name', feature],
+        ['plain_value', operand],
+      ]);
+      expect(
+        query
+          .captures(ranges[0]!)
+          .filter(({ name }) => name === 'property')
+          .map(({ node }) => node.text)
+      ).toEqual([feature]);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('b { display: block; }');
+    } finally {
+      tree.delete();
+    }
+  }
+});
