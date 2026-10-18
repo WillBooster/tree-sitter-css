@@ -4019,7 +4019,7 @@
                     "type": "ALIAS",
                     "content": {
                       "type": "PATTERN",
-                      "value": "[^\\\\'\\n]+"
+                      "value": "[^\\\\'\\n\\r\\f]+"
                     },
                     "named": true,
                     "value": "string_content"
@@ -4027,6 +4027,15 @@
                   {
                     "type": "SYMBOL",
                     "name": "escape_sequence"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_string_continuation"
+                    },
+                    "named": true,
+                    "value": "escape_sequence"
                   }
                 ]
               }
@@ -4053,7 +4062,7 @@
                     "type": "ALIAS",
                     "content": {
                       "type": "PATTERN",
-                      "value": "[^\\\\\"\\n]+"
+                      "value": "[^\\\\\"\\n\\r\\f]+"
                     },
                     "named": true,
                     "value": "string_content"
@@ -4061,6 +4070,15 @@
                   {
                     "type": "SYMBOL",
                     "name": "escape_sequence"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_string_continuation"
+                    },
+                    "named": true,
+                    "value": "escape_sequence"
                   }
                 ]
               }
@@ -4072,6 +4090,22 @@
           ]
         }
       ]
+    },
+    "_string_continuation": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "\\"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\r\\n?|[\\n\\f]"
+          }
+        ]
+      }
     },
     "escape_sequence": {
       "type": "TOKEN",
@@ -4091,7 +4125,7 @@
               },
               {
                 "type": "PATTERN",
-                "value": "[^0-9a-fA-F\\n\\r]"
+                "value": "[^0-9a-fA-F\\n\\r\\f]"
               }
             ]
           }
