@@ -877,9 +877,9 @@ a { color: red; }
     (block))
   (container_statement
     (style_query
-      (at_rule_value)
-      (at_rule_value)
-      (at_rule_value))
+      (style_feature
+        (feature_name)
+        (at_rule_value)))
     (block))
   (container_statement
     (style_query
@@ -1033,9 +1033,9 @@ Mixed container conditions preserve style queries
     (style_query
       (unary_query
         (parenthesized_query
-          (at_rule_value)
-          (at_rule_value)
-          (at_rule_value))))
+          (style_feature
+            (feature_name)
+            (at_rule_value)))))
     (block))
   (container_statement
     (style_query

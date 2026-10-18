@@ -136,3 +136,66 @@ test('style features remain queryable beside general-enclosed operands', () => {
     tree.delete();
   }
 });
+
+test('style ranges expose only custom-property operands as references', () => {
+  const conditions = [
+    ['--size > 10px', ['--size']],
+    ['10px <= --size < 20px', ['--size']],
+    ['20px >= --size > 10px', ['--size']],
+    ['--minimum < --size < --maximum', ['--minimum', '--size', '--maximum']],
+    ['--size = calc(10px + 2px)', ['--size']],
+    [String.raw`--s\69ze > 10px`, [String.raw`--s\69ze`]],
+    [String.raw`\2d \2d size > 10px`, [String.raw`\2d \2d size`]],
+    [String.raw`-\00002dface > 10px`, [String.raw`-\00002dface`]],
+    [String.raw`-\2dface > 10px`, []],
+    ['width > 10px', []],
+  ] as const;
+  for (const [condition, names] of conditions) {
+    const source = `@container style(${condition}) {} a { color: red; }`;
+    const tree = parser.parse(source);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, source).toBe(false);
+    expect(
+      tree.rootNode.descendantsOfType('feature_name').map((node) => node.text),
+      source
+    ).toEqual(names);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name, node }) => name === 'property' && node.type === 'feature_name')
+        .map(({ node }) => node.text),
+      source
+    ).toEqual(names);
+    expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
+    tree.delete();
+  }
+});
+
+test('escaped container query keywords retain source spelling and property captures', () => {
+  for (const source of [
+    String.raw`@container st\79le(--theme: dark) {} a { color: red; }`,
+    String.raw`@\63ontainer \73 tyle((--theme: dark) \61nd (--accent: red)) {} a { color: red; }`,
+    String.raw`@\43ONTAINER \53TYLE(\6e ot (--theme: dark)) {} a { color: red; }`,
+    String.raw`@container \style((--theme: dark) o\72 (--accent: red)) {} a { color: red; }`,
+  ]) {
+    const tree = parser.parse(source);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, source).toBe(false);
+    const features = tree.rootNode.descendantsOfType('feature_name').map((node) => node.text);
+    expect(features, source).toEqual(source.includes('--accent') ? ['--theme', '--accent'] : ['--theme']);
+    const functions = query.captures(tree.rootNode).filter(({ name }) => name === 'function');
+    expect(functions, source).toHaveLength(1);
+    expect(functions[0]!.node.text, source).toContain('\\');
+    expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
+    tree.delete();
+  }
+  for (const source of [
+    String.raw`@container sty\6ce(--theme: dark) {}`,
+    String.raw`@con\74ainer style(--theme: dark) {}`,
+  ]) {
+    const tree = parser.parse(source);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.descendantsOfType('style_query'), source).toHaveLength(0);
+    tree.delete();
+  }
+});

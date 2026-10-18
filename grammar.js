@@ -9,7 +9,8 @@
 // @ts-check
 
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
-const genericName = repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape));
+const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
+const genericName = repeat1(genericNameCharacter);
 
 const unquotedUrl = seq(
   /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
@@ -48,6 +49,7 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.at_rule_value, $._style_range_operand],
     [$.container_statement, $._at_rule_component],
     [$._container_query, $._at_rule_component],
     [$._container_feature_query, $._at_rule_component],
@@ -132,15 +134,15 @@ module.exports = grammar({
       $.block,
     ),
 
-    _container_keyword: _ => token(/@[cC][oO][nN][tT][aA][iI][nN][eE][rR]/),
+    _container_keyword: _ => cssKeyword('@container'),
 
-    _style_keyword: _ => token(/[sS][tT][yY][lL][eE]/),
+    _style_keyword: _ => cssKeyword('style'),
 
-    _query_and: _ => token(/[aA][nN][dD]/),
+    _query_and: _ => cssKeyword('and'),
 
-    _query_or: _ => token(/[oO][rR]/),
+    _query_or: _ => cssKeyword('or'),
 
-    _query_not: _ => token(/[nN][oO][tT]/),
+    _query_not: _ => cssKeyword('not'),
 
     container_statement: $ => prec.dynamic(1, seq(
       alias($._container_keyword, '@container'),
@@ -182,11 +184,19 @@ module.exports = grammar({
 
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
 
-    at_rule_value: _ => token(seq(choice(
+    _custom_property_component: _ => token(seq(
+      /(?:-|\\(?:-|0{0,4}2[dD](?:[ \t\n\f]|\r\n?)?))/,
+      choice(
+        seq(/(?:-|\\-|\\0{4}2[dD](?:[ \t\n\f]|\r\n?)?|\\0{0,3}2[dD](?:[ \t\n\f]|\r\n?))/, genericName),
+        seq(/\\0{0,3}2[dD]/, choice(/[-g-zG-Z_\u0080-\u{10FFFF}]/u, cssEscape), repeat(genericNameCharacter)),
+      ),
+    )),
+
+    at_rule_value: $ => choice($._custom_property_component, token(seq(choice(
       seq(optional(/[#@]/), genericName),
       seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
       /[^\s(){}\[\];,:"'\\/]/,
-    ), repeat('//'))),
+    ), repeat('//')))),
 
     at_rule_url: _ => token(choice(
       /\/\/[^\s(){}\[\];,"'\\]+/,
@@ -490,10 +500,22 @@ module.exports = grammar({
       alias($._style_unary_query, $.unary_query),
     ),
 
-    style_feature: $ => prec.dynamic(1, seq(
-      alias($.at_rule_value, $.feature_name),
-      optional(seq(':', repeat($._at_rule_nested_component))),
+    style_feature: $ => prec.dynamic(1, choice(
+      seq(
+        alias($.at_rule_value, $.feature_name),
+        optional(seq(':', repeat($._at_rule_nested_component))),
+      ),
+      seq($._style_range_operand, choice('<', '<=', '>', '>=', '='), $._style_range_operand),
+      seq($._style_range_operand, choice('<', '<='), $._style_range_operand, choice('<', '<='), $._style_range_operand),
+      seq($._style_range_operand, choice('>', '>='), $._style_range_operand, choice('>', '>='), $._style_range_operand),
     )),
+
+    _style_range_operand: $ => choice(
+      prec.dynamic(1, alias($._custom_property_component, $.feature_name)),
+      $.at_rule_value,
+      $.general_enclosed_query,
+      $.at_rule_parenthesized,
+    ),
 
     _style_parenthesized_query: $ => seq('(', choice($._style_condition, repeat($._at_rule_nested_component)), ')'),
 
@@ -645,6 +667,36 @@ module.exports = grammar({
     )),
   },
 });
+
+function cssKeyword(word) {
+  return token(new RegExp(cssKeywordPattern(word)));
+}
+
+function cssKeywordPattern(word, escapedOnly = false) {
+  if (!word) return '';
+  const character = word[0];
+  const rest = word.slice(1);
+  const suffix = cssKeywordPattern(rest);
+  if (character === '@') return `@${suffix}`;
+  const letters = `[${character}${character.toUpperCase()}]`;
+  const codes = [character, character.toUpperCase()].map(value =>
+    value.charCodeAt(0).toString(16).replace(/[a-f]/g, digit => `[${digit}${digit.toUpperCase()}]`),
+  );
+  const code = `(?:${codes.join('|')})`;
+  const whitespace = String.raw`(?:[ \t\n\f]|\r\n?)`;
+  const alternatives = escapedOnly ? [] : [`${letters}${suffix}`];
+  if (!/[a-f]/.test(character)) alternatives.push(String.raw`\\${letters}${suffix}`);
+  if (rest && /[a-f]/.test(rest[0])) {
+    alternatives.push(
+      String.raw`\\0{4}${code}${whitespace}?${suffix}`,
+      String.raw`\\0{0,3}${code}${whitespace}${suffix}`,
+      String.raw`\\0{0,3}${code}${cssKeywordPattern(rest, true)}`,
+    );
+  } else {
+    alternatives.push(String.raw`\\0{0,4}${code}${whitespace}?${suffix}`);
+  }
+  return `(?:${alternatives.join('|')})`;
+}
 
 /** @param {RuleOrLiteral} prefix */
 function escapedIdentifier(prefix) {

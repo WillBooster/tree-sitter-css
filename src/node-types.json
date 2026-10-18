@@ -339,6 +339,11 @@
     }
   },
   {
+    "type": "at_rule_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "attribute_name",
     "named": true,
     "fields": {},
@@ -910,6 +915,11 @@
     "fields": {}
   },
   {
+    "type": "container_name",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "container_statement",
     "named": true,
     "fields": {},
@@ -1081,6 +1091,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "feature_name",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "feature_query",
@@ -2173,6 +2188,10 @@
           "named": true
         },
         {
+          "type": "general_enclosed_query",
+          "named": true
+        },
+        {
           "type": "string_value",
           "named": true
         }
@@ -2446,11 +2465,23 @@
     "named": false
   },
   {
+    "type": "<",
+    "named": false
+  },
+  {
+    "type": "<=",
+    "named": false
+  },
+  {
     "type": "=",
     "named": false
   },
   {
     "type": ">",
+    "named": false
+  },
+  {
+    "type": ">=",
     "named": false
   },
   {
@@ -2506,10 +2537,6 @@
     "named": true
   },
   {
-    "type": "at_rule_value",
-    "named": true
-  },
-  {
     "type": "attribute_flag",
     "named": true
   },
@@ -2519,15 +2546,7 @@
     "extra": true
   },
   {
-    "type": "container_name",
-    "named": true
-  },
-  {
     "type": "escape_sequence",
-    "named": true
-  },
-  {
-    "type": "feature_name",
     "named": true
   },
   {
