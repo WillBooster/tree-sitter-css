@@ -1,0 +1,163 @@
+==============================
+Media feature range comparisons
+==============================
+
+@import "compact.css" (width < 600px);
+@import url("wide.css") screen and (width >= 30em);
+@media (width < 600px) {}
+@media (600px >= width) {}
+@media (400px <= width < 700px) {}
+@media (700px > width >= 400px) {}
+@media (aspect-ratio = 16 / 9) {}
+@media (16/9 < aspect-ratio <= 2/1) {}
+@media (resolution > 1.5dppx) {}
+@media (10px < w\69 dth < 20px) {}
+@media (color >= 8) {}
+@media (width > -1px) {}
+@media (width <= calc(100vw - 1px)) {}
+@media screen and ((width >= 30em) or (height < 20em)) {}
+@media (width >= 10px), (height > 20px) { a { color: red; } }
+a { display: block; }
+
+---
+
+(stylesheet
+  (import_statement
+    (string_value
+      (string_content))
+    (range_query
+      (feature_name)
+      (integer_value
+        (unit))))
+  (import_statement
+    (call_expression
+      (function_name)
+      (arguments
+        (string_value
+          (string_content))))
+    (binary_query
+      (keyword_query)
+      (range_query
+        (feature_name)
+        (integer_value
+          (unit)))))
+  (media_statement
+    (range_query
+      (feature_name)
+      (integer_value
+        (unit)))
+    (block))
+  (media_statement
+    (range_query
+      (integer_value
+        (unit))
+      (feature_name))
+    (block))
+  (media_statement
+    (range_query
+      (integer_value
+        (unit))
+      (feature_name)
+      (integer_value
+        (unit)))
+    (block))
+  (media_statement
+    (range_query
+      (integer_value
+        (unit))
+      (feature_name)
+      (integer_value
+        (unit)))
+    (block))
+  (media_statement
+    (range_query
+      (feature_name)
+      (ratio_value
+        (integer_value)
+        (integer_value)))
+    (block))
+  (media_statement
+    (range_query
+      (ratio_value
+        (integer_value)
+        (integer_value))
+      (feature_name)
+      (ratio_value
+        (integer_value)
+        (integer_value)))
+    (block))
+  (media_statement
+    (range_query
+      (feature_name)
+      (float_value
+        (unit)))
+    (block))
+  (media_statement
+    (range_query
+      (integer_value
+        (unit))
+      (feature_name)
+      (integer_value
+        (unit)))
+    (block))
+  (media_statement
+    (range_query
+      (feature_name)
+      (integer_value))
+    (block))
+  (media_statement
+    (range_query
+      (feature_name)
+      (integer_value
+        (unit)))
+    (block))
+  (media_statement
+    (range_query
+      (feature_name)
+      (call_expression
+        (function_name)
+        (arguments
+          (binary_expression
+            (integer_value
+              (unit))
+            (integer_value
+              (unit))))))
+    (block))
+  (media_statement
+    (binary_query
+      (keyword_query)
+      (parenthesized_query
+        (binary_query
+          (range_query
+            (feature_name)
+            (integer_value
+              (unit)))
+          (range_query
+            (feature_name)
+            (integer_value
+              (unit))))))
+    (block))
+  (media_statement
+    (range_query
+      (feature_name)
+      (integer_value
+        (unit)))
+    (range_query
+      (feature_name)
+      (integer_value
+        (unit)))
+    (block
+      (rule_set
+        (selectors
+          (tag_name))
+        (block
+          (declaration
+            (property_name)
+            (plain_value))))))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name)
+        (plain_value)))))
