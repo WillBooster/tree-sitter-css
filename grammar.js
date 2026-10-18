@@ -431,9 +431,9 @@ module.exports = grammar({
     ),
 
     ratio_value: $ => seq(
-      choice($.integer_value, $.float_value),
+      choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
       '/',
-      choice($.integer_value, $.float_value),
+      choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
     ),
 
     parenthesized_query: $ => seq(
@@ -510,26 +510,24 @@ module.exports = grammar({
       ),
     )),
 
-    integer_value: $ => seq(
-      token(seq(
-        optional(choice('+', '-')),
-        /\d+/,
-      )),
-      optional($.unit),
-    ),
+    integer_value: $ => seq($._integer, optional($.unit)),
 
-    float_value: $ => seq(
-      token(seq(
-        optional(choice('+', '-')),
-        /\d*/,
-        choice(
-          seq('.', /\d+/),
-          seq(/[eE]/, optional('-'), /\d+/),
-          seq('.', /\d+/, /[eE]/, optional('-'), /\d+/),
-        ),
-      )),
-      optional($.unit),
-    ),
+    float_value: $ => seq($._float, optional($.unit)),
+
+    _integer: _ => token(seq(
+      optional(choice('+', '-')),
+      /\d+/,
+    )),
+
+    _float: _ => token(seq(
+      optional(choice('+', '-')),
+      /\d*/,
+      choice(
+        seq('.', /\d+/),
+        seq(/[eE]/, optional('-'), /\d+/),
+        seq('.', /\d+/, /[eE]/, optional('-'), /\d+/),
+      ),
+    )),
 
     unit: _ => token.immediate(/[a-zA-Z%]+/),
 

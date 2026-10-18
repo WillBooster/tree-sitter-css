@@ -37,3 +37,31 @@ test('media range queries retain feature highlights and following rules', () => 
   expect(tree.rootNode.lastNamedChild?.text).toBe('b { display: block; }');
   tree.delete();
 });
+
+test('media ratios use unitless numbers while dimension values retain units', () => {
+  for (const value of ['16/9', '1.5/.5', '1e2/2.5e1']) {
+    const tree = parser.parse(`@media (aspect-ratio >= ${value}) { a { width: 16px; opacity: .5; } }`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, value).toBe(false);
+    const ratios = tree.rootNode.descendantsOfType('ratio_value');
+    expect(ratios).toHaveLength(1);
+    expect(ratios[0]?.text).toBe(value);
+    expect(ratios[0]?.namedChildren.map((node) => node.type)).toEqual(
+      value === '16/9' ? ['integer_value', 'integer_value'] : ['float_value', 'float_value']
+    );
+    expect(tree.rootNode.descendantsOfType('unit').map((node) => node.text)).toEqual(['px']);
+    expect(
+      query
+        .captures(ratios[0]!)
+        .filter(({ name }) => name === 'number')
+        .map(({ node }) => node.text)
+    ).toEqual(value.split('/'));
+    tree.delete();
+  }
+  for (const value of ['16px/9', '16/9em', '1.5%/.5', '1e2/2.5e1px']) {
+    const tree = parser.parse(`@media (aspect-ratio >= ${value}) {}`);
+    if (!tree) throw new Error('The parser returned no tree');
+    expect(tree.rootNode.hasError, value).toBe(true);
+    tree.delete();
+  }
+});

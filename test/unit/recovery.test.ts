@@ -9,9 +9,15 @@ test('preserves empty-value recovery and the following declaration', async () =>
   parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
   const tree = parser.parse('a { --x: ; color: red; }');
   try {
-    expect(tree?.rootNode.toString()).toBe(
-      '(stylesheet (rule_set (selectors (tag_name)) (block (declaration (property_name) (integer_value (MISSING "integer_value_token1"))) (declaration (property_name) (plain_value)))))'
-    );
+    expect(tree?.rootNode.hasError).toBe(true);
+    const declarations = tree?.rootNode.descendantsOfType('declaration');
+    expect(declarations).toHaveLength(2);
+    const emptyValue = declarations?.[0]?.lastNamedChild;
+    expect(emptyValue?.type).toBe('integer_value');
+    expect(emptyValue?.text).toBe('');
+    expect(emptyValue?.hasError).toBe(true);
+    expect(declarations?.[1]?.text).toBe('color: red;');
+    expect(declarations?.[1]?.hasError).toBe(false);
   } finally {
     tree?.delete();
     parser.delete();
