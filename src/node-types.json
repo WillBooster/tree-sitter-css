@@ -613,6 +613,10 @@
           "named": true
         },
         {
+          "type": "range_query",
+          "named": true
+        },
+        {
           "type": "selector_query",
           "named": true
         },
@@ -1401,6 +1405,10 @@
           "named": true
         },
         {
+          "type": "range_query",
+          "named": true
+        },
+        {
           "type": "selector_query",
           "named": true
         },
@@ -1529,6 +1537,10 @@
         },
         {
           "type": "parenthesized_query",
+          "named": true
+        },
+        {
+          "type": "range_query",
           "named": true
         },
         {
@@ -1686,6 +1698,10 @@
         },
         {
           "type": "parenthesized_query",
+          "named": true
+        },
+        {
+          "type": "range_query",
           "named": true
         },
         {
@@ -1907,6 +1923,60 @@
         },
         {
           "type": "universal_selector",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "range_query",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "feature_name",
+          "named": true
+        },
+        {
+          "type": "float_value",
+          "named": true
+        },
+        {
+          "type": "integer_value",
+          "named": true
+        },
+        {
+          "type": "plain_value",
+          "named": true
+        },
+        {
+          "type": "ratio_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ratio_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "float_value",
+          "named": true
+        },
+        {
+          "type": "integer_value",
           "named": true
         }
       ]
@@ -2378,6 +2448,10 @@
         },
         {
           "type": "parenthesized_query",
+          "named": true
+        },
+        {
+          "type": "range_query",
           "named": true
         },
         {
