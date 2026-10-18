@@ -459,7 +459,7 @@ module.exports = grammar({
     )),
 
     general_enclosed_query: $ => prec.dynamic(2, seq(
-      $.at_rule_value,
+      choice($.at_rule_value, alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value)),
       alias($._container_function_arguments, $.at_rule_parenthesized),
     )),
 
@@ -477,11 +477,11 @@ module.exports = grammar({
 
     _container_parenthesized_query: $ => seq('(', $._container_query, ')'),
 
-    style_query: $ => seq(
+    style_query: $ => prec(1, seq(
       alias($._style_keyword, 'style'), token.immediate('('),
       choice($._style_condition, repeat($._at_rule_nested_component)),
       ')',
-    ),
+    )),
 
     _style_condition: $ => choice(
       $.style_feature,

@@ -114,6 +114,11 @@ test('style features remain queryable beside general-enclosed operands', () => {
     'unknown(foo) or (--theme: dark)',
     '(not unknown(foo)) and (--theme: dark)',
     '(--theme: dark) and (unknown(foo) or unknown(bar))',
+    ...['and', 'or', 'not', 'style', 'AND', 'OR', 'NOT', 'STYLE'].flatMap((name) => [
+      `${name}(foo) or (--theme: dark)`,
+      `(--theme: dark) and ${name}(foo)`,
+      `(not ${name}(foo)) and (--theme: dark)`,
+    ]),
   ]) {
     const source = `@container style(${condition}) {} a { color: red; }`;
     const tree = parser.parse(source);
