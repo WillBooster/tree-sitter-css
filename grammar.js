@@ -8,6 +8,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const queryOpeningParenthesis = choice('(', token.immediate('('));
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
 const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
 const genericName = repeat1(genericNameCharacter);
@@ -49,6 +50,27 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$._container_function_arguments, $._style_parenthesized_query],
+    [$.at_rule_parenthesized, $._container_function_arguments, $._style_parenthesized_query],
+    [$._container_feature_query, $.style_feature],
+    [$._at_rule_component, $.general_enclosed_query, $._style_range_operand, $._style_unary_query],
+    [$._container_feature_query, $.style_feature, $._style_range_value],
+    [$._container_in_parens, $._style_in_parens],
+    [$._container_in_parens, $._style_range_operand, $._style_in_parens],
+    [$._at_rule_component, $._container_in_parens, $._style_range_operand],
+    [$._at_rule_component, $.general_enclosed_query, $._container_unary_query, $._style_range_operand, $._style_unary_query],
+    [$._at_rule_component, $._container_unary_query, $._style_range_operand, $._style_unary_query],
+    [$._at_rule_component, $.general_enclosed_query, $.style_query, $._style_range_operand],
+    [$._container_function_arguments, $.style_query],
+    [$.at_rule_parenthesized, $._container_function_arguments, $.style_query],
+    [$._at_rule_component, $.general_enclosed_query, $.style_query],
+    [$.container_statement, $._at_rule_component, $.general_enclosed_query, $.style_query],
+    [$.at_rule_parenthesized, $._container_function_arguments],
+    [$.general_enclosed_query],
+    [$.general_enclosed_query, $._style_range_operand],
+    [$.at_rule_value],
+    [$.general_enclosed_query, $._at_rule_component],
+    [$.general_enclosed_query, $._at_rule_component, $._style_range_operand],
     [$.at_rule_value, $._style_range_operand],
     [$._style_range_operand, $._query_identifier],
     [$._at_rule_component, $._style_range_operand],
@@ -60,6 +82,7 @@ module.exports = grammar({
     [$.style_feature, $._style_range_value],
     [$._container_in_parens, $._at_rule_component],
     [$._style_unary_query, $._at_rule_component, $._style_range_operand],
+    [$._container_unary_query, $.general_enclosed_query, $._at_rule_component],
     [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
     [$._selector, $.declaration],
@@ -184,7 +207,7 @@ module.exports = grammar({
 
     at_rule_delimiter: _ => choice(',', ':'),
 
-    at_rule_parenthesized: $ => seq('(', repeat($._at_rule_nested_component), ')'),
+    at_rule_parenthesized: $ => seq(queryOpeningParenthesis, repeat($._at_rule_nested_component), ')'),
 
     at_rule_bracketed: $ => seq('[', repeat($._at_rule_nested_component), ']'),
 
@@ -474,7 +497,7 @@ module.exports = grammar({
     ),
 
     _container_feature_query: $ => prec.dynamic(1, seq(
-      '(', alias($._query_identifier, $.feature_name), ':',
+      queryOpeningParenthesis, alias($._query_identifier, $.feature_name), ':',
       repeat($._at_rule_nested_component), ')',
     )),
 
@@ -501,9 +524,9 @@ module.exports = grammar({
 
     _container_unary_query: $ => seq(alias($._query_not, 'not'), $._container_in_parens),
 
-    _container_parenthesized_query: $ => seq('(', $._container_query, ')'),
+    _container_parenthesized_query: $ => seq(queryOpeningParenthesis, $._container_query, ')'),
 
-    style_query: $ => prec(1, seq(
+    style_query: $ => prec.dynamic(3, seq(
       alias($._style_keyword, 'style'), token.immediate('('),
       choice($._style_condition, repeat($._at_rule_nested_component)),
       ')',
@@ -554,7 +577,7 @@ module.exports = grammar({
       /[^\s(){}\[\];,:"'\\/<>=]/,
     ), repeat('//')))),
 
-    _style_parenthesized_query: $ => seq('(', choice($._style_condition, repeat($._at_rule_nested_component)), ')'),
+    _style_parenthesized_query: $ => seq(queryOpeningParenthesis, choice($._style_condition, repeat($._at_rule_nested_component)), ')'),
 
     _style_in_parens: $ => choice(
       alias($._style_parenthesized_query, $.parenthesized_query),

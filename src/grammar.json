@@ -694,8 +694,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "("
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "("
+              }
+            }
+          ]
         },
         {
           "type": "REPEAT",
@@ -2510,8 +2522,20 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "("
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "("
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "("
+                }
+              }
+            ]
           },
           {
             "type": "ALIAS",
@@ -2718,8 +2742,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "("
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "("
+              }
+            }
+          ]
         },
         {
           "type": "SYMBOL",
@@ -2732,8 +2768,8 @@
       ]
     },
     "style_query": {
-      "type": "PREC",
-      "value": 1,
+      "type": "PREC_DYNAMIC",
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -3273,8 +3309,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "("
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "("
+              }
+            }
+          ]
         },
         {
           "type": "CHOICE",
@@ -4143,6 +4191,106 @@
   ],
   "conflicts": [
     [
+      "_container_function_arguments",
+      "_style_parenthesized_query"
+    ],
+    [
+      "at_rule_parenthesized",
+      "_container_function_arguments",
+      "_style_parenthesized_query"
+    ],
+    [
+      "_container_feature_query",
+      "style_feature"
+    ],
+    [
+      "_at_rule_component",
+      "general_enclosed_query",
+      "_style_range_operand",
+      "_style_unary_query"
+    ],
+    [
+      "_container_feature_query",
+      "style_feature",
+      "_style_range_value"
+    ],
+    [
+      "_container_in_parens",
+      "_style_in_parens"
+    ],
+    [
+      "_container_in_parens",
+      "_style_range_operand",
+      "_style_in_parens"
+    ],
+    [
+      "_at_rule_component",
+      "_container_in_parens",
+      "_style_range_operand"
+    ],
+    [
+      "_at_rule_component",
+      "general_enclosed_query",
+      "_container_unary_query",
+      "_style_range_operand",
+      "_style_unary_query"
+    ],
+    [
+      "_at_rule_component",
+      "_container_unary_query",
+      "_style_range_operand",
+      "_style_unary_query"
+    ],
+    [
+      "_at_rule_component",
+      "general_enclosed_query",
+      "style_query",
+      "_style_range_operand"
+    ],
+    [
+      "_container_function_arguments",
+      "style_query"
+    ],
+    [
+      "at_rule_parenthesized",
+      "_container_function_arguments",
+      "style_query"
+    ],
+    [
+      "_at_rule_component",
+      "general_enclosed_query",
+      "style_query"
+    ],
+    [
+      "container_statement",
+      "_at_rule_component",
+      "general_enclosed_query",
+      "style_query"
+    ],
+    [
+      "at_rule_parenthesized",
+      "_container_function_arguments"
+    ],
+    [
+      "general_enclosed_query"
+    ],
+    [
+      "general_enclosed_query",
+      "_style_range_operand"
+    ],
+    [
+      "at_rule_value"
+    ],
+    [
+      "general_enclosed_query",
+      "_at_rule_component"
+    ],
+    [
+      "general_enclosed_query",
+      "_at_rule_component",
+      "_style_range_operand"
+    ],
+    [
       "at_rule_value",
       "_style_range_operand"
     ],
@@ -4186,6 +4334,11 @@
       "_style_unary_query",
       "_at_rule_component",
       "_style_range_operand"
+    ],
+    [
+      "_container_unary_query",
+      "general_enclosed_query",
+      "_at_rule_component"
     ],
     [
       "_container_unary_query",

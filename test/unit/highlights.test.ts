@@ -232,6 +232,11 @@ test('container boolean chains require parentheses when mixing operators', () =>
     '(width > 1px) and style(--a: 1) or (height > 2px)',
     '(width > 1px) or style(--a: 1) and (height > 2px)',
     'not style(--a: 1) and (height > 2px)',
+    'style(--a: 1) and not style(--b)',
+    'style(--a: 1) or not (height > 2px)',
+    'style(--a: 1) and (width > 1px) or (height > 2px)',
+    'style(--a: 1) or (width > 1px) and (height > 2px)',
+    'style(--a: 1) foo',
   ]) {
     const tree = parser.parse(`@container ${condition} {} a { color: red; }`);
     if (!tree) throw new Error('The parser returned no tree');
@@ -352,6 +357,30 @@ test('keyword-spelled range values retain range and sibling style references', (
       ).toEqual(['--size', '--theme']);
       expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
       tree.delete();
+    }
+  }
+});
+
+test('function-leading container ranges preserve adjacent style conditions', () => {
+  for (const value of ['calc(30em + 10px)', 'min(1px, 2px)', 'clamp(1px, 2px, 3px)', 'var(--size)', 'env(x)']) {
+    for (const condition of [
+      `(${value} < width) and style(--theme: dark)`,
+      `style(--theme: dark) and (${value} < width)`,
+      `(style(--theme: dark) or (${value} < width))`,
+      `((${value} < width)), card style(--theme: dark)`,
+    ]) {
+      for (const name of ['', 'card ']) {
+        const source = `@container ${name}${condition} {} a { color: red; }`;
+        const tree = parser.parse(source);
+        if (!tree) throw new Error('The parser returned no tree');
+        expect(tree.rootNode.hasError, source).toBe(false);
+        expect(
+          tree.rootNode.descendantsOfType('style_feature').map((node) => node.text),
+          source
+        ).toEqual(['--theme: dark']);
+        expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
+        tree.delete();
+      }
     }
   }
 });
