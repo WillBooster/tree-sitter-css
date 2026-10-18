@@ -595,3 +595,78 @@ Glued slashes and comment boundaries in preludes
       (declaration
         (property_name)
         (plain_value)))))
+========================================
+Hexadecimal escape terminators remain inside component names
+========================================
+
+@custom \61 url(a[b]) \000061url(a[b]);
+@custom .1\75 rl(a[b]) +1\75 rl(a[b]) -1.5\75 rl(a[b]);
+@custom \61
+url(a[b]);
+@custom \61  url(a[b);
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value)))
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value)))
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value)))
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_bracketed
+        (at_rule_value))))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_url)))
+
+========================================
+Escaped non-URL names require balanced components
+:error
+========================================
+
+@custom \61 url(a[b);
+
+---
+
+(stylesheet)
+
+========================================
+Escaped numeric units require balanced components
+:error
+========================================
+
+@custom .1\75 rl(a[b);
+
+---
+
+(stylesheet)

@@ -8,6 +8,9 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
+const genericName = repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape));
+
 module.exports = grammar({
   name: 'css',
 
@@ -138,8 +141,8 @@ module.exports = grammar({
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
 
     at_rule_value: _ => token(seq(choice(
-      seq(optional(/[#@]/), repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, /\\[^\n\r\f]/))),
-      /[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:[-\w\u0080-\u{10FFFF}]*|%)/u,
+      seq(optional(/[#@]/), genericName),
+      seq(/[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?/, optional(choice(genericName, '%'))),
       /[^\s(){}\[\];,:"'\\/]/,
     ), repeat('//'))),
 
@@ -153,7 +156,7 @@ module.exports = grammar({
         /[ \t\n\r\f]*/,
         repeat(choice(
           /[^\x00-\x20\x7F"'()\\]/,
-          /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/,
+          cssEscape,
         )),
         /[ \t\n\r\f]*/,
         ')',
