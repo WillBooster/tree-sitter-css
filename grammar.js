@@ -11,6 +11,20 @@
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
 const genericName = repeat1(choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape));
 
+const unquotedUrl = seq(
+  /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
+  /(?:[rR]|\\(?:[rR]|0{0,4}[57]2(?:[ \t\n\f]|\r\n?)?))/,
+  /(?:[lL]|\\(?:[lL]|0{0,4}[46][cC](?:[ \t\n\f]|\r\n?)?))/,
+  '(',
+  /[ \t\n\r\f]*/,
+  repeat(choice(
+    /[^\x00-\x20\x7F"'()\\]/,
+    cssEscape,
+  )),
+  /[ \t\n\r\f]*/,
+  ')',
+);
+
 module.exports = grammar({
   name: 'css',
 
@@ -78,7 +92,7 @@ module.exports = grammar({
     namespace_statement: $ => seq(
       '@namespace',
       optional(alias($.identifier, $.namespace_name)),
-      choice($.string_value, $.call_expression),
+      choice($.string_value, $.call_expression, $.url_value),
       ';',
     ),
 
@@ -149,19 +163,7 @@ module.exports = grammar({
 
     at_rule_url: _ => token(choice(
       /\/\/[^\s(){}\[\];,"'\\]+/,
-      seq(
-        /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
-        /(?:[rR]|\\(?:[rR]|0{0,4}[57]2(?:[ \t\n\f]|\r\n?)?))/,
-        /(?:[lL]|\\(?:[lL]|0{0,4}[46][cC](?:[ \t\n\f]|\r\n?)?))/,
-        '(',
-        /[ \t\n\r\f]*/,
-        repeat(choice(
-          /[^\x00-\x20\x7F"'()\\]/,
-          cssEscape,
-        )),
-        /[ \t\n\r\f]*/,
-        ')',
-      ),
+      unquotedUrl,
     )),
 
     rule_set: $ => seq(
@@ -424,6 +426,7 @@ module.exports = grammar({
       $.binary_expression,
       $.parenthesized_value,
       $.call_expression,
+      $.url_value,
       $.important,
     )),
 
@@ -490,6 +493,8 @@ module.exports = grammar({
       sep1(',', $._value),
       ']',
     ),
+
+    url_value: _ => token(unquotedUrl),
 
     call_expression: $ => seq(
       alias($.identifier, $.function_name),

@@ -64,7 +64,7 @@
 "," @punctuation.delimiter
 ":" @punctuation.delimiter
 
-(at_rule_url) @string.special
+[(at_rule_url) (url_value)] @string.special
 (at_rule_delimiter) @punctuation.delimiter
 
 ((at_rule_value) @variable
