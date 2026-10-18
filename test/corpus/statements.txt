@@ -723,11 +723,9 @@ a { color: red; }
           (declaration
             (property_name)
             (plain_value))))))
-  (at_rule
-    (at_keyword)
-    (at_rule_parenthesized
-      (at_rule_value)
-      (at_rule_delimiter)
+  (container_statement
+    (feature_query
+      (feature_name)
       (at_rule_value))
     (block))
   (container_statement
@@ -735,8 +733,7 @@ a { color: red; }
     (binary_query
       (feature_query
         (feature_name)
-        (integer_value
-          (unit)))
+        (at_rule_value))
       (style_query
         (style_feature
           (feature_name)
@@ -757,26 +754,29 @@ a { color: red; }
   (container_statement
     (style_query
       (unary_query
-        (style_feature
-          (feature_name)
-          (at_rule_value))))
+        (parenthesized_query
+          (style_feature
+            (feature_name)
+            (at_rule_value)))))
     (block))
   (container_statement
     (style_query
       (binary_query
-        (style_feature
-          (feature_name)
-          (at_rule_braced
+        (parenthesized_query
+          (style_feature
+            (feature_name)
+            (at_rule_braced
+              (at_rule_value)
+              (at_rule_delimiter)
+              (at_rule_value))))
+        (parenthesized_query
+          (style_feature
+            (feature_name)
             (at_rule_value)
-            (at_rule_delimiter)
-            (at_rule_value)))
-        (style_feature
-          (feature_name)
-          (at_rule_value)
-          (at_rule_parenthesized
-            (at_rule_value)
-            (at_rule_delimiter)
-            (at_rule_value)))))
+            (at_rule_parenthesized
+              (at_rule_value)
+              (at_rule_delimiter)
+              (at_rule_value))))))
     (block))
   (container_statement
     (style_query
@@ -815,7 +815,7 @@ a { color: red; }
         (plain_value)))))
 
 ==============================
-Generic container syntax fallback
+Container query components and fallback
 ==============================
 
 @container card (width > 30em) and style(--responsive: true) {}
@@ -832,51 +832,48 @@ a { color: red; }
 ---
 
 (stylesheet
-  (at_rule
-    (at_keyword)
-    (at_rule_value)
-    (at_rule_parenthesized
-      (at_rule_value)
-      (at_rule_value)
-      (at_rule_value))
-    (at_rule_value)
-    (at_rule_value)
-    (at_rule_parenthesized
-      (at_rule_value)
-      (at_rule_delimiter)
-      (at_rule_value))
-    (block))
-  (at_rule
-    (at_keyword)
-    (at_rule_value)
-    (at_rule_parenthesized
-      (at_rule_value)
-      (at_rule_value)
-      (at_rule_value))
-    (at_rule_delimiter)
-    (at_rule_value)
-    (at_rule_parenthesized
-      (at_rule_value)
-      (at_rule_delimiter)
-      (at_rule_value))
-    (block))
-  (at_rule
-    (at_keyword)
-    (at_rule_value)
-    (block))
-  (at_rule
-    (at_keyword)
-    (at_rule_value)
-    (at_rule_parenthesized
-      (at_rule_value)
-      (at_rule_bracketed
-        (at_rule_value)))
+  (container_statement
+    (container_name)
+    (binary_query
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value))
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value))))
     (block))
   (container_statement
     (container_name)
-    (feature_query
-      (feature_name)
-      (plain_value))
+    (at_rule_parenthesized
+      (at_rule_value)
+      (at_rule_value)
+      (at_rule_value))
+    (style_query
+      (style_feature
+        (feature_name)
+        (at_rule_value)))
+    (block))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (block))
+  (container_statement
+    (general_enclosed_query
+      (at_rule_value)
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_bracketed
+          (at_rule_value))))
+    (block))
+  (container_statement
+    (general_enclosed_query
+      (at_rule_value)
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_delimiter)
+        (at_rule_value)))
     (block))
   (container_statement
     (style_query
@@ -904,7 +901,7 @@ a { color: red; }
     (comment)
     (feature_query
       (feature_name)
-      (plain_value))
+      (at_rule_value))
     (block))
   (rule_set
     (selectors
@@ -913,3 +910,198 @@ a { color: red; }
       (declaration
         (property_name)
         (plain_value)))))
+
+==================
+Mixed container conditions preserve style queries
+==================
+
+@container card not (width > 30em) {}
+@container (min-width: 400px) and style(--a: b) {}
+@container card (min-width: 400px) and style(--a: b) {}
+@container style(--a: b) and (min-width: 400px) {}
+@container (a: b) and (c: d) {}
+@container style(--a: b) and (width > 30em) {}
+@container card style(--a: b) or scroll-state(stuck: top) {}
+@container not style(--a) and (width > 1px) {}
+@container style(--a: b) and unknown(x) {}
+@container style(not (--a > 1)) {}
+@container style(--a: b), style(--c: d) {}
+@container scroll-state(stuck: top) {}
+@container card (width > 30em) and style(--responsive: true) {}
+@container a style(--a: b), b style(--c: d) {}
+@container style((--a: 1) and (--b: 2) and (--c: 3)) {}
+@container style(not (--theme: dark)) {}
+
+---
+
+(stylesheet
+  (container_statement
+    (container_name)
+    (unary_query
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (binary_query
+      (feature_query
+        (feature_name)
+        (at_rule_value))
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value))))
+    (block))
+  (container_statement
+    (container_name)
+    (binary_query
+      (feature_query
+        (feature_name)
+        (at_rule_value))
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value))))
+    (block))
+  (container_statement
+    (binary_query
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value)))
+      (feature_query
+        (feature_name)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (binary_query
+      (feature_query
+        (feature_name)
+        (at_rule_value))
+      (feature_query
+        (feature_name)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (binary_query
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value)))
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (container_name)
+    (binary_query
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value)))
+      (general_enclosed_query
+        (at_rule_value)
+        (at_rule_parenthesized
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_value))))
+    (block))
+  (container_statement
+    (binary_query
+      (unary_query
+        (style_query
+          (style_feature
+            (feature_name))))
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (binary_query
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value)))
+      (general_enclosed_query
+        (at_rule_value)
+        (at_rule_parenthesized
+          (at_rule_value))))
+    (block))
+  (container_statement
+    (style_query
+      (unary_query
+        (parenthesized_query
+          (at_rule_value)
+          (at_rule_value)
+          (at_rule_value))))
+    (block))
+  (container_statement
+    (style_query
+      (style_feature
+        (feature_name)
+        (at_rule_value)))
+    (style_query
+      (style_feature
+        (feature_name)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (general_enclosed_query
+      (at_rule_value)
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_delimiter)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (container_name)
+    (binary_query
+      (at_rule_parenthesized
+        (at_rule_value)
+        (at_rule_value)
+        (at_rule_value))
+      (style_query
+        (style_feature
+          (feature_name)
+          (at_rule_value))))
+    (block))
+  (container_statement
+    (container_name)
+    (style_query
+      (style_feature
+        (feature_name)
+        (at_rule_value)))
+    (container_name)
+    (style_query
+      (style_feature
+        (feature_name)
+        (at_rule_value)))
+    (block))
+  (container_statement
+    (style_query
+      (binary_query
+        (binary_query
+          (parenthesized_query
+            (style_feature
+              (feature_name)
+              (at_rule_value)))
+          (parenthesized_query
+            (style_feature
+              (feature_name)
+              (at_rule_value))))
+        (parenthesized_query
+          (style_feature
+            (feature_name)
+            (at_rule_value)))))
+    (block))
+  (container_statement
+    (style_query
+      (unary_query
+        (parenthesized_query
+          (style_feature
+            (feature_name)
+            (at_rule_value)))))
+    (block)))

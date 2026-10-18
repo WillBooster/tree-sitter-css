@@ -46,3 +46,31 @@ test('container style queries expose and highlight property references', () => {
   ]);
   tree.delete();
 });
+
+test('mixed container conditions retain style properties in either operand order', () => {
+  const conditions = ['(min-width: 400px)', '(width > 30em)', 'scroll-state(stuck: top)', 'unknown(foo [bar])'];
+  for (const name of ['', 'card ']) {
+    for (const condition of conditions) {
+      for (const combined of [`${condition} and style(--theme: dark)`, `style(--theme: dark) and ${condition}`]) {
+        const source = `@container ${name}${combined} {} a { color: red; }`;
+        const tree = parser.parse(source);
+        if (!tree) throw new Error('The parser returned no tree');
+        expect(tree.rootNode.hasError, source).toBe(false);
+        expect(
+          tree.rootNode.descendantsOfType('style_feature').map((node) => node.text),
+          source
+        ).toEqual(['--theme: dark']);
+        expect(
+          tree.rootNode.descendantsOfType('container_name').map((node) => node.text),
+          source
+        ).toEqual(name ? ['card'] : []);
+        expect(
+          query.captures(tree.rootNode).filter(({ name, node }) => name === 'property' && node.text === '--theme'),
+          source
+        ).toHaveLength(1);
+        expect(tree.rootNode.lastNamedChild?.type, source).toBe('rule_set');
+        tree.delete();
+      }
+    }
+  }
+});
