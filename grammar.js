@@ -21,6 +21,7 @@ module.exports = grammar({
     $._descendant_operator,
     $.__error_recovery,
     $._class_name_escape_with_suffix,
+    $._at_rule_slash,
   ],
 
   inline: $ => [
@@ -115,7 +116,11 @@ module.exports = grammar({
 
     _at_rule_component: $ => choice(
       $.at_rule_value,
+      alias($._at_rule_slash, $.at_rule_value),
+      $.at_rule_url,
       $.string_value,
+      ',',
+      ':',
       $.at_rule_parenthesized,
       $.at_rule_bracketed,
     ),
@@ -132,12 +137,20 @@ module.exports = grammar({
 
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
 
-    at_rule_value: _ => token(choice(
-      repeat1(choice(
-        /[^\s(){}\[\];"'\\/]/,
-        /\\[^\n\r\f]/,
+    at_rule_value: _ => token(repeat1(choice(
+      /[^\s(){}\[\];,:"'\\/]/,
+      /\\[^\n\r\f]/,
+    ))),
+
+    at_rule_url: _ => token(seq(
+      /[uU][rR][lL]\(/,
+      /[ \t\n\r\f]*/,
+      repeat(choice(
+        /[^\x00-\x20\x7F"'()\\]/,
+        /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/,
       )),
-      '/',
+      /[ \t\n\r\f]*/,
+      ')',
     )),
 
     rule_set: $ => seq(

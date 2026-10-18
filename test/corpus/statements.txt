@@ -234,6 +234,7 @@ Generic at-rule component preludes
     (at_rule_value)
     (at_rule_parenthesized
       (at_rule_value)
+      (at_rule_value)
       (at_rule_parenthesized
         (at_rule_value)
         (at_rule_value))))
@@ -294,14 +295,7 @@ Generic at-rule component preludes
     (at_rule_bracketed))
   (at_rule
     (at_keyword)
-    (at_rule_value)
-    (at_rule_parenthesized
-      (at_rule_value)
-      (at_rule_value)
-      (at_rule_value)
-      (at_rule_value)
-      (at_rule_value)
-      (at_rule_value))
+    (at_rule_url)
     (at_rule_value)
     (at_rule_value)
     (at_rule_value)))
@@ -312,6 +306,80 @@ Unbalanced generic at-rule prelude
 ========================================
 
 @custom (name];
+
+---
+
+(stylesheet)
+
+========================================
+Generic at-rule punctuation and comments
+========================================
+
+@layer a,b;
+@layer a, b;
+a {
+  @apply foo // ) ; } "
+  ; color: red;
+  @custom [a // ' ] ;
+    b] (c /* } ); */ / 2);
+}
+@custom url(https://example.com/a[b) URL(../a}b) url(a/*b) url(a\)b);
+@custom url( a\20 b ) url("quoted]");
+
+---
+
+(stylesheet
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_value))
+  (at_rule
+    (at_keyword)
+    (at_rule_value)
+    (at_rule_value))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (at_rule
+        (at_keyword)
+        (at_rule_value)
+        (js_comment))
+      (declaration
+        (property_name)
+        (plain_value))
+      (at_rule
+        (at_keyword)
+        (at_rule_bracketed
+          (at_rule_value)
+          (js_comment)
+          (at_rule_value))
+        (at_rule_parenthesized
+          (at_rule_value)
+          (comment)
+          (at_rule_value)
+          (at_rule_value)))))
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_url)
+    (at_rule_url)
+    (at_rule_url))
+  (at_rule
+    (at_keyword)
+    (at_rule_url)
+    (at_rule_value)
+    (at_rule_parenthesized
+      (string_value
+        (string_content)))))
+
+========================================
+Generic at-rule unterminated comment
+:error
+========================================
+
+@foo bar /* unclosed;
+a { color: red; }
 
 ---
 

@@ -6,8 +6,10 @@ enum TokenType {
     DESCENDANT_OP,
     ERROR_RECOVERY,
     CLASS_NAME_ESCAPE_WITH_SUFFIX,
+    AT_RULE_SLASH,
 };
 
+static bool scan_at_rule_slash(TSLexer *lexer);
 static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer);
@@ -30,6 +32,9 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
+    if (valid_symbols[AT_RULE_SLASH]) {
+        return scan_at_rule_slash(lexer);
+    }
     if (valid_symbols[CLASS_NAME_ESCAPE_WITH_SUFFIX] && lexer->lookahead == '\\') {
         return scan_class_name_escape_with_suffix(lexer);
     }
@@ -37,6 +42,22 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         return scan_descendant_operator(lexer);
     }
     return false;
+}
+
+static bool scan_at_rule_slash(TSLexer *lexer) {
+    while (iswspace(lexer->lookahead)) {
+        skip(lexer);
+    }
+    if (lexer->lookahead != '/') {
+        return false;
+    }
+    advance(lexer);
+    lexer->mark_end(lexer);
+    if (lexer->lookahead == '*' || lexer->lookahead == '/') {
+        return false;
+    }
+    lexer->result_symbol = AT_RULE_SLASH;
+    return true;
 }
 
 static bool scan_class_name_escape_with_suffix(TSLexer *lexer) {

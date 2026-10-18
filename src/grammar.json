@@ -415,8 +415,29 @@
           "name": "at_rule_value"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_at_rule_slash"
+          },
+          "named": true,
+          "value": "at_rule_value"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "at_rule_url"
+        },
+        {
           "type": "SYMBOL",
           "name": "string_value"
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "STRING",
+          "value": ":"
         },
         {
           "type": "SYMBOL",
@@ -508,27 +529,58 @@
     "at_rule_value": {
       "type": "TOKEN",
       "content": {
-        "type": "CHOICE",
+        "type": "REPEAT1",
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[^\\s(){}\\[\\];,:\"'\\\\/]"
+            },
+            {
+              "type": "PATTERN",
+              "value": "\\\\[^\\n\\r\\f]"
+            }
+          ]
+        }
+      }
+    },
+    "at_rule_url": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
         "members": [
           {
-            "type": "REPEAT1",
+            "type": "PATTERN",
+            "value": "[uU][rR][lL]\\("
+          },
+          {
+            "type": "PATTERN",
+            "value": "[ \\t\\n\\r\\f]*"
+          },
+          {
+            "type": "REPEAT",
             "content": {
               "type": "CHOICE",
               "members": [
                 {
                   "type": "PATTERN",
-                  "value": "[^\\s(){}\\[\\];\"'\\\\/]"
+                  "value": "[^\\x00-\\x20\\x7F\"'()\\\\]"
                 },
                 {
                   "type": "PATTERN",
-                  "value": "\\\\[^\\n\\r\\f]"
+                  "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
                 }
               ]
             }
           },
           {
+            "type": "PATTERN",
+            "value": "[ \\t\\n\\r\\f]*"
+          },
+          {
             "type": "STRING",
-            "value": "/"
+            "value": ")"
           }
         ]
       }
@@ -2734,6 +2786,10 @@
     {
       "type": "SYMBOL",
       "name": "_class_name_escape_with_suffix"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_at_rule_slash"
     }
   ],
   "inline": [

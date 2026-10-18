@@ -190,6 +190,10 @@
           "named": true
         },
         {
+          "type": "at_rule_url",
+          "named": true
+        },
+        {
           "type": "at_rule_value",
           "named": true
         },
@@ -225,6 +229,10 @@
           "named": true
         },
         {
+          "type": "at_rule_url",
+          "named": true
+        },
+        {
           "type": "at_rule_value",
           "named": true
         },
@@ -256,6 +264,10 @@
           "named": true
         },
         {
+          "type": "at_rule_url",
+          "named": true
+        },
+        {
           "type": "at_rule_value",
           "named": true
         },
@@ -284,6 +296,10 @@
         },
         {
           "type": "at_rule_parenthesized",
+          "named": true
+        },
+        {
+          "type": "at_rule_url",
           "named": true
         },
         {
@@ -2154,6 +2170,10 @@
   },
   {
     "type": "at_keyword",
+    "named": true
+  },
+  {
+    "type": "at_rule_url",
     "named": true
   },
   {
