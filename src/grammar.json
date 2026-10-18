@@ -603,8 +603,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "_at_rule_nested_component"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_at_rule_nested_component"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_descendant_operator"
+              }
+            ]
           }
         },
         {
@@ -3897,6 +3906,10 @@
     [
       "selectors",
       "pseudo_class_selector"
+    ],
+    [
+      "selectors",
+      "descendant_selector"
     ],
     [
       "at_rule_delimiter",

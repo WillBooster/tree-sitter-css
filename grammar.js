@@ -58,6 +58,7 @@ module.exports = grammar({
     [$.selectors],
     [$.class_name],
     [$.selectors, $.pseudo_class_selector],
+    [$.selectors, $.descendant_selector],
     [$.at_rule_delimiter, $.pseudo_class_selector],
     [$._at_rule_component, $._selector],
     [$.scope_statement, $.at_rule],
@@ -165,7 +166,12 @@ module.exports = grammar({
       ),
     ),
 
-    _scope_selector_group: $ => seq('(', $.selectors, repeat($._at_rule_nested_component), ')'),
+    _scope_selector_group: $ => seq(
+      '(',
+      $.selectors,
+      repeat(choice($._at_rule_nested_component, $._descendant_operator)),
+      ')',
+    ),
 
     _at_rule_component: $ => choice(
       alias($.identifier, $.at_rule_value),
