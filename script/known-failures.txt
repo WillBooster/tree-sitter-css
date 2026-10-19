@@ -1,7 +1,3 @@
-examples/bootstrap/dist/css/bootstrap.css
-examples/bootstrap/dist/css/bootstrap.min.css
-examples/bootstrap/dist/css/bootstrap.rtl.css
-examples/bootstrap/dist/css/bootstrap.rtl.min.css
 examples/wordpress/wp-content/themes/twentyeleven/colors/dark.css
 examples/wordpress/wp-content/themes/twentyeleven/style.css
 examples/wordpress/wp-content/themes/twentyfourteen/genericons/genericons.css

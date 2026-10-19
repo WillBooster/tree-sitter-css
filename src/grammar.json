@@ -3791,135 +3791,180 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "identifier"
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "has"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "not"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "is"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "where"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "host"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "host-context"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "_style_keyword"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_query_not"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_query_and"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_query_or"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_custom_property_component"
-                    }
-                  ]
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_custom_property_name"
-                }
-              ]
-            },
-            "named": true,
-            "value": "property_name"
-          },
-          {
-            "type": "CHOICE",
+            "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_descendant_combinator"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "identifier"
+                                },
+                                {
+                                  "type": "CHOICE",
+                                  "members": [
+                                    {
+                                      "type": "STRING",
+                                      "value": "has"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "not"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "is"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "where"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "host"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "host-context"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "CHOICE",
+                                  "members": [
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "_style_keyword"
+                                    },
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "_query_not"
+                                    },
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "_query_and"
+                                    },
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "_query_or"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_custom_property_component"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_custom_property_name"
+                            }
+                          ]
+                        },
+                        "named": true,
+                        "value": "property_name"
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_descendant_combinator"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ":"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_value"
+                      },
+                      {
+                        "type": "REPEAT",
+                        "content": {
+                          "type": "SEQ",
+                          "members": [
+                            {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": ","
+                                },
+                                {
+                                  "type": "BLANK"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_value"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_custom_property_component"
+                        },
+                        "named": true,
+                        "value": "property_name"
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_descendant_combinator"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ":"
+                      }
+                    ]
+                  }
+                ]
               },
               {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "STRING",
-            "value": ":"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_value"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ","
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_value"
-                }
-              ]
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "important"
-              },
-              {
-                "type": "BLANK"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "important"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
               }
             ]
           },
@@ -3937,125 +3982,165 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "identifier"
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "has"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "not"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "is"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "where"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "host"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "host-context"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "_style_keyword"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_query_not"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_query_and"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_query_or"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_custom_property_component"
-                    }
-                  ]
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_custom_property_name"
-                }
-              ]
-            },
-            "named": true,
-            "value": "property_name"
-          },
-          {
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_descendant_combinator"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "identifier"
+                            },
+                            {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": "has"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "not"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "is"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "where"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "host"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "host-context"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_style_keyword"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_query_not"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_query_and"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_query_or"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_custom_property_component"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_custom_property_name"
+                        }
+                      ]
+                    },
+                    "named": true,
+                    "value": "property_name"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_descendant_combinator"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ":"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_value"
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": ","
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_value"
+                        }
+                      ]
+                    }
+                  }
+                ]
               },
               {
-                "type": "BLANK"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_custom_property_component"
+                    },
+                    "named": true,
+                    "value": "property_name"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_descendant_combinator"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ":"
+                  }
+                ]
               }
             ]
-          },
-          {
-            "type": "STRING",
-            "value": ":"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_value"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ","
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_value"
-                }
-              ]
-            }
           },
           {
             "type": "CHOICE",

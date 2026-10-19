@@ -555,30 +555,9 @@ module.exports = grammar({
       $._incomplete_declaration_end,
     ),
 
-    declaration: $ => prec.dynamic(1, seq(
-      alias(propertyIdentifier($), $.property_name),
-      optional($._descendant_combinator),
-      ':',
-      $._value,
-      repeat(seq(
-        optional(','),
-        $._value,
-      )),
-      optional($.important),
-      ';',
-    )),
+    declaration: $ => prec.dynamic(1, seq(declarationValue($), ';')),
 
-    last_declaration: $ => prec.dynamic(1, seq(
-      alias(propertyIdentifier($), $.property_name),
-      optional($._descendant_combinator),
-      ':',
-      $._value,
-      repeat(seq(
-        optional(','),
-        $._value,
-      )),
-      optional($.important),
-    )),
+    last_declaration: $ => prec.dynamic(1, declarationValue($)),
 
     _custom_property_name: _ => escapedIdentifier(seq('--', repeat(nameContinue))),
 
@@ -937,12 +916,32 @@ module.exports = grammar({
   },
 });
 
-function selectorIdentifier($) {
-  return choice($.identifier, selectorFunctionName, queryKeyword($), $._custom_property_component);
+function declarationValue($) {
+  return seq(
+    choice(
+      seq(
+        alias(propertyIdentifier($), $.property_name),
+        optional($._descendant_combinator),
+        ':',
+        $._value,
+        repeat(seq(optional(','), $._value)),
+      ),
+      seq(
+        alias($._custom_property_component, $.property_name),
+        optional($._descendant_combinator),
+        ':',
+      ),
+    ),
+    optional($.important),
+  );
 }
 
 function propertyIdentifier($) {
   return choice(selectorIdentifier($), $._custom_property_name);
+}
+
+function selectorIdentifier($) {
+  return choice($.identifier, selectorFunctionName, queryKeyword($), $._custom_property_component);
 }
 
 function queryKeyword($) {

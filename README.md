@@ -19,6 +19,7 @@ rejects it; newer fork runtimes with a different minimum grammar ABI also requir
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
 Scope statements expose independently optional start and end selector fields.
+Custom properties accept empty and comment-only values, including important declarations.
 Class names accept digit- or hyphen-starting continuations after escape sequences.
 Nesting selectors may follow descendant combinators, as in `b &`.
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
@@ -36,7 +37,7 @@ reports an error.
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
-[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) version 2.0.33, which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
+[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 2.0.33), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
 
 ```js
 import { fileURLToPath } from 'node:url';

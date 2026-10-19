@@ -1,0 +1,42 @@
+==============================
+Empty custom properties retain declarations
+==============================
+
+a { --x:; --1: ; --c\6f lor: /* empty */ !important; --漢字: }
+b { \2d\2d x:; -\2d x: ; color: red; }
+.after {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name))
+      (declaration
+        (property_name))
+      (declaration
+        (property_name)
+        (comment)
+        (important))
+      (declaration
+        (property_name))))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name))
+      (declaration
+        (property_name))
+      (declaration
+        (property_name)
+        (plain_value))))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block)))
