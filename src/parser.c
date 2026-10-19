@@ -4464,84 +4464,6 @@ static const uint16_t ts_lex_advance_map_92[] = {
   'r', 273,
 };
 
-static const uint16_t ts_lex_advance_map_93[] = {
-  '\t', 658,
-  0x0b, 658,
-  ' ', 658,
-  '!', 658,
-  '(', 658,
-  ')', 658,
-  ',', 658,
-  '/', 655,
-  '0', 573,
-  '5', 575,
-  '7', 575,
-  ':', 658,
-  ';', 658,
-  'R', 654,
-  '[', 658,
-  ']', 658,
-  'r', 654,
-  '{', 658,
-  '}', 658,
-};
-
-static const uint16_t ts_lex_advance_map_94[] = {
-  '\t', 658,
-  0x0b, 658,
-  ' ', 658,
-  '!', 658,
-  '(', 658,
-  ')', 658,
-  ',', 658,
-  '/', 655,
-  '0', 574,
-  '4', 582,
-  '6', 582,
-  ':', 658,
-  ';', 658,
-  'L', 651,
-  '[', 658,
-  ']', 658,
-  'l', 651,
-  '{', 658,
-  '}', 658,
-};
-
-static const uint16_t ts_lex_advance_map_95[] = {
-  '\t', 658,
-  0x0b, 658,
-  ' ', 658,
-  '!', 658,
-  '(', 658,
-  ')', 658,
-  ',', 658,
-  '/', 655,
-  ':', 658,
-  ';', 658,
-  '[', 658,
-  ']', 658,
-  '{', 658,
-  '}', 658,
-};
-
-static const uint16_t ts_lex_advance_map_96[] = {
-  '\t', 557,
-  0x0b, 557,
-  ' ', 557,
-  '!', 557,
-  '(', 557,
-  ')', 557,
-  ',', 557,
-  '/', 559,
-  ':', 557,
-  ';', 557,
-  '[', 557,
-  ']', 557,
-  '{', 557,
-  '}', 557,
-};
-
 #define TS_LEX_ADVANCE_MAP_SORTED(map)                                      \
   {                                                                 \
     uint32_t low = 0;                                                \
@@ -4576,7 +4498,8 @@ static const uint32_t ts_lex_ascii_set_4[] = {0x00003400, 0x00000080, 0x10000000
 static const uint32_t ts_lex_ascii_set_5[] = {0x00003400, 0x00000004, 0x10000000, 0x00000000};
 static const uint32_t ts_lex_ascii_set_6[] = {0x00000000, 0x00002000, 0x87fffffc, 0x07fffffc};
 static const uint32_t ts_lex_ascii_set_7[] = {0x00003a00, 0x08001385, 0x38000000, 0x28000000};
-static const uint32_t ts_lex_ascii_set_8[] = {0x00003a00, 0x0c001703, 0x28000000, 0x28000000};
+static const uint32_t ts_lex_ascii_set_8[] = {0x00003a00, 0x0c001703, 0x28000000, 0x38000000};
+static const uint32_t ts_lex_ascii_set_9[] = {0x00000a00, 0x0c001303, 0x28000000, 0x38000000};
 static inline bool ts_lex_ascii_contains(const uint32_t *bits, int32_t lookahead) {
   return (uint32_t)lookahead < 128 && ((bits[lookahead / 32] >> (lookahead % 32)) & 1);
 }
@@ -4609,12 +4532,12 @@ static const TSCharacterRange ts_lex_aux_sym__style_range_value_token1_character
   {0x80, 0x10ffff},
 };
 
-static const uint32_t ts_lex_sym_plain_value_character_set_1_ascii[] = {0xffffc1ff, 0xf3ffe8fc, 0xd7ffffff, 0xd7ffffff};
+static const uint32_t ts_lex_sym_plain_value_character_set_1_ascii[] = {0xffffc1ff, 0xf3ffe8fc, 0xd7ffffff, 0xc7ffffff};
 static const TSCharacterRange ts_lex_sym_plain_value_character_set_1[] = {
   {0x80, 0x10ffff},
 };
 
-static const uint32_t ts_lex_sym_plain_value_character_set_2_ascii[] = {0xffffc1ff, 0xf3ffecfc, 0xd7ffffff, 0xd7ffffff};
+static const uint32_t ts_lex_sym_plain_value_character_set_2_ascii[] = {0xffffc1ff, 0xf3ffecfc, 0xd7ffffff, 0xc7ffffff};
 static const TSCharacterRange ts_lex_sym_plain_value_character_set_2[] = {
   {0x80, 0x10ffff},
 };
@@ -16361,7 +16284,13 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 1259:
       ACCEPT_TOKEN(sym_plain_value);
-      TS_LEX_ADVANCE_MAP_SORTED(ts_lex_advance_map_93);
+      if (lookahead == '/') ADVANCE(655);
+      if (lookahead == '0') ADVANCE(573);
+      if (lookahead == '5' ||
+          lookahead == '7') ADVANCE(575);
+      if (lookahead == 'R' ||
+          lookahead == 'r') ADVANCE(654);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_9, lookahead)) ADVANCE(658);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(591);
@@ -16370,7 +16299,13 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 1260:
       ACCEPT_TOKEN(sym_plain_value);
-      TS_LEX_ADVANCE_MAP_SORTED(ts_lex_advance_map_94);
+      if (lookahead == '/') ADVANCE(655);
+      if (lookahead == '0') ADVANCE(574);
+      if (lookahead == '4' ||
+          lookahead == '6') ADVANCE(582);
+      if (lookahead == 'L' ||
+          lookahead == 'l') ADVANCE(651);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_9, lookahead)) ADVANCE(658);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(591);
@@ -16379,7 +16314,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 1261:
       ACCEPT_TOKEN(sym_plain_value);
-      TS_LEX_ADVANCE_MAP_SORTED(ts_lex_advance_map_95);
+      if (lookahead == '/') ADVANCE(655);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_9, lookahead)) ADVANCE(658);
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(591);
@@ -16388,7 +16324,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 1262:
       ACCEPT_TOKEN(sym_plain_value);
-      TS_LEX_ADVANCE_MAP_SORTED(ts_lex_advance_map_96);
+      if (lookahead == '/') ADVANCE(559);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_9, lookahead)) ADVANCE(557);
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(548);
