@@ -892,7 +892,7 @@ module.exports = grammar({
 
     arguments: $ => seq(
       token.immediate('('),
-      sep(choice(',', ';'), repeat1($._value)),
+      sep(choice(',', ';'), repeat1(choice($._value, alias($._escaped_identifier, $.plain_value)))),
       ')',
     ),
 
