@@ -57,6 +57,7 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant) {
     bool newline = false;
     bool whitespace = false;
+    bool comment = false;
     lexer->mark_end(lexer);
     for (;;) {
         if (iswspace(lexer->lookahead)) {
@@ -67,11 +68,12 @@ static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendan
             if (!scan_separator_comment(lexer)) {
                 return false;
             }
+            comment = true;
         } else {
             break;
         }
     }
-    bool descendant = allow_descendant && whitespace && (lexer->lookahead == '#' || lexer->lookahead == '.' ||
+    bool descendant = allow_descendant && whitespace && (comment || lexer->lookahead == '#' || lexer->lookahead == '.' ||
         lexer->lookahead == '[' || lexer->lookahead == '-' || lexer->lookahead == '*' ||
         lexer->lookahead == '&' || lexer->lookahead == ':' || lexer->lookahead == '\\' || is_name_character(lexer->lookahead));
     lexer->result_symbol = DESCENDANT_OP;
@@ -150,7 +152,8 @@ static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant) {
                 return false;
             }
         }
-        return scan_descendant_operator(lexer);
+        lexer->result_symbol = DESCENDANT_OP;
+        return true;
     }
     lexer->mark_end(lexer);
     lexer->result_symbol = AT_RULE_SLASH;

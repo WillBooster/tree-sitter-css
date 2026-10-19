@@ -50,6 +50,38 @@ test.each([
   expect(largeFastest / smallFastest).toBeLessThan(18);
 });
 
+test.each([
+  ['descendant', '@scope (a ', '.b) {} .after {}'],
+  ['trailing', '@scope (a ', ') {} .after {}'],
+  ['attribute', '@scope ([a ', ']) {} .after {}'],
+  ['nested selector', '@scope (:has(a ', ')) {} .after {}'],
+  ['child', '@scope (a ', '> b) {} .after {}'],
+  ['sibling', '@scope (a ', '~ b) {} .after {}'],
+  ['adjacent sibling', '@scope (a ', '+ b) {} .after {}'],
+  ['attribute flag', '@scope ([a="x" ', 'i]) {} .after {}'],
+  ['attribute operator', '@scope ([a ', '= "x"]) {} .after {}'],
+  ['selector list', '@scope (a ', ', b) {} .after {}'],
+])('parses repeated %s scope comments in linear time', { timeout: 30_000 }, (_name, prefix, suffix) => {
+  const small = prefix + '/**/ '.repeat(1000) + suffix;
+  const large = prefix + '/**/ '.repeat(4000) + suffix;
+  parseCpuTime(large, false);
+  let smallFastest = Infinity;
+  let largeFastest = Infinity;
+  for (let run = 0; run < 3; run++) {
+    smallFastest = Math.min(smallFastest, parseCpuTime(small, false));
+    largeFastest = Math.min(largeFastest, parseCpuTime(large, false));
+  }
+  expect(largeFastest / smallFastest).toBeLessThan(8);
+  const tree = parser.parse(large)!;
+  try {
+    expect(tree.rootNode.firstNamedChild?.type).toBe('scope_statement');
+    expect(tree.rootNode.descendantsOfType('comment')).toHaveLength(4000);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+  }
+});
+
 function parseCpuTime(source: string, expectedError: boolean): number {
   const start = process.threadCpuUsage();
   const tree = parser.parse(source);

@@ -62,6 +62,13 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.selectors, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
+    [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_arguments],
+    [$._escaped_attribute_namespace, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
+    [$.at_rule_bracketed, $._selector, $.attribute_selector],
+    [$._selector, $.attribute_selector, $._query_identifier],
+    [$._at_rule_component, $._selector, $.attribute_selector],
+    [$._selector, $.attribute_selector],
     [$.selectors],
     [$.class_name],
     [$.pseudo_class_selector],
@@ -235,8 +242,8 @@ module.exports = grammar({
 
     scope_statement: $ => prec.dynamic(1, seq(
       alias($._scope_keyword, '@scope'),
-      optional(seq(queryOpeningParenthesis, field('start', $.selectors), ')')),
-      optional(seq(alias($._scope_to, 'to'), queryOpeningParenthesis, field('end', $.selectors), ')')),
+      optional(seq(queryOpeningParenthesis, field('start', $.selectors), optional($._descendant_combinator), ')')),
+      optional(seq(alias($._scope_to, 'to'), queryOpeningParenthesis, field('end', $.selectors), optional($._descendant_combinator), ')')),
       choice(';', $.block),
     )),
 
@@ -258,13 +265,15 @@ module.exports = grammar({
     _scope_selector_group: $ => seq(
       queryOpeningParenthesis,
       $.selectors,
-      repeat($._scope_fallback_component),
+      repeat(seq(optional($._descendant_combinator), $._scope_fallback_component)),
+      optional($._descendant_combinator),
       ')',
     ),
 
     _scope_generic_parenthesized: $ => seq(
       queryOpeningParenthesis,
-      repeat($._scope_fallback_component),
+      repeat(seq(optional($._descendant_combinator), $._scope_fallback_component)),
+      optional($._descendant_combinator),
       ')',
     ),
 
@@ -273,7 +282,6 @@ module.exports = grammar({
       alias($.identifier, $.at_rule_value),
       alias(selectorFunctionName, $.at_rule_value),
       alias($._scope_generic_parenthesized, $.at_rule_parenthesized),
-      $._descendant_combinator,
     ),
 
     _at_rule_component: $ => choice(
@@ -300,12 +308,12 @@ module.exports = grammar({
 
     at_rule_bracketed: $ => seq(
       openingBracket,
-      repeat(choice(
+      repeat(seq(optional($._descendant_combinator), choice(
         $._at_rule_nested_component,
         alias(choice($.identifier, $._escaped_identifier), $.at_rule_value),
-        $._descendant_combinator,
         alias(attributeMatchOperator, $.at_rule_value),
-      )),
+      ))),
+      optional($._descendant_combinator),
       ']',
     ),
 
@@ -331,10 +339,11 @@ module.exports = grammar({
 
     rule_set: $ => seq(
       $.selectors,
+      optional($._descendant_combinator),
       $.block,
     ),
 
-    selectors: $ => sep1(',', $._selector),
+    selectors: $ => sep1(seq(optional($._descendant_combinator), ','), $._selector),
 
     block: $ => seq(
       '{',
@@ -433,10 +442,12 @@ module.exports = grammar({
       openingBracket,
       alias(choice(selectorIdentifier($), $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
       optional(seq(
+        optional($._descendant_combinator),
         attributeMatchOperator,
         choice($._value, alias(selectorIdentifier($), $.plain_value)),
-        optional($.attribute_flag),
+        optional(seq(optional($._descendant_combinator), $.attribute_flag)),
       )),
+      optional($._descendant_combinator),
       ']',
     ),
 
@@ -455,25 +466,36 @@ module.exports = grammar({
 
     attribute_flag: _ => /[iIsS]/,
 
-    child_selector: $ => prec.left(seq(optional($._selector), '>', $._selector)),
+    child_selector: $ => choice(
+      prec.left(seq($._selector, optional($._descendant_combinator), '>', $._selector)),
+      prec.left(-1, seq('>', $._selector)),
+    ),
 
     descendant_selector: $ => prec.left(seq($._selector, $._descendant_combinator, $._selector)),
 
-    sibling_selector: $ => prec.left(seq(optional($._selector), '~', $._selector)),
+    sibling_selector: $ => choice(
+      prec.left(seq($._selector, optional($._descendant_combinator), '~', $._selector)),
+      prec.left(-1, seq('~', $._selector)),
+    ),
 
-    adjacent_sibling_selector: $ => prec.left(seq(optional($._selector), '+', $._selector)),
+    adjacent_sibling_selector: $ => choice(
+      prec.left(seq($._selector, optional($._descendant_combinator), '+', $._selector)),
+      prec.left(-1, seq('+', $._selector)),
+    ),
 
     namespace_selector: $ => prec.left(seq(optional($._selector), '|', $._selector)),
 
     pseudo_class_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value))),
+      sep(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), $._value)))),
+      optional($._descendant_combinator),
       ')',
     ),
 
     pseudo_class_with_selector_arguments: $ => seq(
       token.immediate('('),
-      sep(',', $._selector),
+      sep(seq(optional($._descendant_combinator), ','), $._selector),
+      optional($._descendant_combinator),
       ')',
     ),
 
@@ -491,6 +513,7 @@ module.exports = grammar({
           $._selector,
         ),
       ),
+      optional($._descendant_combinator),
       ')',
     )),
 
@@ -498,7 +521,8 @@ module.exports = grammar({
 
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value))),
+      sep(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), $._value)))),
+      optional($._descendant_combinator),
       ')',
     ),
 
