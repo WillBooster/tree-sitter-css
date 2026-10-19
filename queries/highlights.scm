@@ -85,19 +85,23 @@
 
 (at_rule_parenthesized
  (at_rule_value) @property
+ . (comment)*
  . (at_rule_delimiter) @_colon
+ . (comment)*
  . (_) @_feature_value
  (#eq? @_colon ":")
- (#not-match? @_feature_value "^//")
- (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
+ (#not-match? @_feature_value "^/[*/]")
+ (#match? @property "^(?:--|-?(?:[_a-zA-Z\\u0080-\\uffff]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9\\u0080-\\uffff]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
 
 (import_supports
  (at_rule_value) @property
+ . (comment)*
  . (at_rule_delimiter) @_colon
+ . (comment)*
  . (_) @_feature_value
  (#eq? @_colon ":")
- (#not-match? @_feature_value "^//")
- (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
+ (#not-match? @_feature_value "^/[*/]")
+ (#match? @property "^(?:--|-?(?:[_a-zA-Z\\u0080-\\uffff]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9\\u0080-\\uffff]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
 
 (
  (at_rule_value) @_bang @keyword

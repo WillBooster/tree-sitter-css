@@ -101,3 +101,55 @@ test('import conditions expose public keyword, function, layer, and property cap
     parser.delete();
   }
 });
+
+test.each(
+  ['display', '--theme-color', '--日本', String.raw`\64 isplay`, String.raw`--\74 heme`].flatMap((property) =>
+    ['', '/**/', '/* first *//* second */'].flatMap((comment) =>
+      [false, true].map((parenthesized) => [property, comment, parenthesized] as const)
+    )
+  )
+)(
+  'support property captures survive comments and identifier spelling: %s %s %s',
+  (property, comment, parenthesized) => {
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(
+      language,
+      fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8')
+    );
+    const declaration = `${property}${comment}:${comment} initial`;
+    const tree = parser.parse(`@import "x" supports(${parenthesized ? `(${declaration})` : declaration});`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(
+        query
+          .captures(tree.rootNode)
+          .filter(({ name }) => name === 'property')
+          .map(({ node }) => node.text)
+      ).toEqual([property]);
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(['1', '123px', '#item', 'display 1', 'display /**/ 1 /**/'])(
+  'support properties do not cross non-comment components or accept non-identifiers: %s',
+  (prefix) => {
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(
+      language,
+      fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8')
+    );
+    const tree = parser.parse(`@import "x" supports(${prefix}: grid);`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'property')).toHaveLength(0);
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
