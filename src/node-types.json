@@ -660,6 +660,10 @@
           "named": true
         },
         {
+          "type": "incomplete_declaration",
+          "named": true
+        },
+        {
           "type": "keyframes_statement",
           "named": true
         },
@@ -1489,6 +1493,21 @@
         },
         {
           "type": "string_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "incomplete_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "property_name",
           "named": true
         }
       ]
@@ -2439,6 +2458,10 @@
           "named": true
         },
         {
+          "type": "incomplete_declaration",
+          "named": true
+        },
+        {
           "type": "keyframes_statement",
           "named": true
         },
@@ -2736,6 +2759,10 @@
   },
   {
     "type": "layer",
+    "named": false
+  },
+  {
+    "type": "layer(",
     "named": false
   },
   {
