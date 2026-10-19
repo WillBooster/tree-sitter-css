@@ -1,0 +1,56 @@
+=====================================
+Escaped arithmetic operands retain function declarations
+=====================================
+
+a {
+  width: calc(i\6e finity * 1px);
+  height: calc(1px * (i\6e finity));
+  --size: calc((1 + i\6e finity) * 1px)
+}
+d { color: red; }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name)
+        (call_expression
+          (function_name)
+          (arguments
+            (binary_expression
+              (plain_value)
+              (integer_value
+                (unit))))))
+      (declaration
+        (property_name)
+        (call_expression
+          (function_name)
+          (arguments
+            (binary_expression
+              (integer_value
+                (unit))
+              (parenthesized_value
+                (plain_value))))))
+      (declaration
+        (property_name)
+        (call_expression
+          (function_name)
+          (arguments
+            (binary_expression
+              (parenthesized_value
+                (binary_expression
+                  (integer_value)
+                  (plain_value)))
+              (integer_value
+                (unit))))))))
+  (rule_set
+    (selectors
+      (tag_name))
+    (block
+      (declaration
+        (property_name)
+        (plain_value)))))

@@ -7,7 +7,7 @@ test('reports an empty-value error and preserves the following declaration range
   await Parser.init();
   const parser = new Parser();
   parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
-  const source = 'a { --x: ; color: red; }';
+  const source = 'a { width: ; color: red; }';
   const tree = parser.parse(source);
   try {
     expect(tree?.rootNode.hasError).toBe(true);

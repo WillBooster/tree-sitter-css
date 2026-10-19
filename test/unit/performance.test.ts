@@ -33,8 +33,10 @@ test('uses a Wasm build built from the current parser', () => {
 // 18 leaves a margin over that while failing for growth faster than about n^1.25.
 test.each([
   ['unexpected value punctuation', 'a { b: ) }\n', '', '', true],
-  ['comment punctuation before an invalid value', 'a { b: /* }; : { */ ? }\n', '', '', true],
-  ['comment braces inside one malformed block', 'b:/*{*/?', 'a{', '}', true],
+  ['comment punctuation before a delimiter value', 'a { b: /* }; : { */ ? }\n', '', '', false],
+  ['comment punctuation before an invalid closer', 'a { b: /* }; : { */ ] }\n', '', '', true],
+  ['comment braces inside one delimiter-value block', 'b:/*{*/?', 'a{', '}', false],
+  ['comment braces inside one malformed block', 'b:/*{*/]', 'a{', '}', true],
   ['generic prelude with scheme-like components', 'a+', '.a { @apply ', 'a; color: red; }', false],
 ])('parses %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix, hasError) => {
   const small = prefix + source.repeat(2000) + suffix;
