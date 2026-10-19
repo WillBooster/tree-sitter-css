@@ -48,6 +48,7 @@ module.exports = grammar({
     $.__error_recovery,
     $._class_name_escape_with_suffix,
     $._at_rule_slash,
+    $._incomplete_declaration_end,
   ],
 
   inline: $ => [
@@ -110,6 +111,9 @@ module.exports = grammar({
     [$.range_query, $._range_value],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
+    [$._selector, $.incomplete_declaration, $.declaration, $.last_declaration],
+    [$._selector, $.incomplete_declaration, $.declaration],
+    [$._descendant_combinator, $.incomplete_declaration],
   ],
 
   rules: {
@@ -120,6 +124,7 @@ module.exports = grammar({
 
     _top_level_item: $ => choice(
       $.declaration,
+      $.incomplete_declaration,
       $.rule_set,
       $.import_statement,
       $.media_statement,
@@ -234,7 +239,7 @@ module.exports = grammar({
     _scope_selector_group: $ => seq(
       queryOpeningParenthesis,
       $.selectors,
-      repeat(choice($._at_rule_nested_component, alias($.identifier, $.at_rule_value), $._descendant_operator, alias(choice('>', '~', '+', '|'), $.at_rule_value))),
+      repeat(choice($._at_rule_nested_component, alias($.identifier, $.at_rule_value), $._descendant_combinator, alias(choice('>', '~', '+', '|'), $.at_rule_value))),
       ')',
     ),
 
@@ -297,6 +302,7 @@ module.exports = grammar({
 
     _block_item: $ => choice(
       $.declaration,
+      $.incomplete_declaration,
       $.rule_set,
       $.import_statement,
       $.media_statement,
@@ -408,7 +414,7 @@ module.exports = grammar({
 
     child_selector: $ => prec.left(seq(optional($._selector), '>', $._selector)),
 
-    descendant_selector: $ => prec.left(seq($._selector, $._descendant_operator, $._selector)),
+    descendant_selector: $ => prec.left(seq($._selector, $._descendant_combinator, $._selector)),
 
     sibling_selector: $ => prec.left(seq(optional($._selector), '~', $._selector)),
 
@@ -453,9 +459,16 @@ module.exports = grammar({
       ')',
     ),
 
+    _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
+
+    incomplete_declaration: $ => seq(
+      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      $._incomplete_declaration_end,
+    ),
+
     declaration: $ => prec.dynamic(1, seq(
       alias(choice($.identifier, $._custom_property_name), $.property_name),
-      optional($._descendant_operator),
+      optional($._descendant_combinator),
       ':',
       $._value,
       repeat(seq(
@@ -468,7 +481,7 @@ module.exports = grammar({
 
     last_declaration: $ => prec.dynamic(1, seq(
       alias(choice($.identifier, $._custom_property_name), $.property_name),
-      optional($._descendant_operator),
+      optional($._descendant_combinator),
       ':',
       $._value,
       repeat(seq(
