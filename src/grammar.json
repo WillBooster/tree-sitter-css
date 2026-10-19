@@ -226,34 +226,34 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_query_identifier"
-          },
-          "named": true,
-          "value": "identifier"
-        },
-        {
           "type": "REPEAT",
           "content": {
             "type": "SEQ",
             "members": [
               {
-                "type": "STRING",
-                "value": "."
-              },
-              {
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_query_identifier"
+                  "name": "_layer_name_prefix"
                 },
                 "named": true,
                 "value": "identifier"
+              },
+              {
+                "type": "STRING",
+                "value": "."
               }
             ]
           }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_layer_name_identifier"
+          },
+          "named": true,
+          "value": "identifier"
         }
       ]
     },
@@ -5117,6 +5117,14 @@
     {
       "type": "SYMBOL",
       "name": "_incomplete_declaration_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_layer_name_identifier"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_layer_name_prefix"
     }
   ],
   "inline": [

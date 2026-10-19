@@ -42,6 +42,8 @@ module.exports = grammar({
     $._class_name_escape_with_suffix,
     $._at_rule_slash,
     $._incomplete_declaration_end,
+    $._layer_name_identifier,
+    $._layer_name_prefix,
   ],
 
   inline: $ => [
@@ -133,7 +135,10 @@ module.exports = grammar({
 
     _import_layer_start: _ => token(seq(new RegExp(cssKeywordPattern('layer')), '(')),
 
-    layer_name: $ => sep1('.', alias($._query_identifier, $.identifier)),
+    layer_name: $ => seq(
+      repeat(seq(alias($._layer_name_prefix, $.identifier), '.')),
+      alias($._layer_name_identifier, $.identifier),
+    ),
 
     import_supports: $ => seq(
       alias($._import_supports_start, 'supports('),

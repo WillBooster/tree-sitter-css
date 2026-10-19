@@ -172,7 +172,7 @@ test.each(['', ' ', '/**/', '/* first *//* second */'])(
 );
 
 testCommand(
-  'native support-property highlights preserve Unicode and escaped names',
+  'native import property highlights preserve Unicode, escapes and layer names',
   [
     'script/tree-sitter',
     'highlight',
@@ -192,6 +192,10 @@ testCommand(
         '--😀',
         '--theme',
         String.raw`\64 isplay`,
+        'theme',
+        'component',
+        String.raw`th\65 me`,
+        '日本',
       ]);
     },
   }
@@ -286,6 +290,119 @@ test.each([
     expect(tree.rootNode.firstNamedChild?.descendantsOfType('import_supports').map((node) => node.text)).toEqual([
       condition,
     ]);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  'a .b',
+  'a. b',
+  'a . b',
+  'a\n.b',
+  'a.\tb',
+  'a/**/ .b',
+  'a. /**/b',
+  'a./**/ b',
+  'a /**/.b',
+  'a.\n/**/b',
+  'a. /**//**/b',
+  String.raw`a\2e  .b`,
+])('layer name separators reject whitespace and retain following rules: %s', (name) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `@import "x" layer(${name}); .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  ['theme .b', '.b'],
+  ['theme/**/ .b', '.b'],
+  ['theme\n.b', '.b'],
+  [String.raw`th\65 me .b`, '.b'],
+  ['a.b .c', '.c'],
+  ['a.b/**/ .c', '.c'],
+  ['a.b\n.c', '.c'],
+])('unterminated layer names do not absorb the next selector: %s', (prefix, selector) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `@import "x" layer(${prefix} { color: red; } .after { background: blue; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    const following = tree.rootNode.namedChildren.filter((node) => node.type === 'rule_set');
+    expect(following.map((node) => node.text)).toEqual([`${selector} { color: red; }`, '.after { background: blue; }']);
+    for (const rule of following) expect(rule.startIndex).toBe(source.indexOf(rule.text));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  ['a.b', ['a', 'b']],
+  ['a/**/.b', ['a', 'b']],
+  ['a./**/b', ['a', 'b']],
+  ['a/**/./**/b', ['a', 'b']],
+  ['a/*\n*/./**/b.c', ['a', 'b', 'c']],
+  [String.raw`th\65 me./**/component`, [String.raw`th\65 me`, 'component']],
+  ['--theme./**/日本', ['--theme', '日本']],
+])('layer names retain tight components and comment nodes: %s', (name, components) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const source = `@import "x" layer(${name}); .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const layer = tree.rootNode.descendantsOfType('layer_name')[0]!;
+    expect(layer.text).toBe(name);
+    expect(layer.descendantsOfType('identifier').map((node) => node.text)).toEqual(components);
+    expect(layer.descendantsOfType('comment').map((node) => node.text)).toEqual(name.match(/\/\*[\s\S]*?\*\//g) ?? []);
+    expect(
+      query
+        .captures(layer)
+        .filter(({ name }) => name === 'property')
+        .map(({ node }) => node.text)
+    ).toEqual(components);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  [' a.b', 'a.b'],
+  ['/**/a.b', 'a.b'],
+  [' /**/ a.b', 'a.b'],
+  ['\n a/**/.b\n', 'a/**/.b'],
+  ['a.b ', 'a.b'],
+  ['a.b/**/', 'a.b'],
+  [String.raw`a\2e .b`, String.raw`a\2e .b`],
+  ['--😀.日本', '--😀.日本'],
+])('layer name outer trivia and escape terminators preserve boundaries: %s', (body, name) => {
+  const parser = new Parser().setLanguage(language);
+  const condition = `layer(${body})`;
+  const source = `@import "x" ${condition}; .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('import_layer').map((node) => node.text)).toEqual([condition]);
+    expect(tree.rootNode.descendantsOfType('layer_name').map((node) => node.text)).toEqual([name]);
+    expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(
+      body.match(/\/\*[\s\S]*?\*\//g) ?? []
+    );
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
     expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
   } finally {

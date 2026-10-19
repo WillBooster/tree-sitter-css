@@ -1349,11 +1349,6 @@
     }
   },
   {
-    "type": "identifier",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "import_layer",
     "named": true,
     "fields": {},
@@ -2738,6 +2733,10 @@
   },
   {
     "type": "id_name",
+    "named": true
+  },
+  {
+    "type": "identifier",
     "named": true
   },
   {

@@ -3,3 +3,5 @@
 @import "escaped" supports(\64 isplay: grid);
 @import "reserved" supports(--: initial);
 @import "reserved-escaped" supports(\2d\2d: initial);
+@import "layer-comments" layer(theme/**/./**/component);
+@import "layer-escaped" layer(th\65 me./**/日本);

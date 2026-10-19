@@ -8,8 +8,15 @@ enum TokenType {
     CLASS_NAME_ESCAPE_WITH_SUFFIX,
     AT_RULE_SLASH,
     INCOMPLETE_DECLARATION_END,
+    LAYER_NAME_IDENTIFIER,
+    LAYER_NAME_PREFIX,
 };
 
+static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
+static bool scan_layer_name_token(TSLexer *lexer);
+static bool scan_layer_name_tail(TSLexer *lexer);
+static bool scan_layer_name_gap(TSLexer *lexer, bool *whitespace);
+static bool is_css_whitespace(int32_t character);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
@@ -36,6 +43,9 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
+    if (valid_symbols[LAYER_NAME_IDENTIFIER] || valid_symbols[LAYER_NAME_PREFIX]) {
+        return scan_layer_name_identifier(lexer, valid_symbols);
+    }
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
         return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP]);
     }
@@ -49,6 +59,65 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         return scan_descendant_operator(lexer);
     }
     return false;
+}
+
+static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols) {
+    while (is_css_whitespace(lexer->lookahead)) skip(lexer);
+    if (!scan_layer_name_token(lexer)) {
+        return false;
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = LAYER_NAME_IDENTIFIER;
+    bool whitespace = false;
+    if (scan_layer_name_gap(lexer, &whitespace) && lexer->lookahead == '.' && !whitespace) {
+        advance(lexer);
+        if (scan_layer_name_gap(lexer, &whitespace) && !whitespace && scan_layer_name_token(lexer)) {
+            lexer->result_symbol = LAYER_NAME_PREFIX;
+        }
+    }
+    return valid_symbols[lexer->result_symbol];
+}
+
+static bool scan_layer_name_token(TSLexer *lexer) {
+    if (lexer->lookahead == '-') {
+        advance(lexer);
+        if (lexer->lookahead == '-') {
+            advance(lexer);
+            return scan_layer_name_tail(lexer);
+        }
+    }
+    if (!(lexer->lookahead == '\\' || is_name_start(lexer->lookahead) || lexer->lookahead >= 0x80)) {
+        return false;
+    }
+    return scan_layer_name_tail(lexer);
+}
+
+static bool scan_layer_name_tail(TSLexer *lexer) {
+    while (is_name_character(lexer->lookahead) || lexer->lookahead >= 0x80 || lexer->lookahead == '\\') {
+        if (lexer->lookahead == '\\') {
+            if (!scan_escape(lexer)) return false;
+        } else {
+            advance(lexer);
+        }
+    }
+    return true;
+}
+
+static bool scan_layer_name_gap(TSLexer *lexer, bool *whitespace) {
+    for (;;) {
+        if (is_css_whitespace(lexer->lookahead)) {
+            *whitespace = true;
+            advance(lexer);
+        } else if (lexer->lookahead == '/') {
+            if (!scan_separator_comment(lexer)) return false;
+        } else {
+            return true;
+        }
+    }
+}
+
+static bool is_css_whitespace(int32_t character) {
+    return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '\f';
 }
 
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant) {
