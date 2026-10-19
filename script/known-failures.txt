@@ -1,13 +1,5 @@
-examples/wordpress/wp-content/themes/twentyeleven/colors/dark.css
-examples/wordpress/wp-content/themes/twentyeleven/style.css
 examples/wordpress/wp-content/themes/twentyfourteen/genericons/genericons.css
-examples/wordpress/wp-content/themes/twentyseventeen/assets/css/ie8.css
 examples/wordpress/wp-content/themes/twentysixteen/css/ie7.css
 examples/wordpress/wp-content/themes/twentythirteen/genericons/genericons.css
-examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.css
-examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.min.css
-examples/wordpress/wp-includes/css/dist/block-editor/content.css
-examples/wordpress/wp-includes/css/dist/block-editor/content.min.css
 examples/wordpress/wp-includes/js/crop/cropper.css
-examples/wordpress/wp-includes/js/tinymce/plugins/compat3x/css/dialog.css
 examples/wordpress/wp-includes/js/tinymce/skins/lightgray/skin.min.css

@@ -792,8 +792,9 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        alias(choice('.', '=', '?', '@', '&', '|', '^', '$', '~', ':', '<', '>', '*', '+', '/', '`'), $.plain_value),
+        alias(choice('.', '=', '?', '@', '&', '|', '^', '$', '~', '<', '>', '*', '+', '/', '`'), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
+        alias(token(prec(-1, ':')), $.plain_value),
       )),
       alias($._escaped_identifier, $.plain_value),
     ),
@@ -801,7 +802,7 @@ module.exports = grammar({
 
     parenthesized_value: $ => seq(
       '(',
-      sep(choice(',', ';'), repeat1($._value)),
+      valueSequence($),
       ')',
     ),
 
@@ -863,7 +864,7 @@ module.exports = grammar({
 
     grid_value: $ => seq(
       '[',
-      sep1(',', $._value),
+      valueSequence($),
       ']',
     ),
 
@@ -881,7 +882,7 @@ module.exports = grammar({
 
     arguments: $ => seq(
       token.immediate('('),
-      sep(choice(',', ';'), repeat1($._value)),
+      valueSequence($),
       ')',
     ),
 
@@ -914,12 +915,12 @@ module.exports = grammar({
       seq(
         repeat(choice(
           /[-_]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
         /[a-zA-Z]/,
         repeat(choice(
-          /[^/\s,;!{}()\[\]]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /[^/\s,;:!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
       ),
     )),
@@ -956,6 +957,10 @@ function selectorIdentifier($) {
 
 function queryKeyword($) {
   return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
+}
+
+function valueSequence($) {
+  return sep(choice(',', ';'), repeat1($._value));
 }
 
 function pseudoArgument($) {
