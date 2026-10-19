@@ -52,6 +52,10 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$._value],
+    [$.pseudo_class_arguments, $._value],
+    [$.pseudo_element_arguments, $._value],
+    [$._selector, $._value],
     [$._container_function_arguments, $._style_parenthesized_query],
     [$.at_rule_parenthesized, $._container_function_arguments, $._style_parenthesized_query],
     [$._container_feature_query, $.style_feature],
@@ -367,14 +371,14 @@ module.exports = grammar({
 
     pseudo_class_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value), $._escaped_pseudo_values)),
+      sep(',', choice($._selector, prec.left(repeat1(prec(-1, ordinaryValue($)))), $._escaped_pseudo_values)),
       ')',
     ),
 
     _escaped_pseudo_values: $ => prec.dynamic(1, seq(
-      repeat($._value),
+      repeat(scalarValue($)),
       alias($._escaped_identifier, $.plain_value),
-      repeat(seq(optional($._descendant_combinator), choice($._value, alias($._escaped_identifier, $.plain_value)))),
+      repeat(seq(optional($._descendant_combinator), choice(scalarValue($), alias($._escaped_identifier, $.plain_value)))),
     )),
 
     pseudo_class_with_selector_arguments: $ => seq(
@@ -404,7 +408,7 @@ module.exports = grammar({
 
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value), $._escaped_pseudo_values)),
+      sep(',', choice($._selector, prec.left(repeat1(prec(-1, ordinaryValue($)))), $._escaped_pseudo_values)),
       ')',
     ),
 
@@ -655,18 +659,7 @@ module.exports = grammar({
 
     _value: $ => choice(
       prec(-1, choice(
-        alias($.identifier, $.plain_value),
-        $.plain_value,
-        $.color_value,
-        $.integer_value,
-        $.float_value,
-        $.string_value,
-        $.grid_value,
-        $.binary_expression,
-        $.parenthesized_value,
-        $.call_expression,
-        $.url_value,
-        $.important,
+        ordinaryValue($),
         alias(choice('.', '=', '?', '@', '#', '&', '|', '^', '$', '~', ':', '<', '>', '*', '+', '/', '`'), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
       )),
@@ -759,6 +752,7 @@ module.exports = grammar({
 
     class_name: $ => repeat1(choice(
       $.identifier,
+      alias($._escaped_identifier, $.identifier),
       $.escape_sequence,
       alias($._class_name_escape_with_suffix, $.identifier),
     )),
@@ -791,6 +785,23 @@ module.exports = grammar({
     )),
   },
 });
+
+function ordinaryValue($) {
+  return choice(scalarValue($), $.plain_value, $.color_value, $.grid_value, $.binary_expression);
+}
+
+function scalarValue($) {
+  return choice(
+    alias($.identifier, $.plain_value),
+    $.integer_value,
+    $.float_value,
+    $.string_value,
+    $.parenthesized_value,
+    $.call_expression,
+    $.url_value,
+    $.important,
+  );
+}
 
 function cssKeyword(word) {
   return token(new RegExp(cssKeywordPattern(word)));

@@ -379,8 +379,6 @@ Escape sequences
       (pseudo_element_selector
         (class_selector
           (class_name
-            (identifier)
-            (escape_sequence)
             (identifier)))
         (tag_name)))
     (block
@@ -447,22 +445,37 @@ Digits after class-name escapes
 
 (stylesheet
   (rule_set
-    (selectors (class_selector (class_name (identifier) (identifier))))
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
     (block))
   (rule_set
-    (selectors (class_selector (class_name (identifier) (identifier))))
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
     (block))
   (rule_set
-    (selectors (class_selector (class_name (identifier))))
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
     (block))
   (rule_set
-    (selectors (class_selector (class_name (identifier))))
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
     (block))
   (rule_set
     (selectors
       (pseudo_class_selector
-        (class_selector (class_name (identifier) (identifier) (identifier)))
-        (class_name (identifier))))
+        (class_selector
+          (class_name
+            (identifier)))
+        (class_name
+          (identifier))))
     (block)))
 
 =========================
@@ -512,12 +525,42 @@ Negative numeric suffixes after class-name escapes
 ---
 
 (stylesheet
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (escape_sequence)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier) (escape_sequence)))) (block)))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block)))
 
 =========================
 Hyphen continuations after class-name escapes
@@ -532,11 +575,36 @@ Hyphen continuations after class-name escapes
 ---
 
 (stylesheet
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier) (escape_sequence)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier)))) (block)))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block)))
 
 =========================
 Class-name hexadecimal escape with CRLF terminator
