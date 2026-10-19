@@ -53,6 +53,25 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$._value],
+    [$._pseudo_operand],
+    [$._selector, $.pseudo_class_arguments, $._pseudo_operand],
+    [$._selector, $.pseudo_element_arguments, $._pseudo_operand],
+    [$.pseudo_class_arguments, $._pseudo_operand, $._escaped_pseudo_values],
+    [$.pseudo_element_arguments, $._pseudo_operand, $._escaped_pseudo_values],
+    [$._selector, $._pseudo_operand, $._escaped_pseudo_values],
+    [$._selector, $.pseudo_class_arguments, $._pseudo_operand, $._escaped_pseudo_values],
+    [$._selector, $.pseudo_element_arguments, $._pseudo_operand, $._escaped_pseudo_values],
+    [$.pseudo_class_arguments, $._pseudo_operand],
+    [$.pseudo_element_arguments, $._pseudo_operand],
+    [$._pseudo_operand, $._value],
+    [$._selector, $._pseudo_operand, $._value],
+    [$._selector, $._pseudo_operand],
+    [$._selector, $.pseudo_class_arguments, $._escaped_pseudo_values],
+    [$._selector, $.pseudo_element_arguments, $._escaped_pseudo_values],
+    [$._selector, $.pseudo_class_arguments],
+    [$._selector, $.pseudo_element_arguments],
+    [$.pseudo_class_arguments, $._escaped_pseudo_values],
+    [$.pseudo_element_arguments, $._escaped_pseudo_values],
     [$.pseudo_class_arguments, $._value],
     [$.pseudo_element_arguments, $._value],
     [$._selector, $._value],
@@ -371,14 +390,26 @@ module.exports = grammar({
 
     pseudo_class_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, prec.left(repeat1(prec(-1, ordinaryValue($)))), $._escaped_pseudo_values)),
+      optional($._descendant_combinator),
+      sep(',', pseudoArgument($)),
       ')',
     ),
 
-    _escaped_pseudo_values: $ => prec.dynamic(1, seq(
-      repeat(scalarValue($)),
+    _pseudo_operand: $ => choice(ordinaryValue($), alias($._escaped_identifier, $.plain_value)),
+
+    _pseudo_binary_expression: $ => prec.left(3, seq(
+      choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
+      optional($._descendant_combinator),
+      choice('+', '-', '*', '/'),
+      optional($._descendant_combinator),
+      $._pseudo_operand,
+    )),
+
+    _escaped_pseudo_values: $ => prec.dynamic(2, seq(
+      repeat(seq(scalarValue($), optional($._descendant_combinator))),
       alias($._escaped_identifier, $.plain_value),
-      repeat(seq(optional($._descendant_combinator), choice(scalarValue($), alias($._escaped_identifier, $.plain_value)))),
+      optional($._descendant_combinator),
+      repeat(seq(choice(scalarValue($), alias($._escaped_identifier, $.plain_value)), optional($._descendant_combinator))),
     )),
 
     pseudo_class_with_selector_arguments: $ => seq(
@@ -408,7 +439,8 @@ module.exports = grammar({
 
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, prec.left(repeat1(prec(-1, ordinaryValue($)))), $._escaped_pseudo_values)),
+      optional($._descendant_combinator),
+      sep(',', pseudoArgument($)),
       ')',
     ),
 
@@ -660,8 +692,9 @@ module.exports = grammar({
     _value: $ => choice(
       prec(-1, choice(
         ordinaryValue($),
-        alias(choice('.', '=', '?', '@', '#', '&', '|', '^', '$', '~', ':', '<', '>', '*', '+', '/', '`'), $.plain_value),
+        alias(choice('.', '=', '?', '@', '#', '&', '|', '^', '$', '~', '<', '>', '*', '+', '/', '`'), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
+        alias(token(prec(-1, ':')), $.plain_value),
       )),
       alias($._escaped_identifier, $.plain_value),
     ),
@@ -774,17 +807,25 @@ module.exports = grammar({
       seq(
         repeat(choice(
           /[-_]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
         /[a-zA-Z]/,
         repeat(choice(
-          /[^/\s,;!{}()\[\]]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /[^/\s,;:!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
       ),
     )),
   },
 });
+
+function pseudoArgument($) {
+  return choice(
+    prec.dynamic(1, seq($._selector, optional($._descendant_combinator))),
+    prec.left(repeat1(seq(choice(prec(-1, ordinaryValue($)), alias($._pseudo_binary_expression, $.binary_expression)), optional($._descendant_combinator)))),
+    $._escaped_pseudo_values,
+  );
+}
 
 function ordinaryValue($) {
   return choice(scalarValue($), $.plain_value, $.color_value, $.grid_value, $.binary_expression);

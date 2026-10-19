@@ -46,3 +46,53 @@ test.each(
     parser.delete();
   }
 });
+
+const valueRuns = [
+  ['1 2', ['1', '2']],
+  ['1 + 2 * 3', ['1', '2', '3']],
+  ['1 /* c */ + 2 * 3', ['1', '2', '3']],
+  ['"a" "b" "c"', []],
+  ['f(x) g(y) h(z)', []],
+  ['1 2 3', ['1', '2', '3']],
+  ['1 2 3 4', ['1', '2', '3', '4']],
+  ['1px 2px 3px', ['1px', '2px', '3px']],
+  ['1 2 1 2', ['1', '2', '1', '2']],
+  ['b, 1 /* c */', ['1']],
+  ['1 /* c */ 1 /* c */', ['1', '1']],
+  ['fn(1 2 3) 4 5', ['1', '2', '3', '4', '5']],
+] as const;
+
+test.each(
+  [':foo', ':lang', '::foo'].flatMap((pseudo) =>
+    ['', 'a'].flatMap((prefix) => valueRuns.map(([args, numbers]) => [prefix, pseudo, args, numbers] as const))
+  )
+)('generic pseudo value runs retain their owning selector: %s%s(%s)', (prefix, pseudo, args, numbers) => {
+  const parser = new Parser().setLanguage(language);
+  const selector = `${prefix}${pseudo}(${args})`;
+  const source = `${selector} { c: d; } .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const rule = tree.rootNode.firstNamedChild!;
+    expect(rule.firstNamedChild!.text).toBe(selector);
+    const argument = rule.descendantsOfType('arguments')[0]!;
+    expect(argument.text).toBe(`(${args})`);
+    expect(argument.startIndex).toBe(selector.indexOf('('));
+    expect(argument.endIndex).toBe(selector.length);
+    expect(argument.descendantsOfType('integer_value').map((node) => node.text)).toEqual(numbers);
+    if (args.includes(' + 2 * 3')) {
+      const binaries = argument.descendantsOfType('binary_expression');
+      expect(binaries.map((node) => node.text)).toEqual([args, args.slice(0, args.indexOf(' * 3'))]);
+      for (const binary of binaries) {
+        expect(binary.namedChildren.filter((node) => node.type !== 'comment')).toHaveLength(2);
+      }
+    }
+    expect(argument.descendantsOfType('comment').map((node) => node.text)).toEqual(args.match(/\/\* c \*\//g) ?? []);
+    expect(rule.descendantsOfType('property_name').map((node) => node.text)).toEqual(['c']);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
