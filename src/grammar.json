@@ -278,7 +278,7 @@
           "value": "supports("
         },
         {
-          "type": "REPEAT",
+          "type": "REPEAT1",
           "content": {
             "type": "SYMBOL",
             "name": "_at_rule_nested_component"
