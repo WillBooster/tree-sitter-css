@@ -1,4 +1,5 @@
 #include "tree_sitter/parser.h"
+#include "tree_sitter/array.h"
 
 #include <wctype.h>
 #include <string.h>
@@ -14,8 +15,12 @@ enum TokenType {
     IMPORT_SUPPORTS_START,
 };
 
+typedef Array(char) SupportsDelimiters;
+
 static bool scan_import_supports_start(TSLexer *lexer);
 static bool scan_supports_body_close(TSLexer *lexer);
+static bool scan_supports_components(TSLexer *lexer, SupportsDelimiters *delimiters);
+static bool scan_supports_body_end(TSLexer *lexer);
 static bool scan_supports_literal(TSLexer *lexer, bool *component);
 static bool scan_supports_word(TSLexer *lexer);
 static bool scan_supports_url(TSLexer *lexer);
@@ -27,7 +32,7 @@ static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
 static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded);
 static char keyword_character(int32_t character);
 static void scan_escape_terminator(TSLexer *lexer);
-static bool scan_layer_name_gap(TSLexer *lexer, bool *whitespace);
+static bool scan_component_gap(TSLexer *lexer, bool *whitespace);
 static bool is_layer_name_start(int32_t character);
 static bool is_css_whitespace(int32_t character);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
@@ -98,7 +103,13 @@ static bool scan_import_supports_start(TSLexer *lexer) {
 }
 
 static bool scan_supports_body_close(TSLexer *lexer) {
-    unsigned depth = 0;
+    SupportsDelimiters delimiters = array_new();
+    bool valid = scan_supports_components(lexer, &delimiters);
+    array_delete(&delimiters);
+    return valid;
+}
+
+static bool scan_supports_components(TSLexer *lexer, SupportsDelimiters *delimiters) {
     bool component = false;
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
@@ -112,18 +123,26 @@ static bool scan_supports_body_close(TSLexer *lexer) {
             case '\'': case '"': case '/':
                 if (!scan_supports_literal(lexer, &component)) return false;
                 continue;
-            case ')':
-                if (!depth) return component;
-                depth--;
+            case ')': case ']': case '}':
+                if (!delimiters->size) return character == ')' && component && scan_supports_body_end(lexer);
+                if (array_pop(delimiters) != character) return false;
                 break;
-            case ';': if (!depth) return false; break;
-            case '(': case '[': case '{': depth++; break;
-            case ']': case '}': if (!depth) return false; depth--; break;
+            case ';': if (!delimiters->size) return false; break;
+            case '(': array_push(delimiters, ')'); break;
+            case '[': array_push(delimiters, ']'); break;
+            case '{': array_push(delimiters, '}'); break;
         }
         component = true;
         advance(lexer);
     }
     return false;
+}
+
+static bool scan_supports_body_end(TSLexer *lexer) {
+    advance(lexer);
+    bool whitespace = false;
+    if (!scan_component_gap(lexer, &whitespace)) return false;
+    return lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
 }
 
 static bool scan_supports_literal(TSLexer *lexer, bool *component) {
@@ -209,9 +228,9 @@ static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols
     lexer->mark_end(lexer);
     lexer->result_symbol = LAYER_NAME_IDENTIFIER;
     bool whitespace = false;
-    if (scan_layer_name_gap(lexer, &whitespace) && lexer->lookahead == '.' && !whitespace) {
+    if (scan_component_gap(lexer, &whitespace) && lexer->lookahead == '.' && !whitespace) {
         advance(lexer);
-        if (scan_layer_name_gap(lexer, &whitespace) && !whitespace && scan_layer_name_token(lexer)) {
+        if (scan_component_gap(lexer, &whitespace) && !whitespace && scan_layer_name_token(lexer)) {
             lexer->result_symbol = LAYER_NAME_PREFIX;
         }
     }
@@ -275,7 +294,7 @@ static bool is_layer_name_start(int32_t character) {
     return false;
 }
 
-static bool scan_layer_name_gap(TSLexer *lexer, bool *whitespace) {
+static bool scan_component_gap(TSLexer *lexer, bool *whitespace) {
     for (;;) {
         if (is_css_whitespace(lexer->lookahead)) {
             *whitespace = true;
