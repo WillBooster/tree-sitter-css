@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { expect, test } from 'vitest';
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Edit, Language, Parser, Query } from '@willbooster/web-tree-sitter';
 import { testCommand } from './run.js';
 
 await Parser.init();
@@ -262,7 +262,6 @@ test.each([
   'supports(--theme: { color: red; }',
   'SUPPORTS(display: grid',
   String.raw`s\75 pports(display: grid`,
-  'layer(theme) supports(display: grid',
   'layer supports(display: grid',
 ])('unterminated import conditions retain following rules: %s', (condition) => {
   const parser = new Parser().setLanguage(language);
@@ -422,39 +421,16 @@ test.each([
   }
 });
 
-test.each([
-  'supports(display: grid',
-  'SUPPORTS(display: grid',
-  String.raw`s\75 pports(display: grid`,
-  'layer(theme) supports(display: grid',
-])('an unfinished import without its semicolon retains following rules: %s', (condition) => {
-  const parser = new Parser().setLanguage(language);
-  const following = ['body { color: red; }', '.after { background: blue; }'];
-  const source = `@import "x" ${condition}\n${following.join('\n')}`;
-  const tree = parser.parse(source)!;
-  try {
-    expect(tree.rootNode.hasError).toBe(true);
-    const rules = tree.rootNode.namedChildren.filter((node) => node.type === 'rule_set');
-    const followingRules = rules.slice(-2);
-    expect(followingRules).toHaveLength(2);
-    // Recovery may retain an invalid prefix in the first selector, but its block and following rule remain complete.
-    expect(followingRules[0]!.lastNamedChild?.text).toBe('{ color: red; }');
-    expect(followingRules[1]!.text).toBe(following[1]);
-    expect(followingRules[1]!.startIndex).toBe(source.indexOf('.after'));
-    expect(
-      followingRules.flatMap((node) => node.descendantsOfType('property_name').map((property) => property.text))
-    ).toEqual(['color', 'background']);
-  } finally {
-    tree.delete();
-    parser.delete();
+test.each(['supports(display: grid', 'SUPPORTS(display: grid', String.raw`s\75 pports(display: grid`])(
+  'EOF-unclosed imports regain following rules when completed: %s',
+  (condition) => {
+    expectUnfinishedImportCompletion(condition);
   }
-});
+);
 
 test.each(
   ['supports', 'SUPPORTS', String.raw`s\75 pports`, 'layer(theme) supports'].flatMap((keyword) =>
-    ['"', "'"].flatMap((quote) =>
-      [false, true].map((straySemicolon) => `${keyword}(--theme: ${quote}dark${quote}${straySemicolon ? ';)' : ''}`)
-    )
+    ['"', "'"].map((quote) => `${keyword}(--theme: ${quote}dark${quote};)`)
   )
 )('malformed quoted support bodies retain later complete rules: %s', (condition) => {
   const parser = new Parser().setLanguage(language);
@@ -474,26 +450,15 @@ test.each(
   }
 });
 
-test.each(['supports(--theme: { color: red; }', 'supports(future({ color: red; })'])(
-  'incomplete nested support bodies retain later complete rules: %s',
-  (condition) => {
-    const parser = new Parser().setLanguage(language);
-    const source = `@import "x" ${condition}\nbody { color: red; }\n.after { background: blue; }`;
-    const tree = parser.parse(source)!;
-    try {
-      expect(tree.rootNode.hasError).toBe(true);
-      expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
-      expect(tree.rootNode.lastNamedChild?.text).toBe('.after { background: blue; }');
-      expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
-      expect(tree.rootNode.lastNamedChild?.descendantsOfType('property_name').map((node) => node.text)).toEqual([
-        'background',
-      ]);
-    } finally {
-      tree.delete();
-      parser.delete();
-    }
-  }
-);
+test.each([
+  ...['supports', 'SUPPORTS', String.raw`s\75 pports`, 'layer(theme) supports'].flatMap((keyword) =>
+    ['"', "'"].map((quote) => `${keyword}(--theme: ${quote}dark${quote}`)
+  ),
+  'supports(--theme: { color: red; }',
+  'supports(future({ color: red; })',
+])('EOF-unclosed component bodies regain following rules when completed: %s', (condition) => {
+  expectUnfinishedImportCompletion(condition);
+});
 
 test.each([
   '--theme: prefix {a:b;} suffix',
@@ -692,3 +657,58 @@ test.each(
     parser.delete();
   }
 });
+
+test('an unfinished support function after a named layer owns its EOF components', () => {
+  const parser = new Parser().setLanguage(language);
+  const source = '@import "x" layer(theme) supports(display: grid; .first { color: red; } .after { background: blue; }';
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.firstNamedChild?.type).toBe('import_statement');
+    expect(tree.rootNode.firstNamedChild?.text).toBe(source);
+    expect(tree.rootNode.descendantsOfType('rule_set')).toHaveLength(0);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+  expectUnfinishedImportCompletion('layer(theme) supports(display: grid');
+});
+
+function expectUnfinishedImportCompletion(condition: string): void {
+  const parser = new Parser().setLanguage(language);
+  const prefix = `@import "x" ${condition}`;
+  const following = ['body { color: red; }', '.after { background: blue; }'];
+  const suffix = `\n${following.join('\n')}`;
+  const tree = parser.parse(prefix + suffix)!;
+  let completed;
+  let fresh;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.firstNamedChild?.type).toBe('import_statement');
+    expect(tree.rootNode.firstNamedChild?.text).toBe(prefix + suffix);
+    expect(tree.rootNode.descendantsOfType('rule_set')).toHaveLength(0);
+    tree.edit(
+      new Edit({
+        startIndex: prefix.length,
+        oldEndIndex: prefix.length,
+        newEndIndex: prefix.length + 2,
+        startPosition: { row: 0, column: prefix.length },
+        oldEndPosition: { row: 0, column: prefix.length },
+        newEndPosition: { row: 0, column: prefix.length + 2 },
+      })
+    );
+    const source = `${prefix});${suffix}`;
+    completed = parser.parse(source, tree)!;
+    fresh = parser.parse(source)!;
+    expect(completed.rootNode.hasError).toBe(false);
+    expect(completed.rootNode.toString()).toBe(fresh.rootNode.toString());
+    expect(
+      completed.rootNode.descendantsOfType('rule_set').map((node) => [node.text, node.startIndex, node.endIndex])
+    ).toEqual(following.map((text) => [text, source.indexOf(text), source.indexOf(text) + text.length]));
+  } finally {
+    fresh?.delete();
+    completed?.delete();
+    tree.delete();
+    parser.delete();
+  }
+}

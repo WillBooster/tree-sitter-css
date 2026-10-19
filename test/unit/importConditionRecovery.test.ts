@@ -61,3 +61,22 @@ test.each([
     parser.delete();
   }
 });
+
+test.each([`${'future('.repeat(512)}token${')'.repeat(512)}`, Array.from({ length: 4000 }, () => '{a:b;}').join(' ')])(
+  'valid deeply nested or long component values retain their import boundaries',
+  (value) => {
+    const parser = new Parser().setLanguage(language);
+    const statement = `@import "x" supports(--theme: ${value});`;
+    const source = `${statement}\n.after { color: red; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.firstNamedChild?.text).toBe(statement);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+      expect(tree.rootNode.lastNamedChild?.startIndex).toBe(statement.length + 1);
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);

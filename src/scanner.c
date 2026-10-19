@@ -14,18 +14,22 @@ enum TokenType {
     LAYER_NAME_PREFIX,
     IMPORT_SUPPORTS_START,
     IMPORT_LAYER_START,
+    INVALID_IMPORT_SUPPORTS,
+    INVALID_IMPORT_LAYER,
 };
 
 typedef Array(char) SupportsDelimiters;
 
 static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_import_layer_body_end(TSLexer *lexer);
+static void scan_invalid_import_end(TSLexer *lexer);
 static bool scan_import_component_list(TSLexer *lexer, int32_t terminator);
 static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator);
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, bool *component);
 static bool scan_supports_body_end(TSLexer *lexer);
 static bool scan_supports_literal(TSLexer *lexer, bool *component);
 static bool scan_supports_word(TSLexer *lexer);
+static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsigned *length);
 static bool scan_supports_url(TSLexer *lexer);
 static bool scan_supports_string(TSLexer *lexer);
 static bool scan_supports_slash(TSLexer *lexer, bool *component);
@@ -90,26 +94,38 @@ static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbol
     while (is_css_whitespace(lexer->lookahead)) skip(lexer);
     char name[9] = {0};
     unsigned length = 0;
-    while (is_name_character(lexer->lookahead) || lexer->lookahead == '\\') {
-        if (length == sizeof(name) - 1) return false;
-        int32_t character;
-        if (!scan_name_character(lexer, &character)) return false;
-        name[length++] = keyword_character(character);
-    }
-    bool layer = valid_symbols[IMPORT_LAYER_START] && !strcmp(name, "layer");
-    bool supports = valid_symbols[IMPORT_SUPPORTS_START] && !strcmp(name, "supports");
+    if (!scan_import_word(lexer, name, sizeof(name), &length)) return false;
+    bool layer = length == 5 && valid_symbols[IMPORT_LAYER_START] && !strcmp(name, "layer");
+    bool supports = length == 8 && valid_symbols[IMPORT_SUPPORTS_START] && !strcmp(name, "supports");
     if ((!layer && !supports) || lexer->lookahead != '(') return false;
     advance(lexer);
     lexer->mark_end(lexer);
     lexer->result_symbol = layer ? IMPORT_LAYER_START : IMPORT_SUPPORTS_START;
-    return layer ? scan_import_layer_body_end(lexer) : scan_import_component_list(lexer, ')');
+    if (layer ? scan_import_layer_body_end(lexer) : scan_import_component_list(lexer, ')')) return true;
+    scan_invalid_import_end(lexer);
+    lexer->result_symbol = layer ? INVALID_IMPORT_LAYER : INVALID_IMPORT_SUPPORTS;
+    lexer->mark_end(lexer);
+    return true;
+}
+
+static void scan_invalid_import_end(TSLexer *lexer) {
+    if (lexer->lookahead == '\'' || lexer->lookahead == '"') scan_supports_string(lexer);
+    for (;;) {
+        bool whitespace = false;
+        if (!scan_component_gap(lexer, &whitespace)) {
+            if (lexer->eof(lexer)) return;
+            continue;
+        }
+        if (lexer->lookahead != ')' && lexer->lookahead != ';' && lexer->lookahead != '[' && lexer->lookahead != ']') return;
+        advance(lexer);
+    }
 }
 
 static bool scan_import_layer_body_end(TSLexer *lexer) {
     for (;;) {
         bool whitespace = false;
         if (!scan_component_gap(lexer, &whitespace)) return false;
-        if (lexer->eof(lexer)) return true;
+        if (lexer->eof(lexer)) return false;
         switch (lexer->lookahead) {
             case ')': return scan_supports_body_end(lexer);
             case '\'': case '"': return false;
@@ -183,14 +199,19 @@ static bool scan_supports_word(TSLexer *lexer) {
     unsigned length = 0;
     bool prefixed = lexer->lookahead == '#' || lexer->lookahead == '@';
     if (prefixed) advance(lexer);
+    if (!scan_import_word(lexer, name, sizeof(name), &length)) return false;
+    if (!prefixed && length == 3 && !strcmp(name, "url") && lexer->lookahead == '(') {
+        return scan_supports_url(lexer);
+    }
+    return true;
+}
+
+static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsigned *length) {
     while (is_name_character(lexer->lookahead) || lexer->lookahead >= 0x80 || lexer->lookahead == '\\') {
         int32_t character;
         if (!scan_name_character(lexer, &character)) return false;
-        if (length < 3) name[length] = keyword_character(character);
-        length++;
-    }
-    if (!prefixed && length == 3 && !strcmp(name, "url") && lexer->lookahead == '(') {
-        return scan_supports_url(lexer);
+        if (*length < capacity - 1) name[*length] = keyword_character(character);
+        (*length)++;
     }
     return true;
 }
@@ -217,9 +238,14 @@ static bool scan_supports_string(TSLexer *lexer) {
     advance(lexer);
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
+        if (character == '\n' || character == '\r' || character == '\f') return false;
         advance(lexer);
         if (character == quote) return true;
-        if (character == '\\' && !lexer->eof(lexer)) advance(lexer);
+        if (character == '\\' && !lexer->eof(lexer)) {
+            bool carriage_return = lexer->lookahead == '\r';
+            advance(lexer);
+            if (carriage_return && lexer->lookahead == '\n') advance(lexer);
+        }
     }
     return false;
 }

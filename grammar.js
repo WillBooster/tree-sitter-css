@@ -46,6 +46,8 @@ module.exports = grammar({
     $._layer_name_prefix,
     $._import_supports_start,
     $._import_layer_start,
+    $._invalid_import_supports,
+    $._invalid_import_layer,
   ],
 
   inline: $ => [
@@ -123,8 +125,10 @@ module.exports = grammar({
       '@import',
       $._value,
       optional($.import_layer),
-      optional($.import_supports),
-      sep(',', $._media_query),
+      choice(
+        seq(optional($.import_supports), sep(',', $._media_query)),
+        choice($._invalid_import_layer, $._invalid_import_supports),
+      ),
       ';',
     ),
 
