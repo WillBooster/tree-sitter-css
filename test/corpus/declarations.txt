@@ -833,3 +833,24 @@ four';
       (declaration (property_name) (string_value (string_content) (escape_sequence) (string_content)))
       (declaration (property_name) (string_value (string_content) (escape_sequence) (string_content)))
       (declaration (property_name) (plain_value)))))
+
+================================================================================
+Unfinished property before another declaration
+================================================================================
+
+a {
+  padding
+  color:red;
+}
+
+--------------------------------------------------------------------------------
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (incomplete_declaration
+        (property_name))
+      (declaration
+        (property_name)
+        (plain_value)))))

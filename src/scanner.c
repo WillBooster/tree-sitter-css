@@ -7,8 +7,12 @@ enum TokenType {
     ERROR_RECOVERY,
     CLASS_NAME_ESCAPE_WITH_SUFFIX,
     AT_RULE_SLASH,
+    INCOMPLETE_DECLARATION_END,
 };
 
+static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
+static bool scan_property_colon(TSLexer *lexer);
+static bool scan_separator_comment(TSLexer *lexer);
 static bool scan_at_rule_slash(TSLexer *lexer);
 static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
@@ -32,6 +36,9 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
+    if (valid_symbols[INCOMPLETE_DECLARATION_END] && (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
+        return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP]);
+    }
     if (valid_symbols[AT_RULE_SLASH]) {
         return scan_at_rule_slash(lexer);
     }
@@ -40,6 +47,82 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     }
     if (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP]) {
         return scan_descendant_operator(lexer);
+    }
+    return false;
+}
+
+static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant) {
+    bool newline = false;
+    bool whitespace = false;
+    lexer->mark_end(lexer);
+    for (;;) {
+        if (iswspace(lexer->lookahead)) {
+            whitespace = true;
+            newline |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
+            advance(lexer);
+        } else if (lexer->lookahead == '/') {
+            if (!scan_separator_comment(lexer)) {
+                return false;
+            }
+        } else {
+            break;
+        }
+    }
+    bool descendant = allow_descendant && whitespace && (lexer->lookahead == '#' || lexer->lookahead == '.' ||
+        lexer->lookahead == '[' || lexer->lookahead == '-' || lexer->lookahead == '*' ||
+        lexer->lookahead == '&' || lexer->lookahead == ':' || iswalnum(lexer->lookahead));
+    lexer->result_symbol = DESCENDANT_OP;
+    if (!newline || !(is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\')) {
+        return descendant;
+    }
+    if (!scan_property_colon(lexer)) {
+        return descendant;
+    }
+    lexer->result_symbol = INCOMPLETE_DECLARATION_END;
+    return true;
+}
+
+static bool scan_property_colon(TSLexer *lexer) {
+    while (is_name_character(lexer->lookahead) || lexer->lookahead == '\\') {
+        if (lexer->lookahead != '\\') {
+            advance(lexer);
+            continue;
+        }
+        if (!scan_escape(lexer)) {
+            return false;
+        }
+    }
+    while (iswspace(lexer->lookahead) || lexer->lookahead == '/') {
+        if (lexer->lookahead != '/') {
+            advance(lexer);
+            continue;
+        }
+        if (!scan_separator_comment(lexer)) {
+            return false;
+        }
+    }
+    return lexer->lookahead == ':';
+}
+
+static bool scan_separator_comment(TSLexer *lexer) {
+    advance(lexer);
+    if (lexer->lookahead == '/') {
+        while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') {
+            advance(lexer);
+        }
+        return true;
+    }
+    if (lexer->lookahead != '*') {
+        return false;
+    }
+    advance(lexer);
+    while (!lexer->eof(lexer)) {
+        bool star = lexer->lookahead == '*';
+        advance(lexer);
+        if (star && lexer->lookahead == '/') {
+            advance(lexer);
+            return true;
+        }
     }
     return false;
 }

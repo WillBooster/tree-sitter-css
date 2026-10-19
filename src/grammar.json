@@ -49,6 +49,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "incomplete_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "rule_set"
         },
         {
@@ -1027,6 +1031,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "incomplete_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "rule_set"
         },
         {
@@ -1620,7 +1628,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_descendant_operator"
+            "name": "_descendant_combinator"
           },
           {
             "type": "SYMBOL",
@@ -1992,6 +2000,46 @@
         }
       ]
     },
+    "_descendant_combinator": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_descendant_operator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_incomplete_declaration_end"
+        }
+      ]
+    },
+    "incomplete_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_custom_property_name"
+              }
+            ]
+          },
+          "named": true,
+          "value": "property_name"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_incomplete_declaration_end"
+        }
+      ]
+    },
     "declaration": {
       "type": "PREC_DYNAMIC",
       "value": 1,
@@ -2021,7 +2069,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "_descendant_operator"
+                "name": "_descendant_combinator"
               },
               {
                 "type": "BLANK"
@@ -2108,7 +2156,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "_descendant_operator"
+                "name": "_descendant_combinator"
               },
               {
                 "type": "BLANK"
@@ -4863,6 +4911,21 @@
       "_selector",
       "declaration",
       "last_declaration"
+    ],
+    [
+      "_selector",
+      "incomplete_declaration",
+      "declaration",
+      "last_declaration"
+    ],
+    [
+      "_selector",
+      "incomplete_declaration",
+      "declaration"
+    ],
+    [
+      "_descendant_combinator",
+      "incomplete_declaration"
     ]
   ],
   "precedences": [],
@@ -4882,6 +4945,10 @@
     {
       "type": "SYMBOL",
       "name": "_at_rule_slash"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_incomplete_declaration_end"
     }
   ],
   "inline": [
