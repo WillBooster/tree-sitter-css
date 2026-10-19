@@ -23,6 +23,7 @@ typedef Array(char) SupportsDelimiters;
 static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_import_layer_body_end(TSLexer *lexer);
 static void scan_invalid_import_end(TSLexer *lexer);
+static bool scan_invalid_import_delimiter(TSLexer *lexer);
 static bool scan_import_component_list(TSLexer *lexer, int32_t terminator);
 static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator);
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, bool *component);
@@ -104,21 +105,34 @@ static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbol
     if (layer ? scan_import_layer_body_end(lexer) : scan_import_component_list(lexer, ')')) return true;
     scan_invalid_import_end(lexer);
     lexer->result_symbol = layer ? INVALID_IMPORT_LAYER : INVALID_IMPORT_SUPPORTS;
-    lexer->mark_end(lexer);
     return true;
 }
 
 static void scan_invalid_import_end(TSLexer *lexer) {
     if (lexer->lookahead == '\'' || lexer->lookahead == '"') scan_supports_string(lexer);
+    lexer->mark_end(lexer);
     for (;;) {
         bool whitespace = false;
         if (!scan_component_gap(lexer, &whitespace)) {
+            lexer->mark_end(lexer);
             if (lexer->eof(lexer)) return;
             continue;
         }
-        if (lexer->lookahead != ')' && lexer->lookahead != ';' && lexer->lookahead != '[' && lexer->lookahead != ']') return;
-        advance(lexer);
+        lexer->mark_end(lexer);
+        if (!scan_invalid_import_delimiter(lexer)) return;
+        lexer->mark_end(lexer);
     }
+}
+
+static bool scan_invalid_import_delimiter(TSLexer *lexer) {
+    if (lexer->lookahead == '[') {
+        advance(lexer);
+        return lexer->lookahead == '[' || lexer->lookahead == ']' ||
+            lexer->lookahead == ')' || lexer->lookahead == ';';
+    }
+    if (lexer->lookahead != ')' && lexer->lookahead != ';' && lexer->lookahead != ']') return false;
+    advance(lexer);
+    return true;
 }
 
 static bool scan_import_layer_body_end(TSLexer *lexer) {
