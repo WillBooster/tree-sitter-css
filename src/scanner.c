@@ -142,7 +142,7 @@ static bool scan_supports_body_end(TSLexer *lexer) {
     advance(lexer);
     bool whitespace = false;
     if (!scan_component_gap(lexer, &whitespace)) return false;
-    return lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
+    return lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
 }
 
 static bool scan_supports_literal(TSLexer *lexer, bool *component) {

@@ -666,3 +666,29 @@ test.each([
     parser.delete();
   }
 });
+
+test.each(
+  ['', 'layer(theme) '].flatMap((layer) =>
+    ['', '/**/', '\n'].flatMap((gap) =>
+      ['-foo', '--narrow', '-foo and (min-width: 100px)'].map((media) => [layer, gap, media] as const)
+    )
+  )
+)('hyphen-prefixed media queries retain support conditions: %s supports(...) %s%s', (layer, gap, media) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `@import "x" ${layer}supports(display: grid) ${gap}${media}; .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const support = tree.rootNode.descendantsOfType('import_supports');
+    expect(support).toHaveLength(1);
+    expect(support[0]!.text).toBe('supports(display: grid)');
+    expect(support[0]!.startIndex).toBe(source.indexOf('supports('));
+    expect(support[0]!.endIndex).toBe(source.indexOf('supports(') + 'supports(display: grid)'.length);
+    expect(tree.rootNode.descendantsOfType('import_statement')[0]!.text).toBe(source.slice(0, source.indexOf(';') + 1));
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
