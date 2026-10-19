@@ -491,7 +491,7 @@ module.exports = grammar({
       token.immediate('('),
       optional($._descendant_combinator),
       optional(seq(
-        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._pseudo_binary_expression, $.binary_expression)))))),
+        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._escaped_identifier, $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)))))),
         optional($._descendant_combinator),
       )),
       ')',
@@ -542,7 +542,7 @@ module.exports = grammar({
       token.immediate('('),
       optional($._descendant_combinator),
       optional(seq(
-        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._pseudo_binary_expression, $.binary_expression)))))),
+        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._escaped_identifier, $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)))))),
         optional($._descendant_combinator),
       )),
       ')',

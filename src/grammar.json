@@ -2912,6 +2912,15 @@
                                     "type": "ALIAS",
                                     "content": {
                                       "type": "SYMBOL",
+                                      "name": "_escaped_identifier"
+                                    },
+                                    "named": true,
+                                    "value": "plain_value"
+                                  },
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "SYMBOL",
                                       "name": "_pseudo_binary_expression"
                                     },
                                     "named": true,
@@ -2942,6 +2951,15 @@
                                         {
                                           "type": "SYMBOL",
                                           "name": "_value"
+                                        },
+                                        {
+                                          "type": "ALIAS",
+                                          "content": {
+                                            "type": "SYMBOL",
+                                            "name": "_escaped_identifier"
+                                          },
+                                          "named": true,
+                                          "value": "plain_value"
                                         },
                                         {
                                           "type": "ALIAS",
@@ -3012,6 +3030,15 @@
                                           "type": "ALIAS",
                                           "content": {
                                             "type": "SYMBOL",
+                                            "name": "_escaped_identifier"
+                                          },
+                                          "named": true,
+                                          "value": "plain_value"
+                                        },
+                                        {
+                                          "type": "ALIAS",
+                                          "content": {
+                                            "type": "SYMBOL",
                                             "name": "_pseudo_binary_expression"
                                           },
                                           "named": true,
@@ -3042,6 +3069,15 @@
                                               {
                                                 "type": "SYMBOL",
                                                 "name": "_value"
+                                              },
+                                              {
+                                                "type": "ALIAS",
+                                                "content": {
+                                                  "type": "SYMBOL",
+                                                  "name": "_escaped_identifier"
+                                                },
+                                                "named": true,
+                                                "value": "plain_value"
                                               },
                                               {
                                                 "type": "ALIAS",
@@ -3433,6 +3469,15 @@
                                     "type": "ALIAS",
                                     "content": {
                                       "type": "SYMBOL",
+                                      "name": "_escaped_identifier"
+                                    },
+                                    "named": true,
+                                    "value": "plain_value"
+                                  },
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "SYMBOL",
                                       "name": "_pseudo_binary_expression"
                                     },
                                     "named": true,
@@ -3463,6 +3508,15 @@
                                         {
                                           "type": "SYMBOL",
                                           "name": "_value"
+                                        },
+                                        {
+                                          "type": "ALIAS",
+                                          "content": {
+                                            "type": "SYMBOL",
+                                            "name": "_escaped_identifier"
+                                          },
+                                          "named": true,
+                                          "value": "plain_value"
                                         },
                                         {
                                           "type": "ALIAS",
@@ -3533,6 +3587,15 @@
                                           "type": "ALIAS",
                                           "content": {
                                             "type": "SYMBOL",
+                                            "name": "_escaped_identifier"
+                                          },
+                                          "named": true,
+                                          "value": "plain_value"
+                                        },
+                                        {
+                                          "type": "ALIAS",
+                                          "content": {
+                                            "type": "SYMBOL",
                                             "name": "_pseudo_binary_expression"
                                           },
                                           "named": true,
@@ -3563,6 +3626,15 @@
                                               {
                                                 "type": "SYMBOL",
                                                 "name": "_value"
+                                              },
+                                              {
+                                                "type": "ALIAS",
+                                                "content": {
+                                                  "type": "SYMBOL",
+                                                  "name": "_escaped_identifier"
+                                                },
+                                                "named": true,
+                                                "value": "plain_value"
                                               },
                                               {
                                                 "type": "ALIAS",
