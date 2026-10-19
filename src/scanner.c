@@ -16,11 +16,11 @@ enum TokenType {
 
 static bool scan_import_supports_start(TSLexer *lexer);
 static bool scan_supports_body_close(TSLexer *lexer);
-static bool scan_supports_literal(TSLexer *lexer);
+static bool scan_supports_literal(TSLexer *lexer, bool *component);
 static bool scan_supports_word(TSLexer *lexer);
 static bool scan_supports_url(TSLexer *lexer);
 static bool scan_supports_string(TSLexer *lexer);
-static bool scan_supports_slash(TSLexer *lexer);
+static bool scan_supports_slash(TSLexer *lexer, bool *component);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
 static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
@@ -99,31 +99,36 @@ static bool scan_import_supports_start(TSLexer *lexer) {
 
 static bool scan_supports_body_close(TSLexer *lexer) {
     unsigned depth = 0;
+    bool component = false;
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
+        if (is_css_whitespace(character)) { advance(lexer); continue; }
         if (is_name_character(character) || character >= 0x80 || character == '\\' || character == '#' || character == '@') {
+            component = true;
             if (!scan_supports_word(lexer)) return false;
             continue;
         }
         switch (character) {
             case '\'': case '"': case '/':
-                if (!scan_supports_literal(lexer)) return false;
+                if (!scan_supports_literal(lexer, &component)) return false;
                 continue;
             case ')':
-                if (!depth) return true;
+                if (!depth) return component;
                 depth--;
                 break;
             case ';': if (!depth) return false; break;
             case '(': case '[': case '{': depth++; break;
-            case ']': case '}': if (depth) depth--; break;
+            case ']': case '}': if (!depth) return false; depth--; break;
         }
+        component = true;
         advance(lexer);
     }
     return false;
 }
 
-static bool scan_supports_literal(TSLexer *lexer) {
-    if (lexer->lookahead == '/') return scan_supports_slash(lexer);
+static bool scan_supports_literal(TSLexer *lexer, bool *component) {
+    if (lexer->lookahead == '/') return scan_supports_slash(lexer, component);
+    *component = true;
     return scan_supports_string(lexer);
 }
 
@@ -177,13 +182,13 @@ static bool scan_supports_string(TSLexer *lexer) {
     return false;
 }
 
-static bool scan_supports_slash(TSLexer *lexer) {
+static bool scan_supports_slash(TSLexer *lexer, bool *component) {
     advance(lexer);
     if (lexer->lookahead == '/') {
         while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
         return true;
     }
-    if (lexer->lookahead != '*') return true;
+    if (lexer->lookahead != '*') { *component = true; return true; }
     advance(lexer);
     while (!lexer->eof(lexer)) {
         bool star = lexer->lookahead == '*';

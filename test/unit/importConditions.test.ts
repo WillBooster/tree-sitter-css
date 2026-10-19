@@ -601,3 +601,23 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(['})', '])', ' })', '}a)', '}) ', '))', ')a)', '){', '/**/})', '/**/))', '\t]a)'])(
+  'malformed support closers retain later rules: %s',
+  (body) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `@import "x" supports(${body}\nbody { color: red; }\n.after { background: blue; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(true);
+      const following = tree.rootNode.lastNamedChild!;
+      expect(following.type).toBe('rule_set');
+      expect(following.text).toBe('.after { background: blue; }');
+      expect(following.startIndex).toBe(source.indexOf('.after'));
+      expect(following.descendantsOfType('property_name').map((node) => node.text)).toEqual(['background']);
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
