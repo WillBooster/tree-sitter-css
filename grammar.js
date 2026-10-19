@@ -497,10 +497,7 @@ module.exports = grammar({
     pseudo_class_arguments: $ => seq(
       token.immediate('('),
       optional($._descendant_combinator),
-      optional(seq(
-        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._escaped_identifier, $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)))))),
-        optional($._descendant_combinator),
-      )),
+      optional(sep1(',', pseudoArgument($))),
       ')',
     ),
 
@@ -548,10 +545,7 @@ module.exports = grammar({
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
       optional($._descendant_combinator),
-      optional(seq(
-        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._escaped_identifier, $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)))))),
-        optional($._descendant_combinator),
-      )),
+      optional(sep1(',', pseudoArgument($))),
       ')',
     ),
 
@@ -957,6 +951,16 @@ function selectorIdentifier($) {
 
 function queryKeyword($) {
   return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
+}
+
+function pseudoArgument($) {
+  return choice(
+    seq($._selector, optional($._descendant_combinator)),
+    prec.left(repeat1(seq(
+      choice($._value, alias($._escaped_identifier, $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)),
+      optional($._descendant_combinator),
+    ))),
+  );
 }
 
 function cssKeyword(word) {
