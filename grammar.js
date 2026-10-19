@@ -799,7 +799,7 @@ module.exports = grammar({
 
     parenthesized_value: $ => seq(
       '(',
-      $._value,
+      valueSequence($),
       ')',
     ),
 
@@ -859,7 +859,7 @@ module.exports = grammar({
 
     grid_value: $ => seq(
       '[',
-      sep1(',', $._value),
+      valueSequence($),
       ']',
     ),
 
@@ -877,7 +877,7 @@ module.exports = grammar({
 
     arguments: $ => seq(
       token.immediate('('),
-      sep(choice(',', ';'), repeat1($._value)),
+      valueSequence($),
       ')',
     ),
 
@@ -952,6 +952,10 @@ function selectorIdentifier($) {
 
 function queryKeyword($) {
   return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
+}
+
+function valueSequence($) {
+  return sep(choice(',', ';'), repeat1($._value));
 }
 
 function pseudoArgument($) {
