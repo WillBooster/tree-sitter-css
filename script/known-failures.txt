@@ -12,6 +12,5 @@ examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.css
 examples/wordpress/wp-includes/css/dist/block-editor/content-rtl.min.css
 examples/wordpress/wp-includes/css/dist/block-editor/content.css
 examples/wordpress/wp-includes/css/dist/block-editor/content.min.css
-examples/wordpress/wp-includes/js/crop/cropper.css
 examples/wordpress/wp-includes/js/tinymce/plugins/compat3x/css/dialog.css
 examples/wordpress/wp-includes/js/tinymce/skins/lightgray/skin.min.css

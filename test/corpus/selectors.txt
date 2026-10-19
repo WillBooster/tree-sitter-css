@@ -653,7 +653,7 @@ Generic pseudo arguments preserve escaped plain values
       (pseudo_class_selector (class_name (identifier)) (arguments (plain_value)))
       (pseudo_element_selector (tag_name) (arguments (plain_value)))
       (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value)))
-      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value))))
+      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value))))
     (block)))
 
 =========================

@@ -88,6 +88,7 @@ module.exports = grammar({
     [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
     [$.range_query, $._range_value],
+    [$._selector, $._escaped_pseudo_values],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
     [$._selector, $.incomplete_declaration, $.declaration, $.last_declaration],
@@ -269,6 +270,7 @@ module.exports = grammar({
     _selector: $ => choice(
       $.universal_selector,
       alias($.identifier, $.tag_name),
+      alias($._escaped_identifier, $.tag_name),
       $.class_selector,
       $.nesting_selector,
       $.pseudo_class_selector,
@@ -340,26 +342,13 @@ module.exports = grammar({
     attribute_selector: $ => seq(
       optional($._selector),
       token(prec(1, '[')),
-      alias(choice($.identifier, $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
+      alias(choice($.identifier, $._escaped_identifier, $.namespace_selector), $.attribute_name),
       optional(seq(
         choice('=', '~=', '^=', '|=', '*=', '$='),
         $._value,
         optional($.attribute_flag),
       )),
       ']',
-    ),
-
-    _escaped_attribute_namespace: $ => choice(
-      seq(
-        alias($._escaped_identifier, $.tag_name),
-        '|',
-        choice($._selector, alias($._escaped_identifier, $.tag_name)),
-      ),
-      seq(
-        optional($._selector),
-        '|',
-        alias($._escaped_identifier, $.tag_name),
-      ),
     ),
 
     attribute_flag: _ => /[iIsS]/,
@@ -376,9 +365,15 @@ module.exports = grammar({
 
     pseudo_class_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value))),
+      sep(',', choice($._selector, repeat1($._value), $._escaped_pseudo_values)),
       ')',
     ),
+
+    _escaped_pseudo_values: $ => prec.dynamic(1, seq(
+      repeat($._value),
+      alias($._escaped_identifier, $.plain_value),
+      repeat(seq(optional($._descendant_combinator), choice($._value, alias($._escaped_identifier, $.plain_value)))),
+    )),
 
     pseudo_class_with_selector_arguments: $ => seq(
       token.immediate('('),
@@ -407,7 +402,7 @@ module.exports = grammar({
 
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value))),
+      sep(',', choice($._selector, repeat1($._value), $._escaped_pseudo_values)),
       ')',
     ),
 

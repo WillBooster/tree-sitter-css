@@ -71,3 +71,35 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  [String.raw`\61 `, String.raw`b\61 `, String.raw`c\6c ass`].flatMap((name) =>
+    ['', ':hover', '.active', ' > x'].flatMap((suffix) =>
+      ['top', 'nested', 'media'].map((layout) => [name, suffix, layout] as const)
+    )
+  )
+)('escaped type selectors retain rule ownership: %s%s in %s', (name, suffix, layout) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const rule = `${name}${suffix} { color: red; }`;
+  const before = layout === 'nested' ? `a { ${rule} }` : layout === 'media' ? `@media screen { ${rule} }` : rule;
+  const source = `${before} .after { color: blue; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const parsedRule = tree.rootNode.descendantsOfType('rule_set').find((node) => node.text === rule);
+    expect(parsedRule?.startIndex).toBe(source.indexOf(rule));
+    expect(parsedRule?.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color']);
+    expect(parsedRule?.descendantsOfType('tag_name').map((node) => node.text)).toContain(name);
+    expect(
+      query.captures(tree.rootNode).filter(({ name: capture, node }) => capture === 'tag' && node.text === name)
+    ).toHaveLength(1);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: blue; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+    expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color', 'color']);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
