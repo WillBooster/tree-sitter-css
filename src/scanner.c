@@ -1,6 +1,7 @@
 #include "tree_sitter/parser.h"
 
 #include <wctype.h>
+#include <string.h>
 
 enum TokenType {
     DESCENDANT_OP,
@@ -10,12 +11,23 @@ enum TokenType {
     INCOMPLETE_DECLARATION_END,
     LAYER_NAME_IDENTIFIER,
     LAYER_NAME_PREFIX,
+    IMPORT_SUPPORTS_CLOSED,
 };
 
+static bool scan_import_supports_closed(TSLexer *lexer);
+static bool scan_supports_literal(TSLexer *lexer);
+static bool scan_supports_word(TSLexer *lexer);
+static bool scan_supports_url(TSLexer *lexer);
+static bool scan_supports_string(TSLexer *lexer);
+static bool scan_supports_slash(TSLexer *lexer);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
-static bool scan_layer_name_tail(TSLexer *lexer);
+static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
+static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded);
+static char keyword_character(int32_t character);
+static void scan_escape_terminator(TSLexer *lexer);
 static bool scan_layer_name_gap(TSLexer *lexer, bool *whitespace);
+static bool is_layer_name_start(int32_t character);
 static bool is_css_whitespace(int32_t character);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
 static bool scan_property_colon(TSLexer *lexer);
@@ -43,6 +55,9 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
+    if (valid_symbols[IMPORT_SUPPORTS_CLOSED]) {
+        return scan_import_supports_closed(lexer);
+    }
     if (valid_symbols[LAYER_NAME_IDENTIFIER] || valid_symbols[LAYER_NAME_PREFIX]) {
         return scan_layer_name_identifier(lexer, valid_symbols);
     }
@@ -57,6 +72,107 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     }
     if (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP]) {
         return scan_descendant_operator(lexer);
+    }
+    return false;
+}
+
+static bool scan_import_supports_closed(TSLexer *lexer) {
+    unsigned depth = 0;
+    lexer->mark_end(lexer);
+    lexer->result_symbol = IMPORT_SUPPORTS_CLOSED;
+    while (!lexer->eof(lexer)) {
+        int32_t character = lexer->lookahead;
+        if (is_name_character(character) || character >= 0x80 || character == '\\' || character == '#' || character == '@') {
+            if (!scan_supports_word(lexer)) return false;
+            continue;
+        }
+        switch (character) {
+            case '\'': case '"': case '/':
+                if (!scan_supports_literal(lexer)) return false;
+                continue;
+            case ')':
+                if (!depth) return true;
+                depth--;
+                break;
+            case ';': if (!depth) return false; break;
+            case '(': case '[': case '{': depth++; break;
+            case ']': case '}': if (depth) depth--; break;
+        }
+        advance(lexer);
+    }
+    return false;
+}
+
+static bool scan_supports_literal(TSLexer *lexer) {
+    if (lexer->lookahead == '/') return scan_supports_slash(lexer);
+    return scan_supports_string(lexer);
+}
+
+static bool scan_supports_word(TSLexer *lexer) {
+    char name[4] = {0};
+    unsigned length = 0;
+    bool prefixed = lexer->lookahead == '#' || lexer->lookahead == '@';
+    if (prefixed) advance(lexer);
+    while (is_name_character(lexer->lookahead) || lexer->lookahead >= 0x80 || lexer->lookahead == '\\') {
+        int32_t character = lexer->lookahead;
+        if (character == '\\') {
+            if (!scan_decoded_escape(lexer, &character)) return false;
+        } else {
+            advance(lexer);
+        }
+        if (length < 3) name[length] = keyword_character(character);
+        length++;
+    }
+    if (!prefixed && length == 3 && !strcmp(name, "url") && lexer->lookahead == '(') {
+        return scan_supports_url(lexer);
+    }
+    return true;
+}
+
+static bool scan_supports_url(TSLexer *lexer) {
+    advance(lexer);
+    while (!lexer->eof(lexer)) {
+        if (lexer->lookahead == '\\') {
+            if (!scan_escape(lexer)) return false;
+        } else if (lexer->lookahead == '\'' || lexer->lookahead == '"') {
+            if (!scan_supports_string(lexer)) return false;
+        } else if (lexer->lookahead == ')') {
+            advance(lexer);
+            return true;
+        } else {
+            advance(lexer);
+        }
+    }
+    return false;
+}
+
+static bool scan_supports_string(TSLexer *lexer) {
+    int32_t quote = lexer->lookahead;
+    advance(lexer);
+    while (!lexer->eof(lexer)) {
+        int32_t character = lexer->lookahead;
+        advance(lexer);
+        if (character == quote) return true;
+        if (character == '\\' && !lexer->eof(lexer)) advance(lexer);
+    }
+    return false;
+}
+
+static bool scan_supports_slash(TSLexer *lexer) {
+    advance(lexer);
+    if (lexer->lookahead == '/') {
+        while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
+        return true;
+    }
+    if (lexer->lookahead != '*') return true;
+    advance(lexer);
+    while (!lexer->eof(lexer)) {
+        bool star = lexer->lookahead == '*';
+        advance(lexer);
+        if (star && lexer->lookahead == '/') {
+            advance(lexer);
+            return true;
+        }
     }
     return false;
 }
@@ -79,28 +195,60 @@ static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols
 }
 
 static bool scan_layer_name_token(TSLexer *lexer) {
+    bool hyphen = lexer->lookahead == '-';
     if (lexer->lookahead == '-') {
         advance(lexer);
         if (lexer->lookahead == '-') {
             advance(lexer);
-            return scan_layer_name_tail(lexer);
+            return scan_layer_name_tail(lexer, "--", 2);
         }
     }
-    if (!(lexer->lookahead == '\\' || is_name_start(lexer->lookahead) || lexer->lookahead >= 0x80)) {
+    if (!(lexer->lookahead == '\\' || is_layer_name_start(lexer->lookahead))) {
         return false;
     }
-    return scan_layer_name_tail(lexer);
+    return scan_layer_name_tail(lexer, hyphen ? "-" : "", hyphen ? 1 : 0);
 }
 
-static bool scan_layer_name_tail(TSLexer *lexer) {
-    while (is_name_character(lexer->lookahead) || lexer->lookahead >= 0x80 || lexer->lookahead == '\\') {
-        if (lexer->lookahead == '\\') {
-            if (!scan_escape(lexer)) return false;
+static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length) {
+    char name[13] = {0};
+    memcpy(name, prefix, length);
+    while (is_layer_name_start(lexer->lookahead) || is_digit(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\') {
+        int32_t character = lexer->lookahead;
+        if (character == '\\') {
+            if (!scan_decoded_escape(lexer, &character)) return false;
         } else {
             advance(lexer);
         }
+        if (length < sizeof(name) - 1) {
+            name[length] = keyword_character(character);
+        }
+        length++;
     }
-    return true;
+    if (length >= sizeof(name)) return true;
+    return strcmp(name, "initial") && strcmp(name, "inherit") && strcmp(name, "unset") &&
+        strcmp(name, "revert") && strcmp(name, "revert-layer") && strcmp(name, "revert-rule");
+}
+
+static char keyword_character(int32_t character) {
+    if (character >= 'A' && character <= 'Z') return (char)(character + 'a' - 'A');
+    return character < 0x80 ? (char)character : '?';
+}
+
+static bool is_layer_name_start(int32_t character) {
+    static const int32_t ranges[][2] = {
+        {0xB7, 0xB7}, {0xC0, 0xD6}, {0xD8, 0xF6}, {0xF8, 0x37D}, {0x37F, 0x1FFF},
+        {0x200C, 0x200D}, {0x203F, 0x2040}, {0x2070, 0x218F}, {0x2C00, 0x2FEF},
+        {0x3001, 0xD7FF}, {0xF900, 0xFDCF}, {0xFDF0, 0xFFFD}, {0x10000, 0x10FFFF},
+    };
+    if ((character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || character == '_') {
+        return true;
+    }
+    for (unsigned i = 0; i < sizeof(ranges) / sizeof(ranges[0]); i++) {
+        if (character >= ranges[i][0] && character <= ranges[i][1]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool scan_layer_name_gap(TSLexer *lexer, bool *whitespace) {
@@ -233,28 +381,39 @@ static bool scan_class_name_escape_with_suffix(TSLexer *lexer) {
 }
 
 static bool scan_escape(TSLexer *lexer) {
+    return scan_decoded_escape(lexer, NULL);
+}
+
+static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded) {
     advance(lexer);
     if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f') {
         return false;
     }
     if (!is_hex_digit(lexer->lookahead)) {
+        if (decoded) *decoded = lexer->lookahead;
         advance(lexer);
         return true;
     }
     unsigned digits = 0;
+    int32_t value = 0;
     while (digits < 6 && is_hex_digit(lexer->lookahead)) {
+        int32_t digit = lexer->lookahead;
+        value = value * 16 + (digit <= '9' ? digit - '0' : (digit | 32) - 'a' + 10);
         advance(lexer);
         digits++;
     }
+    if (decoded) *decoded = value == 0 ? 0xFFFD : value;
+    scan_escape_terminator(lexer);
+    return true;
+}
+
+static void scan_escape_terminator(TSLexer *lexer) {
     if (lexer->lookahead == '\r') {
         advance(lexer);
-        if (lexer->lookahead == '\n') {
-            advance(lexer);
-        }
-    } else if (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\n' || lexer->lookahead == '\f') {
+        if (lexer->lookahead == '\n') advance(lexer);
+    } else if (is_css_whitespace(lexer->lookahead)) {
         advance(lexer);
     }
-    return true;
 }
 
 static bool scan_descendant_operator(TSLexer *lexer) {

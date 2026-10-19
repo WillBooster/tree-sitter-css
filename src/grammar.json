@@ -270,6 +270,10 @@
           "value": "supports("
         },
         {
+          "type": "SYMBOL",
+          "name": "_import_supports_closed"
+        },
+        {
           "type": "REPEAT1",
           "content": {
             "type": "CHOICE",
@@ -5125,6 +5129,10 @@
     {
       "type": "SYMBOL",
       "name": "_layer_name_prefix"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_import_supports_closed"
     }
   ],
   "inline": [

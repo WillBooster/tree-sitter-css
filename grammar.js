@@ -44,6 +44,7 @@ module.exports = grammar({
     $._incomplete_declaration_end,
     $._layer_name_identifier,
     $._layer_name_prefix,
+    $._import_supports_closed,
   ],
 
   inline: $ => [
@@ -142,6 +143,7 @@ module.exports = grammar({
 
     import_supports: $ => seq(
       alias($._import_supports_start, 'supports('),
+      $._import_supports_closed,
       repeat1(choice($._at_rule_component, $.at_rule_braced)),
       ')',
     ),

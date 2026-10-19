@@ -104,7 +104,16 @@ test('import conditions expose public keyword, function, layer, and property cap
 });
 
 test.each(
-  ['display', '--theme-color', '--日本', '--😀', String.raw`\64 isplay`, String.raw`--\74 heme`].flatMap((property) =>
+  [
+    'display',
+    '--theme-color',
+    '--日本',
+    '--😀',
+    String.raw`\64 isplay`,
+    String.raw`--\74 heme`,
+    String.raw`\A9 `,
+    String.raw`--\2192 `,
+  ].flatMap((property) =>
     ['', '/**/', '/* first *//* second */'].flatMap((comment) =>
       [false, true].map((parenthesized) => [property, comment, parenthesized] as const)
     )
@@ -135,7 +144,7 @@ test.each(
   }
 );
 
-test.each(['1', '123px', '#item', 'display 1', 'display /**/ 1 /**/'])(
+test.each(['1', '123px', '#item', 'display 1', 'display /**/ 1 /**/', '©', '--©', 'a→', '--\uE000', '×'])(
   'support properties do not cross non-comment components or accept non-identifiers: %s',
   (prefix) => {
     const parser = new Parser().setLanguage(language);
@@ -196,6 +205,8 @@ testCommand(
         'component',
         String.raw`th\65 me`,
         '日本',
+        String.raw`\A9 `,
+        String.raw`--\2192 `,
       ]);
     },
   }
@@ -403,6 +414,162 @@ test.each([
     expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(
       body.match(/\/\*[\s\S]*?\*\//g) ?? []
     );
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  'supports(display: grid',
+  'SUPPORTS(display: grid',
+  String.raw`s\75 pports(display: grid`,
+  'layer(theme) supports(display: grid',
+])('an unfinished import without its semicolon retains following rules: %s', (condition) => {
+  const parser = new Parser().setLanguage(language);
+  const following = ['body { color: red; }', '.after { background: blue; }'];
+  const source = `@import "x" ${condition}\n${following.join('\n')}`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    const rules = tree.rootNode.namedChildren.filter((node) => node.type === 'rule_set');
+    const followingRules = rules.slice(-2);
+    expect(followingRules).toHaveLength(2);
+    // Recovery may retain an invalid prefix in the first selector, but its block and following rule remain complete.
+    expect(followingRules[0]!.lastNamedChild?.text).toBe('{ color: red; }');
+    expect(followingRules[1]!.text).toBe(following[1]);
+    expect(followingRules[1]!.startIndex).toBe(source.indexOf('.after'));
+    expect(
+      followingRules.flatMap((node) => node.descendantsOfType('property_name').map((property) => property.text))
+    ).toEqual(['color', 'background']);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(['supports(--theme: { color: red; }', 'supports(future({ color: red; })'])(
+  'incomplete nested support bodies retain later complete rules: %s',
+  (condition) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `@import "x" ${condition}\nbody { color: red; }\n.after { background: blue; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(true);
+      expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after { background: blue; }');
+      expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+      expect(tree.rootNode.lastNamedChild?.descendantsOfType('property_name').map((node) => node.text)).toEqual([
+        'background',
+      ]);
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each([
+  '--theme: prefix {a:b;} suffix',
+  '--theme: {a:b;} {c:d;}',
+  String.raw`--theme: ") ; {" {a:b;}`,
+  String.raw`--theme: \) {a:b;}`,
+  '--theme: fn([a;{b:c;}]) /* ) ; */ {d:e;}',
+  'background: url(https://example.test/image.svg)',
+  'background: url(//example.test/image.svg)',
+  String.raw`background: u\72 l(https://example.test/image.svg)`,
+  'background: URL(https://example.test/image.svg)',
+  '--theme: {a:b;} url(https://example.test/image.svg)',
+  '--theme: future(a // ) comment\n b) {c:d;}',
+])('complete support values preserve balanced braces at any position: %s', (body) => {
+  const parser = new Parser().setLanguage(language);
+  const condition = `supports(${body})`;
+  const source = `@import "x" ${condition}; .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('import_supports').map((node) => node.text)).toEqual([condition]);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['initial', 'inherit', 'unset', 'revert', 'revert-layer', 'revert-rule'].flatMap((keyword) =>
+    [
+      keyword,
+      keyword.toUpperCase(),
+      `\\${keyword[0]}${keyword.slice(1)}`,
+      `\\${keyword.codePointAt(0)!.toString(16)} ${keyword.slice(1)}`,
+    ].flatMap((spelling) =>
+      [spelling, `theme.${spelling}`, `${spelling}.theme`].map((name) => [keyword, spelling, name] as const)
+    )
+  )
+)('CSS-wide keywords are reserved in every decoded layer component: %s %s %s', (keyword, spelling, name) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const source = `@import "x" layer(${name}); .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name: capture, node }) => capture === 'property' && node.text === spelling)
+    ).toHaveLength(0);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  'default',
+  'initially',
+  'inherit-theme',
+  'unset0',
+  'reverted',
+  'revert-layers',
+  'revert-rules',
+  String.raw`\A9 `,
+  String.raw`theme\2192 `,
+  String.raw`\E000 `,
+  '--initial',
+  String.raw`initial\0 `,
+])('non-reserved layer names retain their complete components: %s', (name) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `@import "x" layer(${name}); .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('layer_name').map((node) => node.text)).toEqual([name]);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['©', '→', '…', '—', '\uE000', '\u00A0'].flatMap((character) => [
+    character,
+    `theme${character}`,
+    `theme.${character}`,
+  ])
+)('literal non-identifier codepoints do not form valid layer names: %s', (name) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `@import "x" layer(${name}); .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
     expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
   } finally {

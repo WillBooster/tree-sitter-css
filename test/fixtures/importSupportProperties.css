@@ -5,3 +5,9 @@
 @import "reserved-escaped" supports(\2d\2d: initial);
 @import "layer-comments" layer(theme/**/./**/component);
 @import "layer-escaped" layer(th\65 me./**/日本);
+
+@import "x" supports(©: initial);
+@import "x" supports(--©: initial);
+@import "x" supports(a→: initial);
+@import "x" supports(\A9 : initial);
+@import "x" supports(--\2192 : initial);
