@@ -6144,10 +6144,6 @@
                     },
                     {
                       "type": "STRING",
-                      "value": ":"
-                    },
-                    {
-                      "type": "STRING",
                       "value": "<"
                     },
                     {
@@ -6185,6 +6181,22 @@
                     "content": {
                       "type": "STRING",
                       "value": "%"
+                    }
+                  }
+                },
+                "named": true,
+                "value": "plain_value"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": -1,
+                    "content": {
+                      "type": "STRING",
+                      "value": ":"
                     }
                   }
                 },
@@ -7179,7 +7191,7 @@
                     },
                     {
                       "type": "PATTERN",
-                      "value": "\\/[^\\*\\s,;!{}()\\[\\]]"
+                      "value": "\\/[^\\*\\s,;:!{}()\\[\\]]"
                     }
                   ]
                 }
@@ -7195,11 +7207,11 @@
                   "members": [
                     {
                       "type": "PATTERN",
-                      "value": "[^/\\s,;!{}()\\[\\]]"
+                      "value": "[^/\\s,;:!{}()\\[\\]]"
                     },
                     {
                       "type": "PATTERN",
-                      "value": "\\/[^\\*\\s,;!{}()\\[\\]]"
+                      "value": "\\/[^\\*\\s,;:!{}()\\[\\]]"
                     }
                   ]
                 }

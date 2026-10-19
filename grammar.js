@@ -790,8 +790,9 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        alias(choice('.', '=', '?', '@', '#', '&', '|', '^', '$', '~', ':', '<', '>', '*', '+', '/', '`'), $.plain_value),
+        alias(choice('.', '=', '?', '@', '#', '&', '|', '^', '$', '~', '<', '>', '*', '+', '/', '`'), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
+        alias(token(prec(-1, ':')), $.plain_value),
       )),
       alias($._escaped_identifier, $.plain_value),
     ),
@@ -909,12 +910,12 @@ module.exports = grammar({
       seq(
         repeat(choice(
           /[-_]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
         /[a-zA-Z]/,
         repeat(choice(
-          /[^/\s,;!{}()\[\]]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /[^/\s,;:!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
       ),
     )),
