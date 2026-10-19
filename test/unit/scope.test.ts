@@ -310,3 +310,49 @@ test.each([
     parser.delete();
   }
 });
+
+for (const selector of [
+  'has',
+  'not',
+  'is',
+  'where',
+  'host',
+  'host-context',
+  'a /**/b',
+  'a /**/ b',
+  'a /**/',
+  'a/**/',
+  ...['has', 'not', 'is', 'where', 'host', 'host-context'].flatMap((name) => [`[${name}]`, `[${name}=${name}]`]),
+]) {
+  test.each([`(${selector})`, `to (${selector})`, `(${selector}) to (${selector})`])(
+    'scope retains selector interpretations: %s',
+    (limits) => {
+      const parser = new Parser();
+      parser.setLanguage(language);
+      const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
+      const tree = parser.parse(`@scope ${limits} {} .after { color: red; }`)!;
+      try {
+        expect(tree.rootNode.hasError).toBe(false);
+        const scope = tree.rootNode.firstNamedChild!;
+        expect(scope.type).toBe('scope_statement');
+        expect(
+          query.captures(scope).some(({ name }) => name === (selector.startsWith('[') ? 'attribute' : 'tag'))
+        ).toBe(true);
+        for (const field of limits.startsWith('to ')
+          ? ['end']
+          : limits.includes(' to ')
+            ? ['start', 'end']
+            : ['start']) {
+          const boundary = scope.childForFieldName(field)!;
+          expect(boundary.text).toBe(selector.replace(/\s*\/\*\*\/\s*$/, ''));
+          if (selector.endsWith('b')) expect(boundary.descendantsOfType('descendant_selector')).toHaveLength(1);
+        }
+        expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
+      } finally {
+        tree.delete();
+        query.delete();
+        parser.delete();
+      }
+    }
+  );
+}

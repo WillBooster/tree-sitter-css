@@ -9,6 +9,7 @@
 // @ts-check
 
 const queryOpeningParenthesis = choice('(', token.immediate('('));
+const selectorFunctionName = choice('has', 'not', 'is', 'where', 'host', 'host-context');
 const openingBracket = token(prec(1, '['));
 const attributeMatchOperator = choice('=', '~=', '^=', '|=', '*=', '$=');
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
@@ -266,7 +267,7 @@ module.exports = grammar({
     _scope_fallback_component: $ => choice(
       $._at_rule_nested_component,
       alias($.identifier, $.at_rule_value),
-      alias(choice('has', 'not', 'is', 'where', 'host', 'host-context'), $.at_rule_value),
+      alias(selectorFunctionName, $.at_rule_value),
       alias($._scope_generic_parenthesized, $.at_rule_parenthesized),
       $._descendant_combinator,
     ),
@@ -355,7 +356,7 @@ module.exports = grammar({
 
     _selector: $ => choice(
       $.universal_selector,
-      alias($.identifier, $.tag_name),
+      alias(choice($.identifier, selectorFunctionName), $.tag_name),
       $.class_selector,
       $.nesting_selector,
       $.pseudo_class_selector,
@@ -386,7 +387,7 @@ module.exports = grammar({
       choice(
         seq(
           alias(
-            choice('has', 'not', 'is', 'where', 'host', 'host-context'),
+            selectorFunctionName,
             $.class_name,
           ),
           alias($.pseudo_class_with_selector_arguments, $.arguments),
@@ -414,7 +415,7 @@ module.exports = grammar({
     pseudo_element_selector: $ => seq(
       optional($._selector),
       '::',
-      alias($.identifier, $.tag_name),
+      alias(choice($.identifier, selectorFunctionName), $.tag_name),
       optional(alias($.pseudo_element_arguments, $.arguments)),
     ),
 
@@ -426,10 +427,10 @@ module.exports = grammar({
     attribute_selector: $ => seq(
       optional($._selector),
       openingBracket,
-      alias(choice($.identifier, $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
+      alias(choice($.identifier, selectorFunctionName, $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
       optional(seq(
         attributeMatchOperator,
-        $._value,
+        choice($._value, alias(selectorFunctionName, $.plain_value)),
         optional($.attribute_flag),
       )),
       ']',

@@ -12,7 +12,8 @@ enum TokenType {
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
-static bool scan_at_rule_slash(TSLexer *lexer);
+static bool scan_comment_body(TSLexer *lexer);
+static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer);
 static bool is_name_character(int32_t character);
@@ -46,7 +47,7 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         }
         lexer->mark_end(lexer);
         if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
-            return scan_at_rule_slash(lexer);
+            return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP]);
         }
         return whitespace && valid_symbols[DESCENDANT_OP] && scan_descendant_operator(lexer);
     }
@@ -108,6 +109,10 @@ static bool scan_property_colon(TSLexer *lexer) {
 
 static bool scan_separator_comment(TSLexer *lexer) {
     advance(lexer);
+    return scan_comment_body(lexer);
+}
+
+static bool scan_comment_body(TSLexer *lexer) {
     if (lexer->lookahead == '/') {
         while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') {
             advance(lexer);
@@ -129,15 +134,25 @@ static bool scan_separator_comment(TSLexer *lexer) {
     return false;
 }
 
-static bool scan_at_rule_slash(TSLexer *lexer) {
+static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant) {
     if (lexer->lookahead != '/') {
         return false;
     }
     advance(lexer);
-    lexer->mark_end(lexer);
     if (lexer->lookahead == '*' || lexer->lookahead == '/') {
-        return false;
+        if (!allow_descendant || !scan_comment_body(lexer)) {
+            return false;
+        }
+        while (iswspace(lexer->lookahead) || lexer->lookahead == '/') {
+            if (iswspace(lexer->lookahead)) {
+                advance(lexer);
+            } else if (!scan_separator_comment(lexer)) {
+                return false;
+            }
+        }
+        return scan_descendant_operator(lexer);
     }
+    lexer->mark_end(lexer);
     lexer->result_symbol = AT_RULE_SLASH;
     return true;
 }

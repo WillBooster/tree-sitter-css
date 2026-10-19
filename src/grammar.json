@@ -1532,8 +1532,42 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "has"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "not"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "is"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "where"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "host"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "host-context"
+                  }
+                ]
+              }
+            ]
           },
           "named": true,
           "value": "tag_name"
@@ -1792,8 +1826,42 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "has"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "not"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "is"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "where"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "host"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "host-context"
+                  }
+                ]
+              }
+            ]
           },
           "named": true,
           "value": "tag_name"
@@ -1958,6 +2026,35 @@
                 "name": "identifier"
               },
               {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "has"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "not"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "is"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "where"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "host"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "host-context"
+                  }
+                ]
+              },
+              {
                 "type": "SYMBOL",
                 "name": "_escaped_identifier"
               },
@@ -2010,8 +2107,47 @@
                   ]
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "_value"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_value"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "has"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "not"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "is"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "where"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "host"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "host-context"
+                          }
+                        ]
+                      },
+                      "named": true,
+                      "value": "plain_value"
+                    }
+                  ]
                 },
                 {
                   "type": "CHOICE",
