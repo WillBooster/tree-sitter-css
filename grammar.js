@@ -942,7 +942,7 @@ function selectorIdentifier($) {
 }
 
 function propertyIdentifier($) {
-  return choice($.identifier, $._custom_property_name, $._custom_property_component);
+  return choice(selectorIdentifier($), $._custom_property_name);
 }
 
 function queryKeyword($) {

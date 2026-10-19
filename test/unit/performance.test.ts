@@ -71,11 +71,19 @@ test.each([
   const small = prefix + '/**/ '.repeat(1000) + suffix;
   const large = prefix + '/**/ '.repeat(4000) + suffix;
   parseCpuTime(large, false);
-  let smallFastest = Infinity;
+  // Single parses can register zero CPU time on Linux; compare equal batches above the timer's resolution.
+  const minimumSampleMicroseconds = 20_000;
+  let iterations = 1;
+  let smallFastest = 0;
   let largeFastest = Infinity;
-  for (let run = 0; run < 3; run++) {
-    smallFastest = Math.min(smallFastest, parseCpuTime(small, false));
-    largeFastest = Math.min(largeFastest, parseCpuTime(large, false));
+  while (smallFastest < minimumSampleMicroseconds) {
+    smallFastest = Infinity;
+    largeFastest = Infinity;
+    for (let run = 0; run < 3; run++) {
+      smallFastest = Math.min(smallFastest, parseCpuTime(small, false, iterations));
+      largeFastest = Math.min(largeFastest, parseCpuTime(large, false, iterations));
+    }
+    if (smallFastest < minimumSampleMicroseconds) iterations *= 2;
   }
   expect(largeFastest / smallFastest).toBeLessThan(8);
   const tree = parser.parse(large)!;
@@ -88,13 +96,16 @@ test.each([
   }
 });
 
-function parseCpuTime(source: string, expectedError: boolean): number {
+function parseCpuTime(source: string, expectedError: boolean, iterations = 1): number {
   const start = process.threadCpuUsage();
-  const tree = parser.parse(source);
+  let hasUnexpectedError = false;
+  for (let iteration = 0; iteration < iterations; iteration++) {
+    const tree = parser.parse(source);
+    if (!tree) throw new Error('The parser returned no tree');
+    hasUnexpectedError ||= tree.rootNode.hasError !== expectedError;
+    tree.delete();
+  }
   const { system, user } = process.threadCpuUsage(start);
-  if (!tree) throw new Error('The parser returned no tree');
-  const { hasError } = tree.rootNode;
-  tree.delete();
-  expect(hasError).toBe(expectedError);
+  expect(hasUnexpectedError).toBe(false);
   return system + user;
 }

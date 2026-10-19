@@ -3635,16 +3635,71 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "identifier"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "has"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "not"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "is"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "where"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "host"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "host-context"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_style_keyword"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_query_not"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_query_and"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_query_or"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_custom_property_component"
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
                 "name": "_custom_property_name"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_custom_property_component"
               }
             ]
           },
@@ -3669,16 +3724,71 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "identifier"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "has"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "not"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "is"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "where"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "host"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "host-context"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "_style_keyword"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_query_not"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_query_and"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_query_or"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_custom_property_component"
+                    }
+                  ]
                 },
                 {
                   "type": "SYMBOL",
                   "name": "_custom_property_name"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_custom_property_component"
                 }
               ]
             },
@@ -3760,16 +3870,71 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "identifier"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "has"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "not"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "is"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "where"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "host"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "host-context"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "_style_keyword"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_query_not"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_query_and"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_query_or"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_custom_property_component"
+                    }
+                  ]
                 },
                 {
                   "type": "SYMBOL",
                   "name": "_custom_property_name"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_custom_property_component"
                 }
               ]
             },
