@@ -11,7 +11,7 @@ test.each([
   ['url(x)', 'layer(theme)', 'supports(display: grid)', 'screen'],
   ['"x"', 'layer(framework.component)', '', ''],
   ['"x"', 'layer', '', 'screen and (width > 30px)'],
-  ['"x"', 'layer()', 'supports((display: grid) and (color: red))', 'print, screen'],
+  ['"x"', 'layer(theme)', 'supports((display: grid) and (color: red))', 'print, screen'],
   ['"x"', '', 'supports(selector(:has(.a)))', ''],
   ['"x"', 'LAYER(theme)', 'SUPPORTS(display: grid)', 'screen'],
   ['"x"', String.raw`l\61 yer(theme)`, String.raw`s\75 pports(display: grid)`, ''],
@@ -222,3 +222,20 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(['layer()', 'layer( )', 'layer(/**/)', 'LAYER()', String.raw`l\61 yer()`, 'layer(\n)'])(
+  'empty layer function names report errors and preserve following rules: %s',
+  (layer) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `@import "x" ${layer}; .after { color: red; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(true);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+      expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);

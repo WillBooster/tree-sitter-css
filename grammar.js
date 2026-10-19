@@ -126,7 +126,7 @@ module.exports = grammar({
 
     import_layer: $ => choice(
       alias($._import_layer_keyword, 'layer'),
-      seq(alias($._import_layer_start, 'layer('), optional($.layer_name), ')'),
+      seq(alias($._import_layer_start, 'layer('), $.layer_name, ')'),
     ),
 
     _import_layer_keyword: _ => cssKeyword('layer'),

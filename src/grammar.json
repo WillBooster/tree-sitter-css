@@ -188,16 +188,8 @@
               "value": "layer("
             },
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "layer_name"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "layer_name"
             },
             {
               "type": "STRING",
