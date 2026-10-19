@@ -99,3 +99,76 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  ['#', '#/**/fff', '#/**/abc', '#/**/12345678', '#/**//**/fff', '#/**/fff/**/', '# fff', '#/**/日本'].flatMap(
+    (value) => ['x', '--x'].map((property) => [property, value] as const)
+  )
+)('separated hash delimiters remain generic values: %s %s', (property, value) => {
+  assertHashDelimiter(`a { ${property}: ${value}; color: red; } .after {}`, value);
+});
+
+test.each(['fn(#/**/fff, 0)', 'fn(#, 0)'])('hash delimiters remain available inside functions: %s', (value) => {
+  assertHashDelimiter(`a { --x: ${value}; color: red; } .after {}`, value);
+});
+
+test('split unquoted hash attributes retain error recovery', () => {
+  const parser = new Parser().setLanguage(language);
+  const source = 'a[data-x=#/**/abc] { color: red; } .after {}';
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual(['color: red;']);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test('quoted hash attributes retain their string syntax', () => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const tree = parser.parse('a[data-x="#/**/abc"] { color: red; } .after {}')!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('comment')).toHaveLength(0);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'string')
+        .map(({ node }) => node.text)
+    ).toEqual(['"#/**/abc"']);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+function assertHashDelimiter(source: string, value: string): void {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('hash_value')).toHaveLength(0);
+    expect(tree.rootNode.descendantsOfType('color_value')).toHaveLength(0);
+    expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(
+      value.match(/\/\*[\s\S]*?\*\//g) ?? []
+    );
+    expect(
+      query.captures(tree.rootNode).filter(({ name, node }) => name === 'punctuation.delimiter' && node.text === '#')
+    ).toHaveLength(1);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+    const color = tree.rootNode.descendantsOfType('declaration').find((node) => node.text === 'color: red;');
+    expect(color?.startIndex).toBe(source.indexOf('color: red;'));
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+}

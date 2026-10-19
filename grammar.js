@@ -801,6 +801,7 @@ module.exports = grammar({
       $.plain_value,
       $.color_value,
       $.hash_value,
+      '#',
       $.integer_value,
       $.float_value,
       $.string_value,

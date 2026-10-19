@@ -68,6 +68,7 @@
 (float_value) @number
 (unit) @type
 
+"#" @punctuation.delimiter
 "," @punctuation.delimiter
 ":" @punctuation.delimiter
 
