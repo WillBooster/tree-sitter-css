@@ -62,13 +62,12 @@
 (important) @keyword
 
 (string_value) @string
-(color_value) @string.special
+[(color_value) (hash_value)] @string.special
 
 (integer_value) @number
 (float_value) @number
 (unit) @type
 
-"#" @punctuation.delimiter
 "," @punctuation.delimiter
 ":" @punctuation.delimiter
 

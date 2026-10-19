@@ -1,0 +1,101 @@
+import path from 'node:path';
+import fs from 'node:fs';
+import { expect, test } from 'vitest';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+
+await Parser.init();
+const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
+
+test.each([
+  ['color', String.raw`#\36 7BA6A`],
+  ['color', String.raw`#67BA6A\9`],
+  ['--hash', '#item'],
+  ['--hash', '#123456789'],
+  ['--hash', '#12345'],
+  ['--hash', '#1234567'],
+  ['--hash', '#ab'],
+  ['--hash', '#--theme'],
+  ['--hash', '#-'],
+  ['--hash', '#123abcg'],
+  ['--hash', '#日本'],
+  ['--hash', String.raw`#a\+b`],
+])('hash values remain atomic and preserve following declarations: %s %s', (property, value) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const tree = parser.parse(`a { ${property}: ${value}; color: red; }`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('hash_value').map((node) => node.text)).toEqual([value]);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'string.special')
+        .map(({ node }) => node.text)
+    ).toEqual([value]);
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+      `${property}: ${value};`,
+      'color: red;',
+    ]);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test('ordinary colors retain their public nodes and captures', () => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const tree = parser.parse('a { color: #abc; background: #12345678; border-color: #abcd #123456; }')!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('color_value').map((node) => node.text)).toEqual([
+      '#abc',
+      '#12345678',
+      '#abcd',
+      '#123456',
+    ]);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'string.special')
+        .map(({ node }) => node.text)
+    ).toEqual(['#abc', '#12345678', '#abcd', '#123456']);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['#abc', String.raw`#\61 bc`, '#日本'].flatMap((selector) =>
+    (
+      [
+        [selector, 'rule_set', 1],
+        [`@scope (${selector})`, 'scope_statement', 1],
+        [`@scope to (${selector})`, 'scope_statement', 1],
+        [`@scope (${selector}) to (${selector})`, 'scope_statement', 2],
+      ] as const
+    ).map(([prefix, type, count]) => [selector, prefix, type, count] as const)
+  )
+)('hash values preserve ID selectors: %s in %s', (selector, prefix, type, count) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `${prefix} { --hash: #item; } .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild?.type).toBe(type);
+    expect(tree.rootNode.descendantsOfType('id_name').map((node) => node.text)).toEqual(
+      Array.from({ length: count }, () => selector)
+    );
+    expect(tree.rootNode.descendantsOfType('hash_value').map((node) => node.text)).toEqual(['#item']);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.lastIndexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

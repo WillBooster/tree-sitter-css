@@ -800,6 +800,7 @@ module.exports = grammar({
       alias($.identifier, $.plain_value),
       $.plain_value,
       $.color_value,
+      $.hash_value,
       $.integer_value,
       $.float_value,
       $.string_value,
@@ -817,7 +818,9 @@ module.exports = grammar({
       ')',
     ),
 
-    color_value: _ => seq('#', token.immediate(/[0-9a-fA-F]{3,8}/)),
+    color_value: _ => token(seq('#', choice(/[0-9a-fA-F]{3,4}/, /[0-9a-fA-F]{6}/, /[0-9a-fA-F]{8}/))),
+
+    hash_value: _ => token(seq('#', repeat1(choice(nameContinue, cssEscape)))),
 
     string_value: $ => choice(
       seq(
