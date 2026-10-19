@@ -82,7 +82,7 @@ fuzzed with:
 
 ```toml
 [dependencies]
-tree-sitter = { package = "willbooster-tree-sitter", version = "=2.0.33" }
+tree-sitter = { package = "willbooster-tree-sitter", version = "2.0.33" }
 tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "3" }
 ```
 

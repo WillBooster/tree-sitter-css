@@ -13,11 +13,13 @@ test('preserves empty-value recovery and the following declaration', async () =>
     const declarations = tree?.rootNode.descendantsOfType('declaration');
     expect(declarations).toHaveLength(2);
     const emptyValue = declarations?.[0]?.lastNamedChild;
-    expect(emptyValue?.type).toBe('integer_value');
+    expect(declarations?.[0]?.text).toBe('--x: ;');
     expect(emptyValue?.text).toBe('');
     expect(emptyValue?.hasError).toBe(true);
     expect(declarations?.[1]?.text).toBe('color: red;');
     expect(declarations?.[1]?.hasError).toBe(false);
+    expect(declarations?.[1]?.startIndex).toBe(11);
+    expect(declarations?.[1]?.endIndex).toBe(22);
   } finally {
     tree?.delete();
     parser.delete();

@@ -1668,6 +1668,11 @@
     }
   },
   {
+    "type": "nesting_selector",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "parenthesized_query",
     "named": true,
     "fields": {},
@@ -2510,6 +2515,10 @@
     "named": false
   },
   {
+    "type": "&",
+    "named": false
+  },
+  {
     "type": "'",
     "named": false
   },
@@ -2681,10 +2690,6 @@
   },
   {
     "type": "namespace_name",
-    "named": true
-  },
-  {
-    "type": "nesting_selector",
     "named": true
   },
   {
