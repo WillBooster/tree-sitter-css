@@ -395,7 +395,7 @@ module.exports = grammar({
       ')',
     ),
 
-    _pseudo_operand: $ => choice(ordinaryValue($), alias($._escaped_identifier, $.plain_value)),
+    _pseudo_operand: $ => choice(pseudoValue($), alias($._escaped_identifier, $.plain_value)),
 
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
@@ -807,12 +807,12 @@ module.exports = grammar({
       seq(
         repeat(choice(
           /[-_]/,
-          /\/[^\*\s,;:|!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
         /[a-zA-Z]/,
         repeat(choice(
-          /[^/\s,;:|!{}()\[\]]/,
-          /\/[^\*\s,;:|!{}()\[\]]/,
+          /[^/\s,;:!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
       ),
     )),
@@ -822,9 +822,13 @@ module.exports = grammar({
 function pseudoArgument($) {
   return choice(
     prec.dynamic(1, seq($._selector, optional($._descendant_combinator))),
-    prec.left(repeat1(seq(choice(prec(-1, ordinaryValue($)), alias($._pseudo_binary_expression, $.binary_expression)), optional($._descendant_combinator)))),
+    prec.left(repeat1(seq(choice(prec(-1, pseudoValue($)), alias($._pseudo_binary_expression, $.binary_expression)), optional($._descendant_combinator)))),
     $._escaped_pseudo_values,
   );
+}
+
+function pseudoValue($) {
+  return choice(scalarValue($), $.color_value, $.grid_value);
 }
 
 function ordinaryValue($) {
