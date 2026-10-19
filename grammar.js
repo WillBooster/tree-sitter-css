@@ -52,6 +52,8 @@ module.exports = grammar({
     $.__error_recovery,
     $._at_rule_slash,
     $._incomplete_declaration_end,
+    $._value_dot,
+    $._invalid_value_dot,
   ],
 
   inline: $ => [
@@ -398,7 +400,7 @@ module.exports = grammar({
 
     class_selector: $ => prec(1, seq(
       optional($._selector),
-      '.',
+      choice('.', alias($._value_dot, '.')),
       $.class_name,
     )),
 
@@ -501,7 +503,7 @@ module.exports = grammar({
       ')',
     ),
 
-    pseudo_class_with_selector_arguments: $ => seq(
+    pseudo_class_with_selector_arguments: $ => prec.dynamic(2, seq(
       token.immediate('('),
       optional($._descendant_combinator),
       optional(seq(
@@ -509,7 +511,7 @@ module.exports = grammar({
         optional($._descendant_combinator),
       )),
       ')',
-    ),
+    )),
 
     pseudo_class_nth_child_arguments: $ => prec(-1, seq(
       token.immediate('('),
@@ -777,6 +779,7 @@ module.exports = grammar({
     _style_unary_query: $ => seq(alias($._query_not, 'not'), $._style_in_parens),
 
     _value: $ => choice(
+      seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
       prec(-1, choice(
         alias($.identifier, $.plain_value),
         $.plain_value,
@@ -790,7 +793,7 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        alias(choice('.', '=', '?', '@', '#', '&', '|', '^', '$', '~', '<', '>', '*', '+', '/', '`'), $.plain_value),
+        prec.dynamic(-1, alias(choice($._value_dot, '=', '?', '@', '#', '&', '|', '^', '$', '~', '<', '>', '*', '+', '/', '`'), $.plain_value)),
         alias(token(prec(-1, '%')), $.plain_value),
         alias(token(prec(-1, ':')), $.plain_value),
       )),

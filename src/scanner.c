@@ -7,8 +7,13 @@ enum TokenType {
     ERROR_RECOVERY,
     AT_RULE_SLASH,
     INCOMPLETE_DECLARATION_END,
+    VALUE_DOT,
+    INVALID_VALUE_DOT,
 };
 
+static bool scan_rule_gap(TSLexer *lexer, const bool *valid_symbols);
+static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
+static bool scan_dot_following_gap(TSLexer *lexer);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
@@ -35,23 +40,66 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
+    if (valid_symbols[VALUE_DOT] && lexer->lookahead == '.') return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && !valid_symbols[AT_RULE_SLASH] &&
         (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
         return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP]);
     }
-    if (valid_symbols[AT_RULE_SLASH] || (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP])) {
-        bool whitespace = false;
-        while (iswspace(lexer->lookahead)) {
-            whitespace = true;
-            skip(lexer);
-        }
-        lexer->mark_end(lexer);
-        if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
-            return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP]);
-        }
-        return whitespace && valid_symbols[DESCENDANT_OP] && scan_descendant_operator(lexer);
+    if (valid_symbols[AT_RULE_SLASH] || (iswspace(lexer->lookahead) &&
+        (valid_symbols[DESCENDANT_OP] || valid_symbols[VALUE_DOT]))) {
+        return scan_rule_gap(lexer, valid_symbols);
     }
     return false;
+}
+
+static bool scan_rule_gap(TSLexer *lexer, const bool *valid_symbols) {
+    bool whitespace = false;
+    while (iswspace(lexer->lookahead)) {
+        whitespace = true;
+        skip(lexer);
+    }
+    lexer->mark_end(lexer);
+    if (lexer->lookahead == '.' && valid_symbols[VALUE_DOT] &&
+        !(whitespace && valid_symbols[DESCENDANT_OP])) return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
+    if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
+        return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP]);
+    }
+    return whitespace && valid_symbols[DESCENDANT_OP] && scan_descendant_operator(lexer);
+}
+
+static bool scan_value_dot(TSLexer *lexer, bool allow_invalid) {
+    advance(lexer);
+    lexer->mark_end(lexer);
+    if (is_digit(lexer->lookahead)) return false;
+    lexer->result_symbol = VALUE_DOT;
+    if (!allow_invalid) return true;
+    while (is_name_character(lexer->lookahead) || lexer->lookahead == '\\') {
+        if (lexer->lookahead == '\\') {
+            if (!scan_escape(lexer)) return true;
+        } else {
+            advance(lexer);
+        }
+    }
+    return !scan_dot_following_gap(lexer) || lexer->lookahead != '{';
+}
+
+static bool scan_dot_following_gap(TSLexer *lexer) {
+    while (iswspace(lexer->lookahead) || lexer->lookahead == '/') {
+        if (iswspace(lexer->lookahead)) {
+            advance(lexer);
+            continue;
+        }
+        advance(lexer);
+        bool block = lexer->lookahead == '*';
+        if (!scan_comment_body(lexer)) {
+            if (block && lexer->eof(lexer)) {
+                lexer->mark_end(lexer);
+                lexer->result_symbol = INVALID_VALUE_DOT;
+            }
+            return false;
+        }
+    }
+    return true;
 }
 
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant) {
