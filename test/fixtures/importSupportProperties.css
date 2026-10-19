@@ -1,3 +1,5 @@
 @import "unicode" supports(--😀/**/:/**/ initial);
 @import "ordinary" supports(--theme: initial);
 @import "escaped" supports(\64 isplay: grid);
+@import "reserved" supports(--: initial);
+@import "reserved-escaped" supports(\2d\2d: initial);

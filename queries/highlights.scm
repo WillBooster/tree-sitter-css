@@ -91,6 +91,7 @@
  . (_) @_feature_value
  (#eq? @_colon ":")
  (#not-match? @_feature_value "^/[*/]")
+ (#not-match? @property "^(?:-|\\\\(?:-|0{0,4}2[dD](?:[ \\t\\n\\f]|\\r\\n?)?)){2}$")
  (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\x7f]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\x7f]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
 
 (import_supports
@@ -101,6 +102,7 @@
  . (_) @_feature_value
  (#eq? @_colon ":")
  (#not-match? @_feature_value "^/[*/]")
+ (#not-match? @property "^(?:-|\\\\(?:-|0{0,4}2[dD](?:[ \\t\\n\\f]|\\r\\n?)?)){2}$")
  (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\x7f]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\x7f]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
 
 (

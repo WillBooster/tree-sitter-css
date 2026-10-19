@@ -196,3 +196,29 @@ testCommand(
     },
   }
 );
+
+test.each(
+  [
+    '--',
+    String.raw`\--`,
+    String.raw`-\-`,
+    String.raw`\-\-`,
+    String.raw`\2d\2d`,
+    String.raw`\00002d\00002d`,
+    String.raw`\2d -`,
+    String.raw`-\2d `,
+  ].flatMap((property) => [false, true].map((parenthesized) => [property, parenthesized] as const))
+)('reserved double-hyphen names do not acquire property captures: %s %s', (property, parenthesized) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const declaration = `${property}: initial`;
+  const tree = parser.parse(`@import "x" supports(${parenthesized ? `(${declaration})` : declaration}); .after {}`)!;
+  try {
+    expect(query.captures(tree.rootNode.firstNamedChild!).filter(({ name }) => name === 'property')).toHaveLength(0);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
