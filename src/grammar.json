@@ -785,6 +785,15 @@
                     },
                     "named": true,
                     "value": "at_rule_parenthesized"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_scope_generic_parenthesized"
+                    },
+                    "named": true,
+                    "value": "at_rule_parenthesized"
                   }
                 ]
               }
@@ -832,31 +841,110 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_at_rule_nested_component"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "identifier"
-                },
-                "named": true,
-                "value": "at_rule_value"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_descendant_combinator"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_scope_fallback_component"
           }
         },
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "_scope_generic_parenthesized": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "("
+              }
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_scope_fallback_component"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "_scope_fallback_component": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_at_rule_nested_component"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "at_rule_value"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "has"
+              },
+              {
+                "type": "STRING",
+                "value": "not"
+              },
+              {
+                "type": "STRING",
+                "value": "is"
+              },
+              {
+                "type": "STRING",
+                "value": "where"
+              },
+              {
+                "type": "STRING",
+                "value": "host"
+              },
+              {
+                "type": "STRING",
+                "value": "host-context"
+              }
+            ]
+          },
+          "named": true,
+          "value": "at_rule_value"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_scope_generic_parenthesized"
+          },
+          "named": true,
+          "value": "at_rule_parenthesized"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_descendant_combinator"
         }
       ]
     },
@@ -1021,14 +1109,82 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "["
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "STRING",
+              "value": "["
+            }
+          }
         },
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "_at_rule_nested_component"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_at_rule_nested_component"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_escaped_identifier"
+                    }
+                  ]
+                },
+                "named": true,
+                "value": "at_rule_value"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_descendant_combinator"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "="
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "~="
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "^="
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "|="
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "*="
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "$="
+                    }
+                  ]
+                },
+                "named": true,
+                "value": "at_rule_value"
+              }
+            ]
           }
         },
         {
@@ -5357,12 +5513,32 @@
       "namespace_selector"
     ],
     [
+      "selectors",
+      "attribute_selector"
+    ],
+    [
       "at_rule_delimiter",
       "pseudo_class_selector"
     ],
     [
       "_at_rule_component",
       "_selector"
+    ],
+    [
+      "at_rule_bracketed",
+      "_selector"
+    ],
+    [
+      "at_rule_bracketed",
+      "attribute_selector"
+    ],
+    [
+      "_at_rule_component",
+      "_escaped_attribute_namespace"
+    ],
+    [
+      "at_rule_bracketed",
+      "_escaped_attribute_namespace"
     ],
     [
       "_at_rule_component",
@@ -5387,6 +5563,18 @@
     [
       "scope_statement",
       "_scope_selector_group"
+    ],
+    [
+      "_scope_generic_parenthesized",
+      "at_rule_parenthesized"
+    ],
+    [
+      "_scope_fallback_component",
+      "_selector"
+    ],
+    [
+      "_scope_fallback_component",
+      "at_rule_parenthesized"
     ],
     [
       "_container_function_arguments",

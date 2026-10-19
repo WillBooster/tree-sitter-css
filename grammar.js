@@ -9,6 +9,8 @@
 // @ts-check
 
 const queryOpeningParenthesis = choice('(', token.immediate('('));
+const openingBracket = token(prec(1, '['));
+const attributeMatchOperator = choice('=', '~=', '^=', '|=', '*=', '$=');
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
 const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
 const genericName = repeat1(genericNameCharacter);
@@ -68,14 +70,22 @@ module.exports = grammar({
     [$.selectors, $.sibling_selector],
     [$.selectors, $.adjacent_sibling_selector],
     [$.selectors, $.namespace_selector],
+    [$.selectors, $.attribute_selector],
     [$.at_rule_delimiter, $.pseudo_class_selector],
     [$._at_rule_component, $._selector],
+    [$.at_rule_bracketed, $._selector],
+    [$.at_rule_bracketed, $.attribute_selector],
+    [$._at_rule_component, $._escaped_attribute_namespace],
+    [$.at_rule_bracketed, $._escaped_attribute_namespace],
     [$._at_rule_component, $.child_selector],
     [$._at_rule_component, $.sibling_selector],
     [$._at_rule_component, $.adjacent_sibling_selector],
     [$._at_rule_component, $.namespace_selector],
     [$.scope_statement, $.at_rule],
     [$.scope_statement, $._scope_selector_group],
+    [$._scope_generic_parenthesized, $.at_rule_parenthesized],
+    [$._scope_fallback_component, $._selector],
+    [$._scope_fallback_component, $.at_rule_parenthesized],
     [$._container_function_arguments, $._style_parenthesized_query],
     [$.at_rule_parenthesized, $._container_function_arguments, $._style_parenthesized_query],
     [$._container_feature_query, $.style_feature],
@@ -234,6 +244,7 @@ module.exports = grammar({
           alias($.identifier, $.at_rule_value),
           alias($._scope_to, $.at_rule_value),
           alias($._scope_selector_group, $.at_rule_parenthesized),
+          alias($._scope_generic_parenthesized, $.at_rule_parenthesized),
         )),
         choice(';', $.block),
       ),
@@ -242,8 +253,22 @@ module.exports = grammar({
     _scope_selector_group: $ => seq(
       queryOpeningParenthesis,
       $.selectors,
-      repeat(choice($._at_rule_nested_component, alias($.identifier, $.at_rule_value), $._descendant_combinator)),
+      repeat($._scope_fallback_component),
       ')',
+    ),
+
+    _scope_generic_parenthesized: $ => seq(
+      queryOpeningParenthesis,
+      repeat($._scope_fallback_component),
+      ')',
+    ),
+
+    _scope_fallback_component: $ => choice(
+      $._at_rule_nested_component,
+      alias($.identifier, $.at_rule_value),
+      alias(choice('has', 'not', 'is', 'where', 'host', 'host-context'), $.at_rule_value),
+      alias($._scope_generic_parenthesized, $.at_rule_parenthesized),
+      $._descendant_combinator,
     ),
 
     _at_rule_component: $ => choice(
@@ -268,7 +293,16 @@ module.exports = grammar({
 
     at_rule_parenthesized: $ => seq(queryOpeningParenthesis, repeat($._at_rule_nested_component), ')'),
 
-    at_rule_bracketed: $ => seq('[', repeat($._at_rule_nested_component), ']'),
+    at_rule_bracketed: $ => seq(
+      openingBracket,
+      repeat(choice(
+        $._at_rule_nested_component,
+        alias(choice($.identifier, $._escaped_identifier), $.at_rule_value),
+        $._descendant_combinator,
+        alias(attributeMatchOperator, $.at_rule_value),
+      )),
+      ']',
+    ),
 
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
 
@@ -391,10 +425,10 @@ module.exports = grammar({
 
     attribute_selector: $ => seq(
       optional($._selector),
-      token(prec(1, '[')),
+      openingBracket,
       alias(choice($.identifier, $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
       optional(seq(
-        choice('=', '~=', '^=', '|=', '*=', '$='),
+        attributeMatchOperator,
         $._value,
         optional($.attribute_flag),
       )),

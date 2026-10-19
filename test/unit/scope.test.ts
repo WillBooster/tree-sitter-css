@@ -271,3 +271,42 @@ test.each([
     parser.delete();
   }
 });
+
+test.each([
+  '[> 1px]',
+  '[+ #1]',
+  '[fn(> 1px)]',
+  '[[> 1px]]',
+  '[a b]',
+  '[a 1]',
+  '[a #1]',
+  '[a > 1]',
+  '[a=1px extra]',
+  String.raw`[\61=1 i extra]`,
+  ':has([a b])',
+  ':has([a b]) 1px',
+  '[.a]',
+  '::',
+  '::1px',
+  'a::',
+  ':: .a',
+])('invalid scope syntax preserves the following rule and highlights: %s', (prelude) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
+  const following = '.after { color: red; }';
+  const source = `@scope (${prelude}) {} ${following}`;
+  const tree = parser.parse(source)!;
+  try {
+    const rule = tree.rootNode.lastNamedChild!;
+    expect(rule.type).toBe('rule_set');
+    expect(rule.text).toBe(following);
+    expect(rule.startIndex).toBe(source.indexOf(following));
+    expect(query.captures(rule).some(({ name, node }) => name === 'property' && node.text === 'after')).toBe(true);
+    expect(rule.descendantsOfType('declaration').map((node) => node.text)).toEqual(['color: red;']);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
