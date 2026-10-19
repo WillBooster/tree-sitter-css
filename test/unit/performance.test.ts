@@ -61,6 +61,12 @@ test.each([
   ['attribute flag', '@scope ([a="x" ', 'i]) {} .after {}'],
   ['attribute operator', '@scope ([a ', '= "x"]) {} .after {}'],
   ['selector list', '@scope (a ', ', b) {} .after {}'],
+  ['leading scope', '@scope ( ', '.a) {} .after {}'],
+  ['leading attribute', '@scope ([ ', 'a]) {} .after {}'],
+  ['leading function', '@scope (:has( ', 'a)) {} .after {}'],
+  ['nth clause', '@scope (:nth-child(2n ', 'of .a)) {} .after {}'],
+  ['nth selector', '@scope (:nth-child(2n of ', '.a)) {} .after {}'],
+  ['selector query', '@scope { @supports selector(a ', ') { .x {} } } .after {}'],
 ])('parses repeated %s scope comments in linear time', { timeout: 30_000 }, (_name, prefix, suffix) => {
   const small = prefix + '/**/ '.repeat(1000) + suffix;
   const large = prefix + '/**/ '.repeat(4000) + suffix;

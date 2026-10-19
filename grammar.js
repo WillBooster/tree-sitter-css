@@ -242,8 +242,8 @@ module.exports = grammar({
 
     scope_statement: $ => prec.dynamic(1, seq(
       alias($._scope_keyword, '@scope'),
-      optional(seq(queryOpeningParenthesis, field('start', $.selectors), optional($._descendant_combinator), ')')),
-      optional(seq(alias($._scope_to, 'to'), queryOpeningParenthesis, field('end', $.selectors), optional($._descendant_combinator), ')')),
+      optional(seq(queryOpeningParenthesis, optional($._descendant_combinator), field('start', $.selectors), optional($._descendant_combinator), ')')),
+      optional(seq(alias($._scope_to, 'to'), queryOpeningParenthesis, optional($._descendant_combinator), field('end', $.selectors), optional($._descendant_combinator), ')')),
       choice(';', $.block),
     )),
 
@@ -264,6 +264,7 @@ module.exports = grammar({
 
     _scope_selector_group: $ => seq(
       queryOpeningParenthesis,
+      optional($._descendant_combinator),
       $.selectors,
       repeat(seq(optional($._descendant_combinator), $._scope_fallback_component)),
       optional($._descendant_combinator),
@@ -440,6 +441,7 @@ module.exports = grammar({
     attribute_selector: $ => seq(
       optional($._selector),
       openingBracket,
+      optional($._descendant_combinator),
       alias(choice(selectorIdentifier($), $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
       optional(seq(
         optional($._descendant_combinator),
@@ -487,20 +489,27 @@ module.exports = grammar({
 
     pseudo_class_arguments: $ => seq(
       token.immediate('('),
-      sep(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), $._value)))),
       optional($._descendant_combinator),
+      optional(seq(
+        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._pseudo_binary_expression, $.binary_expression)))))),
+        optional($._descendant_combinator),
+      )),
       ')',
     ),
 
     pseudo_class_with_selector_arguments: $ => seq(
       token.immediate('('),
-      sep(seq(optional($._descendant_combinator), ','), $._selector),
       optional($._descendant_combinator),
+      optional(seq(
+        sep1(seq(optional($._descendant_combinator), ','), $._selector),
+        optional($._descendant_combinator),
+      )),
       ')',
     ),
 
     pseudo_class_nth_child_arguments: $ => prec(-1, seq(
       token.immediate('('),
+      optional($._descendant_combinator),
       choice(
         alias('even', $.plain_value),
         alias('odd', $.plain_value),
@@ -509,7 +518,9 @@ module.exports = grammar({
       ),
       optional(
         seq(
+          optional($._descendant_combinator),
           'of',
+          optional($._descendant_combinator),
           $._selector,
         ),
       ),
@@ -517,12 +528,23 @@ module.exports = grammar({
       ')',
     )),
 
+    _pseudo_binary_expression: $ => prec.left(-1, seq(
+      $._value,
+      optional($._descendant_combinator),
+      choice('+', '-', '*', '/'),
+      optional($._descendant_combinator),
+      $._value,
+    )),
+
     _nth_functional_notation: _ => /-?(\d)*n\s*(\+\s*\d+)?/,
 
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
-      sep(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), $._value)))),
       optional($._descendant_combinator),
+      optional(seq(
+        sep1(seq(optional($._descendant_combinator), ','), choice($._selector, prec.left(sep1(optional($._descendant_combinator), choice($._value, alias($._pseudo_binary_expression, $.binary_expression)))))),
+        optional($._descendant_combinator),
+      )),
       ')',
     ),
 
@@ -651,6 +673,7 @@ module.exports = grammar({
       'selector',
       '(',
       $._selector,
+      optional($._descendant_combinator),
       ')',
     ),
 
