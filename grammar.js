@@ -45,6 +45,7 @@ module.exports = grammar({
     $._layer_name_identifier,
     $._layer_name_prefix,
     $._import_supports_start,
+    $._import_layer_start,
   ],
 
   inline: $ => [
@@ -133,8 +134,6 @@ module.exports = grammar({
     ),
 
     _import_layer_keyword: _ => cssKeyword('layer'),
-
-    _import_layer_start: _ => token(seq(new RegExp(cssKeywordPattern('layer')), '(')),
 
     layer_name: $ => seq(
       repeat(seq(alias($._layer_name_prefix, $.identifier), '.')),

@@ -13,13 +13,16 @@ enum TokenType {
     LAYER_NAME_IDENTIFIER,
     LAYER_NAME_PREFIX,
     IMPORT_SUPPORTS_START,
+    IMPORT_LAYER_START,
 };
 
 typedef Array(char) SupportsDelimiters;
 
-static bool scan_import_supports_start(TSLexer *lexer);
-static bool scan_supports_body_close(TSLexer *lexer);
-static bool scan_supports_components(TSLexer *lexer, SupportsDelimiters *delimiters);
+static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols);
+static bool scan_import_layer_body_end(TSLexer *lexer);
+static bool scan_import_component_list(TSLexer *lexer, int32_t terminator);
+static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator);
+static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, bool *component);
 static bool scan_supports_body_end(TSLexer *lexer);
 static bool scan_supports_literal(TSLexer *lexer, bool *component);
 static bool scan_supports_word(TSLexer *lexer);
@@ -29,6 +32,7 @@ static bool scan_supports_slash(TSLexer *lexer, bool *component);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
 static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
+static bool scan_name_character(TSLexer *lexer, int32_t *character);
 static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded);
 static char keyword_character(int32_t character);
 static void scan_escape_terminator(TSLexer *lexer);
@@ -61,8 +65,8 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
-    if (valid_symbols[IMPORT_SUPPORTS_START]) {
-        return scan_import_supports_start(lexer);
+    if (valid_symbols[IMPORT_SUPPORTS_START] || valid_symbols[IMPORT_LAYER_START]) {
+        return scan_import_condition_start(lexer, valid_symbols);
     }
     if (valid_symbols[LAYER_NAME_IDENTIFIER] || valid_symbols[LAYER_NAME_PREFIX]) {
         return scan_layer_name_identifier(lexer, valid_symbols);
@@ -82,67 +86,90 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     return false;
 }
 
-static bool scan_import_supports_start(TSLexer *lexer) {
+static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols) {
     while (is_css_whitespace(lexer->lookahead)) skip(lexer);
-    const char *keyword = "supports";
-    for (unsigned index = 0; keyword[index]; index++) {
-        if (lexer->eof(lexer)) return false;
-        int32_t character = lexer->lookahead;
-        if (character == '\\') {
-            if (!scan_decoded_escape(lexer, &character)) return false;
-        } else {
-            advance(lexer);
-        }
-        if (keyword_character(character) != keyword[index]) return false;
+    char name[9] = {0};
+    unsigned length = 0;
+    while (is_name_character(lexer->lookahead) || lexer->lookahead == '\\') {
+        if (length == sizeof(name) - 1) return false;
+        int32_t character;
+        if (!scan_name_character(lexer, &character)) return false;
+        name[length++] = keyword_character(character);
     }
-    if (lexer->lookahead != '(') return false;
+    bool layer = valid_symbols[IMPORT_LAYER_START] && !strcmp(name, "layer");
+    bool supports = valid_symbols[IMPORT_SUPPORTS_START] && !strcmp(name, "supports");
+    if ((!layer && !supports) || lexer->lookahead != '(') return false;
     advance(lexer);
     lexer->mark_end(lexer);
-    lexer->result_symbol = IMPORT_SUPPORTS_START;
-    return scan_supports_body_close(lexer);
+    lexer->result_symbol = layer ? IMPORT_LAYER_START : IMPORT_SUPPORTS_START;
+    return layer ? scan_import_layer_body_end(lexer) : scan_import_component_list(lexer, ')');
 }
 
-static bool scan_supports_body_close(TSLexer *lexer) {
+static bool scan_import_layer_body_end(TSLexer *lexer) {
+    for (;;) {
+        bool whitespace = false;
+        if (!scan_component_gap(lexer, &whitespace)) return false;
+        if (lexer->eof(lexer)) return true;
+        switch (lexer->lookahead) {
+            case ')': return scan_supports_body_end(lexer);
+            case '\'': case '"': return false;
+            case ';': case '{': case '}': return true;
+            default: {
+                int32_t character;
+                if (!scan_name_character(lexer, &character)) return false;
+            }
+        }
+    }
+}
+
+static bool scan_import_component_list(TSLexer *lexer, int32_t terminator) {
     SupportsDelimiters delimiters = array_new();
-    bool valid = scan_supports_components(lexer, &delimiters);
+    bool valid = scan_import_components(lexer, &delimiters, terminator);
     array_delete(&delimiters);
     return valid;
 }
 
-static bool scan_supports_components(TSLexer *lexer, SupportsDelimiters *delimiters) {
+static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator) {
     bool component = false;
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
-        if (is_css_whitespace(character)) { advance(lexer); continue; }
-        if (is_name_character(character) || character >= 0x80 || character == '\\' || character == '#' || character == '@') {
-            component = true;
-            if (!scan_supports_word(lexer)) return false;
-            continue;
+        if (!delimiters->size) {
+            if (character == terminator) return terminator == ';' || (component && scan_supports_body_end(lexer));
+            if (character == ')' || character == ']' || character == '}' || character == ';') return false;
+            if (terminator == ';' && (character == '\'' || character == '"' || character == '{')) return false;
         }
-        switch (character) {
-            case '\'': case '"': case '/':
-                if (!scan_supports_literal(lexer, &component)) return false;
-                continue;
-            case ')': case ']': case '}':
-                if (!delimiters->size) return character == ')' && component && scan_supports_body_end(lexer);
-                if (array_pop(delimiters) != character) return false;
-                break;
-            case ';': if (!delimiters->size) return false; break;
-            case '(': array_push(delimiters, ')'); break;
-            case '[': array_push(delimiters, ']'); break;
-            case '{': array_push(delimiters, '}'); break;
-        }
-        component = true;
-        advance(lexer);
+        if (!scan_import_component(lexer, delimiters, &component)) return false;
     }
-    return false;
+    return terminator == ';' && !delimiters->size;
+}
+
+static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, bool *component) {
+    int32_t character = lexer->lookahead;
+    if (is_css_whitespace(character)) { advance(lexer); return true; }
+    if (character == '\'' || character == '"' || character == '/') return scan_supports_literal(lexer, component);
+    *component = true;
+    if (is_name_character(character) || character >= 0x80 || character == '\\' || character == '#' || character == '@') {
+        return scan_supports_word(lexer);
+    }
+    switch (character) {
+        case ')': case ']': case '}':
+            if (!delimiters->size || array_pop(delimiters) != character) return false;
+            break;
+        case '(': array_push(delimiters, ')'); break;
+        case '[': array_push(delimiters, ']'); break;
+        case '{': array_push(delimiters, '}'); break;
+    }
+    advance(lexer);
+    return true;
 }
 
 static bool scan_supports_body_end(TSLexer *lexer) {
     advance(lexer);
     bool whitespace = false;
     if (!scan_component_gap(lexer, &whitespace)) return false;
-    return lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
+    bool start = lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' ||
+        lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
+    return start && scan_import_component_list(lexer, ';');
 }
 
 static bool scan_supports_literal(TSLexer *lexer, bool *component) {
@@ -157,12 +184,8 @@ static bool scan_supports_word(TSLexer *lexer) {
     bool prefixed = lexer->lookahead == '#' || lexer->lookahead == '@';
     if (prefixed) advance(lexer);
     while (is_name_character(lexer->lookahead) || lexer->lookahead >= 0x80 || lexer->lookahead == '\\') {
-        int32_t character = lexer->lookahead;
-        if (character == '\\') {
-            if (!scan_decoded_escape(lexer, &character)) return false;
-        } else {
-            advance(lexer);
-        }
+        int32_t character;
+        if (!scan_name_character(lexer, &character)) return false;
         if (length < 3) name[length] = keyword_character(character);
         length++;
     }
@@ -256,12 +279,8 @@ static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length) 
     char name[13] = {0};
     memcpy(name, prefix, length);
     while (is_layer_name_start(lexer->lookahead) || is_digit(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\') {
-        int32_t character = lexer->lookahead;
-        if (character == '\\') {
-            if (!scan_decoded_escape(lexer, &character)) return false;
-        } else {
-            advance(lexer);
-        }
+        int32_t character;
+        if (!scan_name_character(lexer, &character)) return false;
         if (length < sizeof(name) - 1) {
             name[length] = keyword_character(character);
         }
@@ -270,6 +289,13 @@ static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length) 
     if (length >= sizeof(name)) return true;
     return strcmp(name, "initial") && strcmp(name, "inherit") && strcmp(name, "unset") &&
         strcmp(name, "revert") && strcmp(name, "revert-layer") && strcmp(name, "revert-rule");
+}
+
+static bool scan_name_character(TSLexer *lexer, int32_t *character) {
+    *character = lexer->lookahead;
+    if (*character == '\\') return scan_decoded_escape(lexer, character);
+    advance(lexer);
+    return true;
 }
 
 static char keyword_character(int32_t character) {
