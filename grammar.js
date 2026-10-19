@@ -841,7 +841,14 @@ module.exports = grammar({
       ')',
     ),
 
-    class_name: $ => alias(token(idName), $.identifier),
+    class_name: $ => choice(
+      $.identifier,
+      alias(escapedIdentifier(optional(choice(
+        '-',
+        seq('--', repeat(nameContinue)),
+        seq(optional('-'), nameStart, repeat(nameContinue)),
+      )), 1), $.identifier),
+    ),
 
     at_keyword: _ => token(seq(
       '@',
@@ -905,8 +912,8 @@ function cssKeywordPattern(word, escapedOnly = false) {
 }
 
 /** @param {RuleOrLiteral} prefix */
-function escapedIdentifier(prefix) {
-  return token(seq(
+function escapedIdentifier(prefix, precedence = 0) {
+  return token(prec(precedence, seq(
     prefix,
     repeat1(seq(
       '\\',
@@ -916,7 +923,7 @@ function escapedIdentifier(prefix) {
       ),
       repeat(nameContinue),
     )),
-  ));
+  )));
 }
 
 /**

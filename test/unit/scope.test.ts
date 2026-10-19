@@ -312,6 +312,11 @@ test.each([
 });
 
 for (const selector of [
+  ':hover',
+  String.raw`:\68 over`,
+  String.raw`:a\31 x`,
+  ':scope',
+  ':root',
   'has',
   'not',
   'is',
@@ -336,7 +341,9 @@ for (const selector of [
         const scope = tree.rootNode.firstNamedChild!;
         expect(scope.type).toBe('scope_statement');
         expect(
-          query.captures(scope).some(({ name }) => name === (selector.startsWith('[') ? 'attribute' : 'tag'))
+          query
+            .captures(scope)
+            .some(({ name }) => name === (selector.startsWith('[') || selector.startsWith(':') ? 'attribute' : 'tag'))
         ).toBe(true);
         for (const field of limits.startsWith('to ')
           ? ['end']
