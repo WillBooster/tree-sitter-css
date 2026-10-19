@@ -226,3 +226,48 @@ test.each(['a .日本', 'a 日本'])('a Unicode descendant boundary retains sele
     parser.delete();
   }
 });
+
+test.each(['> 1px', '+ #1', '~ 1px', '| #1', 'fn(> 1px)', 'fn(+ #1)'])(
+  'leading combinators keep balanced generic scope fallback: %s',
+  (prelude) => {
+    const parser = new Parser();
+    parser.setLanguage(language);
+    const source = `@scope (${prelude}) {} .after {}`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.firstNamedChild?.type).toBe('at_rule');
+      expect(tree.rootNode.firstNamedChild?.text).toBe(`@scope (${prelude}) {}`);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each([
+  String.raw`.a\31 x`,
+  String.raw`.a\000031x`,
+  String.raw`.a\+b`,
+  String.raw`.\31 0`,
+  String.raw`.a\31 x:hover`,
+])('escaped class names remain structured scope boundaries: %s', (selector) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
+  const tree = parser.parse(`@scope (${selector}) to (${selector}) {} .after {}`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const scope = tree.rootNode.firstNamedChild!;
+    expect(scope.type).toBe('scope_statement');
+    expect(scope.childForFieldName('start')?.text).toBe(selector);
+    expect(scope.childForFieldName('end')?.text).toBe(selector);
+    expect(query.captures(scope).filter(({ name }) => name === 'property').length).toBeGreaterThanOrEqual(2);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});

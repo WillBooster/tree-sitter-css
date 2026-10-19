@@ -46,7 +46,6 @@ module.exports = grammar({
   externals: $ => [
     $._descendant_operator,
     $.__error_recovery,
-    $._class_name_escape_with_suffix,
     $._at_rule_slash,
     $._incomplete_declaration_end,
   ],
@@ -71,6 +70,10 @@ module.exports = grammar({
     [$.selectors, $.namespace_selector],
     [$.at_rule_delimiter, $.pseudo_class_selector],
     [$._at_rule_component, $._selector],
+    [$._at_rule_component, $.child_selector],
+    [$._at_rule_component, $.sibling_selector],
+    [$._at_rule_component, $.adjacent_sibling_selector],
+    [$._at_rule_component, $.namespace_selector],
     [$.scope_statement, $.at_rule],
     [$.scope_statement, $._scope_selector_group],
     [$._container_function_arguments, $._style_parenthesized_query],
@@ -239,12 +242,13 @@ module.exports = grammar({
     _scope_selector_group: $ => seq(
       queryOpeningParenthesis,
       $.selectors,
-      repeat(choice($._at_rule_nested_component, alias($.identifier, $.at_rule_value), $._descendant_combinator, alias(choice('>', '~', '+', '|'), $.at_rule_value))),
+      repeat(choice($._at_rule_nested_component, alias($.identifier, $.at_rule_value), $._descendant_combinator)),
       ')',
     ),
 
     _at_rule_component: $ => choice(
       $.at_rule_value,
+      alias(choice('>', '~', '+', '|'), $.at_rule_value),
       alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
       alias($._at_rule_slash, $.at_rule_value),
       $.at_rule_url,
@@ -802,11 +806,7 @@ module.exports = grammar({
       ')',
     ),
 
-    class_name: $ => repeat1(choice(
-      $.identifier,
-      $.escape_sequence,
-      alias($._class_name_escape_with_suffix, $.identifier),
-    )),
+    class_name: $ => alias(token(idName), $.identifier),
 
     at_keyword: _ => token(seq(
       '@',

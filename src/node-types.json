@@ -840,13 +840,9 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
         {
           "type": "identifier",
           "named": true
