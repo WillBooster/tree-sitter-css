@@ -312,6 +312,14 @@ test.each([
 });
 
 for (const selector of [
+  String.raw`\73 tyle \73 tyle`,
+  String.raw`\61 nd \61 nd`,
+  'style',
+  'and',
+  'or',
+  ...['style', 'and', 'or', 'not', 'STYLE', 'AND', 'OR', 'NOT', String.raw`\73 tyle`, String.raw`\61 nd`].flatMap(
+    (name) => [`[${name}]`, `[${name}=${name}]`, `.${name}`]
+  ),
   ':hover',
   String.raw`:\68 over`,
   String.raw`:a\31 x`,
@@ -343,7 +351,15 @@ for (const selector of [
         expect(
           query
             .captures(scope)
-            .some(({ name }) => name === (selector.startsWith('[') || selector.startsWith(':') ? 'attribute' : 'tag'))
+            .some(
+              ({ name }) =>
+                name ===
+                (selector.startsWith('.')
+                  ? 'property'
+                  : selector.startsWith('[') || selector.startsWith(':')
+                    ? 'attribute'
+                    : 'tag')
+            )
         ).toBe(true);
         for (const field of limits.startsWith('to ')
           ? ['end']

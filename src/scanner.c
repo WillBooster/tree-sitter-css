@@ -73,7 +73,7 @@ static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendan
     }
     bool descendant = allow_descendant && whitespace && (lexer->lookahead == '#' || lexer->lookahead == '.' ||
         lexer->lookahead == '[' || lexer->lookahead == '-' || lexer->lookahead == '*' ||
-        lexer->lookahead == '&' || lexer->lookahead == ':' || is_name_character(lexer->lookahead));
+        lexer->lookahead == '&' || lexer->lookahead == ':' || lexer->lookahead == '\\' || is_name_character(lexer->lookahead));
     lexer->result_symbol = DESCENDANT_OP;
     if (!newline || !(is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\')) {
         return descendant;
@@ -185,7 +185,7 @@ static bool scan_escape(TSLexer *lexer) {
 static bool scan_descendant_operator(TSLexer *lexer) {
     lexer->result_symbol = DESCENDANT_OP;
     if (lexer->lookahead == '#' || lexer->lookahead == '.' || lexer->lookahead == '[' || lexer->lookahead == '-' ||
-        lexer->lookahead == '*' || lexer->lookahead == '&' || is_name_character(lexer->lookahead)) {
+        lexer->lookahead == '*' || lexer->lookahead == '&' || lexer->lookahead == '\\' || is_name_character(lexer->lookahead)) {
         return true;
     }
     return lexer->lookahead == ':';

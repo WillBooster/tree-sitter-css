@@ -353,7 +353,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "adjacent_sibling_selector",
@@ -2703,6 +2703,18 @@
     "named": true
   },
   {
+    "type": "has",
+    "named": false
+  },
+  {
+    "type": "host",
+    "named": false
+  },
+  {
+    "type": "host-context",
+    "named": false
+  },
+  {
     "type": "id_name",
     "named": true
   },
@@ -2713,6 +2725,10 @@
   {
     "type": "important",
     "named": true
+  },
+  {
+    "type": "is",
+    "named": false
   },
   {
     "type": "js_comment",
@@ -2772,10 +2788,6 @@
     "named": false
   },
   {
-    "type": "tag_name",
-    "named": true
-  },
-  {
     "type": "to",
     "named": false
   },
@@ -2790,6 +2802,10 @@
   {
     "type": "url_value",
     "named": true
+  },
+  {
+    "type": "where",
+    "named": false
   },
   {
     "type": "{",
