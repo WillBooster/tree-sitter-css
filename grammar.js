@@ -779,26 +779,30 @@ module.exports = grammar({
       seq(
         '\'',
         repeat(choice(
-          alias(/[^\\'\n]+/, $.string_content),
+          alias(/[^\\'\n\r\f]+/, $.string_content),
           $.escape_sequence,
+          alias($._string_continuation, $.escape_sequence),
         )),
         '\'',
       ),
       seq(
         '"',
         repeat(choice(
-          alias(/[^\\"\n]+/, $.string_content),
+          alias(/[^\\"\n\r\f]+/, $.string_content),
           $.escape_sequence,
+          alias($._string_continuation, $.escape_sequence),
         )),
         '"',
       ),
     ),
 
+    _string_continuation: _ => token(seq('\\', /\r\n?|[\n\f]/)),
+
     escape_sequence: _ => token(seq(
       '\\',
       choice(
         /[0-9a-fA-F]{1,6}\s?/,
-        /[^0-9a-fA-F\n\r]/,
+        /[^0-9a-fA-F\n\r\f]/,
       ),
     )),
 

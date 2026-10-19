@@ -813,6 +813,28 @@ b { color: red; }
         (plain_value)))))
 
 ================================================================================
+String line continuations
+================================================================================
+
+a {
+  content: "one\
+two";
+  content: 'three\
+four';
+  color: red;
+}
+
+--------------------------------------------------------------------------------
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (string_value (string_content) (escape_sequence) (string_content)))
+      (declaration (property_name) (string_value (string_content) (escape_sequence) (string_content)))
+      (declaration (property_name) (plain_value)))))
+
+================================================================================
 Unfinished property before another declaration
 ================================================================================
 
