@@ -54,8 +54,6 @@ module.exports = grammar({
   ],
 
   inline: $ => [
-    $._selector_identifier,
-    $._query_keyword,
     $._range_comparison,
     $._escaped_identifier,
     $._top_level_item,
@@ -278,7 +276,7 @@ module.exports = grammar({
     _at_rule_component: $ => choice(
       $.at_rule_value,
       alias(choice('>', '~', '+', '|'), $.at_rule_value),
-      alias($._query_keyword, $.at_rule_value),
+      alias(queryKeyword($), $.at_rule_value),
       alias($._at_rule_slash, $.at_rule_value),
       $.at_rule_url,
       $.string_value,
@@ -357,13 +355,9 @@ module.exports = grammar({
       $.at_rule,
     ),
 
-    _query_keyword: $ => choice($._style_keyword, $._query_not, $._query_and, $._query_or),
-
-    _selector_identifier: $ => choice($.identifier, selectorFunctionName, $._query_keyword),
-
     _selector: $ => choice(
       $.universal_selector,
-      alias($._selector_identifier, $.tag_name),
+      alias(selectorIdentifier($), $.tag_name),
       $.class_selector,
       $.nesting_selector,
       $.pseudo_class_selector,
@@ -422,7 +416,7 @@ module.exports = grammar({
     pseudo_element_selector: $ => seq(
       optional($._selector),
       '::',
-      alias($._selector_identifier, $.tag_name),
+      alias(selectorIdentifier($), $.tag_name),
       optional(alias($.pseudo_element_arguments, $.arguments)),
     ),
 
@@ -434,10 +428,10 @@ module.exports = grammar({
     attribute_selector: $ => seq(
       optional($._selector),
       openingBracket,
-      alias(choice($._selector_identifier, $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
+      alias(choice(selectorIdentifier($), $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
       optional(seq(
         attributeMatchOperator,
-        choice($._value, alias($._selector_identifier, $.plain_value)),
+        choice($._value, alias(selectorIdentifier($), $.plain_value)),
         optional($.attribute_flag),
       )),
       ']',
@@ -654,7 +648,7 @@ module.exports = grammar({
     )),
 
     general_enclosed_query: $ => prec.dynamic(2, seq(
-      choice($.at_rule_value, alias($._query_keyword, $.at_rule_value)),
+      choice($.at_rule_value, alias(queryKeyword($), $.at_rule_value)),
       alias($._container_function_arguments, $.at_rule_parenthesized),
     )),
 
@@ -706,7 +700,7 @@ module.exports = grammar({
       prec.dynamic(1, alias($._custom_property_component, $.feature_name)),
       repeat1(choice(
         alias($._style_range_value, $.at_rule_value),
-        alias($._query_keyword, $.at_rule_value),
+        alias(queryKeyword($), $.at_rule_value),
         $.at_rule_url,
         $.string_value,
         $.general_enclosed_query,
@@ -854,7 +848,7 @@ module.exports = grammar({
 
     class_name: $ => choice(
       $.identifier,
-      alias($._query_keyword, $.identifier),
+      alias(queryKeyword($), $.identifier),
       alias(escapedIdentifier(optional(choice(
         '-',
         seq('--', repeat(nameContinue)),
@@ -892,6 +886,14 @@ module.exports = grammar({
     )),
   },
 });
+
+function selectorIdentifier($) {
+  return choice($.identifier, selectorFunctionName, queryKeyword($));
+}
+
+function queryKeyword($) {
+  return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
+}
 
 function cssKeyword(word) {
   return token(new RegExp(cssKeywordPattern(word)));
