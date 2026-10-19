@@ -11,10 +11,11 @@ enum TokenType {
     INCOMPLETE_DECLARATION_END,
     LAYER_NAME_IDENTIFIER,
     LAYER_NAME_PREFIX,
-    IMPORT_SUPPORTS_CLOSED,
+    IMPORT_SUPPORTS_START,
 };
 
-static bool scan_import_supports_closed(TSLexer *lexer);
+static bool scan_import_supports_start(TSLexer *lexer);
+static bool scan_supports_body_close(TSLexer *lexer);
 static bool scan_supports_literal(TSLexer *lexer);
 static bool scan_supports_word(TSLexer *lexer);
 static bool scan_supports_url(TSLexer *lexer);
@@ -55,8 +56,8 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
-    if (valid_symbols[IMPORT_SUPPORTS_CLOSED]) {
-        return scan_import_supports_closed(lexer);
+    if (valid_symbols[IMPORT_SUPPORTS_START]) {
+        return scan_import_supports_start(lexer);
     }
     if (valid_symbols[LAYER_NAME_IDENTIFIER] || valid_symbols[LAYER_NAME_PREFIX]) {
         return scan_layer_name_identifier(lexer, valid_symbols);
@@ -76,10 +77,28 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     return false;
 }
 
-static bool scan_import_supports_closed(TSLexer *lexer) {
-    unsigned depth = 0;
+static bool scan_import_supports_start(TSLexer *lexer) {
+    while (is_css_whitespace(lexer->lookahead)) skip(lexer);
+    const char *keyword = "supports";
+    for (unsigned index = 0; keyword[index]; index++) {
+        if (lexer->eof(lexer)) return false;
+        int32_t character = lexer->lookahead;
+        if (character == '\\') {
+            if (!scan_decoded_escape(lexer, &character)) return false;
+        } else {
+            advance(lexer);
+        }
+        if (keyword_character(character) != keyword[index]) return false;
+    }
+    if (lexer->lookahead != '(') return false;
+    advance(lexer);
     lexer->mark_end(lexer);
-    lexer->result_symbol = IMPORT_SUPPORTS_CLOSED;
+    lexer->result_symbol = IMPORT_SUPPORTS_START;
+    return scan_supports_body_close(lexer);
+}
+
+static bool scan_supports_body_close(TSLexer *lexer) {
+    unsigned depth = 0;
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
         if (is_name_character(character) || character >= 0x80 || character == '\\' || character == '#' || character == '@') {

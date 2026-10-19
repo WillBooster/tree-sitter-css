@@ -450,6 +450,30 @@ test.each([
   }
 });
 
+test.each(
+  ['supports', 'SUPPORTS', String.raw`s\75 pports`, 'layer(theme) supports'].flatMap((keyword) =>
+    ['"', "'"].flatMap((quote) =>
+      [false, true].map((straySemicolon) => `${keyword}(--theme: ${quote}dark${quote}${straySemicolon ? ';)' : ''}`)
+    )
+  )
+)('malformed quoted support bodies retain later complete rules: %s', (condition) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `@import "x" ${condition}\nbody { color: red; }\n.after { background: blue; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { background: blue; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+    expect(tree.rootNode.lastNamedChild?.descendantsOfType('property_name').map((node) => node.text)).toEqual([
+      'background',
+    ]);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
 test.each(['supports(--theme: { color: red; }', 'supports(future({ color: red; })'])(
   'incomplete nested support bodies retain later complete rules: %s',
   (condition) => {
