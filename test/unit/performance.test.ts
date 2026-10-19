@@ -7,13 +7,11 @@ import { generationInputMtime } from '../helpers/generationInputs.js';
 import { Language, Parser } from '@willbooster/web-tree-sitter';
 
 const Root = path.join(import.meta.dirname, '../..');
-// The Wasm build is the one the package ships.
 const WasmPath = path.join(Root, 'tree-sitter-css.wasm');
 await Parser.init();
 const parser = new Parser();
 parser.setLanguage(await Language.load(WasmPath));
 
-// The tests load the existing Wasm build, so a stale one would hide an edit that makes error recovery slower than linear.
 test('uses a Wasm build built from the current parser', () => {
   const sources = ['grammar.js', 'src/parser.c', 'src/scanner.c', 'src/tree_sitter/parser.h'].map(
     (name) => fs.statSync(path.join(Root, name)).mtimeMs
@@ -37,6 +35,8 @@ test.each([
   ['comment punctuation before an invalid closer', 'a { b: /* }; : { */ ] }\n', '', '', true],
   ['comment braces inside one delimiter-value block', 'b:/*{*/?', 'a{', '}', false],
   ['comment braces inside one malformed block', 'b:/*{*/]', 'a{', '}', true],
+  ['unterminated comments after dot components', ' .a/*', 'a{b:f(', '', true],
+  ['dot components in function arguments', '.token ', 'a { b: f(', '); } .after {}', false],
   ['generic prelude with scheme-like components', 'a+', '.a { @apply ', 'a; color: red; }', false],
 ])('parses %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix, hasError) => {
   const small = prefix + source.repeat(2000) + suffix;
