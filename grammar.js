@@ -52,6 +52,7 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$._pseudo_operand, $._escaped_pseudo_values],
     [$._value],
     [$._pseudo_operand],
     [$._selector, $.pseudo_class_arguments, $._pseudo_operand],
@@ -406,10 +407,10 @@ module.exports = grammar({
     )),
 
     _escaped_pseudo_values: $ => prec.dynamic(2, seq(
-      repeat(seq(scalarValue($), optional($._descendant_combinator))),
+      repeat(seq(pseudoComponent($), optional($._descendant_combinator))),
       alias($._escaped_identifier, $.plain_value),
       optional($._descendant_combinator),
-      repeat(seq(choice(scalarValue($), alias($._escaped_identifier, $.plain_value)), optional($._descendant_combinator))),
+      repeat(seq(choice(pseudoComponent($), alias($._escaped_identifier, $.plain_value)), optional($._descendant_combinator))),
     )),
 
     pseudo_class_with_selector_arguments: $ => seq(
@@ -802,33 +803,26 @@ module.exports = grammar({
       '/',
     )),
 
-    plain_value: _ => token(choice(
-      /<[a-zA-Z-]+>[+#]?/,
-      seq(
-        repeat(choice(
-          /[-_]/,
-          /\/[^\*\s,;:!{}()\[\]]/,
-        )),
-        /[a-zA-Z]/,
-        repeat(choice(
-          /[^/\s,;:!{}()\[\]]/,
-          /\/[^\*\s,;:!{}()\[\]]/,
-        )),
-      ),
-    )),
+    _pseudo_plain_value: _ => plainValue('.#|>+~'),
+
+    plain_value: _ => plainValue(),
   },
 });
 
 function pseudoArgument($) {
   return choice(
     prec.dynamic(1, seq($._selector, optional($._descendant_combinator))),
-    prec.left(repeat1(seq(choice(prec(-1, pseudoValue($)), alias($._pseudo_binary_expression, $.binary_expression)), optional($._descendant_combinator)))),
+    prec.left(repeat1(seq(pseudoComponent($), optional($._descendant_combinator)))),
     $._escaped_pseudo_values,
   );
 }
 
+function pseudoComponent($) {
+  return choice(prec(-1, pseudoValue($)), alias($._pseudo_binary_expression, $.binary_expression));
+}
+
 function pseudoValue($) {
-  return choice(scalarValue($), $.color_value, $.grid_value);
+  return choice(scalarValue($), alias($._pseudo_plain_value, $.plain_value), $.color_value, $.grid_value, alias(token(seq('*-', genericName)), $.plain_value));
 }
 
 function ordinaryValue($) {
@@ -913,4 +907,18 @@ function sep(separator, rule) {
  */
 function sep1(separator, rule) {
   return seq(rule, repeat(seq(separator, rule)));
+}
+
+
+function plainValue(selectorDelimiters = '') {
+  const continuation = new RegExp(`[^/\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
+  const slashContinuation = new RegExp(`\\/[^\\*\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
+  return token(choice(
+    /<[a-zA-Z-]+>[+#]?/,
+    seq(
+      repeat(choice(/[-_]/, slashContinuation)),
+      /[a-zA-Z]/,
+      repeat(choice(continuation, slashContinuation)),
+    ),
+  ));
 }

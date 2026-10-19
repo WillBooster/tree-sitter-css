@@ -1774,12 +1774,55 @@
                                         ]
                                       },
                                       {
+                                        "type": "ALIAS",
+                                        "content": {
+                                          "type": "SYMBOL",
+                                          "name": "_pseudo_plain_value"
+                                        },
+                                        "named": true,
+                                        "value": "plain_value"
+                                      },
+                                      {
                                         "type": "SYMBOL",
                                         "name": "color_value"
                                       },
                                       {
                                         "type": "SYMBOL",
                                         "name": "grid_value"
+                                      },
+                                      {
+                                        "type": "ALIAS",
+                                        "content": {
+                                          "type": "TOKEN",
+                                          "content": {
+                                            "type": "SEQ",
+                                            "members": [
+                                              {
+                                                "type": "STRING",
+                                                "value": "*-"
+                                              },
+                                              {
+                                                "type": "REPEAT1",
+                                                "content": {
+                                                  "type": "CHOICE",
+                                                  "members": [
+                                                    {
+                                                      "type": "PATTERN",
+                                                      "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                                                      "flags": "u"
+                                                    },
+                                                    {
+                                                      "type": "PATTERN",
+                                                      "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                                                    }
+                                                  ]
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "named": true,
+                                        "value": "plain_value"
                                       }
                                     ]
                                   }
@@ -1914,12 +1957,55 @@
                                               ]
                                             },
                                             {
+                                              "type": "ALIAS",
+                                              "content": {
+                                                "type": "SYMBOL",
+                                                "name": "_pseudo_plain_value"
+                                              },
+                                              "named": true,
+                                              "value": "plain_value"
+                                            },
+                                            {
                                               "type": "SYMBOL",
                                               "name": "color_value"
                                             },
                                             {
                                               "type": "SYMBOL",
                                               "name": "grid_value"
+                                            },
+                                            {
+                                              "type": "ALIAS",
+                                              "content": {
+                                                "type": "TOKEN",
+                                                "content": {
+                                                  "type": "SEQ",
+                                                  "members": [
+                                                    {
+                                                      "type": "STRING",
+                                                      "value": "*-"
+                                                    },
+                                                    {
+                                                      "type": "REPEAT1",
+                                                      "content": {
+                                                        "type": "CHOICE",
+                                                        "members": [
+                                                          {
+                                                            "type": "PATTERN",
+                                                            "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                                                            "flags": "u"
+                                                          },
+                                                          {
+                                                            "type": "PATTERN",
+                                                            "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                                                          }
+                                                        ]
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              },
+                                              "named": true,
+                                              "value": "plain_value"
                                             }
                                           ]
                                         }
@@ -2022,12 +2108,55 @@
               ]
             },
             {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_pseudo_plain_value"
+              },
+              "named": true,
+              "value": "plain_value"
+            },
+            {
               "type": "SYMBOL",
               "name": "color_value"
             },
             {
               "type": "SYMBOL",
               "name": "grid_value"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "TOKEN",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "*-"
+                    },
+                    {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "PATTERN",
+                            "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                            "flags": "u"
+                          },
+                          {
+                            "type": "PATTERN",
+                            "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "named": true,
+              "value": "plain_value"
             }
           ]
         },
@@ -2133,41 +2262,115 @@
                   "type": "CHOICE",
                   "members": [
                     {
+                      "type": "PREC",
+                      "value": -1,
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "ALIAS",
+                                "content": {
+                                  "type": "SYMBOL",
+                                  "name": "identifier"
+                                },
+                                "named": true,
+                                "value": "plain_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "integer_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "float_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "string_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "parenthesized_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "call_expression"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "url_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "important"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_pseudo_plain_value"
+                            },
+                            "named": true,
+                            "value": "plain_value"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "color_value"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "grid_value"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "SEQ",
+                                "members": [
+                                  {
+                                    "type": "STRING",
+                                    "value": "*-"
+                                  },
+                                  {
+                                    "type": "REPEAT1",
+                                    "content": {
+                                      "type": "CHOICE",
+                                      "members": [
+                                        {
+                                          "type": "PATTERN",
+                                          "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                                          "flags": "u"
+                                        },
+                                        {
+                                          "type": "PATTERN",
+                                          "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            "named": true,
+                            "value": "plain_value"
+                          }
+                        ]
+                      }
+                    },
+                    {
                       "type": "ALIAS",
                       "content": {
                         "type": "SYMBOL",
-                        "name": "identifier"
+                        "name": "_pseudo_binary_expression"
                       },
                       "named": true,
-                      "value": "plain_value"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "integer_value"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "float_value"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "string_value"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "parenthesized_value"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "call_expression"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "url_value"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "important"
+                      "value": "binary_expression"
                     }
                   ]
                 },
@@ -2219,41 +2422,115 @@
                       "type": "CHOICE",
                       "members": [
                         {
+                          "type": "PREC",
+                          "value": -1,
+                          "content": {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "SYMBOL",
+                                      "name": "identifier"
+                                    },
+                                    "named": true,
+                                    "value": "plain_value"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "integer_value"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "float_value"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "string_value"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "parenthesized_value"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "call_expression"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "url_value"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "important"
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "ALIAS",
+                                "content": {
+                                  "type": "SYMBOL",
+                                  "name": "_pseudo_plain_value"
+                                },
+                                "named": true,
+                                "value": "plain_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "color_value"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "grid_value"
+                              },
+                              {
+                                "type": "ALIAS",
+                                "content": {
+                                  "type": "TOKEN",
+                                  "content": {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "STRING",
+                                        "value": "*-"
+                                      },
+                                      {
+                                        "type": "REPEAT1",
+                                        "content": {
+                                          "type": "CHOICE",
+                                          "members": [
+                                            {
+                                              "type": "PATTERN",
+                                              "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                                              "flags": "u"
+                                            },
+                                            {
+                                              "type": "PATTERN",
+                                              "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "named": true,
+                                "value": "plain_value"
+                              }
+                            ]
+                          }
+                        },
+                        {
                           "type": "ALIAS",
                           "content": {
                             "type": "SYMBOL",
-                            "name": "identifier"
+                            "name": "_pseudo_binary_expression"
                           },
                           "named": true,
-                          "value": "plain_value"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "integer_value"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "float_value"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "string_value"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "parenthesized_value"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "call_expression"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "url_value"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "important"
+                          "value": "binary_expression"
                         }
                       ]
                     },
@@ -2532,12 +2809,55 @@
                                         ]
                                       },
                                       {
+                                        "type": "ALIAS",
+                                        "content": {
+                                          "type": "SYMBOL",
+                                          "name": "_pseudo_plain_value"
+                                        },
+                                        "named": true,
+                                        "value": "plain_value"
+                                      },
+                                      {
                                         "type": "SYMBOL",
                                         "name": "color_value"
                                       },
                                       {
                                         "type": "SYMBOL",
                                         "name": "grid_value"
+                                      },
+                                      {
+                                        "type": "ALIAS",
+                                        "content": {
+                                          "type": "TOKEN",
+                                          "content": {
+                                            "type": "SEQ",
+                                            "members": [
+                                              {
+                                                "type": "STRING",
+                                                "value": "*-"
+                                              },
+                                              {
+                                                "type": "REPEAT1",
+                                                "content": {
+                                                  "type": "CHOICE",
+                                                  "members": [
+                                                    {
+                                                      "type": "PATTERN",
+                                                      "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                                                      "flags": "u"
+                                                    },
+                                                    {
+                                                      "type": "PATTERN",
+                                                      "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                                                    }
+                                                  ]
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "named": true,
+                                        "value": "plain_value"
                                       }
                                     ]
                                   }
@@ -2672,12 +2992,55 @@
                                               ]
                                             },
                                             {
+                                              "type": "ALIAS",
+                                              "content": {
+                                                "type": "SYMBOL",
+                                                "name": "_pseudo_plain_value"
+                                              },
+                                              "named": true,
+                                              "value": "plain_value"
+                                            },
+                                            {
                                               "type": "SYMBOL",
                                               "name": "color_value"
                                             },
                                             {
                                               "type": "SYMBOL",
                                               "name": "grid_value"
+                                            },
+                                            {
+                                              "type": "ALIAS",
+                                              "content": {
+                                                "type": "TOKEN",
+                                                "content": {
+                                                  "type": "SEQ",
+                                                  "members": [
+                                                    {
+                                                      "type": "STRING",
+                                                      "value": "*-"
+                                                    },
+                                                    {
+                                                      "type": "REPEAT1",
+                                                      "content": {
+                                                        "type": "CHOICE",
+                                                        "members": [
+                                                          {
+                                                            "type": "PATTERN",
+                                                            "value": "[-\\w\\u0080-\\u{10FFFF}]",
+                                                            "flags": "u"
+                                                          },
+                                                          {
+                                                            "type": "PATTERN",
+                                                            "value": "\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])"
+                                                          }
+                                                        ]
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              },
+                                              "named": true,
+                                              "value": "plain_value"
                                             }
                                           ]
                                         }
@@ -5581,6 +5944,59 @@
         ]
       }
     },
+    "_pseudo_plain_value": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "<[a-zA-Z-]+>[+#]?"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[-_]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\/[^\\*\\s,;:!{}()\\[\\].#|>+~]"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "PATTERN",
+                "value": "[a-zA-Z]"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[^/\\s,;:!{}()\\[\\].#|>+~]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\/[^\\*\\s,;:!{}()\\[\\].#|>+~]"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
     "plain_value": {
       "type": "TOKEN",
       "content": {
@@ -5650,6 +6066,10 @@
     }
   ],
   "conflicts": [
+    [
+      "_pseudo_operand",
+      "_escaped_pseudo_values"
+    ],
     [
       "_value"
     ],
