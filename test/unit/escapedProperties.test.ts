@@ -73,6 +73,37 @@ test.each(
 });
 
 test.each(
+  [
+    String.raw`b \61 `,
+    String.raw`b \61 .active`,
+    String.raw`.b \61 `,
+    String.raw`:is(b \61 )`,
+    'b\n\\61 ',
+    String.raw`b /* gap */ \61 `,
+  ].flatMap((selector) => ['top', 'nested', 'media'].map((layout) => [selector, layout] as const))
+)('escaped descendant selectors retain separate names and rules: %s in %s', (selector, layout) => {
+  const parser = new Parser().setLanguage(language);
+  const rule = `${selector} { color: red; }`;
+  const before = layout === 'nested' ? `a { ${rule} }` : layout === 'media' ? `@media screen { ${rule} }` : rule;
+  const source = `${before} .after { color: blue; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const parsedRule = tree.rootNode.descendantsOfType('rule_set').find((node) => node.text === rule);
+    expect(parsedRule?.startIndex).toBe(source.indexOf(rule));
+    expect(parsedRule?.descendantsOfType('tag_name').map((node) => node.text)).toContain(String.raw`\61 `);
+    expect(parsedRule?.descendantsOfType('descendant_selector')).toHaveLength(1);
+    expect(parsedRule?.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color']);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: blue; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+    expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color', 'color']);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(
   [String.raw`\61 `, String.raw`b\61 `, String.raw`c\6c ass`].flatMap((name) =>
     ['', ':hover', '.active', ' > x'].flatMap((suffix) =>
       ['top', 'nested', 'media'].map((layout) => [name, suffix, layout] as const)
