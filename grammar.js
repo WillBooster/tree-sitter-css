@@ -807,7 +807,7 @@ module.exports = grammar({
 
     parenthesized_value: $ => seq(
       '(',
-      $._value,
+      sep(choice(',', ';'), repeat1($._value)),
       ')',
     ),
 
