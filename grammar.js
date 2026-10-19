@@ -414,12 +414,12 @@ module.exports = grammar({
     _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
 
     incomplete_declaration: $ => seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(choice($.identifier, $._escaped_identifier), $.property_name),
       $._incomplete_declaration_end,
     ),
 
     declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(choice($.identifier, $._escaped_identifier), $.property_name),
       optional($._descendant_combinator),
       ':',
       $._value,
@@ -432,7 +432,7 @@ module.exports = grammar({
     )),
 
     last_declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(choice($.identifier, $._escaped_identifier), $.property_name),
       optional($._descendant_combinator),
       ':',
       $._value,
