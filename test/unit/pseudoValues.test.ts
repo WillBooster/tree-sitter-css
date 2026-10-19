@@ -38,3 +38,32 @@ test.each(pseudos.flatMap((pseudo) => argumentsLists.map(([args, value]) => [pse
     }
   }
 );
+
+test.each(
+  [':foo', '::foo', ':nth-of-type', ':nth-last-of-type', ':nth-col'].flatMap((pseudo) =>
+    [
+      ['1 + 2 * 3', '1 + 2'],
+      ['1 - 2 - 3', '1 - 2'],
+      ['1 * 2 * 3', '1 * 2'],
+      ['2n + 1 + 3', '2n + 1'],
+    ].map(([value, left]) => [pseudo, value!, left!] as const)
+  )
+)('generic pseudo arithmetic stays left associative: %s(%s)', (pseudo, value, left) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `a${pseudo}(${value}) { c: d; } .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const binary = tree.rootNode.descendantsOfType('binary_expression');
+    expect(binary).toHaveLength(2);
+    expect(binary[0]!.text).toBe(value);
+    expect(binary[0]!.firstNamedChild!.type).toBe('binary_expression');
+    expect(binary[0]!.lastNamedChild!.type).toBe('integer_value');
+    expect(binary[1]!.text).toBe(left);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

@@ -62,6 +62,13 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.pseudo_class_arguments, $._value],
+    [$.pseudo_element_arguments, $._value],
+    [$._selector, $._value],
+    [$.child_selector, $._value],
+    [$.sibling_selector, $._value],
+    [$.adjacent_sibling_selector, $._value],
+    [$.namespace_selector, $._value],
     [$.selectors, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
     [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_arguments],
     [$._escaped_attribute_namespace, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
@@ -528,8 +535,8 @@ module.exports = grammar({
       ')',
     )),
 
-    _pseudo_binary_expression: $ => prec.left(-1, seq(
-      $._value,
+    _pseudo_binary_expression: $ => prec.left(3, seq(
+      choice($._value, alias($._pseudo_binary_expression, $.binary_expression)),
       optional($._descendant_combinator),
       choice('+', '-', '*', '/'),
       optional($._descendant_combinator),
@@ -775,26 +782,25 @@ module.exports = grammar({
 
     _style_unary_query: $ => seq(alias($._query_not, 'not'), $._style_in_parens),
 
-    _value: $ => value($, $.grid_value, $.binary_expression, $.parenthesized_value),
-
-    _argument_value: $ => choice(
-      value($,
-        alias($._argument_grid, $.grid_value),
-        alias($._argument_binary, $.binary_expression),
-        alias($._argument_parenthesized, $.parenthesized_value),
-      ),
+    _value: $ => choice(
+      prec(-1, choice(
+        alias($.identifier, $.plain_value),
+        $.plain_value,
+        $.color_value,
+        $.integer_value,
+        $.float_value,
+        $.string_value,
+        $.grid_value,
+        $.binary_expression,
+        $.parenthesized_value,
+        $.call_expression,
+        $.url_value,
+        $.important,
+        alias(choice('.', '=', '?', '@', '#', '&', '|', '^', '$', '~', ':', '<', '>', '*', '+', '/', '`'), $.plain_value),
+        alias(token(prec(-1, '%')), $.plain_value),
+      )),
       alias($._escaped_identifier, $.plain_value),
     ),
-
-    _argument_grid: $ => seq('[', sep1(',', $._argument_value), ']'),
-
-    _argument_binary: $ => prec.left(seq(
-      $._argument_value,
-      choice('+', '-', '*', '/'),
-      $._argument_value,
-    )),
-
-    _argument_parenthesized: $ => seq('(', $._argument_value, ')'),
 
     parenthesized_value: $ => seq(
       '(',
@@ -869,15 +875,14 @@ module.exports = grammar({
       $.arguments,
     ),
 
-    binary_expression: $ => prec.left(seq(
-      $._value,
-      choice('+', '-', '*', '/'),
-      $._value,
-    )),
+    binary_expression: $ => choice(
+      prec.left(2, seq($._value, choice('+', '-', '*', '/'), $._value)),
+      prec.left(1, seq($._value, choice('+', '-', '*', '/'))),
+    ),
 
     arguments: $ => seq(
       token.immediate('('),
-      sep(choice(',', ';'), repeat1($._argument_value)),
+      sep(choice(',', ';'), repeat1($._value)),
       ')',
     ),
 
@@ -921,23 +926,6 @@ module.exports = grammar({
     )),
   },
 });
-
-function value($, gridValue, binaryExpression, parenthesizedValue) {
-  return prec(-1, choice(
-    alias($.identifier, $.plain_value),
-    $.plain_value,
-    $.color_value,
-    $.integer_value,
-    $.float_value,
-    $.string_value,
-    gridValue,
-    binaryExpression,
-    parenthesizedValue,
-    $.call_expression,
-    $.url_value,
-    $.important,
-  ));
-}
 
 function declarationValue($) {
   return seq(
