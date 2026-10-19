@@ -1,6 +1,7 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import { expect, test } from 'vitest';
-import { Language, Parser } from '@willbooster/web-tree-sitter';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
@@ -51,3 +52,52 @@ test.each(['supports', 'screen and (width > 30px)', 'print, screen', 'layered'])
     }
   }
 );
+
+test.each(['/**/', ' ', '/* layer boundary */\n'])(
+  'comments and whitespace separate anonymous layers from media features: %s',
+  (separator) => {
+    const parser = new Parser();
+    parser.setLanguage(language);
+    const tree = parser.parse(`@import "x" layer${separator}(width: 10px); .after { color: red; }`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const statement = tree.rootNode.firstNamedChild!;
+      expect(statement.type).toBe('import_statement');
+      expect(statement.descendantsOfType('import_layer').map((node) => node.text)).toEqual(['layer']);
+      expect(statement.descendantsOfType('feature_query').map((node) => node.text)).toEqual(['(width: 10px)']);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test('import conditions expose public keyword, function, layer, and property captures', () => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const tree = parser.parse('@import "x" layer(theme.base) supports(display: grid); @import "y" layer;')!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => ['keyword', 'function', 'property'].includes(name))
+        .map(({ name, node }) => [name, node.text])
+    ).toEqual([
+      ['keyword', '@import'],
+      ['function', 'layer('],
+      ['property', 'theme'],
+      ['property', 'base'],
+      ['function', 'supports('],
+      ['property', 'display'],
+      ['keyword', '@import'],
+      ['keyword', 'layer'],
+    ]);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});

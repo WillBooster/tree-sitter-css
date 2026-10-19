@@ -119,12 +119,14 @@ module.exports = grammar({
       ';',
     ),
 
-    import_layer: $ => seq(
+    import_layer: $ => choice(
       alias($._import_layer_keyword, 'layer'),
-      optional(seq(token.immediate('('), optional($.layer_name), ')')),
+      seq(alias($._import_layer_start, 'layer('), optional($.layer_name), ')'),
     ),
 
     _import_layer_keyword: _ => cssKeyword('layer'),
+
+    _import_layer_start: _ => token(seq(new RegExp(cssKeywordPattern('layer')), '(')),
 
     layer_name: $ => sep1('.', alias($._query_identifier, $.identifier)),
 

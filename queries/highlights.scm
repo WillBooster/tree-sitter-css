@@ -32,6 +32,7 @@
 (class_name) @property
 (id_name) @property
 (namespace_name) @property
+(layer_name (identifier) @property)
 (container_name) @property
 (property_name) @property
 (feature_name) @property
@@ -41,6 +42,9 @@
 
 (function_name) @function
 (style_query "style" @function)
+(import_layer "layer(" @function)
+(import_supports "supports(" @function)
+(import_layer "layer" @keyword)
 
 ((property_name) @variable
  (#match? @variable "^--"))
@@ -80,6 +84,14 @@
  (#match? @number "^[+-]?([0-9]+(\\.[0-9]+)?|\\.[0-9]+)([eE][+-]?[0-9]+)?([a-zA-Z]+|%)?$"))
 
 (at_rule_parenthesized
+ (at_rule_value) @property
+ . (at_rule_delimiter) @_colon
+ . (_) @_feature_value
+ (#eq? @_colon ":")
+ (#not-match? @_feature_value "^//")
+ (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
+
+(import_supports
  (at_rule_value) @property
  . (at_rule_delimiter) @_colon
  . (_) @_feature_value
