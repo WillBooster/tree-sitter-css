@@ -1,0 +1,21 @@
+=====================================
+Escaped function arguments preserve declaration ownership
+=====================================
+
+a {
+  color: var(--\31 0);
+  background: f(\78 );
+  border-color: f(\78 b)
+}
+d {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))))
+  (rule_set (selectors (tag_name)) (block)))
