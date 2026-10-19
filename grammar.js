@@ -16,7 +16,8 @@ const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])
 const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
 const genericName = repeat1(genericNameCharacter);
 
-const nameStart = /[a-zA-Z_\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
+const nonAsciiNameStart = /[\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
+const nameStart = choice(/[a-zA-Z_]/, nonAsciiNameStart);
 const nameContinue = choice(nameStart, /[0-9-]/);
 const idName = seq(
   choice('--', seq(optional('-'), choice(nameStart, cssEscape))),
@@ -74,6 +75,8 @@ module.exports = grammar({
     [$.selectors, $.attribute_selector],
     [$.at_rule_delimiter, $.pseudo_class_selector],
     [$._at_rule_component, $._selector],
+    [$._selector, $._query_identifier],
+    [$.attribute_selector, $._query_identifier],
     [$._at_rule_component, $.attribute_selector],
     [$.at_rule_bracketed, $._selector],
     [$.at_rule_bracketed, $.attribute_selector],
@@ -311,8 +314,8 @@ module.exports = grammar({
     _custom_property_component: _ => token(seq(
       /(?:-|\\(?:-|0{0,4}2[dD](?:[ \t\n\f]|\r\n?)?))/,
       choice(
-        seq(/(?:-|\\-|\\0{4}2[dD](?:[ \t\n\f]|\r\n?)?|\\0{0,3}2[dD](?:[ \t\n\f]|\r\n?))/, genericName),
-        seq(/\\0{0,3}2[dD]/, choice(/[-g-zG-Z_\u0080-\u{10FFFF}]/u, cssEscape), repeat(genericNameCharacter)),
+        seq(/(?:-|\\-|\\0{4}2[dD](?:[ \t\n\f]|\r\n?)?|\\0{0,3}2[dD](?:[ \t\n\f]|\r\n?))/, repeat1(choice(nameContinue, cssEscape))),
+        seq(/\\0{0,3}2[dD]/, choice(/[-g-zG-Z_]/, nonAsciiNameStart, cssEscape), repeat(choice(nameContinue, cssEscape))),
       ),
     )),
 
@@ -502,12 +505,12 @@ module.exports = grammar({
     _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
 
     incomplete_declaration: $ => seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(propertyIdentifier($), $.property_name),
       $._incomplete_declaration_end,
     ),
 
     declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(propertyIdentifier($), $.property_name),
       optional($._descendant_combinator),
       ':',
       $._value,
@@ -520,7 +523,7 @@ module.exports = grammar({
     )),
 
     last_declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(propertyIdentifier($), $.property_name),
       optional($._descendant_combinator),
       ':',
       $._value,
@@ -848,7 +851,7 @@ module.exports = grammar({
 
     class_name: $ => choice(
       $.identifier,
-      alias(queryKeyword($), $.identifier),
+      alias(choice(queryKeyword($), $._custom_property_component), $.identifier),
       alias(escapedIdentifier(optional(choice(
         '-',
         seq('--', repeat(nameContinue)),
@@ -888,7 +891,11 @@ module.exports = grammar({
 });
 
 function selectorIdentifier($) {
-  return choice($.identifier, selectorFunctionName, queryKeyword($));
+  return choice($.identifier, selectorFunctionName, queryKeyword($), $._custom_property_component);
+}
+
+function propertyIdentifier($) {
+  return choice($.identifier, $._custom_property_name, $._custom_property_component);
 }
 
 function queryKeyword($) {

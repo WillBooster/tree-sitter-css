@@ -312,6 +312,12 @@ test.each([
 });
 
 for (const selector of [
+  '--foo',
+  '--foo --foo',
+  ':--foo',
+  '[--foo]',
+  String.raw`[--\31 foo]`,
+  String.raw`[\2d-foo]`,
   String.raw`\73 tyle \73 tyle`,
   String.raw`\61 nd \61 nd`,
   'style',
