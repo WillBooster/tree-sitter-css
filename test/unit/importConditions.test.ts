@@ -239,3 +239,57 @@ test.each(['layer()', 'layer( )', 'layer(/**/)', 'LAYER()', String.raw`l\61 yer(
     }
   }
 );
+
+test.each([
+  'supports(display: grid',
+  'supports((display: grid)',
+  'supports(selector(:has(.a))',
+  'supports(--theme: { color: red; }',
+  'SUPPORTS(display: grid',
+  String.raw`s\75 pports(display: grid`,
+  'layer(theme) supports(display: grid',
+  'layer supports(display: grid',
+])('unterminated import conditions retain following rules: %s', (condition) => {
+  const parser = new Parser().setLanguage(language);
+  const following = ['.first { color: red; }', '.after { background: blue; }'];
+  const source = `@import "x" ${condition}; ${following.join(' ')}`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    const rules = tree.rootNode.namedChildren.filter((node) => node.type === 'rule_set');
+    expect(rules.map((node) => node.text)).toEqual(following);
+    for (const rule of rules) expect(rule.startIndex).toBe(source.indexOf(rule.text));
+    expect(rules.flatMap((node) => node.descendantsOfType('property_name').map((property) => property.text))).toEqual([
+      'color',
+      'background',
+    ]);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  '--theme: { color: red; padding: 1px; }',
+  '--theme: [a;b]',
+  '--theme: fn(a;b)',
+  '(--theme: { a: b; })',
+  '(display: grid) and (--theme: { a: b; })',
+  'future({a:b;})',
+])('balanced import support values retain nested delimiters: %s', (body) => {
+  const parser = new Parser().setLanguage(language);
+  const condition = `supports(${body})`;
+  const source = `@import "x" ${condition}; .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild?.descendantsOfType('import_supports').map((node) => node.text)).toEqual([
+      condition,
+    ]);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+    expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

@@ -272,8 +272,17 @@
         {
           "type": "REPEAT1",
           "content": {
-            "type": "SYMBOL",
-            "name": "_at_rule_nested_component"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_at_rule_component"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "at_rule_braced"
+              }
+            ]
           }
         },
         {

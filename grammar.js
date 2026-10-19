@@ -137,7 +137,7 @@ module.exports = grammar({
 
     import_supports: $ => seq(
       alias($._import_supports_start, 'supports('),
-      repeat1($._at_rule_nested_component),
+      repeat1(choice($._at_rule_component, $.at_rule_braced)),
       ')',
     ),
 
