@@ -20,6 +20,7 @@ rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensit
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
 Scope statements expose independently optional start and end selector fields.
 Custom properties accept empty and comment-only values, including important declarations.
+Escaped function values remain complete in arithmetic and nested parentheses.
 Class names accept digit- or hyphen-starting continuations after escape sequences.
 Nesting selectors may follow descendant combinators, as in `b &`.
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
