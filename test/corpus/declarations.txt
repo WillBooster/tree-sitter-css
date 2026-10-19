@@ -811,3 +811,24 @@ b { color: red; }
       (declaration
         (property_name)
         (plain_value)))))
+
+================================================================================
+Unfinished property before another declaration
+================================================================================
+
+a {
+  padding
+  color:red;
+}
+
+--------------------------------------------------------------------------------
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (incomplete_declaration
+        (property_name))
+      (declaration
+        (property_name)
+        (plain_value)))))
