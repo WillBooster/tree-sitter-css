@@ -3,21 +3,19 @@ import { expect, test } from 'vitest';
 
 import { Language, Parser } from '@willbooster/web-tree-sitter';
 
-test('preserves empty-value recovery and the following declaration', async () => {
+test('reports an empty-value error and preserves the following declaration range', async () => {
   await Parser.init();
   const parser = new Parser();
   parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
-  const tree = parser.parse('a { --x: ; color: red; }');
+  const source = 'a { width: ; color: red; }';
+  const tree = parser.parse(source);
   try {
     expect(tree?.rootNode.hasError).toBe(true);
-    const declarations = tree?.rootNode.descendantsOfType('declaration');
-    expect(declarations).toHaveLength(2);
-    const emptyValue = declarations?.[0]?.lastNamedChild;
-    expect(emptyValue?.type).toBe('integer_value');
-    expect(emptyValue?.text).toBe('');
-    expect(emptyValue?.hasError).toBe(true);
-    expect(declarations?.[1]?.text).toBe('color: red;');
-    expect(declarations?.[1]?.hasError).toBe(false);
+    const declarations = tree?.rootNode.descendantsOfType('declaration').filter((node) => !node.hasError);
+    expect(declarations).toHaveLength(1);
+    expect(declarations?.[0]?.text).toBe('color: red;');
+    expect(declarations?.[0]?.startIndex).toBe(source.indexOf('color: red;'));
+    expect(declarations?.[0]?.endIndex).toBe(source.indexOf('color: red;') + 'color: red;'.length);
   } finally {
     tree?.delete();
     parser.delete();

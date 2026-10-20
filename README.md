@@ -14,11 +14,14 @@ to its authors and contributors. This is not an official release of that project
 
 This fork is based on upstream's version 0.23.2 grammar and generates the parser with the
 [WillBooster/tree-sitter](https://github.com/WillBooster/tree-sitter) generator. The parser carries that fork's own ABI
-number (`0x57420001`) and is tested with that fork's runtime 2.0.33. Upstream's tree-sitter runtime
+number (`0x57420006`) and is tested with that fork's runtime 7.0.10. Upstream's tree-sitter runtime
 rejects it; newer fork runtimes with a different minimum grammar ABI also require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
 Imports expose optional layer assignment and support conditions before media queries.
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
+Scope statements expose independently optional start and end selector fields.
+Custom properties accept empty and comment-only values, including important declarations.
+Escaped function values remain complete in arithmetic and nested parentheses.
 Class names accept digit- or hyphen-starting continuations after escape sequences.
 Nesting selectors may follow descendant combinators, as in `b &`.
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
@@ -37,7 +40,7 @@ reports an error.
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
-[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 2.0.33), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
+[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 7.0.10), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
 
 ```js
 import { fileURLToPath } from 'node:url';
@@ -83,8 +86,8 @@ fuzzed with:
 
 ```toml
 [dependencies]
-tree-sitter = { package = "willbooster-tree-sitter", version = "=2.0.33" }
-tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "3" }
+tree-sitter = { package = "willbooster-tree-sitter", version = "=7.0.10" }
+tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "4" }
 ```
 
 ```rust

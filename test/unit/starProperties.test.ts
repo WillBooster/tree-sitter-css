@@ -34,6 +34,22 @@ test.each([
   }
 });
 
+test.each(['a { --x: f(*foo); }', 'a { --x: *foo; }', 'a { --x: f(*-foo) *bar; }'])(
+  'keeps an asterisk followed by a name inside values as a value in %s',
+  (source) => {
+    const parser = new Parser();
+    parser.setLanguage(language);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.firstNamedChild?.text)).toEqual(['--x']);
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
 test('editing a star-prefixed declaration preserves nested universal selectors and following rules', () => {
   const parser = new Parser();
   parser.setLanguage(language);

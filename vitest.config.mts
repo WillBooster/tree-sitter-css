@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     // tsconfig.json declares the `vitest/globals` types, so the runner must provide those globals.
     globals: true,
+    maxWorkers: 2,
     projects: [
       {
         test: {

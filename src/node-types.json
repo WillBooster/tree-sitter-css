@@ -340,6 +340,10 @@
           "named": true
         },
         {
+          "type": "selectors",
+          "named": true
+        },
+        {
           "type": "string_value",
           "named": true
         }
@@ -688,6 +692,10 @@
           "named": true
         },
         {
+          "type": "scope_statement",
+          "named": true
+        },
+        {
           "type": "supports_statement",
           "named": true
         }
@@ -840,13 +848,9 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
         {
           "type": "identifier",
           "named": true
@@ -1236,7 +1240,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "binary_expression",
@@ -1380,10 +1384,6 @@
       "required": true,
       "types": [
         {
-          "type": "binary_expression",
-          "named": true
-        },
-        {
           "type": "binary_query",
           "named": true
         },
@@ -1392,19 +1392,7 @@
           "named": true
         },
         {
-          "type": "color_value",
-          "named": true
-        },
-        {
           "type": "feature_query",
-          "named": true
-        },
-        {
-          "type": "float_value",
-          "named": true
-        },
-        {
-          "type": "grid_value",
           "named": true
         },
         {
@@ -1416,27 +1404,11 @@
           "named": true
         },
         {
-          "type": "important",
-          "named": true
-        },
-        {
-          "type": "integer_value",
-          "named": true
-        },
-        {
           "type": "keyword_query",
           "named": true
         },
         {
           "type": "parenthesized_query",
-          "named": true
-        },
-        {
-          "type": "parenthesized_value",
-          "named": true
-        },
-        {
-          "type": "plain_value",
           "named": true
         },
         {
@@ -1850,6 +1822,11 @@
     }
   },
   {
+    "type": "nesting_selector",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "parenthesized_query",
     "named": true,
     "fields": {},
@@ -1933,8 +1910,8 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
-      "required": true,
+      "multiple": true,
+      "required": false,
       "types": [
         {
           "type": "binary_expression",
@@ -1982,6 +1959,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "plain_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "pseudo_class_selector",
@@ -2197,6 +2179,42 @@
         },
         {
           "type": "selectors",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "scope_statement",
+    "named": true,
+    "fields": {
+      "end": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "selectors",
+            "named": true
+          }
+        ]
+      },
+      "start": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "selectors",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "block",
           "named": true
         }
       ]
@@ -2578,6 +2596,10 @@
           "named": true
         },
         {
+          "type": "scope_statement",
+          "named": true
+        },
+        {
           "type": "supports_statement",
           "named": true
         }
@@ -2692,6 +2714,10 @@
     "named": false
   },
   {
+    "type": "&",
+    "named": false
+  },
+  {
     "type": "'",
     "named": false
   },
@@ -2788,6 +2814,10 @@
     "named": false
   },
   {
+    "type": "@scope",
+    "named": false
+  },
+  {
     "type": "@supports",
     "named": false
   },
@@ -2874,10 +2904,6 @@
     "named": true
   },
   {
-    "type": "nesting_selector",
-    "named": true
-  },
-  {
     "type": "not",
     "named": false
   },
@@ -2892,10 +2918,6 @@
   {
     "type": "or",
     "named": false
-  },
-  {
-    "type": "plain_value",
-    "named": true
   },
   {
     "type": "property_name",
@@ -2920,6 +2942,10 @@
   {
     "type": "tag_name",
     "named": true
+  },
+  {
+    "type": "to",
+    "named": false
   },
   {
     "type": "to",

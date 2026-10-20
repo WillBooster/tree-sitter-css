@@ -379,8 +379,6 @@ Escape sequences
       (pseudo_element_selector
         (class_selector
           (class_name
-            (identifier)
-            (escape_sequence)
             (identifier)))
         (tag_name)))
     (block
@@ -447,10 +445,10 @@ Digits after class-name escapes
 
 (stylesheet
   (rule_set
-    (selectors (class_selector (class_name (identifier) (identifier))))
+    (selectors (class_selector (class_name (identifier))))
     (block))
   (rule_set
-    (selectors (class_selector (class_name (identifier) (identifier))))
+    (selectors (class_selector (class_name (identifier))))
     (block))
   (rule_set
     (selectors (class_selector (class_name (identifier))))
@@ -461,7 +459,7 @@ Digits after class-name escapes
   (rule_set
     (selectors
       (pseudo_class_selector
-        (class_selector (class_name (identifier) (identifier) (identifier)))
+        (class_selector (class_name (identifier)))
         (class_name (identifier))))
     (block)))
 
@@ -512,12 +510,12 @@ Negative numeric suffixes after class-name escapes
 ---
 
 (stylesheet
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
   (rule_set (selectors (class_selector (class_name (identifier)))) (block))
   (rule_set (selectors (class_selector (class_name (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (escape_sequence)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier) (escape_sequence)))) (block)))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block)))
 
 =========================
 Hyphen continuations after class-name escapes
@@ -532,11 +530,11 @@ Hyphen continuations after class-name escapes
 ---
 
 (stylesheet
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (identifier) (identifier) (escape_sequence)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier)))) (block))
-  (rule_set (selectors (class_selector (class_name (identifier) (escape_sequence) (identifier)))) (block)))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block))
+  (rule_set (selectors (class_selector (class_name (identifier)))) (block)))
 
 =========================
 Class-name hexadecimal escape with CRLF terminator
@@ -640,7 +638,7 @@ Escaped attribute names in selector arguments
     (block)))
 
 =========================
-Generic pseudo arguments preserve escaped plain values
+Generic pseudo arguments preserve escaped selector names
 =========================
 
 :lang(a\:b), ::part(foo\:bar), :foo(a\:b c), :foo(a\31 b) {}
@@ -650,10 +648,27 @@ Generic pseudo arguments preserve escaped plain values
 (stylesheet
   (rule_set
     (selectors
-      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value)))
-      (pseudo_element_selector (tag_name) (arguments (plain_value)))
-      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value)))
-      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value))))
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (tag_name)))
+      (pseudo_element_selector
+        (tag_name)
+        (arguments
+          (tag_name)))
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (descendant_selector
+            (tag_name)
+            (tag_name))))
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (tag_name))))
     (block)))
 
 =========================

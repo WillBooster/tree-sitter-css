@@ -8,11 +8,35 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const identifierPattern = /(--|-?[a-zA-Z_\xA0-\xFF])[a-zA-Z0-9-_\xA0-\xFF]*/;
 const queryOpeningParenthesis = choice('(', token.immediate('('));
+const selectorFunctionName = choice('has', 'not', 'is', 'where', 'host', 'host-context');
+const valueSlash = token(prec(-2, '/'));
+const openingBracket = token(prec(1, '['));
+const attributeMatchOperator = choice('=', '~=', '^=', '|=', '*=', '$=');
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
+const atKeywordName = seq(
+  choice('--', seq(optional('-'), choice(/[a-zA-Z_]/, cssEscape))),
+  repeat(choice(/[-a-zA-Z0-9_]/, cssEscape)),
+);
+// A lone `@` token would be the only conflict-free `@` token, which drops at-keywords from the error-recovery lexer
+// so that an at-rule after an error is swallowed; spanning the at-keyword name and losing to it keeps them there.
+const valueAt = token(prec(-1, seq('@', optional(atKeywordName))));
 const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
 const genericName = repeat1(genericNameCharacter);
+
+const nonAsciiNameStart = /[\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
+const nameStart = choice(/[a-zA-Z_]/, nonAsciiNameStart);
+const nameContinue = choice(nameStart, /[0-9-]/);
+const idName = seq(
+  choice('--', seq(optional('-'), choice(nameStart, cssEscape))),
+  repeat(choice(nameContinue, cssEscape)),
+);
+
+const escapedName = escapedIdentifier(optional(choice(
+  '-',
+  seq('--', repeat(nameContinue)),
+  seq(optional('-'), nameStart, repeat(nameContinue)),
+)));
 
 const unquotedUrl = seq(
   /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
@@ -40,9 +64,12 @@ module.exports = grammar({
   externals: $ => [
     $._descendant_operator,
     $.__error_recovery,
-    $._class_name_escape_with_suffix,
     $._at_rule_slash,
     $._incomplete_declaration_end,
+    $._value_dot,
+    $._invalid_value_dot,
+    $._value_ampersand,
+    $._value_asterisk,
     $._layer_name_identifier,
     $._layer_name_prefix,
     $._import_supports_start,
@@ -59,6 +86,56 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$._nth_functional_notation],
+    [$.child_selector],
+    [$.sibling_selector],
+    [$.adjacent_sibling_selector],
+    [$._selector, $.pseudo_class_arguments, $._value],
+    [$.attribute_selector, $._value],
+    [$.pseudo_class_arguments, $._value],
+    [$.pseudo_element_arguments, $._value],
+    [$._selector, $._value],
+    [$.child_selector, $._value],
+    [$.sibling_selector, $._value],
+    [$.adjacent_sibling_selector, $._value],
+    [$.namespace_selector, $._value],
+    [$.selectors, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
+    [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_arguments],
+    [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_with_selector_arguments],
+    [$._escaped_attribute_namespace, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
+    [$.at_rule_bracketed, $._selector, $.attribute_selector],
+    [$._selector, $.attribute_selector, $._query_identifier],
+    [$._at_rule_component, $._selector, $.attribute_selector],
+    [$._selector, $.attribute_selector],
+    [$.selectors],
+    [$.class_name],
+    [$.pseudo_class_selector],
+    [$.pseudo_element_selector],
+    [$.selectors, $.pseudo_class_selector],
+    [$.selectors, $.descendant_selector],
+    [$.selectors, $.child_selector],
+    [$.selectors, $.sibling_selector],
+    [$.selectors, $.adjacent_sibling_selector],
+    [$.selectors, $.namespace_selector],
+    [$.selectors, $.attribute_selector],
+    [$.at_rule_delimiter, $.pseudo_class_selector],
+    [$._at_rule_component, $._selector],
+    [$._selector, $._query_identifier],
+    [$.attribute_selector, $._query_identifier],
+    [$._at_rule_component, $.attribute_selector],
+    [$.at_rule_bracketed, $._selector],
+    [$.at_rule_bracketed, $.attribute_selector],
+    [$._at_rule_component, $._escaped_attribute_namespace],
+    [$.at_rule_bracketed, $._escaped_attribute_namespace],
+    [$._at_rule_component, $.child_selector],
+    [$._at_rule_component, $.sibling_selector],
+    [$._at_rule_component, $.adjacent_sibling_selector],
+    [$._at_rule_component, $.namespace_selector],
+    [$.scope_statement, $.at_rule],
+    [$.scope_statement, $._scope_selector_group],
+    [$._scope_generic_parenthesized, $.at_rule_parenthesized],
+    [$._scope_fallback_component, $._selector],
+    [$._scope_fallback_component, $.at_rule_parenthesized],
     [$._container_function_arguments, $._style_parenthesized_query],
     [$.at_rule_parenthesized, $._container_function_arguments, $._style_parenthesized_query],
     [$._container_feature_query, $.style_feature],
@@ -119,12 +196,13 @@ module.exports = grammar({
       $.keyframes_statement,
       $.supports_statement,
       $.container_statement,
+      $.scope_statement,
       $.at_rule,
     ),
 
     import_statement: $ => seq(
       '@import',
-      $._value,
+      choice($.string_value, $.url_value, alias($._import_url, $.call_expression), alias($._import_src, $.call_expression)),
       optional($.import_layer),
       choice(
         seq(optional($.import_supports), sep(',', $._media_query)),
@@ -217,6 +295,40 @@ module.exports = grammar({
 
     _import_supports_braced: $ => seq('{', repeat($._import_supports_value_nested_component), '}'),
 
+    _import_src: $ => seq(
+      alias(cssKeyword('src'), $.function_name),
+      alias($._import_src_arguments, $.arguments),
+    ),
+
+    _import_src_arguments: $ => seq(
+      token.immediate('('),
+      choice($.string_value, alias($._import_url_modifier, $.call_expression)),
+      importUrlModifiers($),
+      ')',
+    ),
+
+    _import_url: $ => seq(
+      alias(cssKeyword('url'), $.function_name),
+      alias($._import_url_arguments, $.arguments),
+    ),
+
+    _import_url_arguments: $ => seq(
+      token.immediate('('),
+      choice(
+        seq(
+          $.string_value,
+          importUrlModifiers($),
+        ),
+        alias(token(repeat1(choice(/[^\x00-\x20\x7F"'()\\]/, cssEscape))), $.plain_value),
+      ),
+      ')',
+    ),
+
+    _import_url_modifier: $ => seq(
+      alias(choice($.identifier, $._escaped_identifier), $.function_name),
+      $.arguments,
+    ),
+
     media_statement: $ => seq(
       '@media',
       sep1(',', $._media_query),
@@ -284,15 +396,59 @@ module.exports = grammar({
       $.block,
     )),
 
-    at_rule: $ => seq(
-      choice($.at_keyword, alias($._container_keyword, $.at_keyword)),
-      repeat($._at_rule_component),
+    _scope_keyword: _ => cssKeyword('@scope'),
+
+    _scope_to: _ => cssKeyword('to'),
+
+    scope_statement: $ => prec.dynamic(1, seq(
+      alias($._scope_keyword, '@scope'),
+      optional(seq(queryOpeningParenthesis, optional($._descendant_combinator), field('start', $.selectors), optional($._descendant_combinator), ')')),
+      optional(seq(alias($._scope_to, 'to'), queryOpeningParenthesis, optional($._descendant_combinator), field('end', $.selectors), optional($._descendant_combinator), ')')),
       choice(';', $.block),
+    )),
+
+    at_rule: $ => choice(
+      seq(choice($.at_keyword, alias($._container_keyword, $.at_keyword)), repeat($._at_rule_component), choice(';', $.block)),
+      seq(
+        alias($._scope_keyword, $.at_keyword),
+        repeat(choice(
+          $._at_rule_component,
+          alias($.identifier, $.at_rule_value),
+          alias($._scope_to, $.at_rule_value),
+          alias($._scope_selector_group, $.at_rule_parenthesized),
+          alias($._scope_generic_parenthesized, $.at_rule_parenthesized),
+        )),
+        choice(';', $.block),
+      ),
+    ),
+
+    _scope_selector_group: $ => seq(
+      queryOpeningParenthesis,
+      optional($._descendant_combinator),
+      $.selectors,
+      repeat(seq(optional($._descendant_combinator), $._scope_fallback_component)),
+      optional($._descendant_combinator),
+      ')',
+    ),
+
+    _scope_generic_parenthesized: $ => seq(
+      queryOpeningParenthesis,
+      repeat(seq(optional($._descendant_combinator), $._scope_fallback_component)),
+      optional($._descendant_combinator),
+      ')',
+    ),
+
+    _scope_fallback_component: $ => choice(
+      $._at_rule_nested_component,
+      alias($.identifier, $.at_rule_value),
+      alias(selectorFunctionName, $.at_rule_value),
+      alias($._scope_generic_parenthesized, $.at_rule_parenthesized),
     ),
 
     _at_rule_component: $ => choice(
       $.at_rule_value,
-      alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
+      alias(choice('>', '~', '+', '|'), $.at_rule_value),
+      alias(queryKeyword($), $.at_rule_value),
       alias($._at_rule_slash, $.at_rule_value),
       $.at_rule_url,
       $.string_value,
@@ -311,15 +467,24 @@ module.exports = grammar({
 
     at_rule_parenthesized: $ => seq(queryOpeningParenthesis, repeat($._at_rule_nested_component), ')'),
 
-    at_rule_bracketed: $ => seq('[', repeat($._at_rule_nested_component), ']'),
+    at_rule_bracketed: $ => seq(
+      openingBracket,
+      repeat(seq(optional($._descendant_combinator), choice(
+        $._at_rule_nested_component,
+        alias(choice($.identifier, $._escaped_identifier), $.at_rule_value),
+        alias(attributeMatchOperator, $.at_rule_value),
+      ))),
+      optional($._descendant_combinator),
+      ']',
+    ),
 
     at_rule_braced: $ => seq('{', repeat($._at_rule_nested_component), '}'),
 
     _custom_property_component: _ => token(seq(
       /(?:-|\\(?:-|0{0,4}2[dD](?:[ \t\n\f]|\r\n?)?))/,
       choice(
-        seq(/(?:-|\\-|\\0{4}2[dD](?:[ \t\n\f]|\r\n?)?|\\0{0,3}2[dD](?:[ \t\n\f]|\r\n?))/, genericName),
-        seq(/\\0{0,3}2[dD]/, choice(/[-g-zG-Z_\u0080-\u{10FFFF}]/u, cssEscape), repeat(genericNameCharacter)),
+        seq(/(?:-|\\-|\\0{4}2[dD](?:[ \t\n\f]|\r\n?)?|\\0{0,3}2[dD](?:[ \t\n\f]|\r\n?))/, repeat1(choice(nameContinue, cssEscape))),
+        seq(/\\0{0,3}2[dD]/, choice(/[-g-zG-Z_]/, nonAsciiNameStart, cssEscape), repeat(choice(nameContinue, cssEscape))),
       ),
     )),
 
@@ -335,10 +500,11 @@ module.exports = grammar({
 
     rule_set: $ => seq(
       $.selectors,
+      optional($._descendant_combinator),
       $.block,
     ),
 
-    selectors: $ => sep1(',', $._selector),
+    selectors: $ => sep1(seq(optional($._descendant_combinator), ','), $._selector),
 
     block: $ => seq(
       '{',
@@ -358,12 +524,13 @@ module.exports = grammar({
       $.keyframes_statement,
       $.supports_statement,
       $.container_statement,
+      $.scope_statement,
       $.at_rule,
     ),
 
     _selector: $ => choice(
       $.universal_selector,
-      alias($.identifier, $.tag_name),
+      alias(selectorIdentifier($), $.tag_name),
       $.class_selector,
       $.nesting_selector,
       $.pseudo_class_selector,
@@ -378,13 +545,13 @@ module.exports = grammar({
       $.namespace_selector,
     ),
 
-    nesting_selector: _ => '&',
+    nesting_selector: $ => choice('&', alias($._value_ampersand, '&')),
 
-    universal_selector: _ => '*',
+    universal_selector: $ => choice('*', alias($._value_asterisk, '*')),
 
     class_selector: $ => prec(1, seq(
       optional($._selector),
-      '.',
+      choice('.', alias($._value_dot, '.')),
       $.class_name,
     )),
 
@@ -394,7 +561,7 @@ module.exports = grammar({
       choice(
         seq(
           alias(
-            choice('has', 'not', 'is', 'where', 'host', 'host-context'),
+            selectorFunctionName,
             $.class_name,
           ),
           alias($.pseudo_class_with_selector_arguments, $.arguments),
@@ -422,25 +589,27 @@ module.exports = grammar({
     pseudo_element_selector: $ => seq(
       optional($._selector),
       '::',
-      alias($.identifier, $.tag_name),
+      alias(selectorIdentifier($), $.tag_name),
       optional(alias($.pseudo_element_arguments, $.arguments)),
     ),
 
     id_selector: $ => seq(
       optional($._selector),
-      '#',
-      alias($.identifier, $.id_name),
+      alias(token(seq('#', idName)), $.id_name),
     ),
 
     attribute_selector: $ => seq(
       optional($._selector),
-      token(prec(1, '[')),
-      alias(choice($.identifier, $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
+      openingBracket,
+      optional($._descendant_combinator),
+      alias(choice(selectorIdentifier($), $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
       optional(seq(
-        choice('=', '~=', '^=', '|=', '*=', '$='),
-        $._value,
-        optional($.attribute_flag),
+        optional($._descendant_combinator),
+        attributeMatchOperator,
+        choice($._value, alias(selectorIdentifier($), $.plain_value)),
+        optional(seq(optional($._descendant_combinator), $.attribute_flag)),
       )),
+      optional($._descendant_combinator),
       ']',
     ),
 
@@ -459,94 +628,106 @@ module.exports = grammar({
 
     attribute_flag: _ => /[iIsS]/,
 
-    child_selector: $ => prec.left(seq(optional($._selector), '>', $._selector)),
+    child_selector: $ => choice(
+      prec.left(seq($._selector, optional($._descendant_combinator), '>', $._selector)),
+      prec.left(seq('>', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
+    ),
 
     descendant_selector: $ => prec.left(seq($._selector, $._descendant_combinator, $._selector)),
 
-    sibling_selector: $ => prec.left(seq(optional($._selector), '~', $._selector)),
+    sibling_selector: $ => choice(
+      prec.left(seq($._selector, optional($._descendant_combinator), '~', $._selector)),
+      prec.left(seq('~', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
+    ),
 
-    adjacent_sibling_selector: $ => prec.left(seq(optional($._selector), '+', $._selector)),
+    adjacent_sibling_selector: $ => choice(
+      prec.left(seq($._selector, optional($._descendant_combinator), '+', $._selector)),
+      prec.left(seq('+', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
+    ),
 
     namespace_selector: $ => prec.left(seq(optional($._selector), '|', $._selector)),
 
     pseudo_class_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value))),
+      optional($._descendant_combinator),
+      optional(sep1(',', pseudoArgument($))),
       ')',
     ),
 
-    pseudo_class_with_selector_arguments: $ => seq(
+    pseudo_class_with_selector_arguments: $ => prec.dynamic(2, seq(
       token.immediate('('),
-      sep(',', $._selector),
+      optional($._descendant_combinator),
+      optional(seq(
+        sep1(seq(optional($._descendant_combinator), ','), $._selector),
+        optional($._descendant_combinator),
+      )),
       ')',
-    ),
+    )),
 
     pseudo_class_nth_child_arguments: $ => prec(-1, seq(
       token.immediate('('),
+      optional($._descendant_combinator),
       choice(
-        alias('even', $.plain_value),
-        alias('odd', $.plain_value),
+        alias(cssKeyword('even'), $.plain_value),
+        alias(cssKeyword('odd'), $.plain_value),
         $.integer_value,
         alias($._nth_functional_notation, $.plain_value),
       ),
       optional(
         seq(
-          'of',
-          $._selector,
+          optional($._descendant_combinator),
+          alias(cssKeyword('of'), 'of'),
+          optional($._descendant_combinator),
+          sep1(seq(optional($._descendant_combinator), ','), $._selector),
         ),
       ),
+      optional($._descendant_combinator),
       ')',
     )),
 
-    _nth_functional_notation: _ => /-?(\d)*n\s*(\+\s*\d+)?/,
+    _pseudo_binary_expression: $ => prec.left(3, seq(
+      choice($._value, alias($._pseudo_binary_expression, $.binary_expression)),
+      optional($._descendant_combinator),
+      choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash),
+      optional($._descendant_combinator),
+      $._value,
+    )),
+
+    _nth_functional_notation: $ => choice(
+      /[+-]?\d*[nN][\t\n\f\r ]*[+-][\t\n\f\r ]*\d+/,
+      seq(/[+-]?\d*[nN]/, optional(seq(
+        optional($._descendant_combinator),
+        choice(/[+-]\d+/, seq(choice('+', '-'), optional($._descendant_combinator), /\d+/)),
+      ))),
+    ),
 
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
-      sep(',', choice($._selector, repeat1($._value))),
+      optional($._descendant_combinator),
+      optional(sep1(',', pseudoArgument($))),
       ')',
     ),
 
     _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
 
     incomplete_declaration: $ => seq(
-      alias(choice($.identifier, $._custom_property_name, $._star_property_name), $.property_name),
+      alias(propertyIdentifier($), $.property_name),
       $._incomplete_declaration_end,
     ),
 
-    declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name, $._star_property_name), $.property_name),
-      optional($._descendant_combinator),
-      ':',
-      $._value,
-      repeat(seq(
-        optional(','),
-        $._value,
-      )),
-      optional($.important),
-      ';',
-    )),
+    declaration: $ => prec.dynamic(1, seq(declarationValue($), ';')),
 
-    last_declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name, $._star_property_name), $.property_name),
-      optional($._descendant_combinator),
-      ':',
-      $._value,
-      repeat(seq(
-        optional(','),
-        $._value,
-      )),
-      optional($.important),
-    )),
+    last_declaration: $ => prec.dynamic(1, declarationValue($)),
 
-    _star_property_name: _ => token(seq('*', identifierPattern)),
+    _star_property_name: _ => token(seq('*', choice('--', seq(optional('-'), nameStart)), repeat(nameContinue))),
 
-    _custom_property_name: _ => escapedIdentifier(seq('--', /[-a-zA-Z0-9_\xA0-\xFF]*/)),
+    _custom_property_name: _ => escapedIdentifier(seq('--', repeat(nameContinue))),
 
     _escaped_identifier: $ => choice(
       $._custom_property_name,
       escapedIdentifier(optional(choice(
         '-',
-        /-?[a-zA-Z_\xA0-\xFF][a-zA-Z0-9-_\xA0-\xFF]*/,
+        seq(optional('-'), nameStart, repeat(nameContinue)),
       ))),
     ),
 
@@ -608,7 +789,7 @@ module.exports = grammar({
 
     ratio_value: $ => seq(
       choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
-      '/',
+      valueSlash,
       choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
     ),
 
@@ -633,6 +814,7 @@ module.exports = grammar({
       'selector',
       '(',
       $._selector,
+      optional($._descendant_combinator),
       ')',
     ),
 
@@ -657,7 +839,7 @@ module.exports = grammar({
     )),
 
     general_enclosed_query: $ => prec.dynamic(2, seq(
-      choice($.at_rule_value, alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value)),
+      choice($.at_rule_value, alias(queryKeyword($), $.at_rule_value)),
       alias($._container_function_arguments, $.at_rule_parenthesized),
     )),
 
@@ -709,7 +891,7 @@ module.exports = grammar({
       prec.dynamic(1, alias($._custom_property_component, $.feature_name)),
       repeat1(choice(
         alias($._style_range_value, $.at_rule_value),
-        alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
+        alias(queryKeyword($), $.at_rule_value),
         $.at_rule_url,
         $.string_value,
         $.general_enclosed_query,
@@ -720,6 +902,8 @@ module.exports = grammar({
         alias($._at_rule_slash, $.at_rule_value),
       )),
     ),
+
+    identifier: _ => token(seq(choice('--', seq(optional('-'), nameStart)), repeat(nameContinue))),
 
     _query_identifier: $ => choice($._custom_property_component, token(seq(
       choice(seq(optional('-'), choice(/[_a-zA-Z\u0080-\u{10FFFF}]/u, cssEscape)), '--'),
@@ -753,24 +937,31 @@ module.exports = grammar({
 
     _style_unary_query: $ => seq(alias($._query_not, 'not'), $._style_in_parens),
 
-    _value: $ => prec(-1, choice(
-      alias($.identifier, $.plain_value),
-      $.plain_value,
-      $.color_value,
-      $.integer_value,
-      $.float_value,
-      $.string_value,
-      $.grid_value,
-      $.binary_expression,
-      $.parenthesized_value,
-      $.call_expression,
-      $.url_value,
-      $.important,
-    )),
+    _value: $ => choice(
+      seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
+      prec(-1, choice(
+        alias($.identifier, $.plain_value),
+        $.plain_value,
+        $.color_value,
+        $.integer_value,
+        $.float_value,
+        $.string_value,
+        $.grid_value,
+        $.binary_expression,
+        $.parenthesized_value,
+        $.call_expression,
+        $.url_value,
+        $.important,
+        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '#', '|', '^', '$', '~', '<', '>', '+', valueSlash, '`'), $.plain_value)),
+        alias(token(prec(-1, '%')), $.plain_value),
+        alias(token(prec(-1, ':')), $.plain_value),
+      )),
+      alias(choice($._escaped_identifier, escapedName), $.plain_value),
+    ),
 
     parenthesized_value: $ => seq(
       '(',
-      $._value,
+      valueSequence($),
       ')',
     ),
 
@@ -830,7 +1021,7 @@ module.exports = grammar({
 
     grid_value: $ => seq(
       '[',
-      sep1(',', $._value),
+      valueSequence($),
       ']',
     ),
 
@@ -841,27 +1032,28 @@ module.exports = grammar({
       $.arguments,
     ),
 
-    binary_expression: $ => prec.left(seq(
-      $._value,
-      choice('+', '-', '*', '/'),
-      $._value,
-    )),
+    binary_expression: $ => choice(
+      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash), $._value)),
+      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash))),
+    ),
 
     arguments: $ => seq(
       token.immediate('('),
-      sep(choice(',', ';'), repeat1($._value)),
+      valueSequence($),
       ')',
     ),
 
-    class_name: $ => repeat1(choice(
+    class_name: $ => choice(
       $.identifier,
-      $.escape_sequence,
-      alias($._class_name_escape_with_suffix, $.identifier),
-    )),
+      alias(choice(queryKeyword($), $._custom_property_component), $.identifier),
+      alias(escapedIdentifier(optional(choice(
+        '-',
+        seq('--', repeat(nameContinue)),
+        seq(optional('-'), nameStart, repeat(nameContinue)),
+      )), 1), $.identifier),
+    ),
 
-    identifier: _ => identifierPattern,
-
-    at_keyword: _ => /@[a-zA-Z-_]+/,
+    at_keyword: _ => token(seq('@', atKeywordName)),
 
     js_comment: _ => token(prec(-1, seq('//', /.*/))),
 
@@ -876,17 +1068,70 @@ module.exports = grammar({
       seq(
         repeat(choice(
           /[-_]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
         /[a-zA-Z]/,
         repeat(choice(
-          /[^/\s,;!{}()\[\]]/,
-          /\/[^\*\s,;!{}()\[\]]/,
+          /[^/\s,;:!{}()\[\]]/,
+          /\/[^\*\s,;:!{}()\[\]]/,
         )),
       ),
     )),
   },
 });
+
+function importUrlModifiers($) {
+  return repeat(choice(
+    alias(choice($.identifier, $._escaped_identifier), $.plain_value),
+    alias($._import_url_modifier, $.call_expression),
+  ));
+}
+
+function declarationValue($) {
+  return seq(
+    choice(
+      seq(
+        alias(propertyIdentifier($), $.property_name),
+        optional($._descendant_combinator),
+        ':',
+        $._value,
+        repeat(seq(optional(','), $._value)),
+      ),
+      seq(
+        alias($._custom_property_component, $.property_name),
+        optional($._descendant_combinator),
+        ':',
+      ),
+    ),
+    optional($.important),
+  );
+}
+
+function propertyIdentifier($) {
+  return choice(selectorIdentifier($), $._custom_property_name, $._star_property_name);
+}
+
+function selectorIdentifier($) {
+  return choice($.identifier, escapedName, selectorFunctionName, queryKeyword($), $._custom_property_component);
+}
+
+function queryKeyword($) {
+  return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
+}
+
+function valueSequence($) {
+  return sep(choice(',', ';'), repeat1($._value));
+}
+
+function pseudoArgument($) {
+  return choice(
+    seq($._selector, optional($._descendant_combinator)),
+    prec.left(repeat1(seq(
+      choice($._value, alias(choice($._escaped_identifier, escapedName), $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)),
+      optional($._descendant_combinator),
+    ))),
+  );
+}
 
 function cssKeyword(word) {
   return token(new RegExp(cssKeywordPattern(word)));
@@ -919,8 +1164,8 @@ function cssKeywordPattern(word, escapedOnly = false) {
 }
 
 /** @param {RuleOrLiteral} prefix */
-function escapedIdentifier(prefix) {
-  return token(seq(
+function escapedIdentifier(prefix, precedence = 0) {
+  return token(prec(precedence, seq(
     prefix,
     repeat1(seq(
       '\\',
@@ -928,9 +1173,9 @@ function escapedIdentifier(prefix) {
         /[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?/,
         /[^0-9a-fA-F\n\r\f]/,
       ),
-      /[-a-zA-Z0-9_\xA0-\xFF]*/,
+      repeat(nameContinue),
     )),
-  ));
+  )));
 }
 
 /**
