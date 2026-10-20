@@ -617,6 +617,8 @@ module.exports = grammar({
 
     last_declaration: $ => prec.dynamic(1, declarationValue($)),
 
+    _star_property_name: _ => token(seq('*', choice('--', seq(optional('-'), nameStart)), repeat(nameContinue))),
+
     _custom_property_name: _ => escapedIdentifier(seq('--', repeat(nameContinue))),
 
     _escaped_identifier: $ => choice(
@@ -1008,7 +1010,7 @@ function declarationValue($) {
 }
 
 function propertyIdentifier($) {
-  return choice(selectorIdentifier($), $._custom_property_name);
+  return choice(selectorIdentifier($), $._custom_property_name, $._star_property_name);
 }
 
 function selectorIdentifier($) {

@@ -148,6 +148,8 @@ static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbo
     TSLexerPosition position;
     lexer->get_position(lexer, &position);
     advance(lexer);
+    // A name right after `*` is a legacy star-prefixed property such as `*zoom`, which the internal lexer tokenizes.
+    if (symbol == VALUE_ASTERISK && (is_name_start(lexer->lookahead) || lexer->lookahead == '-')) return false;
     lexer->mark_end(lexer);
     lexer->result_symbol = symbol;
     if (!guard_rule) return true;
@@ -309,7 +311,15 @@ static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendan
         lexer->lookahead == '[' || lexer->lookahead == '-' || lexer->lookahead == '*' ||
         lexer->lookahead == '&' || lexer->lookahead == ':' || lexer->lookahead == '\\' || is_name_character(lexer->lookahead));
     lexer->result_symbol = DESCENDANT_OP;
-    if (!newline || !(is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\')) {
+    if (!newline) {
+        return descendant;
+    }
+    bool star_property = lexer->lookahead == '*';
+    if (star_property) {
+        advance(lexer);
+    }
+    if (!(is_name_start(lexer->lookahead) || lexer->lookahead == '-' ||
+        (!star_property && lexer->lookahead == '\\'))) {
         return descendant;
     }
     if (!scan_property_colon(lexer)) {
