@@ -14,7 +14,7 @@ to its authors and contributors. This is not an official release of that project
 
 This fork is based on upstream's version 0.23.2 grammar and generates the parser with the
 [WillBooster/tree-sitter](https://github.com/WillBooster/tree-sitter) generator. The parser carries that fork's own ABI
-number (`0x57420006`) and is tested with that fork's runtime 7.0.2. Upstream's tree-sitter runtime
+number (`0x57420006`) and is tested with that fork's runtime 7.0.10. Upstream's tree-sitter runtime
 rejects it; newer fork runtimes with a different minimum grammar ABI also require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
@@ -39,7 +39,7 @@ reports an error.
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
-[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 7.0.2), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
+[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 7.0.10), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
 
 ```js
 import { fileURLToPath } from 'node:url';
@@ -85,7 +85,7 @@ fuzzed with:
 
 ```toml
 [dependencies]
-tree-sitter = { package = "willbooster-tree-sitter", version = "=7.0.2" }
+tree-sitter = { package = "willbooster-tree-sitter", version = "=7.0.10" }
 tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "4" }
 ```
 
