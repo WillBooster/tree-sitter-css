@@ -1120,9 +1120,10 @@ Import layer and support conditions
     (import_layer
       (layer_name (identifier) (identifier)))
     (import_supports
-      (at_rule_value)
-      (at_rule_delimiter)
-      (at_rule_value))
+      (import_supports_declaration
+        (at_rule_value)
+        (at_rule_delimiter)
+        (at_rule_value)))
     (keyword_query))
   (rule_set
     (selectors (class_selector (class_name (identifier))))

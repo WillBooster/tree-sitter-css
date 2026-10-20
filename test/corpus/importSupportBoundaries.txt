@@ -16,16 +16,17 @@ body { color: red; }
       (layer_name
         (identifier)))
     (import_supports
-      (at_rule_value)
-      (at_rule_delimiter)
-      (at_rule_value)
-      (at_rule_braced
+      (import_supports_declaration
         (at_rule_value)
         (at_rule_delimiter)
         (at_rule_value)
-        (at_rule_delimiter))
-      (at_rule_value)
-      (at_rule_url)))
+        (at_rule_braced
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_value)
+          (at_rule_delimiter))
+        (at_rule_value)
+        (at_rule_url))))
   (rule_set
     (selectors
       (tag_name))
@@ -57,9 +58,10 @@ Import support conditions expose operators and their own groups
       (string_content))
     (import_supports
       (import_supports_group
-        (at_rule_value)
-        (at_rule_delimiter)
-        (at_rule_value))
+        (import_supports_declaration
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_value)))
       (at_rule_value)
       (import_supports_group
         (at_rule_value)

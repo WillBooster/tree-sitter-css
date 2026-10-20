@@ -14,18 +14,20 @@ body { color: red; }
     (string_value
       (string_content))
     (import_supports
-      (at_rule_value)
-      (at_rule_delimiter)
-      (string_value
-        (string_content))))
+      (import_supports_declaration
+        (at_rule_value)
+        (at_rule_delimiter)
+        (string_value
+          (string_content)))))
   (import_statement
     (string_value
       (string_content))
     (import_supports
-      (at_rule_value)
-      (at_rule_delimiter)
-      (string_value
-        (string_content))))
+      (import_supports_declaration
+        (at_rule_value)
+        (at_rule_delimiter)
+        (string_value
+          (string_content)))))
   (rule_set
     (selectors
       (tag_name))

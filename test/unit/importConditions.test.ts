@@ -202,6 +202,11 @@ test.each([
   ['(--x: not (a: b))', ['--x']],
   ['not ((a: b) or (c: d))', ['a', 'c']],
   ['(a: b) and (not (c: d))', ['a', 'c']],
+  ['--x: not', ['--x']],
+  ['display not : grid', []],
+  ['--x: (a) and (b: c)', ['--x']],
+  ['(--y: (a) or (b: c))', ['--y']],
+  ['--x:', ['--x']],
   ['(not: initial)', ['not']],
   [String.raw`\6e ot: initial`, [String.raw`\6e ot`]],
 ])('support property captures cover only the leading declaration name: %s', (condition, properties) => {

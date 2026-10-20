@@ -145,15 +145,49 @@ module.exports = grammar({
       alias($._layer_name_identifier, $.identifier),
     ),
 
-    // Mirrors the generic at-rule components with own group nodes, so that queries can tell support conditions from
-    // generic at-rule preludes, and with not/and/or exposed as operators.
+    // Mirrors the generic at-rule components with own nodes, so that queries can tell support conditions from generic
+    // at-rule preludes. A body that starts with a name and `:` is a declaration; groups in condition position may hold
+    // declarations, while groups in a declaration value or a function's arguments hold plain components.
     import_supports: $ => seq(
       alias($._import_supports_start, 'supports('),
-      repeat1(choice($._import_supports_component, alias($._import_supports_braced, $.at_rule_braced))),
+      choice($.import_supports_declaration, repeat1($._import_supports_condition_component)),
       ')',
     ),
 
-    _import_supports_component: $ => choice(
+    import_supports_declaration: $ => prec(1, seq(
+      field('name', choice($.at_rule_value, alias(choice($._query_not, $._query_and, $._query_or), $.at_rule_value))),
+      alias(':', $.at_rule_delimiter),
+      repeat($._import_supports_value_nested_component),
+    )),
+
+    _import_supports_condition_component: $ => choice(
+      $._import_supports_leaf,
+      $._import_supports_function,
+      alias($._import_supports_condition_group, $.import_supports_group),
+      alias($._import_supports_bracketed, $.at_rule_bracketed),
+      alias($._import_supports_braced, $.at_rule_braced),
+    ),
+
+    _import_supports_condition_group: $ => seq(
+      queryOpeningParenthesis,
+      optional(choice(
+        $.import_supports_declaration,
+        repeat1(choice($._import_supports_condition_component, alias(';', $.at_rule_delimiter))),
+      )),
+      ')',
+    ),
+
+    // Arguments directly after a value, as in `selector(a:hover)`, hold plain components rather than a declaration.
+    _import_supports_function: $ => prec(1, seq(
+      choice($.at_rule_value, alias($._style_keyword, $.at_rule_value)),
+      alias($._import_supports_function_arguments, $.import_supports_group),
+    )),
+
+    _import_supports_function_arguments: $ => seq(
+      token.immediate('('), repeat($._import_supports_value_nested_component), ')',
+    ),
+
+    _import_supports_leaf: $ => choice(
       $.at_rule_value,
       alias($._style_keyword, $.at_rule_value),
       alias($._query_not, 'not'),
@@ -163,21 +197,21 @@ module.exports = grammar({
       $.at_rule_url,
       $.string_value,
       $.at_rule_delimiter,
-      $.import_supports_group,
-      alias($._import_supports_bracketed, $.at_rule_bracketed),
     ),
 
-    _import_supports_nested_component: $ => choice(
-      $._import_supports_component,
+    _import_supports_value_nested_component: $ => choice(
+      $._import_supports_leaf,
+      alias($._import_supports_value_group, $.import_supports_group),
+      alias($._import_supports_bracketed, $.at_rule_bracketed),
       alias($._import_supports_braced, $.at_rule_braced),
       alias(';', $.at_rule_delimiter),
     ),
 
-    import_supports_group: $ => seq(queryOpeningParenthesis, repeat($._import_supports_nested_component), ')'),
+    _import_supports_value_group: $ => seq(queryOpeningParenthesis, repeat($._import_supports_value_nested_component), ')'),
 
-    _import_supports_bracketed: $ => seq('[', repeat($._import_supports_nested_component), ']'),
+    _import_supports_bracketed: $ => seq('[', repeat($._import_supports_value_nested_component), ']'),
 
-    _import_supports_braced: $ => seq('{', repeat($._import_supports_nested_component), '}'),
+    _import_supports_braced: $ => seq('{', repeat($._import_supports_value_nested_component), '}'),
 
     media_statement: $ => seq(
       '@media',
