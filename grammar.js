@@ -49,6 +49,7 @@ module.exports = grammar({
     $._import_layer_start,
     $._invalid_import_supports,
     $._invalid_import_layer,
+    $._operator_gap,
   ],
 
   inline: $ => [
@@ -495,7 +496,7 @@ module.exports = grammar({
 
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
-      optional($._descendant_combinator),
+      optional($._operator_gap),
       choice('+', '-', '*', '/'),
       optional($._descendant_combinator),
       $._pseudo_operand,
@@ -791,27 +792,29 @@ module.exports = grammar({
       prec(-1, choice(
         ordinaryValue($),
         alias(choice('=', '?', '^', '$', '<', '/', '`'), $.plain_value),
-        // A bare `@` token would exclude every at-keyword from error recovery, which then cannot resume at a following
-        // at-rule; matching at-keyword shapes keeps those tokens available there.
-        alias(token(prec(-1, /@[a-zA-Z-_]*/)), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
-        // Only a glued colon, as in `http://` or `progid:`, so that a nested `:hover` rule after a declaration without
-        // its semicolon stays a rule.
-        alias(token.immediate(prec(-1, ':')), $.plain_value),
+        alias($._glued_colon, $.plain_value),
       )),
       alias($._escaped_identifier, $.plain_value),
     ),
 
-    // Delimiters that can start a selector stay inside parentheses: in a declaration value they would absorb the
-    // selector of a nested rule that follows a declaration without its semicolon.
+    // Delimiters that can start a selector stay inside parentheses: in a declaration value they would absorb a nested
+    // rule that follows a declaration without its semicolon. No `@` delimiter exists: its token would lex `@media`
+    // and other at-keywords as values in merged lexer states and exclude them from error recovery.
     _argument_value: $ => choice(
       $._value,
       prec(-1, alias(choice('.', '#', '&', '|', '~', '>', '*', '+'), $.plain_value)),
     ),
 
+    // Only a glued colon, as in `http://` or `progid:`, so that a nested `:hover` rule after a declaration without its
+    // semicolon stays a rule.
+    _glued_colon: _ => token.immediate(prec(-1, ':')),
+
+    // Single values joined only by glued colons, as in `(max-width:600px)`: admitting value sequences would let a
+    // slash-prefixed plain value such as `/var` replace the division operator after a value.
     parenthesized_value: $ => seq(
       '(',
-      $._argument_value,
+      colonJoined($, $._argument_value),
       ')',
     ),
 
@@ -871,7 +874,7 @@ module.exports = grammar({
 
     grid_value: $ => seq(
       '[',
-      sep1(',', $._value),
+      sep1(',', colonJoined($, $._value)),
       ']',
     ),
 
@@ -917,6 +920,10 @@ module.exports = grammar({
     plain_value: _ => plainValue(),
   },
 });
+
+function colonJoined($, rule) {
+  return seq(rule, repeat(seq(alias($._glued_colon, $.plain_value), rule)));
+}
 
 function pseudoArgument($) {
   return choice(

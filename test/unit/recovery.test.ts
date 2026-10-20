@@ -71,3 +71,43 @@ test.each(['.c', '&', '& .b', '&:hover', ':hover', '> b', '~ b', '|b'])(
     }
   }
 );
+
+test('keeps a nested at-rule after a declaration without its semicolon', async () => {
+  await Parser.init();
+  const parser = new Parser();
+  parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
+  const source = 'a { color: red\n  @media screen { c: d } }\n.after { color: blue; }';
+  const tree = parser.parse(source)!;
+  try {
+    const [outer, after] = tree.rootNode.namedChildren;
+    expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
+    expect(outer?.descendantsOfType('media_statement').map((node) => node.text)).toEqual(['@media screen { c: d }']);
+    expect(after?.text).toBe('.after { color: blue; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each([
+  '--mq: (max-width:600px)',
+  'x: (a:b)',
+  '--x: [a:b]',
+  'x: screen and (min-width:100px)',
+  'x: var(--a, (a:b))',
+])('parses glued colons inside groups: %s', async (declaration) => {
+  await Parser.init();
+  const parser = new Parser();
+  parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
+  const tree = parser.parse(`a { ${declaration}; y: z }`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+      `${declaration};`,
+      'y: z',
+    ]);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

@@ -36,6 +36,8 @@ test.each([
   ['comment braces inside one delimiter-value block', 'b:/*{*/?', 'a{', '}', false],
   ['comment braces inside one malformed block', 'b:/*{*/]', 'a{', '}', true],
   ['generic prelude with scheme-like components', 'a+', '.a { @apply ', 'a; color: red; }', false],
+  ['generic pseudo-argument name runs', 'a ', ':foo(', ') {}', false],
+  ['function name runs in a declaration', 'a ', 'a { x: f(', '); }', false],
 ])('parses %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix, hasError) => {
   const small = prefix + source.repeat(2000) + suffix;
   const large = prefix + source.repeat(20_000) + suffix;

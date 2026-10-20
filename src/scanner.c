@@ -16,6 +16,7 @@ enum TokenType {
     IMPORT_LAYER_START,
     INVALID_IMPORT_SUPPORTS,
     INVALID_IMPORT_LAYER,
+    OPERATOR_GAP,
 };
 
 typedef Array(char) SupportsDelimiters;
@@ -49,13 +50,15 @@ static void scan_escape_terminator(TSLexer *lexer);
 static bool scan_component_gap(TSLexer *lexer, bool *whitespace);
 static bool is_layer_name_start(int32_t character);
 static bool is_css_whitespace(int32_t character);
-static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
+static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap);
+static bool scan_property_start(TSLexer *lexer, int32_t first, bool first_consumed);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
 static bool scan_at_rule_slash(TSLexer *lexer);
 static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
-static bool scan_descendant_operator(TSLexer *lexer);
+static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool allow_gap);
+static bool scan_operator_gap(TSLexer *lexer, bool allow_gap);
 static bool is_descendant_selector_start(int32_t character);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
@@ -83,7 +86,7 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         return scan_layer_name_identifier(lexer, valid_symbols);
     }
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
-        return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP]);
+        return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP], valid_symbols[OPERATOR_GAP]);
     }
     if (valid_symbols[AT_RULE_SLASH]) {
         return scan_at_rule_slash(lexer);
@@ -91,8 +94,8 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[CLASS_NAME_ESCAPE_WITH_SUFFIX] && lexer->lookahead == '\\') {
         return scan_class_name_escape_with_suffix(lexer);
     }
-    if (iswspace(lexer->lookahead) && valid_symbols[DESCENDANT_OP]) {
-        return scan_descendant_operator(lexer);
+    if (iswspace(lexer->lookahead) && (valid_symbols[DESCENDANT_OP] || valid_symbols[OPERATOR_GAP])) {
+        return scan_descendant_operator(lexer, valid_symbols[DESCENDANT_OP], valid_symbols[OPERATOR_GAP]);
     }
     return false;
 }
@@ -439,7 +442,7 @@ static bool is_css_whitespace(int32_t character) {
     return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '\f';
 }
 
-static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant) {
+static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap) {
     bool newline = false;
     bool whitespace = false;
     lexer->mark_end(lexer);
@@ -456,24 +459,29 @@ static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendan
             break;
         }
     }
-    bool descendant = allow_descendant && whitespace && is_descendant_selector_start(lexer->lookahead);
+    int32_t first = lexer->lookahead;
+    bool descendant = allow_descendant && whitespace && is_descendant_selector_start(first);
     lexer->result_symbol = DESCENDANT_OP;
-    if (!newline) {
-        return descendant;
+    bool operator = whitespace && (first == '*' || first == '-');
+    if (operator && scan_operator_gap(lexer, allow_gap)) {
+        return true;
     }
-    bool star_property = lexer->lookahead == '*';
-    if (star_property) {
+    if (newline && scan_property_start(lexer, first, operator)) {
+        lexer->result_symbol = INCOMPLETE_DECLARATION_END;
+        return true;
+    }
+    return descendant;
+}
+
+static bool scan_property_start(TSLexer *lexer, int32_t first, bool first_consumed) {
+    bool star_property = first == '*';
+    if (star_property && !first_consumed) {
         advance(lexer);
     }
-    if (!(is_name_start(lexer->lookahead) || lexer->lookahead == '-' ||
-        (!star_property && lexer->lookahead == '\\'))) {
-        return descendant;
-    }
-    if (!scan_property_colon(lexer)) {
-        return descendant;
-    }
-    lexer->result_symbol = INCOMPLETE_DECLARATION_END;
-    return true;
+    // A consumed hyphen is the first name character.
+    bool name_start = (first_consumed && first == '-') || is_name_start(lexer->lookahead) ||
+        lexer->lookahead == '-' || (!star_property && lexer->lookahead == '\\');
+    return name_start && scan_property_colon(lexer);
 }
 
 static bool scan_property_colon(TSLexer *lexer) {
@@ -593,14 +601,30 @@ static void scan_escape_terminator(TSLexer *lexer) {
     }
 }
 
-static bool scan_descendant_operator(TSLexer *lexer) {
-    lexer->result_symbol = DESCENDANT_OP;
+static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool allow_gap) {
     skip(lexer);
     while (iswspace(lexer->lookahead)) {
         skip(lexer);
     }
     lexer->mark_end(lexer);
-    return is_descendant_selector_start(lexer->lookahead);
+    bool descendant = allow_descendant && is_descendant_selector_start(lexer->lookahead);
+    lexer->result_symbol = DESCENDANT_OP;
+    if ((lexer->lookahead == '*' || lexer->lookahead == '-') && scan_operator_gap(lexer, allow_gap)) {
+        return true;
+    }
+    return descendant;
+}
+
+// A spaced `*` or `-` after a pseudo-argument operand is an operator, not a universal or hyphenated selector. A distinct
+// token keeps the binary interpretation from forking at every descendant gap: a fork that then fails on the next name
+// falls back to error-mode lexing, which skips the whole remaining name run each time.
+static bool scan_operator_gap(TSLexer *lexer, bool allow_gap) {
+    advance(lexer);
+    if (!allow_gap || !is_css_whitespace(lexer->lookahead)) {
+        return false;
+    }
+    lexer->result_symbol = OPERATOR_GAP;
+    return true;
 }
 
 static bool is_descendant_selector_start(int32_t character) {
