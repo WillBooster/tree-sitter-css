@@ -14,9 +14,10 @@ to its authors and contributors. This is not an official release of that project
 
 This fork is based on upstream's version 0.23.2 grammar and generates the parser with the
 [WillBooster/tree-sitter](https://github.com/WillBooster/tree-sitter) generator. The parser carries that fork's own ABI
-number (`0x57420001`) and loads only with that fork's runtime, version 2.0.0 or later: upstream's tree-sitter runtime
-rejects it. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
+number (`0x57420001`) and is tested with that fork's runtime 2.0.33. Upstream's tree-sitter runtime
+rejects it; newer fork runtimes with a different minimum grammar ABI also require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
+Imports expose optional layer assignment and support conditions before media queries.
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
 Class names accept digit- or hyphen-starting continuations after escape sequences.
 Nesting selectors may follow descendant combinators, as in `b &`.
@@ -36,7 +37,7 @@ reports an error.
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
-[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) version 2.0.0 or later, which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
+[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 2.0.33), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
 
 ```js
 import { fileURLToPath } from 'node:url';
@@ -82,8 +83,8 @@ fuzzed with:
 
 ```toml
 [dependencies]
-tree-sitter = { package = "willbooster-tree-sitter", version = "2" }
-tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "1" }
+tree-sitter = { package = "willbooster-tree-sitter", version = "=2.0.33" }
+tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "3" }
 ```
 
 ```rust

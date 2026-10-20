@@ -7,13 +7,11 @@ import { generationInputMtime } from '../helpers/generationInputs.js';
 import { Language, Parser } from '@willbooster/web-tree-sitter';
 
 const Root = path.join(import.meta.dirname, '../..');
-// The Wasm build is the one the package ships.
 const WasmPath = path.join(Root, 'tree-sitter-css.wasm');
 await Parser.init();
 const parser = new Parser();
 parser.setLanguage(await Language.load(WasmPath));
 
-// The tests load the existing Wasm build, so a stale one would hide an edit that makes error recovery slower than linear.
 test('uses a Wasm build built from the current parser', () => {
   const sources = ['grammar.js', 'src/parser.c', 'src/scanner.c', 'src/tree_sitter/parser.h'].map(
     (name) => fs.statSync(path.join(Root, name)).mtimeMs
@@ -49,6 +47,35 @@ test.each([
   }
   expect(largeFastest / smallFastest).toBeLessThan(18);
 });
+
+test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
+  const small = repeatedImportInput(250);
+  const large = repeatedImportInput(1000);
+  parseCpuTime(small, true);
+  parseCpuTime(large, true);
+  let batch = 1;
+  while (importBatchCpuTime(small, batch) < 20_000 && batch < 128) batch *= 2;
+  let smallFastest = Infinity;
+  let largeFastest = Infinity;
+  for (let run = 0; run < 3; run++) {
+    smallFastest = Math.min(smallFastest, importBatchCpuTime(small, batch));
+    largeFastest = Math.min(largeFastest, importBatchCpuTime(large, batch));
+  }
+  expect(largeFastest / smallFastest).toBeLessThan(8);
+});
+
+function importBatchCpuTime(source: string, count: number): number {
+  let elapsed = 0;
+  for (let index = 0; index < count; index++) elapsed += parseCpuTime(source, true);
+  return elapsed;
+}
+
+function repeatedImportInput(count: number): string {
+  return Array.from(
+    { length: count },
+    (_, index) => `@import "x${index}" supports(a: b\n.r${index} { color: red; padding: 1px; }\n`
+  ).join('');
+}
 
 function parseCpuTime(source: string, expectedError: boolean): number {
   const start = process.threadCpuUsage();

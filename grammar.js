@@ -43,6 +43,12 @@ module.exports = grammar({
     $._class_name_escape_with_suffix,
     $._at_rule_slash,
     $._incomplete_declaration_end,
+    $._layer_name_identifier,
+    $._layer_name_prefix,
+    $._import_supports_start,
+    $._import_layer_start,
+    $._invalid_import_supports,
+    $._invalid_import_layer,
   ],
 
   inline: $ => [
@@ -119,9 +125,97 @@ module.exports = grammar({
     import_statement: $ => seq(
       '@import',
       $._value,
-      sep(',', $._media_query),
+      optional($.import_layer),
+      choice(
+        seq(optional($.import_supports), sep(',', $._media_query)),
+        choice($._invalid_import_layer, $._invalid_import_supports),
+      ),
       ';',
     ),
+
+    import_layer: $ => choice(
+      alias($._import_layer_keyword, 'layer'),
+      seq(alias($._import_layer_start, 'layer('), $.layer_name, ')'),
+    ),
+
+    _import_layer_keyword: _ => cssKeyword('layer'),
+
+    layer_name: $ => seq(
+      repeat(seq(alias($._layer_name_prefix, $.identifier), '.')),
+      alias($._layer_name_identifier, $.identifier),
+    ),
+
+    // Mirrors the generic at-rule components with own nodes, so that queries can tell support conditions from generic
+    // at-rule preludes. A body that starts with a name and `:` is a declaration; groups in condition position may hold
+    // declarations, while groups in a declaration value or after a value hold plain components.
+    import_supports: $ => seq(
+      alias($._import_supports_start, 'supports('),
+      choice($.import_supports_declaration, repeat1($._import_supports_condition_component)),
+      ')',
+    ),
+
+    import_supports_declaration: $ => prec(1, seq(
+      field('name', choice(
+        $.at_rule_value,
+        alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
+      )),
+      alias(':', $.at_rule_delimiter),
+      repeat($._import_supports_value_nested_component),
+    )),
+
+    _import_supports_condition_component: $ => choice(
+      $._import_supports_leaf,
+      $._import_supports_function,
+      alias($._import_supports_condition_group, $.import_supports_group),
+      alias($._import_supports_bracketed, $.at_rule_bracketed),
+      alias($._import_supports_braced, $.at_rule_braced),
+    ),
+
+    _import_supports_condition_group: $ => seq(
+      queryOpeningParenthesis,
+      optional(choice(
+        $.import_supports_declaration,
+        repeat1(choice($._import_supports_condition_component, alias(';', $.at_rule_delimiter))),
+      )),
+      ')',
+    ),
+
+    // A group after a value, such as the arguments of `selector(a:hover)`, holds plain components, not a declaration.
+    _import_supports_function: $ => prec(1, seq(
+      choice(
+        $.at_rule_value,
+        alias(choice($._style_keyword, $._at_rule_slash), $.at_rule_value),
+        $.at_rule_url,
+        $.string_value,
+      ),
+      alias($._import_supports_value_group, $.import_supports_group),
+    )),
+
+    _import_supports_leaf: $ => choice(
+      $.at_rule_value,
+      alias($._style_keyword, $.at_rule_value),
+      alias($._query_not, 'not'),
+      alias($._query_and, 'and'),
+      alias($._query_or, 'or'),
+      alias($._at_rule_slash, $.at_rule_value),
+      $.at_rule_url,
+      $.string_value,
+      $.at_rule_delimiter,
+    ),
+
+    _import_supports_value_nested_component: $ => choice(
+      $._import_supports_leaf,
+      alias($._import_supports_value_group, $.import_supports_group),
+      alias($._import_supports_bracketed, $.at_rule_bracketed),
+      alias($._import_supports_braced, $.at_rule_braced),
+      alias(';', $.at_rule_delimiter),
+    ),
+
+    _import_supports_value_group: $ => seq(queryOpeningParenthesis, repeat($._import_supports_value_nested_component), ')'),
+
+    _import_supports_bracketed: $ => seq('[', repeat($._import_supports_value_nested_component), ']'),
+
+    _import_supports_braced: $ => seq('{', repeat($._import_supports_value_nested_component), '}'),
 
     media_statement: $ => seq(
       '@media',
