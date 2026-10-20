@@ -31,3 +31,44 @@ test.each(
     parser.delete();
   }
 });
+
+test.each([
+  ['#item//', 'hash_value'],
+  ['#item//bar', 'hash_value'],
+  ['#item///', 'hash_value'],
+  ['#abc//', 'color_value'],
+  ['#abc//bar', 'color_value'],
+])('attached slashes after %s stay value components', (value, type) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `a { --x: ${value}; color: red; } .after {}`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('js_comment')).toEqual([]);
+    expect(tree.rootNode.descendantsOfType(type)[0]!.text).toBe(value.slice(0, value.indexOf('/')));
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+      `--x: ${value};`,
+      'color: red;',
+    ]);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test('a separated line comment after a hash remains a comment', () => {
+  const parser = new Parser().setLanguage(language);
+  const tree = parser.parse('a {\n  --x: #item // note\n  ;\n  color: red;\n}\n')!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('js_comment').map((node) => node.text)).toEqual(['// note']);
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+      '--x: #item // note\n  ;',
+      'color: red;',
+    ]);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
