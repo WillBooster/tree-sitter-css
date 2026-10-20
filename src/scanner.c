@@ -27,7 +27,8 @@ static bool scan_invalid_import_delimiter(TSLexer *lexer);
 static bool scan_import_component_list(TSLexer *lexer, int32_t terminator);
 static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator);
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component);
-static bool scan_supports_body_end(TSLexer *lexer);
+static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed);
+static bool scan_layer_tail(TSLexer *lexer);
 static bool scan_supports_word(TSLexer *lexer);
 static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsigned *length);
 static bool scan_supports_url(TSLexer *lexer);
@@ -141,7 +142,7 @@ static bool scan_import_layer_body_end(TSLexer *lexer) {
         if (!scan_component_gap(lexer, &whitespace)) return false;
         if (lexer->eof(lexer)) return false;
         switch (lexer->lookahead) {
-            case ')': return scan_supports_body_end(lexer);
+            case ')': return scan_supports_body_end(lexer, true);
             case '\'': case '"': return false;
             case ';': case '{': case '}': return true;
             default: {
@@ -164,9 +165,11 @@ static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiter
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
         if (!delimiters->size) {
-            if (character == terminator) return terminator == ';' || (component && scan_supports_body_end(lexer));
+            // A rule after an import missing its `;` ends the tail, as it does without a condition.
+            bool end = character == terminator || (terminator == ';' && character == '{');
+            if (end) return terminator == ';' || (component && scan_supports_body_end(lexer, false));
             if (character == ')' || character == ']' || character == '}' || character == ';') return false;
-            if (terminator == ';' && (character == '\'' || character == '"' || character == '{')) return false;
+            if (terminator == ';' && (character == '\'' || character == '"')) return false;
         }
         if (!scan_import_component(lexer, delimiters, terminator, &component)) return false;
     }
@@ -195,13 +198,28 @@ static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters
     return true;
 }
 
-static bool scan_supports_body_end(TSLexer *lexer) {
+static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed) {
     advance(lexer);
     bool whitespace = false;
     if (!scan_component_gap(lexer, &whitespace)) return false;
     bool start = lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' ||
         lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
-    return start && scan_import_component_list(lexer, ';');
+    if (!start) return false;
+    return supports_allowed ? scan_layer_tail(lexer) : scan_import_component_list(lexer, ';');
+}
+
+// Scans a supports() after a layer with the body rules of a direct supports() lookahead, so a malformed body recovers
+// at the same position with or without a preceding layer.
+static bool scan_layer_tail(TSLexer *lexer) {
+    char name[9] = {0};
+    unsigned length = 0;
+    if (!scan_import_word(lexer, name, sizeof(name), &length)) return false;
+    if (lexer->lookahead == '(' && length == 8 && !strcmp(name, "supports")) {
+        advance(lexer);
+        return scan_import_component_list(lexer, ')');
+    }
+    if (lexer->lookahead == '(' && length == 3 && !strcmp(name, "url") && !scan_supports_url(lexer)) return false;
+    return scan_import_component_list(lexer, ';');
 }
 
 static bool scan_supports_word(TSLexer *lexer) {

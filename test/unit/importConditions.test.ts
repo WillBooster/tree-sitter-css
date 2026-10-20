@@ -265,6 +265,7 @@ test.each([
   'SUPPORTS(display: grid',
   String.raw`s\75 pports(display: grid`,
   'layer supports(display: grid',
+  'layer(theme) supports(display: grid',
 ])('unterminated import conditions retain following rules: %s', (condition) => {
   const parser = new Parser().setLanguage(language);
   const following = ['.first { color: red; }', '.after { background: blue; }'];
@@ -423,12 +424,14 @@ test.each([
   }
 });
 
-test.each(['supports(display: grid', 'SUPPORTS(display: grid', String.raw`s\75 pports(display: grid`])(
-  'EOF-unclosed imports regain following rules when completed: %s',
-  (condition) => {
-    expectUnfinishedImportCompletion(condition);
-  }
-);
+test.each([
+  'supports(display: grid',
+  'SUPPORTS(display: grid',
+  String.raw`s\75 pports(display: grid`,
+  'layer(theme) supports(display: grid',
+])('EOF-unclosed imports regain following rules when completed: %s', (condition) => {
+  expectUnfinishedImportCompletion(condition);
+});
 
 test.each(
   ['supports', 'SUPPORTS', String.raw`s\75 pports`, 'layer(theme) supports'].flatMap((keyword) =>
@@ -660,21 +663,27 @@ test.each(
   }
 });
 
-test('an unfinished support function after a named layer owns its EOF components', () => {
-  const parser = new Parser().setLanguage(language);
-  const source = '@import "x" layer(theme) supports(display: grid; .first { color: red; } .after { background: blue; }';
-  const tree = parser.parse(source)!;
-  try {
-    expect(tree.rootNode.hasError).toBe(true);
-    expect(tree.rootNode.firstNamedChild?.type).toBe('import_statement');
-    expect(tree.rootNode.firstNamedChild?.text).toBe(source);
-    expect(tree.rootNode.descendantsOfType('rule_set')).toHaveLength(0);
-  } finally {
-    tree.delete();
-    parser.delete();
+test.each(['layer(a) screen', 'supports(a: b) screen', 'layer(a) supports(a: b) (width > 1px)'])(
+  'imports missing their semicolon keep their conditions and the following rule: %s',
+  (condition) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `@import "x" ${condition}\n.b { color: red; }`;
+    const tree = parser.parse(source)!;
+    try {
+      const statement = tree.rootNode.firstNamedChild!;
+      expect(statement.type).toBe('import_statement');
+      expect(statement.children.filter((node) => node.isError)).toHaveLength(0);
+      expect(statement.descendantsOfType(['import_layer', 'import_supports']).map((node) => node.text)).toEqual(
+        condition.match(/(?:layer|supports)\([^)]*\)/g)
+      );
+      expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
+      expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.b'));
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
   }
-  expectUnfinishedImportCompletion('layer(theme) supports(display: grid');
-});
+);
 
 function expectUnfinishedImportCompletion(condition: string): void {
   const parser = new Parser().setLanguage(language);
