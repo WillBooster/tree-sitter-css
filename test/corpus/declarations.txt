@@ -169,7 +169,7 @@ a {
   (rule_set
     (selectors (tag_name))
     (block
-      (declaration (property_name) (plain_value) (plain_value) (plain_value)))))
+      (declaration (property_name) (plain_value)))))
 
 ============================
 Important declarations
@@ -351,7 +351,8 @@ Important keyword whitespace and case
 
 a {
   color: red ! important;
-  margin: 0 !	IMPORTANT;
+  margin: 0 !	
+IMPORTANT;
   padding: 1px !
     ImPoRtAnT
 }

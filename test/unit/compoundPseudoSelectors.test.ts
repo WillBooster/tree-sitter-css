@@ -74,3 +74,21 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  [':matches', ':foo', '::foo'].flatMap((pseudo) =>
+    ['.b', '#id', ':hover', '::before', '> b', '&', '*', '[x]'].map((tail) => [pseudo, tail] as const)
+  )
+)('generic pseudo arguments keep a spaced universal selector: %s(a * %s)', (pseudo, tail) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `${pseudo}(a * ${tail}) {} .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild!.descendantsOfType('universal_selector').length).toBeGreaterThan(0);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

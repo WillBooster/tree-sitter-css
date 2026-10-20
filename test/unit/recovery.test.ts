@@ -111,3 +111,25 @@ test.each([
     parser.delete();
   }
 });
+
+test.each([
+  ['1px solid', '*'],
+  ['1px solid', '*:hover'],
+  ['1px', '*:hover'],
+  ['a, b', '+'],
+])('keeps the outer block after %s without its semicolon before a nested %s rule', async (value, selector) => {
+  await Parser.init();
+  const parser = new Parser();
+  parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
+  const source = `a { x: ${value}\n  ${selector} { c: d } }\n.after { color: blue; }`;
+  const tree = parser.parse(source)!;
+  try {
+    const [outer, after] = tree.rootNode.namedChildren;
+    expect(outer?.type).toBe('rule_set');
+    expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
+    expect(after?.text).toBe('.after { color: blue; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

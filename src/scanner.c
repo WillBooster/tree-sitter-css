@@ -58,7 +58,8 @@ static bool scan_at_rule_slash(TSLexer *lexer);
 static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool allow_gap);
-static bool scan_operator_gap(TSLexer *lexer, bool allow_gap);
+static bool scan_operator_gap(TSLexer *lexer, bool allow_gap, bool *spaced);
+static bool scan_star_operand(TSLexer *lexer);
 static bool is_descendant_selector_start(int32_t character);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
@@ -463,10 +464,11 @@ static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendan
     bool descendant = allow_descendant && whitespace && is_descendant_selector_start(first);
     lexer->result_symbol = DESCENDANT_OP;
     bool operator = whitespace && (first == '*' || first == '-');
-    if (operator && scan_operator_gap(lexer, allow_gap)) {
+    bool spaced = false;
+    if (operator && scan_operator_gap(lexer, allow_gap, &spaced)) {
         return true;
     }
-    if (newline && scan_property_start(lexer, first, operator)) {
+    if (newline && !spaced && scan_property_start(lexer, first, operator)) {
         lexer->result_symbol = INCOMPLETE_DECLARATION_END;
         return true;
     }
@@ -609,22 +611,41 @@ static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool
     lexer->mark_end(lexer);
     bool descendant = allow_descendant && is_descendant_selector_start(lexer->lookahead);
     lexer->result_symbol = DESCENDANT_OP;
-    if ((lexer->lookahead == '*' || lexer->lookahead == '-') && scan_operator_gap(lexer, allow_gap)) {
+    bool spaced = false;
+    if ((lexer->lookahead == '*' || lexer->lookahead == '-') && scan_operator_gap(lexer, allow_gap, &spaced)) {
         return true;
     }
     return descendant;
 }
 
-// A spaced `*` or `-` after a pseudo-argument operand is an operator, not a universal or hyphenated selector. A distinct
-// token keeps the binary interpretation from forking at every descendant gap: a fork that then fails on the next name
-// falls back to error-mode lexing, which skips the whole remaining name run each time.
-static bool scan_operator_gap(TSLexer *lexer, bool allow_gap) {
+// A spaced `-`, or a spaced `*` before an operand, after a pseudo-argument operand is an operator, not a hyphenated or
+// universal selector. A distinct token keeps the binary interpretation from forking at every descendant gap: a fork
+// that then fails on the next name falls back to error-mode lexing, which skips the whole remaining name run each time.
+static bool scan_operator_gap(TSLexer *lexer, bool allow_gap, bool *spaced) {
+    bool star = lexer->lookahead == '*';
     advance(lexer);
-    if (!allow_gap || !is_css_whitespace(lexer->lookahead)) {
+    *spaced = is_css_whitespace(lexer->lookahead);
+    if (!allow_gap || !*spaced || (star && !scan_star_operand(lexer))) {
         return false;
     }
     lexer->result_symbol = OPERATOR_GAP;
     return true;
+}
+
+// A component that can only continue a selector, as in `a * .b` or `a * :hover`, keeps `*` a universal selector.
+static bool scan_star_operand(TSLexer *lexer) {
+    while (is_css_whitespace(lexer->lookahead)) {
+        advance(lexer);
+    }
+    switch (lexer->lookahead) {
+        case '.':
+            advance(lexer);
+            return is_digit(lexer->lookahead);
+        case '#': case ':': case '[': case '>': case '&': case '*': case '+': case '~': case '|':
+            return false;
+        default:
+            return true;
+    }
 }
 
 static bool is_descendant_selector_start(int32_t character) {

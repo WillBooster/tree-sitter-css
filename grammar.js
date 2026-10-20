@@ -793,28 +793,25 @@ module.exports = grammar({
         ordinaryValue($),
         alias(choice('=', '?', '^', '$', '<', '/', '`'), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
-        alias($._glued_colon, $.plain_value),
       )),
       alias($._escaped_identifier, $.plain_value),
     ),
 
-    // Delimiters that can start a selector stay inside parentheses: in a declaration value they would absorb a nested
-    // rule that follows a declaration without its semicolon. No `@` delimiter exists: its token would lex `@media`
-    // and other at-keywords as values in merged lexer states and exclude them from error recovery.
+    // Delimiters that can start a selector, and operators ending a value, stay inside parentheses: in a declaration
+    // value they would absorb a nested rule that follows a declaration without its semicolon. No `@` delimiter exists:
+    // its token would lex `@media` and other at-keywords as values in merged lexer states and exclude them from error
+    // recovery.
     _argument_value: $ => choice(
       $._value,
       prec(-1, alias(choice('.', '#', '&', '|', '~', '>', '*', '+'), $.plain_value)),
+      // Only a colon glued to the preceding component, as in `f(a\31 b:)`.
+      prec(-1, alias(token.immediate(prec(-1, ':')), $.plain_value)),
+      alias($._operator_ending_expression, $.binary_expression),
     ),
 
-    // Only a glued colon, as in `http://` or `progid:`, so that a nested `:hover` rule after a declaration without its
-    // semicolon stays a rule.
-    _glued_colon: _ => token.immediate(prec(-1, ':')),
-
-    // Single values joined only by glued colons, as in `(max-width:600px)`: admitting value sequences would let a
-    // slash-prefixed plain value such as `/var` replace the division operator after a value.
     parenthesized_value: $ => seq(
       '(',
-      colonJoined($, $._argument_value),
+      $._argument_value,
       ')',
     ),
 
@@ -874,7 +871,7 @@ module.exports = grammar({
 
     grid_value: $ => seq(
       '[',
-      sep1(',', colonJoined($, $._value)),
+      sep1(',', $._value),
       ']',
     ),
 
@@ -885,10 +882,9 @@ module.exports = grammar({
       $.arguments,
     ),
 
-    binary_expression: $ => choice(
-      prec.left(2, seq($._value, choice('+', '-', '*', '/'), $._value)),
-      prec.left(1, seq($._value, choice('+', '-', '*', '/'))),
-    ),
+    binary_expression: $ => prec.left(2, seq($._value, choice('+', '-', '*', '/'), $._value)),
+
+    _operator_ending_expression: $ => prec.left(1, seq($._value, choice('+', '-', '*', '/'))),
 
     arguments: $ => seq(
       token.immediate('('),
@@ -915,15 +911,11 @@ module.exports = grammar({
       '/',
     )),
 
-    _pseudo_plain_value: _ => plainValue('.#|>+~'),
+    _pseudo_plain_value: _ => plainValue('.#|>+~:'),
 
     plain_value: _ => plainValue(),
   },
 });
-
-function colonJoined($, rule) {
-  return seq(rule, repeat(seq(alias($._glued_colon, $.plain_value), rule)));
-}
 
 function pseudoArgument($) {
   return choice(
@@ -1029,12 +1021,18 @@ function sep1(separator, rule) {
 function plainValue(selectorDelimiters = '') {
   const continuation = new RegExp(`[^/\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
   const slashContinuation = new RegExp(`\\/[^\\*\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
+  // A colon continues the value only when another value character follows it, as in `http://a` or
+  // `(max-width:600px)`: a colon before whitespace ends a following property name instead, and a standalone colon
+  // value would let error recovery continue a declaration through a nested `*:hover` rule.
+  const continuations = selectorDelimiters.includes(':')
+    ? [continuation, slashContinuation]
+    : [continuation, slashContinuation, seq(':', choice(continuation, slashContinuation))];
   return token(choice(
     /<[a-zA-Z-]+>[+#]?/,
     seq(
       repeat(choice(/[-_]/, slashContinuation)),
       /[a-zA-Z]/,
-      repeat(choice(continuation, slashContinuation)),
+      repeat(choice(...continuations)),
     ),
   ));
 }
