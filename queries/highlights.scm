@@ -95,11 +95,11 @@
 ; Other groups belong to values or functions such as selector().
 (
  [
-  (import_supports . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)
-  (import_supports . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
-  (import_supports . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
-  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
-  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)
+  (import_supports . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  (import_supports . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
  ]
  (#eq? @_colon ":")
  (#not-match? @_feature_value "^/[*/]")

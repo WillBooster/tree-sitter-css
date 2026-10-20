@@ -196,6 +196,9 @@ test.each([
   ['--x: ((a: b))', ['--x']],
   [String.raw`\6e ot (display: grid) \61 nd (color: red)`, ['display', 'color']],
   ['((a: b)) or (c: d)', ['a', 'c']],
+  ['and: initial', ['and']],
+  ['(not: initial)', ['not']],
+  [String.raw`\6e ot: initial`, [String.raw`\6e ot`]],
 ])('support property captures cover only the leading declaration name: %s', (condition, properties) => {
   const parser = new Parser().setLanguage(language);
   const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
@@ -243,6 +246,7 @@ testCommand(
         String.raw`\A9 `,
         String.raw`--\2192 `,
         '--x',
+        'and',
       ]);
     },
   }
