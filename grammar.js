@@ -8,6 +8,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const identifierPattern = /(--|-?[a-zA-Z_\xA0-\xFF])[a-zA-Z0-9-_\xA0-\xFF]*/;
 const queryOpeningParenthesis = choice('(', token.immediate('('));
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
 const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
@@ -442,12 +443,12 @@ module.exports = grammar({
     _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
 
     incomplete_declaration: $ => seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(choice($.identifier, $._custom_property_name, $._star_property_name), $.property_name),
       $._incomplete_declaration_end,
     ),
 
     declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(choice($.identifier, $._custom_property_name, $._star_property_name), $.property_name),
       optional($._descendant_combinator),
       ':',
       $._value,
@@ -460,7 +461,7 @@ module.exports = grammar({
     )),
 
     last_declaration: $ => prec.dynamic(1, seq(
-      alias(choice($.identifier, $._custom_property_name), $.property_name),
+      alias(choice($.identifier, $._custom_property_name, $._star_property_name), $.property_name),
       optional($._descendant_combinator),
       ':',
       $._value,
@@ -470,6 +471,8 @@ module.exports = grammar({
       )),
       optional($.important),
     )),
+
+    _star_property_name: _ => token(seq('*', identifierPattern)),
 
     _custom_property_name: _ => escapedIdentifier(seq('--', /[-a-zA-Z0-9_\xA0-\xFF]*/)),
 
@@ -790,7 +793,7 @@ module.exports = grammar({
       alias($._class_name_escape_with_suffix, $.identifier),
     )),
 
-    identifier: _ => /(--|-?[a-zA-Z_\xA0-\xFF])[a-zA-Z0-9-_\xA0-\xFF]*/,
+    identifier: _ => identifierPattern,
 
     at_keyword: _ => /@[a-zA-Z-_]+/,
 
