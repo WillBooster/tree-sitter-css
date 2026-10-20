@@ -86,3 +86,23 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  [String.raw`a\31 b`, String.raw`\61 b`].flatMap((atom) =>
+    [':', ': c', '.c', '#', '#c', '+', '*', '>c', '&c', '|c', '~c', '@c'].flatMap((tail) =>
+      ['--x', 'x'].map((name) => [name, `${atom}${tail}`] as const)
+    )
+  )
+)('escaped values keep the tails plain values continue through: %s: %s', (name, value) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `a { ${name}: ${value}; y: z }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const block = tree.rootNode.firstNamedChild!.descendantsOfType('block')[0]!;
+    expect(block.namedChildren.map((node) => node.text)).toEqual([`${name}: ${value};`, 'y: z']);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

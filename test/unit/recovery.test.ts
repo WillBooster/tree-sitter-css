@@ -136,7 +136,7 @@ test.each([
   }
 });
 
-test.each(['background: blue;', '--x: y;', '-x: y;'])(
+test.each(['background: blue;', '--x: y;', '-x: y;', String.raw`c\6f lor: z;`])(
   'keeps the following top-level rule after a declaration without its semicolon before %s',
   async (next) => {
     await Parser.init();

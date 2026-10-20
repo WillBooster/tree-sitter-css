@@ -775,8 +775,18 @@ module.exports = grammar({
         alias(choice('=', '?', '^', '$', '<', '/', '`'), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
       )),
-      alias($._escaped_identifier, $.plain_value),
+      seq(
+        alias($._escaped_identifier, $.plain_value),
+        optional(alias($._escaped_value_tail, $.plain_value)),
+      ),
     ),
+
+    // The characters a plain value continues through also continue a value after an escape, as in `a\31 b.c` or
+    // `--x: a\31 b: c`; the escaped identifier token itself ends before them.
+    _escaped_value_tail: _ => token.immediate(prec(1, repeat1(choice(
+      /[^/\s,;!{}()\[\]\\]/,
+      /\/[^*\s,;!{}()\[\]]/,
+    )))),
 
     // Delimiters that can start a selector, and operators ending a value, stay inside parentheses: in a declaration
     // value they would absorb a nested rule that follows a declaration without its semicolon. No `@` delimiter exists:
