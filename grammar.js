@@ -151,7 +151,7 @@ module.exports = grammar({
 
     import_statement: $ => seq(
       '@import',
-      $._statement_value,
+      $._value,
       optional($.import_layer),
       choice(
         seq(optional($.import_supports), sep(',', $._media_query)),
@@ -252,7 +252,7 @@ module.exports = grammar({
 
     charset_statement: $ => seq(
       '@charset',
-      $._statement_value,
+      $._value,
       ';',
     ),
 
@@ -790,29 +790,28 @@ module.exports = grammar({
     _value: $ => choice(
       prec(-1, choice(
         ordinaryValue($),
-        alias(choice('.', '=', '?', '#', '&', '|', '^', '$', '~', '<', '>', '*', '+', '/', '`'), $.plain_value),
+        alias(choice('=', '?', '^', '$', '<', '/', '`'), $.plain_value),
         // A bare `@` token would exclude every at-keyword from error recovery, which then cannot resume at a following
         // at-rule; matching at-keyword shapes keeps those tokens available there.
         alias(token(prec(-1, /@[a-zA-Z-_]*/)), $.plain_value),
         alias(token(prec(-1, '%')), $.plain_value),
-        alias(token(prec(-1, ':')), $.plain_value),
+        // Only a glued colon, as in `http://` or `progid:`, so that a nested `:hover` rule after a declaration without
+        // its semicolon stays a rule.
+        alias(token.immediate(prec(-1, ':')), $.plain_value),
       )),
       alias($._escaped_identifier, $.plain_value),
     ),
 
-    // Excludes the delimiter values of `_value`, which would let error recovery resume at the statement's value and absorb
-    // following rules and statements.
-    _statement_value: $ => choice(
-      scalarValue($),
-      $.plain_value,
-      $.color_value,
-      $.grid_value,
-      alias($._escaped_identifier, $.plain_value),
+    // Delimiters that can start a selector stay inside parentheses: in a declaration value they would absorb the
+    // selector of a nested rule that follows a declaration without its semicolon.
+    _argument_value: $ => choice(
+      $._value,
+      prec(-1, alias(choice('.', '#', '&', '|', '~', '>', '*', '+'), $.plain_value)),
     ),
 
     parenthesized_value: $ => seq(
       '(',
-      $._value,
+      $._argument_value,
       ')',
     ),
 
@@ -890,7 +889,7 @@ module.exports = grammar({
 
     arguments: $ => seq(
       token.immediate('('),
-      sep(choice(',', ';'), repeat1($._value)),
+      sep(choice(',', ';'), repeat1($._argument_value)),
       ')',
     ),
 

@@ -48,3 +48,26 @@ test.each(['a { color: red', '.foo { color: red', 'a{b:c', 'a {\n color: red;\n 
     }
   }
 );
+
+test.each(['.c', '&', '& .b', '&:hover', ':hover', '> b', '~ b', '|b'])(
+  'keeps a nested rule after a declaration without its semicolon: %s',
+  async (selector) => {
+    await Parser.init();
+    const parser = new Parser();
+    parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
+    const source = `a { border: 1px solid\n  ${selector} { c: d } }\n.after { color: blue; }`;
+    const tree = parser.parse(source)!;
+    try {
+      const [outer, after] = tree.rootNode.namedChildren;
+      expect(outer?.type).toBe('rule_set');
+      expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
+      const block = outer!.namedChildren.find((node) => node.type === 'block')!;
+      expect(block.namedChildren.map((node) => node.type)).toEqual(['declaration', 'rule_set']);
+      expect(block.namedChildren[1]?.text).toBe(`${selector} { c: d }`);
+      expect(after?.text).toBe('.after { color: blue; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
