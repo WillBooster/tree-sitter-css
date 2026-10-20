@@ -72,6 +72,16 @@ test.each([
   }
 });
 
+test.each(['&', '*'])(
+  'parses nested %s prefixes before a malformed brace in linear time',
+  { timeout: 30_000 },
+  (prefix) => {
+    const source = (count: number): string =>
+      'a { --x: f(' + `${prefix} f(`.repeat(count) + '{' + ')'.repeat(count + 1) + '; } .after {}';
+    expect(parseGrowth(source(1000), source(4000), true)).toBeLessThan(8);
+  }
+);
+
 function parseGrowth(small: string, large: string, expectedError: boolean): number {
   parseCpuTime(large, expectedError);
   parseCpuTime(large, expectedError);
