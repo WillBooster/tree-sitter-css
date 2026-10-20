@@ -10,6 +10,7 @@
 
 const queryOpeningParenthesis = choice('(', token.immediate('('));
 const selectorFunctionName = choice('has', 'not', 'is', 'where', 'host', 'host-context');
+const valueSlash = token(prec(-2, '/'));
 const openingBracket = token(prec(1, '['));
 const attributeMatchOperator = choice('=', '~=', '^=', '|=', '*=', '$=');
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
@@ -585,7 +586,7 @@ module.exports = grammar({
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._value, alias($._pseudo_binary_expression, $.binary_expression)),
       optional($._descendant_combinator),
-      choice('+', '-', '*', alias($._value_asterisk, '*'), '/'),
+      choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash),
       optional($._descendant_combinator),
       $._value,
     )),
@@ -684,7 +685,7 @@ module.exports = grammar({
 
     ratio_value: $ => seq(
       choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
-      '/',
+      valueSlash,
       choice(alias($._integer, $.integer_value), alias($._float, $.float_value)),
     ),
 
@@ -847,7 +848,7 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', '@', '#', '|', '^', '$', '~', '<', '>', '+', '/', '`'), $.plain_value)),
+        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', '@', '#', '|', '^', '$', '~', '<', '>', '+', valueSlash, '`'), $.plain_value)),
         alias(token(prec(-1, '%')), $.plain_value),
         alias(token(prec(-1, ':')), $.plain_value),
       )),
@@ -928,8 +929,8 @@ module.exports = grammar({
     ),
 
     binary_expression: $ => choice(
-      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), '/'), $._value)),
-      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), '/'))),
+      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash), $._value)),
+      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash))),
     ),
 
     arguments: $ => seq(
