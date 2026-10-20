@@ -197,6 +197,11 @@ test.each([
   [String.raw`\6e ot (display: grid) \61 nd (color: red)`, ['display', 'color']],
   ['((a: b)) or (c: d)', ['a', 'c']],
   ['and: initial', ['and']],
+  [String.raw`--x: \6e ot (a: b)`, ['--x']],
+  [String.raw`selector(\6e ot (a: b))`, []],
+  ['(--x: not (a: b))', ['--x']],
+  ['not ((a: b) or (c: d))', ['a', 'c']],
+  ['(a: b) and (not (c: d))', ['a', 'c']],
   ['(not: initial)', ['not']],
   [String.raw`\6e ot: initial`, [String.raw`\6e ot`]],
 ])('support property captures cover only the leading declaration name: %s', (condition, properties) => {

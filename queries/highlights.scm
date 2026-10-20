@@ -91,15 +91,24 @@
  (#not-match? @_feature_value "^//")
  (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
 
-; A support declaration leads import_supports or a group that leads it, follows not/and/or, or leads such a group.
-; Other groups belong to values or functions such as selector().
+; A support declaration leads import_supports or a condition group nested at most twice. A condition group leads its
+; parent, follows a leading `not`, or follows a group and `and`/`or`; other groups belong to values or functions such
+; as selector(). A not/and/or token before `:` is a declaration name.
 (
  [
   (import_supports . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)
   (import_supports . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  (import_supports . (comment)* . "not" . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  (import_supports (import_supports_group) . (comment)* . ["and" "or"] . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
   (import_supports . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
-  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
-  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports . (comment)* . (import_supports_group . (comment)* . "not" . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports . (comment)* . (import_supports_group (import_supports_group) . (comment)* . ["and" "or"] . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports . (comment)* . "not" . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports . (comment)* . "not" . (comment)* . (import_supports_group . (comment)* . "not" . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports . (comment)* . "not" . (comment)* . (import_supports_group (import_supports_group) . (comment)* . ["and" "or"] . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports (import_supports_group) . (comment)* . ["and" "or"] . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports (import_supports_group) . (comment)* . ["and" "or"] . (comment)* . (import_supports_group . (comment)* . "not" . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (import_supports (import_supports_group) . (comment)* . ["and" "or"] . (comment)* . (import_supports_group (import_supports_group) . (comment)* . ["and" "or"] . (comment)* . (import_supports_group . (comment)* . [(at_rule_value) "not" "and" "or"] @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
  ]
  (#eq? @_colon ":")
  (#not-match? @_feature_value "^/[*/]")
