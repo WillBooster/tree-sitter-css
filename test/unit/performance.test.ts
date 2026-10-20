@@ -31,6 +31,8 @@ test.each([
   ['comment braces inside one delimiter-value block', 'b:/*{*/?', 'a{', '}', false],
   ['comment braces inside one malformed block', 'b:/*{*/]', 'a{', '}', true],
   ['unterminated comments after dot components', ' .a/*', 'a{b:f(', '', true],
+  ['ampersand components in function arguments', '& word ', 'a { b: f(', '); } .after {}', false],
+  ['asterisk components in function arguments', '* word ', 'a { b: f(', '); } .after {}', false],
   ['dot components in function arguments', '.token ', 'a { b: f(', '); } .after {}', false],
   ['generic prelude with scheme-like components', 'a+', '.a { @apply ', 'a; color: red; }', false],
 ])('parses %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix, hasError) => {

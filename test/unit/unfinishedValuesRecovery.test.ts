@@ -142,15 +142,26 @@ test.each([
 });
 
 test.each(
-  ['(', '[', 'f('].flatMap((opening) =>
+  ['(', '[', '(word', '[word', '(f(x) '].flatMap((opening) =>
     ['\n', '\r\n', '\n/**/'].flatMap((gap) =>
-      ['& .after', '* .after', '&.after', '*.after'].map((selector) => [opening, gap, selector] as const)
+      [
+        '& .after',
+        '* .after',
+        '&.after',
+        '*.after',
+        '& * .after',
+        '* & .after',
+        '& & .after',
+        '* * .after',
+        '& * & .after',
+        '& [a*=x]',
+      ].map((selector) => [opening, gap, selector] as const)
     )
   )
 )('unfinished values retain complete nested selector boundaries: %s %s %s', (opening, gap, selector) => {
   const parser = new Parser().setLanguage(language);
   const rule = `${selector} { color: red; }`;
-  const source = `a { --x: ${opening}${gap}${rule}\n`;
+  const source = `a { --x: ${opening}${gap}${rule}\n}`;
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(true);
