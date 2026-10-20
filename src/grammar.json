@@ -6692,28 +6692,10 @@
       "_escaped_pseudo_values"
     ],
     [
-      "_value"
-    ],
-    [
-      "_pseudo_operand"
-    ],
-    [
-      "_selector",
-      "pseudo_class_arguments",
-      "_pseudo_operand"
-    ],
-    [
-      "_selector",
-      "pseudo_element_arguments",
       "_pseudo_operand"
     ],
     [
       "pseudo_class_arguments",
-      "_pseudo_operand",
-      "_escaped_pseudo_values"
-    ],
-    [
-      "pseudo_element_arguments",
       "_pseudo_operand",
       "_escaped_pseudo_values"
     ],
@@ -6727,29 +6709,6 @@
       "pseudo_class_arguments",
       "_pseudo_operand",
       "_escaped_pseudo_values"
-    ],
-    [
-      "_selector",
-      "pseudo_element_arguments",
-      "_pseudo_operand",
-      "_escaped_pseudo_values"
-    ],
-    [
-      "pseudo_class_arguments",
-      "_pseudo_operand"
-    ],
-    [
-      "pseudo_element_arguments",
-      "_pseudo_operand"
-    ],
-    [
-      "_pseudo_operand",
-      "_value"
-    ],
-    [
-      "_selector",
-      "_pseudo_operand",
-      "_value"
     ],
     [
       "_selector",
@@ -6759,39 +6718,6 @@
       "_selector",
       "pseudo_class_arguments",
       "_escaped_pseudo_values"
-    ],
-    [
-      "_selector",
-      "pseudo_element_arguments",
-      "_escaped_pseudo_values"
-    ],
-    [
-      "_selector",
-      "pseudo_class_arguments"
-    ],
-    [
-      "_selector",
-      "pseudo_element_arguments"
-    ],
-    [
-      "pseudo_class_arguments",
-      "_escaped_pseudo_values"
-    ],
-    [
-      "pseudo_element_arguments",
-      "_escaped_pseudo_values"
-    ],
-    [
-      "pseudo_class_arguments",
-      "_value"
-    ],
-    [
-      "pseudo_element_arguments",
-      "_value"
-    ],
-    [
-      "_selector",
-      "_value"
     ],
     [
       "_container_function_arguments",
@@ -6958,15 +6884,6 @@
     [
       "_selector",
       "_escaped_pseudo_values"
-    ],
-    [
-      "_escaped_pseudo_values",
-      "_value"
-    ],
-    [
-      "_selector",
-      "_escaped_pseudo_values",
-      "_value"
     ],
     [
       "_selector",
