@@ -73,3 +73,39 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  ['nth-child', 'nth-last-child'].flatMap((name) =>
+    ['.a, .b', '.a /**/, /**/ .b', 'article > .a, [data-x="b"] .b'].map((selectors) => [name, selectors] as const)
+  )
+)('nth selector lists retain pseudo ranges and captures: %s(%s)', (name, selectors) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const selector = `a:${name}(2n+1 of ${selectors})`;
+  const tree = parser.parse(`${selector} { color: red; } .after {}`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const rule = tree.rootNode.firstNamedChild!;
+    const pseudo = rule.descendantsOfType('pseudo_class_selector')[0]!;
+    expect(pseudo.text).toBe(selector);
+    expect(pseudo.startIndex).toBe(0);
+    expect(pseudo.endIndex).toBe(selector.length);
+    expect(pseudo.descendantsOfType('class_selector').map((node) => node.text)).toEqual(
+      expect.arrayContaining(['.a', '.b'])
+    );
+    expect(
+      query
+        .captures(pseudo)
+        .filter(({ name: capture }) => capture === 'property')
+        .map(({ node }) => node.text)
+    ).toEqual(expect.arrayContaining(['a', 'b']));
+    expect(
+      query.captures(pseudo).some(({ name: capture, node }) => capture === 'attribute' && node.text === name)
+    ).toBe(true);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});

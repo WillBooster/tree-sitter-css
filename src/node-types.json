@@ -253,6 +253,10 @@
           "named": true
         },
         {
+          "type": "import_supports_group",
+          "named": true
+        },
+        {
           "type": "string_value",
           "named": true
         }
@@ -289,6 +293,10 @@
         },
         {
           "type": "at_rule_value",
+          "named": true
+        },
+        {
+          "type": "import_supports_group",
           "named": true
         },
         {
@@ -1376,17 +1384,28 @@
     }
   },
   {
+    "type": "import_layer",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "layer_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "import_statement",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
-        {
-          "type": "binary_expression",
-          "named": true
-        },
         {
           "type": "binary_query",
           "named": true
@@ -1396,31 +1415,15 @@
           "named": true
         },
         {
-          "type": "color_value",
-          "named": true
-        },
-        {
           "type": "feature_query",
           "named": true
         },
         {
-          "type": "float_value",
+          "type": "import_layer",
           "named": true
         },
         {
-          "type": "grid_value",
-          "named": true
-        },
-        {
-          "type": "hash_value",
-          "named": true
-        },
-        {
-          "type": "important",
-          "named": true
-        },
-        {
-          "type": "integer_value",
+          "type": "import_supports",
           "named": true
         },
         {
@@ -1429,14 +1432,6 @@
         },
         {
           "type": "parenthesized_query",
-          "named": true
-        },
-        {
-          "type": "parenthesized_value",
-          "named": true
-        },
-        {
-          "type": "plain_value",
           "named": true
         },
         {
@@ -1457,6 +1452,142 @@
         },
         {
           "type": "url_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_supports",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "at_rule_braced",
+          "named": true
+        },
+        {
+          "type": "at_rule_bracketed",
+          "named": true
+        },
+        {
+          "type": "at_rule_delimiter",
+          "named": true
+        },
+        {
+          "type": "at_rule_url",
+          "named": true
+        },
+        {
+          "type": "at_rule_value",
+          "named": true
+        },
+        {
+          "type": "import_supports_declaration",
+          "named": true
+        },
+        {
+          "type": "import_supports_group",
+          "named": true
+        },
+        {
+          "type": "string_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_supports_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "at_rule_value",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "at_rule_braced",
+          "named": true
+        },
+        {
+          "type": "at_rule_bracketed",
+          "named": true
+        },
+        {
+          "type": "at_rule_delimiter",
+          "named": true
+        },
+        {
+          "type": "at_rule_url",
+          "named": true
+        },
+        {
+          "type": "at_rule_value",
+          "named": true
+        },
+        {
+          "type": "import_supports_group",
+          "named": true
+        },
+        {
+          "type": "string_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_supports_group",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "at_rule_braced",
+          "named": true
+        },
+        {
+          "type": "at_rule_bracketed",
+          "named": true
+        },
+        {
+          "type": "at_rule_delimiter",
+          "named": true
+        },
+        {
+          "type": "at_rule_url",
+          "named": true
+        },
+        {
+          "type": "at_rule_value",
+          "named": true
+        },
+        {
+          "type": "import_supports_declaration",
+          "named": true
+        },
+        {
+          "type": "import_supports_group",
+          "named": true
+        },
+        {
+          "type": "string_value",
           "named": true
         }
       ]
@@ -1556,6 +1687,21 @@
         },
         {
           "type": "keyframes_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "layer_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -1840,6 +1986,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "plain_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "pseudo_class_selector",
@@ -2776,6 +2927,14 @@
     "named": true
   },
   {
+    "type": "layer",
+    "named": false
+  },
+  {
+    "type": "layer(",
+    "named": false
+  },
+  {
     "type": "namespace_name",
     "named": true
   },
@@ -2796,10 +2955,6 @@
     "named": false
   },
   {
-    "type": "plain_value",
-    "named": true
-  },
-  {
     "type": "property_name",
     "named": true
   },
@@ -2813,6 +2968,10 @@
   },
   {
     "type": "style",
+    "named": false
+  },
+  {
+    "type": "supports(",
     "named": false
   },
   {

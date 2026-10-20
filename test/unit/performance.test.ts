@@ -22,13 +22,8 @@ test('uses a Wasm build built from the current parser', () => {
   ).toBe(false);
 });
 
-// Consumers parse files being edited, so parsing and error recovery must stay linear: ten times the input takes about
-// ten times as long, against a hundred times for quadratic recovery. The ratio catches a cost that grows faster than
-// the input even on a slow CI runner. The parses are timed in the CPU time of the thread that runs them: wall-clock
-// time is inflated unevenly by the test files running alongside, and the process's CPU time also counts the engine's
-// background threads, which compile the Wasm build and collect garbage during the parses. 2,000 and 20,000 repetitions are
-// measured after warm-up parses and in alternation, each keeping its fastest run; their ratio is about 10 locally, and
-// 18 leaves a margin over that while failing for growth faster than about n^1.25.
+// Thread CPU time excludes unrelated concurrent test work; batching avoids zero-duration Linux samples.
+// Fastest alternating samples limit scheduler/GC noise while retaining a ratio sensitive to superlinear growth.
 test.each([
   ['unexpected value punctuation', 'a { b: ) }\n', '', '', true],
   ['comment punctuation before a delimiter value', 'a { b: /* }; : { */ ? }\n', '', '', false],
@@ -36,20 +31,14 @@ test.each([
   ['comment braces inside one delimiter-value block', 'b:/*{*/?', 'a{', '}', false],
   ['comment braces inside one malformed block', 'b:/*{*/]', 'a{', '}', true],
   ['unterminated comments after dot components', ' .a/*', 'a{b:f(', '', true],
+  ['ampersand components in function arguments', '& word ', 'a { b: f(', '); } .after {}', false],
+  ['asterisk components in function arguments', '* word ', 'a { b: f(', '); } .after {}', false],
   ['dot components in function arguments', '.token ', 'a { b: f(', '); } .after {}', false],
   ['generic prelude with scheme-like components', 'a+', '.a { @apply ', 'a; color: red; }', false],
 ])('parses %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix, hasError) => {
   const small = prefix + source.repeat(2000) + suffix;
   const large = prefix + source.repeat(20_000) + suffix;
-  parseCpuTime(large, hasError);
-  parseCpuTime(large, hasError);
-  let smallFastest = Infinity;
-  let largeFastest = Infinity;
-  for (let run = 0; run < 5; run++) {
-    smallFastest = Math.min(smallFastest, parseCpuTime(small, hasError));
-    largeFastest = Math.min(largeFastest, parseCpuTime(large, hasError));
-  }
-  expect(largeFastest / smallFastest).toBeLessThan(18);
+  expect(parseGrowth(small, large, hasError)).toBeLessThan(18);
 });
 
 test.each([
@@ -72,22 +61,7 @@ test.each([
 ])('parses repeated %s scope comments in linear time', { timeout: 30_000 }, (_name, prefix, suffix) => {
   const small = prefix + '/**/ '.repeat(1000) + suffix;
   const large = prefix + '/**/ '.repeat(4000) + suffix;
-  parseCpuTime(large, false);
-  // Single parses can register zero CPU time on Linux; compare equal batches above the timer's resolution.
-  const minimumSampleMicroseconds = 20_000;
-  let iterations = 1;
-  let smallFastest = 0;
-  let largeFastest = Infinity;
-  while (smallFastest < minimumSampleMicroseconds) {
-    smallFastest = Infinity;
-    largeFastest = Infinity;
-    for (let run = 0; run < 3; run++) {
-      smallFastest = Math.min(smallFastest, parseCpuTime(small, false, iterations));
-      largeFastest = Math.min(largeFastest, parseCpuTime(large, false, iterations));
-    }
-    if (smallFastest < minimumSampleMicroseconds) iterations *= 2;
-  }
-  expect(largeFastest / smallFastest).toBeLessThan(8);
+  expect(parseGrowth(small, large, false)).toBeLessThan(8);
   const tree = parser.parse(large)!;
   try {
     expect(tree.rootNode.firstNamedChild?.type).toBe('scope_statement');
@@ -97,6 +71,45 @@ test.each([
     tree.delete();
   }
 });
+
+test.each(['&', '*'])(
+  'parses nested %s prefixes before a malformed brace in linear time',
+  { timeout: 30_000 },
+  (prefix) => {
+    const source = (count: number): string =>
+      'a { --x: f(' + `${prefix} f(`.repeat(count) + '{' + ')'.repeat(count + 1) + '; } .after {}';
+    expect(parseGrowth(source(1000), source(4000), true)).toBeLessThan(8);
+  }
+);
+
+test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
+  expect(parseGrowth(repeatedImportInput(250), repeatedImportInput(1000), true)).toBeLessThan(8);
+});
+
+function parseGrowth(small: string, large: string, expectedError: boolean): number {
+  parseCpuTime(large, expectedError);
+  parseCpuTime(large, expectedError);
+  let iterations = 1;
+  let smallFastest = 0;
+  let largeFastest = Infinity;
+  while (smallFastest < 20_000) {
+    smallFastest = Infinity;
+    largeFastest = Infinity;
+    for (let run = 0; run < 5; run++) {
+      smallFastest = Math.min(smallFastest, parseCpuTime(small, expectedError, iterations));
+      largeFastest = Math.min(largeFastest, parseCpuTime(large, expectedError, iterations));
+    }
+    if (smallFastest < 20_000) iterations *= 2;
+  }
+  return largeFastest / smallFastest;
+}
+
+function repeatedImportInput(count: number): string {
+  return Array.from(
+    { length: count },
+    (_, index) => `@import "x${index}" supports(a: b\n.r${index} { color: red; padding: 1px; }\n`
+  ).join('');
+}
 
 function parseCpuTime(source: string, expectedError: boolean, iterations = 1): number {
   const start = process.threadCpuUsage();
