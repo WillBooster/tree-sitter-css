@@ -145,11 +145,39 @@ module.exports = grammar({
       alias($._layer_name_identifier, $.identifier),
     ),
 
+    // Mirrors the generic at-rule components with own group nodes, so that queries can tell support conditions from
+    // generic at-rule preludes, and with not/and/or exposed as operators.
     import_supports: $ => seq(
       alias($._import_supports_start, 'supports('),
-      repeat1(choice($._at_rule_component, $.at_rule_braced)),
+      repeat1(choice($._import_supports_component, alias($._import_supports_braced, $.at_rule_braced))),
       ')',
     ),
+
+    _import_supports_component: $ => choice(
+      $.at_rule_value,
+      alias($._style_keyword, $.at_rule_value),
+      alias($._query_not, 'not'),
+      alias($._query_and, 'and'),
+      alias($._query_or, 'or'),
+      alias($._at_rule_slash, $.at_rule_value),
+      $.at_rule_url,
+      $.string_value,
+      $.at_rule_delimiter,
+      $.import_supports_group,
+      alias($._import_supports_bracketed, $.at_rule_bracketed),
+    ),
+
+    _import_supports_nested_component: $ => choice(
+      $._import_supports_component,
+      alias($._import_supports_braced, $.at_rule_braced),
+      alias(';', $.at_rule_delimiter),
+    ),
+
+    import_supports_group: $ => seq(queryOpeningParenthesis, repeat($._import_supports_nested_component), ')'),
+
+    _import_supports_bracketed: $ => seq('[', repeat($._import_supports_nested_component), ']'),
+
+    _import_supports_braced: $ => seq('{', repeat($._import_supports_nested_component), '}'),
 
     media_statement: $ => seq(
       '@media',

@@ -249,6 +249,10 @@
           "named": true
         },
         {
+          "type": "import_supports_group",
+          "named": true
+        },
+        {
           "type": "string_value",
           "named": true
         }
@@ -285,6 +289,10 @@
         },
         {
           "type": "at_rule_value",
+          "named": true
+        },
+        {
+          "type": "import_supports_group",
           "named": true
         },
         {
@@ -1460,7 +1468,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "at_rule_braced",
@@ -1475,7 +1483,42 @@
           "named": true
         },
         {
-          "type": "at_rule_parenthesized",
+          "type": "at_rule_url",
+          "named": true
+        },
+        {
+          "type": "at_rule_value",
+          "named": true
+        },
+        {
+          "type": "import_supports_group",
+          "named": true
+        },
+        {
+          "type": "string_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_supports_group",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "at_rule_braced",
+          "named": true
+        },
+        {
+          "type": "at_rule_bracketed",
+          "named": true
+        },
+        {
+          "type": "at_rule_delimiter",
           "named": true
         },
         {
@@ -1484,6 +1527,10 @@
         },
         {
           "type": "at_rule_value",
+          "named": true
+        },
+        {
+          "type": "import_supports_group",
           "named": true
         },
         {

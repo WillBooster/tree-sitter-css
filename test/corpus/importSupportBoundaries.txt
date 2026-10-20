@@ -42,3 +42,30 @@ body { color: red; }
       (declaration
         (property_name)
         (plain_value)))))
+
+=====================================
+Import support conditions expose operators and their own groups
+=====================================
+
+@import "x" supports(not (display: grid) and selector(a:hover) or [x (y)]);
+
+---
+
+(stylesheet
+  (import_statement
+    (string_value
+      (string_content))
+    (import_supports
+      (import_supports_group
+        (at_rule_value)
+        (at_rule_delimiter)
+        (at_rule_value))
+      (at_rule_value)
+      (import_supports_group
+        (at_rule_value)
+        (at_rule_delimiter)
+        (at_rule_value))
+      (at_rule_bracketed
+        (at_rule_value)
+        (import_supports_group
+          (at_rule_value))))))

@@ -83,27 +83,28 @@
 ((at_rule_value) @number
  (#match? @number "^[+-]?([0-9]+(\\.[0-9]+)?|\\.[0-9]+)([eE][+-]?[0-9]+)?([a-zA-Z]+|%)?$"))
 
-; A declaration condition is the first component of a group that starts its parent, follows the prelude's at-keyword or
-; another group, or follows a not/and/or keyword; groups after other values belong to those values (e.g. selector()).
+(at_rule_parenthesized
+ (at_rule_value) @property
+ . (at_rule_delimiter) @_colon
+ . (_) @_feature_value
+ (#eq? @_colon ":")
+ (#not-match? @_feature_value "^//")
+ (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
+
+; A support declaration leads import_supports or a group that leads it, follows not/and/or, or leads such a group.
+; Other groups belong to values or functions such as selector().
 (
  [
   (import_supports . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)
-  (_ . (comment)* . (at_rule_parenthesized . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  (import_supports . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  (import_supports . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
+  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  (_ ["not" "and" "or"] . (comment)* . (import_supports_group . (comment)* . (import_supports_group . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)))
  ]
  (#eq? @_colon ":")
  (#not-match? @_feature_value "^/[*/]")
  (#not-match? @property "^(?:-|\\\\(?:-|0{0,4}2[dD](?:[ \\t\\n\\f]|\\r\\n?)?)){2}$")
  (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
-
-(
- [(at_keyword) (at_rule_parenthesized) (at_rule_value)] @_previous
- . (comment)*
- . (at_rule_parenthesized . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)
- (#eq? @_colon ":")
- (#not-match? @_feature_value "^/[*/]")
- (#not-match? @property "^(?:-|\\\\(?:-|0{0,4}2[dD](?:[ \\t\\n\\f]|\\r\\n?)?)){2}$")
- (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$")
- (#match? @_previous "^(?:@|\\(|(?:[nN][oO][tT]|[aA][nN][dD]|[oO][rR])$)"))
 
 (
  (at_rule_value) @_bang @keyword

@@ -192,6 +192,10 @@ test.each([
   ['--x: (a: b)', ['--x']],
   ['--x: foo (a: b)', ['--x']],
   ['not /**/ (a: b) and (c: d)', ['a', 'c']],
+  ['--x: (1) (b: c)', ['--x']],
+  ['--x: ((a: b))', ['--x']],
+  [String.raw`\6e ot (display: grid) \61 nd (color: red)`, ['display', 'color']],
+  ['((a: b)) or (c: d)', ['a', 'c']],
 ])('support property captures cover only the leading declaration name: %s', (condition, properties) => {
   const parser = new Parser().setLanguage(language);
   const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
