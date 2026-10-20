@@ -541,7 +541,7 @@ module.exports = grammar({
       ')',
     ),
 
-    _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
+    _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end, $._operator_gap),
 
     incomplete_declaration: $ => seq(
       alias(choice($.identifier, $._escaped_identifier, $._star_property_name), $.property_name),

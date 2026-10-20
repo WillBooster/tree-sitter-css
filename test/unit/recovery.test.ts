@@ -135,3 +135,23 @@ test.each([
     parser.delete();
   }
 });
+
+test.each(['background: blue;', '--x: y;', '-x: y;'])(
+  'keeps the following top-level rule after a declaration without its semicolon before %s',
+  async (next) => {
+    await Parser.init();
+    const parser = new Parser();
+    parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
+    const source = `a {\n  color: red\n  ${next}\n}\n.after { color: blue; }`;
+    const tree = parser.parse(source)!;
+    try {
+      const [outer, after] = tree.rootNode.namedChildren;
+      expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
+      expect(outer?.descendantsOfType('rule_set')).toHaveLength(1);
+      expect(after?.text).toBe('.after { color: blue; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);

@@ -59,7 +59,6 @@ static bool scan_class_name_escape_with_suffix(TSLexer *lexer);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool allow_gap);
 static bool scan_operator_gap(TSLexer *lexer, bool allow_gap, bool *spaced);
-static bool scan_star_operand(TSLexer *lexer);
 static bool is_descendant_selector_start(int32_t character);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
@@ -618,34 +617,17 @@ static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool
     return descendant;
 }
 
-// A spaced `-`, or a spaced `*` before an operand, after a pseudo-argument operand is an operator, not a hyphenated or
-// universal selector. A distinct token keeps the binary interpretation from forking at every descendant gap: a fork
-// that then fails on the next name falls back to error-mode lexing, which skips the whole remaining name run each time.
+// A gap before a spaced `*` or `-` gets its own token, which selectors accept as a descendant combinator and pseudo
+// arithmetic accepts before its operator. Only these gaps fork the binary interpretation: forking it at every
+// descendant gap made each failing fork fall back to error-mode lexing, which skips the whole remaining name run.
 static bool scan_operator_gap(TSLexer *lexer, bool allow_gap, bool *spaced) {
-    bool star = lexer->lookahead == '*';
     advance(lexer);
     *spaced = is_css_whitespace(lexer->lookahead);
-    if (!allow_gap || !*spaced || (star && !scan_star_operand(lexer))) {
+    if (!allow_gap || !*spaced) {
         return false;
     }
     lexer->result_symbol = OPERATOR_GAP;
     return true;
-}
-
-// A component that can only continue a selector, as in `a * .b` or `a * :hover`, keeps `*` a universal selector.
-static bool scan_star_operand(TSLexer *lexer) {
-    while (is_css_whitespace(lexer->lookahead)) {
-        advance(lexer);
-    }
-    switch (lexer->lookahead) {
-        case '.':
-            advance(lexer);
-            return is_digit(lexer->lookahead);
-        case '#': case ':': case '[': case '>': case '&': case '*': case '+': case '~': case '|':
-            return false;
-        default:
-            return true;
-    }
 }
 
 static bool is_descendant_selector_start(int32_t character) {

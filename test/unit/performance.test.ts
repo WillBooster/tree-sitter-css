@@ -38,6 +38,7 @@ test.each([
   ['generic prelude with scheme-like components', 'a+', '.a { @apply ', 'a; color: red; }', false],
   ['generic pseudo-argument name runs', 'a ', ':foo(', ') {}', false],
   ['function name runs in a declaration', 'a ', 'a { x: f(', '); }', false],
+  ['generic pseudo-argument universal descendants', 'a * ', ':foo(', 'a) {}', false],
 ])('parses %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix, hasError) => {
   const small = prefix + source.repeat(2000) + suffix;
   const large = prefix + source.repeat(20_000) + suffix;

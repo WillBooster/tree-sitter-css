@@ -76,8 +76,8 @@ test.each(
 });
 
 test.each(
-  [':matches', ':foo', '::foo'].flatMap((pseudo) =>
-    ['.b', '#id', ':hover', '::before', '> b', '&', '*', '[x]'].map((tail) => [pseudo, tail] as const)
+  [':matches', ':-webkit-any', ':foo', '::foo'].flatMap((pseudo) =>
+    ['b', '.b', '#id', ':hover', '::before', '> b', '&', '*', '[x]'].map((tail) => [pseudo, tail] as const)
   )
 )('generic pseudo arguments keep a spaced universal selector: %s(a * %s)', (pseudo, tail) => {
   const parser = new Parser().setLanguage(language);
