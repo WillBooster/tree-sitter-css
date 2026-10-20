@@ -17,6 +17,21 @@ const offsets = [
   '2n\f-\t1',
   '2n/**/-1',
   '2n/**/-/**/1',
+  '2n /**/ -1',
+  '2n/**/ -1',
+  '2n /**/-1',
+  '2n /**/ - /**/ 1',
+  '2n\r\n/**/\t-\r\n/**/\t1',
+  '2n /* gap */ +1',
+  '-n /**/ -1',
+  '+2N /**/ -2',
+  'n /**/ + /**/ 1',
+  '2n',
+  '-n',
+  '+2N',
+  '2n /**/',
+  '2n /* gap */ ',
+  '2n\r\n/**/\t',
 ];
 
 test.each(
@@ -27,7 +42,7 @@ test.each(
       )
     )
   )
-)('signed nth offsets retain selector boundaries: %s(%s%s) in %s', (name, offset, filter, context) => {
+)('nth notation retains selector boundaries: %s(%s%s) in %s', (name, offset, filter, context) => {
   const parser = new Parser().setLanguage(language);
   const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const selector = `:${name}(${offset}${filter})`;
@@ -45,7 +60,12 @@ test.each(
     expect(pseudo.text).toBe(selector);
     expect(pseudo.startIndex).toBe(source.indexOf(selector));
     expect(pseudo.endIndex).toBe(source.indexOf(selector) + selector.length);
-    expect(pseudo.descendantsOfType('comment').map((node) => node.text)).toEqual(offset.match(/\/\*\*\//g) ?? []);
+    expect(
+      query.captures(pseudo).some(({ name: capture, node }) => capture === 'attribute' && node.text === name)
+    ).toBe(true);
+    expect(pseudo.descendantsOfType('comment').map((node) => node.text)).toEqual(
+      offset.match(/\/\*[\s\S]*?\*\//g) ?? []
+    );
     if (filter) {
       expect(pseudo.descendantsOfType('class_selector').map((node) => node.text)).toEqual(['.a', '.b']);
       expect(

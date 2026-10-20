@@ -70,6 +70,7 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$._nth_functional_notation],
     [$.child_selector],
     [$.sibling_selector],
     [$.adjacent_sibling_selector],
@@ -587,9 +588,12 @@ module.exports = grammar({
       $._value,
     )),
 
-    _nth_functional_notation: _ => choice(
+    _nth_functional_notation: $ => choice(
       /[+-]?\d*[nN][\t\n\f\r ]*[+-][\t\n\f\r ]*\d+/,
-      seq(/[+-]?\d*[nN]/, optional(choice(/[+-]\d+/, seq(choice('+', '-'), /\d+/)))),
+      seq(/[+-]?\d*[nN]/, optional(seq(
+        optional($._descendant_combinator),
+        choice(/[+-]\d+/, seq(choice('+', '-'), optional($._descendant_combinator), /\d+/)),
+      ))),
     ),
 
     pseudo_element_arguments: $ => seq(
