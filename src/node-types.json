@@ -1361,10 +1361,6 @@
       "required": true,
       "types": [
         {
-          "type": "binary_expression",
-          "named": true
-        },
-        {
           "type": "binary_query",
           "named": true
         },
@@ -1373,27 +1369,7 @@
           "named": true
         },
         {
-          "type": "color_value",
-          "named": true
-        },
-        {
           "type": "feature_query",
-          "named": true
-        },
-        {
-          "type": "float_value",
-          "named": true
-        },
-        {
-          "type": "grid_value",
-          "named": true
-        },
-        {
-          "type": "important",
-          "named": true
-        },
-        {
-          "type": "integer_value",
           "named": true
         },
         {
@@ -1402,14 +1378,6 @@
         },
         {
           "type": "parenthesized_query",
-          "named": true
-        },
-        {
-          "type": "parenthesized_value",
-          "named": true
-        },
-        {
-          "type": "plain_value",
           "named": true
         },
         {

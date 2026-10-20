@@ -8,9 +8,18 @@ const language = await Language.load(path.join(import.meta.dirname, '../../tree-
 test.each(
   ['@import url("x.css"', '@import url(x.css'].flatMap((prefix) =>
     ['\n', '\r\n', '\n/**/'].flatMap((gap) =>
-      ['.after', String.raw`.\61 fter`, '.é', '.after/**/'].flatMap((selector) =>
-        ['', '\n'].map((ending) => [prefix, gap, selector, ending] as const)
-      )
+      [
+        '.after',
+        String.raw`.\61 fter`,
+        '.é',
+        '.after/**/',
+        '.after:hover',
+        '.after.child',
+        '.after[a]',
+        '.after#x',
+        '.after > a',
+        '.after .child',
+      ].flatMap((selector) => ['', '\n'].map((ending) => [prefix, gap, selector, ending] as const))
     )
   )
 )('unfinished imports retain a following class rule: %s%s%s%s', (prefix, gap, selector, ending) => {
@@ -96,3 +105,26 @@ test.each(['b: .a/*', 'a { b: .a/*', 'a { b: f(.a/*', ':foo(.a/*'])(
     }
   }
 );
+
+test.each([
+  'url("x.css")',
+  'src("x.css")',
+  String.raw`s\72 c(var(--stylesheet))`,
+  'URL("x.css" modifier type("text/css"))',
+  String.raw`u\72 l("x.css" \6d odifier)`,
+  String.raw`url("x.css" \74 ype("text/css"))`,
+  String.raw`u\72l(https://example.test/a;b,c.css)`,
+])('import URL syntax retains modifiers and following rules: %s', (url) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `@import ${url} screen; .after { color: red; }`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild?.type).toBe('import_statement');
+    expect(tree.rootNode.firstNamedChild?.text).toBe(`@import ${url} screen;`);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

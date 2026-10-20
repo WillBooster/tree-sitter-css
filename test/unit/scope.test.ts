@@ -385,3 +385,73 @@ for (const selector of [
     }
   );
 }
+
+test.each([String.raw`\61 rticle`, String.raw`a\72 ticle`, String.raw`\000061rticle`, String.raw`\e9 lément`])(
+  'escaped type selectors retain scope fields and tag captures: %s',
+  (selector) => {
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
+    const tree = parser.parse(`@scope (${selector}) to (${selector}) {} .after {}`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const scope = tree.rootNode.firstNamedChild!;
+      expect(scope.type).toBe('scope_statement');
+      for (const field of ['start', 'end']) {
+        const boundary = scope.childForFieldName(field)!;
+        expect(boundary.text).toBe(selector);
+        expect(boundary.descendantsOfType('tag_name').map((node) => node.text)).toEqual([selector]);
+      }
+      expect(
+        query
+          .captures(scope)
+          .filter(({ name }) => name === 'tag')
+          .map(({ node }) => node.text)
+      ).toEqual([selector, selector]);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(
+  ['>', '+', '~'].flatMap((combinator) =>
+    [' ', '/**/', '\n'].flatMap((gap) =>
+      ['.parent {', '@scope (.parent) {'].map((prefix) => [combinator, gap, prefix] as const)
+    )
+  )
+)('nested relative scope starts retain fields and captures: %s%s%s', (combinator, gap, prefix) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
+  const selector = `${combinator}${gap}.card`;
+  const statement = `@scope (${selector}) to (.limit) { .content {} }`;
+  const source = `${prefix} ${statement} } .after {}`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const scope = tree.rootNode.descendantsOfType('scope_statement').find((node) => node.text === statement)!;
+    expect(scope).toBeDefined();
+    expect(scope.childForFieldName('start')?.text).toBe(selector);
+    expect(scope.childForFieldName('end')?.text).toBe('.limit');
+    expect(scope.startIndex).toBe(source.indexOf(statement));
+    expect(
+      query
+        .captures(scope)
+        .filter(({ name }) => name === 'keyword')
+        .map(({ node }) => node.text)
+    ).toEqual(['@scope', 'to']);
+    expect(
+      query
+        .captures(scope)
+        .filter(({ name }) => name === 'property')
+        .map(({ node }) => node.text)
+    ).toEqual(['card', 'limit', 'content']);
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});

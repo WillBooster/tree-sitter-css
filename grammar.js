@@ -24,6 +24,12 @@ const idName = seq(
   repeat(choice(nameContinue, cssEscape)),
 );
 
+const escapedName = escapedIdentifier(optional(choice(
+  '-',
+  seq('--', repeat(nameContinue)),
+  seq(optional('-'), nameStart, repeat(nameContinue)),
+)));
+
 const unquotedUrl = seq(
   /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
   /(?:[rR]|\\(?:[rR]|0{0,4}[57]2(?:[ \t\n\f]|\r\n?)?))/,
@@ -64,6 +70,11 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.child_selector],
+    [$.sibling_selector],
+    [$.adjacent_sibling_selector],
+    [$._selector, $.pseudo_class_arguments, $._value],
+    [$.attribute_selector, $._value],
     [$.pseudo_class_arguments, $._value],
     [$.pseudo_element_arguments, $._value],
     [$._selector, $._value],
@@ -173,9 +184,39 @@ module.exports = grammar({
 
     import_statement: $ => seq(
       '@import',
-      $._value,
+      choice($.string_value, $.url_value, alias($._import_url, $.call_expression), alias($._import_src, $.call_expression)),
       sep(',', $._media_query),
       ';',
+    ),
+
+    _import_src: $ => seq(
+      alias(cssKeyword('src'), $.function_name),
+      $.arguments,
+    ),
+
+    _import_url: $ => seq(
+      alias(cssKeyword('url'), $.function_name),
+      alias($._import_url_arguments, $.arguments),
+    ),
+
+    _import_url_arguments: $ => seq(
+      token.immediate('('),
+      choice(
+        seq(
+          $.string_value,
+          repeat(choice(
+            alias(choice($.identifier, $._escaped_identifier), $.plain_value),
+            alias($._import_url_modifier, $.call_expression),
+          )),
+        ),
+        alias(token(repeat1(choice(/[^\x00-\x20\x7F"'()\\]/, cssEscape))), $.plain_value),
+      ),
+      ')',
+    ),
+
+    _import_url_modifier: $ => seq(
+      alias(choice($.identifier, $._escaped_identifier), $.function_name),
+      $.arguments,
     ),
 
     media_statement: $ => seq(
@@ -479,19 +520,19 @@ module.exports = grammar({
 
     child_selector: $ => choice(
       prec.left(seq($._selector, optional($._descendant_combinator), '>', $._selector)),
-      prec.left(-1, seq('>', $._selector, optional($._descendant_combinator))),
+      prec.left(seq('>', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
 
     descendant_selector: $ => prec.left(seq($._selector, $._descendant_combinator, $._selector)),
 
     sibling_selector: $ => choice(
       prec.left(seq($._selector, optional($._descendant_combinator), '~', $._selector)),
-      prec.left(-1, seq('~', $._selector, optional($._descendant_combinator))),
+      prec.left(seq('~', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
 
     adjacent_sibling_selector: $ => choice(
       prec.left(seq($._selector, optional($._descendant_combinator), '+', $._selector)),
-      prec.left(-1, seq('+', $._selector, optional($._descendant_combinator))),
+      prec.left(seq('+', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
 
     namespace_selector: $ => prec.left(seq(optional($._selector), '|', $._selector)),
@@ -527,7 +568,7 @@ module.exports = grammar({
           optional($._descendant_combinator),
           'of',
           optional($._descendant_combinator),
-          $._selector,
+          sep1(seq(optional($._descendant_combinator), ','), $._selector),
         ),
       ),
       optional($._descendant_combinator),
@@ -797,7 +838,7 @@ module.exports = grammar({
         alias(token(prec(-1, '%')), $.plain_value),
         alias(token(prec(-1, ':')), $.plain_value),
       )),
-      alias($._escaped_identifier, $.plain_value),
+      alias(choice($._escaped_identifier, escapedName), $.plain_value),
     ),
 
     parenthesized_value: $ => seq(
@@ -950,7 +991,7 @@ function propertyIdentifier($) {
 }
 
 function selectorIdentifier($) {
-  return choice($.identifier, selectorFunctionName, queryKeyword($), $._custom_property_component);
+  return choice($.identifier, escapedName, selectorFunctionName, queryKeyword($), $._custom_property_component);
 }
 
 function queryKeyword($) {
@@ -965,7 +1006,7 @@ function pseudoArgument($) {
   return choice(
     seq($._selector, optional($._descendant_combinator)),
     prec.left(repeat1(seq(
-      choice($._value, alias($._escaped_identifier, $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)),
+      choice($._value, alias(choice($._escaped_identifier, escapedName), $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)),
       optional($._descendant_combinator),
     ))),
   );

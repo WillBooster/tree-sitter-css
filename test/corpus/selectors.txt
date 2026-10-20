@@ -638,7 +638,7 @@ Escaped attribute names in selector arguments
     (block)))
 
 =========================
-Generic pseudo arguments preserve escaped plain values
+Generic pseudo arguments preserve escaped selector names
 =========================
 
 :lang(a\:b), ::part(foo\:bar), :foo(a\:b c), :foo(a\31 b) {}
@@ -648,10 +648,27 @@ Generic pseudo arguments preserve escaped plain values
 (stylesheet
   (rule_set
     (selectors
-      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value)))
-      (pseudo_element_selector (tag_name) (arguments (plain_value)))
-      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value) (plain_value)))
-      (pseudo_class_selector (class_name (identifier)) (arguments (plain_value))))
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (tag_name)))
+      (pseudo_element_selector
+        (tag_name)
+        (arguments
+          (tag_name)))
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (descendant_selector
+            (tag_name)
+            (tag_name))))
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (tag_name))))
     (block)))
 
 =========================
