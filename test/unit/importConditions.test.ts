@@ -15,6 +15,8 @@ test.each([
   ['"x"', '', 'supports(selector(:has(.a)))', ''],
   ['"x"', 'LAYER(theme)', 'SUPPORTS(display: grid)', 'screen'],
   ['"x"', String.raw`l\61 yer(theme)`, String.raw`s\75 pports(display: grid)`, ''],
+  ['"x"', '', 'supports(--x: //foo/bar)', ''],
+  ['"x"', 'layer', 'supports(--x: [//foo])', '(--y: //bar)'],
 ])('import conditions retain their boundaries: %s %s %s %s', (url, layer, supports, media) => {
   const parser = new Parser();
   parser.setLanguage(language);

@@ -26,14 +26,14 @@ static void scan_invalid_import_end(TSLexer *lexer);
 static bool scan_invalid_import_delimiter(TSLexer *lexer);
 static bool scan_import_component_list(TSLexer *lexer, int32_t terminator);
 static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator);
-static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, bool *component);
+static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component);
 static bool scan_supports_body_end(TSLexer *lexer);
-static bool scan_supports_literal(TSLexer *lexer, bool *component);
 static bool scan_supports_word(TSLexer *lexer);
 static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsigned *length);
 static bool scan_supports_url(TSLexer *lexer);
 static bool scan_supports_string(TSLexer *lexer);
-static bool scan_supports_slash(TSLexer *lexer, bool *component);
+static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowed);
+static bool is_at_rule_url_character(int32_t character);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
 static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
@@ -168,16 +168,18 @@ static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiter
             if (character == ')' || character == ']' || character == '}' || character == ';') return false;
             if (terminator == ';' && (character == '\'' || character == '"' || character == '{')) return false;
         }
-        if (!scan_import_component(lexer, delimiters, &component)) return false;
+        if (!scan_import_component(lexer, delimiters, terminator, &component)) return false;
     }
     return terminator == ';' && !delimiters->size;
 }
 
-static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, bool *component) {
+static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component) {
     int32_t character = lexer->lookahead;
     if (is_css_whitespace(character)) { advance(lexer); return true; }
-    if (character == '\'' || character == '"' || character == '/') return scan_supports_literal(lexer, component);
+    // Outside parentheses the media tail has no at_rule_url, so `//` there always starts a js_comment.
+    if (character == '/') return scan_supports_slash(lexer, component, delimiters->size || terminator != ';');
     *component = true;
+    if (character == '\'' || character == '"') return scan_supports_string(lexer);
     if (is_name_character(character) || character >= 0x80 || character == '\\' || character == '#' || character == '@') {
         return scan_supports_word(lexer);
     }
@@ -200,12 +202,6 @@ static bool scan_supports_body_end(TSLexer *lexer) {
     bool start = lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' ||
         lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
     return start && scan_import_component_list(lexer, ';');
-}
-
-static bool scan_supports_literal(TSLexer *lexer, bool *component) {
-    if (lexer->lookahead == '/') return scan_supports_slash(lexer, component);
-    *component = true;
-    return scan_supports_string(lexer);
 }
 
 static bool scan_supports_word(TSLexer *lexer) {
@@ -264,9 +260,15 @@ static bool scan_supports_string(TSLexer *lexer) {
     return false;
 }
 
-static bool scan_supports_slash(TSLexer *lexer, bool *component) {
+static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowed) {
     advance(lexer);
     if (lexer->lookahead == '/') {
+        advance(lexer);
+        // Mirrors grammar.js: the at_rule_url token outranks the lower-precedence js_comment extra.
+        if (url_allowed && !lexer->eof(lexer) && is_at_rule_url_character(lexer->lookahead)) {
+            *component = true;
+            return true;
+        }
         while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
         return true;
     }
@@ -281,6 +283,15 @@ static bool scan_supports_slash(TSLexer *lexer, bool *component) {
         }
     }
     return false;
+}
+
+static bool is_at_rule_url_character(int32_t character) {
+    switch (character) {
+        case '(': case ')': case '{': case '}': case '[': case ']': case ';': case ',': case '"': case '\'': case '\\':
+            return false;
+        default:
+            return !is_css_whitespace(character);
+    }
 }
 
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols) {
