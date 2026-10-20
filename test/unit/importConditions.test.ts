@@ -16,6 +16,7 @@ test.each([
   ['"x"', 'LAYER(theme)', 'SUPPORTS(display: grid)', 'screen'],
   ['"x"', String.raw`l\61 yer(theme)`, String.raw`s\75 pports(display: grid)`, ''],
   ['"x"', '', 'supports(--x: //foo/bar//baz/*qux)', ''],
+  ['"x"', '', 'supports(--x: //foo\v/* ) */)', ''],
   ['"x"', 'layer', 'supports(--x: [//foo//])', '(--y: //bar//)'],
 ])('import conditions retain their boundaries: %s %s %s %s', (url, layer, supports, media) => {
   const parser = new Parser();
@@ -688,11 +689,15 @@ test.each(
   }
 });
 
-test.each(['layer(a) screen', 'supports(a: b) screen', 'layer(a) supports(a: b) (width > 1px)'])(
-  'imports missing their semicolon keep their conditions and the following rule: %s',
-  (condition) => {
+test.each(
+  ['layer(a) screen', 'supports(a: b) screen', 'layer(a) supports(a: b) (width > 1px)'].flatMap((condition) =>
+    ['.b { color: red; }', '@import "b";', '@media screen {}'].map((following) => [condition, following])
+  )
+)(
+  'imports missing their semicolon keep their conditions and the following statement: %s, %s',
+  (condition, following) => {
     const parser = new Parser().setLanguage(language);
-    const source = `@import "x" ${condition}\n.b { color: red; }`;
+    const source = `@import "x" ${condition}\n${following}`;
     const tree = parser.parse(source)!;
     try {
       const statement = tree.rootNode.firstNamedChild!;
@@ -701,8 +706,9 @@ test.each(['layer(a) screen', 'supports(a: b) screen', 'layer(a) supports(a: b) 
       expect(statement.descendantsOfType(['import_layer', 'import_supports']).map((node) => node.text)).toEqual(
         condition.match(/(?:layer|supports)\([^)]*\)/g)
       );
-      expect(tree.rootNode.lastNamedChild?.type).toBe('rule_set');
-      expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.b'));
+      expect(tree.rootNode.namedChildren).toHaveLength(2);
+      expect(tree.rootNode.lastNamedChild?.hasError).toBe(false);
+      expect(tree.rootNode.lastNamedChild?.text).toBe(following);
     } finally {
       tree.delete();
       parser.delete();

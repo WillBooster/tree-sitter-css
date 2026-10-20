@@ -26,6 +26,7 @@ static void scan_invalid_import_end(TSLexer *lexer);
 static bool scan_invalid_import_delimiter(TSLexer *lexer);
 static bool scan_import_component_list(TSLexer *lexer, int32_t terminator);
 static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator);
+static bool is_import_components_end(int32_t character, int32_t terminator);
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component);
 static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed);
 static bool scan_layer_tail(TSLexer *lexer);
@@ -36,6 +37,7 @@ static bool scan_supports_string(TSLexer *lexer);
 static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowed);
 static bool scan_double_slash(TSLexer *lexer, bool url_allowed);
 static bool is_at_rule_url_character(int32_t character);
+static bool is_regex_whitespace(int32_t character);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
 static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
@@ -166,15 +168,20 @@ static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiter
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
         if (!delimiters->size) {
-            // A rule after an import missing its `;` ends the tail, as it does without a condition.
-            bool end = character == terminator || (terminator == ';' && character == '{');
-            if (end) return terminator == ';' || (component && scan_supports_body_end(lexer, false));
+            if (is_import_components_end(character, terminator)) {
+                return terminator == ';' || (component && scan_supports_body_end(lexer, false));
+            }
             if (character == ')' || character == ']' || character == '}' || character == ';') return false;
             if (terminator == ';' && (character == '\'' || character == '"')) return false;
         }
         if (!scan_import_component(lexer, delimiters, terminator, &component)) return false;
     }
     return terminator == ';' && !delimiters->size;
+}
+
+static bool is_import_components_end(int32_t character, int32_t terminator) {
+    // A rule or at-rule after an import missing its `;` ends the tail, as it does without a condition.
+    return character == terminator || (terminator == ';' && (character == '{' || character == '@'));
 }
 
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component) {
@@ -315,8 +322,15 @@ static bool is_at_rule_url_character(int32_t character) {
         case '(': case ')': case '{': case '}': case '[': case ']': case ';': case ',': case '"': case '\'': case '\\':
             return false;
         default:
-            return !is_css_whitespace(character);
+            return !is_regex_whitespace(character);
     }
+}
+
+// The `\s` that grammar.js excludes from at_rule_url is the Unicode White_Space class, not CSS whitespace.
+static bool is_regex_whitespace(int32_t character) {
+    return (character >= '\t' && character <= '\r') || character == ' ' || character == 0x85 || character == 0xA0 ||
+        character == 0x1680 || (character >= 0x2000 && character <= 0x200A) || character == 0x2028 ||
+        character == 0x2029 || character == 0x202F || character == 0x205F || character == 0x3000;
 }
 
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols) {
