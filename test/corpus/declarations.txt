@@ -351,8 +351,7 @@ Important keyword whitespace and case
 
 a {
   color: red ! important;
-  margin: 0 !	
-IMPORTANT;
+  margin: 0 !	IMPORTANT;
   padding: 1px !
     ImPoRtAnT
 }
