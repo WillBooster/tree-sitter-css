@@ -516,8 +516,9 @@ static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbo
     TSLexerPosition position;
     lexer->get_position(lexer, &position);
     advance(lexer);
-    // A name right after `*` is a legacy star-prefixed property such as `*zoom`, which the internal lexer tokenizes.
-    if (symbol == VALUE_ASTERISK && (is_name_start(lexer->lookahead) || lexer->lookahead == '-')) return false;
+    // Outside values, a name right after `*` is a legacy star-prefixed property such as `*zoom`, which the internal
+    // lexer tokenizes.
+    if (symbol == VALUE_ASTERISK && !guard_rule && (is_name_start(lexer->lookahead) || lexer->lookahead == '-')) return false;
     lexer->mark_end(lexer);
     lexer->result_symbol = symbol;
     if (!guard_rule) return true;
