@@ -1019,20 +1019,14 @@ function sep1(separator, rule) {
 
 
 function plainValue(selectorDelimiters = '') {
-  const continuation = new RegExp(`[^/\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
-  const slashContinuation = new RegExp(`\\/[^\\*\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
-  // A colon continues the value only when another value character follows it, as in `http://a` or
-  // `(max-width:600px)`: a colon before whitespace ends a following property name instead, and a standalone colon
-  // value would let error recovery continue a declaration through a nested `*:hover` rule.
-  const continuations = selectorDelimiters.includes(':')
-    ? [continuation, slashContinuation]
-    : [continuation, slashContinuation, seq(':', choice(continuation, slashContinuation))];
+  const continuation = new RegExp(`[^/\\s,;!{}()\\[\\]${selectorDelimiters}]`);
+  const slashContinuation = new RegExp(`\\/[^\\*\\s,;!{}()\\[\\]${selectorDelimiters}]`);
   return token(choice(
     /<[a-zA-Z-]+>[+#]?/,
     seq(
       repeat(choice(/[-_]/, slashContinuation)),
       /[a-zA-Z]/,
-      repeat(choice(...continuations)),
+      repeat(choice(continuation, slashContinuation)),
     ),
   ));
 }

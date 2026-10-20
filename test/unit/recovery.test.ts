@@ -95,7 +95,9 @@ test.each([
   '--x: [a:b]',
   'x: screen and (min-width:100px)',
   'x: var(--a, (a:b))',
-])('parses glued colons inside groups: %s', async (declaration) => {
+  '--x: a: b',
+  '--x: a:(b)',
+])('parses colons inside values: %s', async (declaration) => {
   await Parser.init();
   const parser = new Parser();
   parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
