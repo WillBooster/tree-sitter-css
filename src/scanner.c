@@ -326,11 +326,10 @@ static bool is_at_rule_url_character(int32_t character) {
     }
 }
 
-// The `\s` that grammar.js excludes from at_rule_url is the Unicode White_Space class, not CSS whitespace.
+// The generated lexer matches the `\s` that grammar.js excludes from at_rule_url as ASCII whitespace only, which
+// includes the vertical tab that CSS does not treat as whitespace.
 static bool is_regex_whitespace(int32_t character) {
-    return (character >= '\t' && character <= '\r') || character == ' ' || character == 0x85 || character == 0xA0 ||
-        character == 0x1680 || (character >= 0x2000 && character <= 0x200A) || character == 0x2028 ||
-        character == 0x2029 || character == 0x202F || character == 0x205F || character == 0x3000;
+    return (character >= '\t' && character <= '\r') || character == ' ';
 }
 
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols) {

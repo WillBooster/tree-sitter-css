@@ -17,6 +17,7 @@ test.each([
   ['"x"', String.raw`l\61 yer(theme)`, String.raw`s\75 pports(display: grid)`, ''],
   ['"x"', '', 'supports(--x: //foo/bar//baz/*qux)', ''],
   ['"x"', '', 'supports(--x: //foo\v/* ) */)', ''],
+  ['"x"', '', 'supports(--x: //foo\u00A0/*)', ''],
   ['"x"', 'layer', 'supports(--x: [//foo//])', '(--y: //bar//)'],
 ])('import conditions retain their boundaries: %s %s %s %s', (url, layer, supports, media) => {
   const parser = new Parser();
