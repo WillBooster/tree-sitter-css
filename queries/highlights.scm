@@ -32,6 +32,7 @@
 (class_name) @property
 (id_name) @property
 (namespace_name) @property
+(layer_name (identifier) @property)
 (container_name) @property
 (property_name) @property
 (feature_name) @property
@@ -41,6 +42,9 @@
 
 (function_name) @function
 (style_query "style" @function)
+(import_layer "layer(" @function)
+(import_supports "supports(" @function)
+(import_layer "layer" @keyword)
 
 ((property_name) @variable
  (#match? @variable "^--"))
@@ -88,6 +92,12 @@
  (#eq? @_colon ":")
  (#not-match? @_feature_value "^//")
  (#match? @property "^-?[_a-zA-Z][_a-zA-Z0-9-]*$"))
+
+; Only condition positions parse declarations, so value groups and function arguments such as selector() get none.
+(import_supports_declaration
+ name: (_) @property
+ (#not-match? @property "^(?:-|\\\\(?:-|0{0,4}2[dD](?:[ \\t\\n\\f]|\\r\\n?)?)){2}$")
+ (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
 
 (
  (at_rule_value) @_bang @keyword

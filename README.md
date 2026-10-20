@@ -17,6 +17,7 @@ This fork is based on upstream's version 0.23.2 grammar and generates the parser
 number (`0x57420006`) and is tested with that fork's runtime 7.0.10. Upstream's tree-sitter runtime
 rejects it; newer fork runtimes with a different minimum grammar ABI also require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
+Imports expose optional layer assignment and support conditions before media queries.
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
 Scope statements expose independently optional start and end selector fields.
 Custom properties accept empty and comment-only values, including important declarations.

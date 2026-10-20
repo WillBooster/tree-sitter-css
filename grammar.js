@@ -14,6 +14,13 @@ const valueSlash = token(prec(-2, '/'));
 const openingBracket = token(prec(1, '['));
 const attributeMatchOperator = choice('=', '~=', '^=', '|=', '*=', '$=');
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
+const atKeywordName = seq(
+  choice('--', seq(optional('-'), choice(/[a-zA-Z_]/, cssEscape))),
+  repeat(choice(/[-a-zA-Z0-9_]/, cssEscape)),
+);
+// A lone `@` token would be the only conflict-free `@` token, which drops at-keywords from the error-recovery lexer
+// so that an at-rule after an error is swallowed; spanning the at-keyword name and losing to it keeps them there.
+const valueAt = token(prec(-1, seq('@', optional(atKeywordName))));
 const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
 const genericName = repeat1(genericNameCharacter);
 
@@ -63,6 +70,12 @@ module.exports = grammar({
     $._invalid_value_dot,
     $._value_ampersand,
     $._value_asterisk,
+    $._layer_name_identifier,
+    $._layer_name_prefix,
+    $._import_supports_start,
+    $._import_layer_start,
+    $._invalid_import_supports,
+    $._invalid_import_layer,
   ],
 
   inline: $ => [
@@ -88,6 +101,7 @@ module.exports = grammar({
     [$.namespace_selector, $._value],
     [$.selectors, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
     [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_arguments],
+    [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_with_selector_arguments],
     [$._escaped_attribute_namespace, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
     [$.at_rule_bracketed, $._selector, $.attribute_selector],
     [$._selector, $.attribute_selector, $._query_identifier],
@@ -189,9 +203,97 @@ module.exports = grammar({
     import_statement: $ => seq(
       '@import',
       choice($.string_value, $.url_value, alias($._import_url, $.call_expression), alias($._import_src, $.call_expression)),
-      sep(',', $._media_query),
+      optional($.import_layer),
+      choice(
+        seq(optional($.import_supports), sep(',', $._media_query)),
+        choice($._invalid_import_layer, $._invalid_import_supports),
+      ),
       ';',
     ),
+
+    import_layer: $ => choice(
+      alias($._import_layer_keyword, 'layer'),
+      seq(alias($._import_layer_start, 'layer('), $.layer_name, ')'),
+    ),
+
+    _import_layer_keyword: _ => cssKeyword('layer'),
+
+    layer_name: $ => seq(
+      repeat(seq(alias($._layer_name_prefix, $.identifier), '.')),
+      alias($._layer_name_identifier, $.identifier),
+    ),
+
+    // Mirrors the generic at-rule components with own nodes, so that queries can tell support conditions from generic
+    // at-rule preludes. A body that starts with a name and `:` is a declaration; groups in condition position may hold
+    // declarations, while groups in a declaration value or after a value hold plain components.
+    import_supports: $ => seq(
+      alias($._import_supports_start, 'supports('),
+      choice($.import_supports_declaration, repeat1($._import_supports_condition_component)),
+      ')',
+    ),
+
+    import_supports_declaration: $ => prec(1, seq(
+      field('name', choice(
+        $.at_rule_value,
+        alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
+      )),
+      alias(':', $.at_rule_delimiter),
+      repeat($._import_supports_value_nested_component),
+    )),
+
+    _import_supports_condition_component: $ => choice(
+      $._import_supports_leaf,
+      $._import_supports_function,
+      alias($._import_supports_condition_group, $.import_supports_group),
+      alias($._import_supports_bracketed, $.at_rule_bracketed),
+      alias($._import_supports_braced, $.at_rule_braced),
+    ),
+
+    _import_supports_condition_group: $ => seq(
+      queryOpeningParenthesis,
+      optional(choice(
+        $.import_supports_declaration,
+        repeat1(choice($._import_supports_condition_component, alias(';', $.at_rule_delimiter))),
+      )),
+      ')',
+    ),
+
+    // A group after a value, such as the arguments of `selector(a:hover)`, holds plain components, not a declaration.
+    _import_supports_function: $ => prec(1, seq(
+      choice(
+        $.at_rule_value,
+        alias(choice($._style_keyword, $._at_rule_slash), $.at_rule_value),
+        $.at_rule_url,
+        $.string_value,
+      ),
+      alias($._import_supports_value_group, $.import_supports_group),
+    )),
+
+    _import_supports_leaf: $ => choice(
+      $.at_rule_value,
+      alias($._style_keyword, $.at_rule_value),
+      alias($._query_not, 'not'),
+      alias($._query_and, 'and'),
+      alias($._query_or, 'or'),
+      alias($._at_rule_slash, $.at_rule_value),
+      $.at_rule_url,
+      $.string_value,
+      $.at_rule_delimiter,
+    ),
+
+    _import_supports_value_nested_component: $ => choice(
+      $._import_supports_leaf,
+      alias($._import_supports_value_group, $.import_supports_group),
+      alias($._import_supports_bracketed, $.at_rule_bracketed),
+      alias($._import_supports_braced, $.at_rule_braced),
+      alias(';', $.at_rule_delimiter),
+    ),
+
+    _import_supports_value_group: $ => seq(queryOpeningParenthesis, repeat($._import_supports_value_nested_component), ')'),
+
+    _import_supports_bracketed: $ => seq('[', repeat($._import_supports_value_nested_component), ']'),
+
+    _import_supports_braced: $ => seq('{', repeat($._import_supports_value_nested_component), '}'),
 
     _import_src: $ => seq(
       alias(cssKeyword('src'), $.function_name),
@@ -850,7 +952,7 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', '@', '#', '|', '^', '$', '~', '<', '>', '+', valueSlash, '`'), $.plain_value)),
+        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '#', '|', '^', '$', '~', '<', '>', '+', valueSlash, '`'), $.plain_value)),
         alias(token(prec(-1, '%')), $.plain_value),
         alias(token(prec(-1, ':')), $.plain_value),
       )),
@@ -951,11 +1053,7 @@ module.exports = grammar({
       )), 1), $.identifier),
     ),
 
-    at_keyword: _ => token(seq(
-      '@',
-      choice('--', seq(optional('-'), choice(/[a-zA-Z_]/, cssEscape))),
-      repeat(choice(/[-a-zA-Z0-9_]/, cssEscape)),
-    )),
+    at_keyword: _ => token(seq('@', atKeywordName)),
 
     js_comment: _ => token(prec(-1, seq('//', /.*/))),
 

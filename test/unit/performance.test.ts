@@ -82,6 +82,10 @@ test.each(['&', '*'])(
   }
 );
 
+test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
+  expect(parseGrowth(repeatedImportInput(250), repeatedImportInput(1000), true)).toBeLessThan(8);
+});
+
 function parseGrowth(small: string, large: string, expectedError: boolean): number {
   parseCpuTime(large, expectedError);
   parseCpuTime(large, expectedError);
@@ -98,6 +102,13 @@ function parseGrowth(small: string, large: string, expectedError: boolean): numb
     if (smallFastest < 20_000) iterations *= 2;
   }
   return largeFastest / smallFastest;
+}
+
+function repeatedImportInput(count: number): string {
+  return Array.from(
+    { length: count },
+    (_, index) => `@import "x${index}" supports(a: b\n.r${index} { color: red; padding: 1px; }\n`
+  ).join('');
 }
 
 function parseCpuTime(source: string, expectedError: boolean, iterations = 1): number {
