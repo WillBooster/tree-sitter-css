@@ -72,32 +72,50 @@ test('editing a star-prefixed declaration preserves nested universal selectors a
   }
 });
 
-test.each(['a { * display: inline; }', 'a { **display: inline; }', 'a { *: inline; }'])(
-  'does not accept malformed star-prefixed property names: %s',
-  (source) => {
-    const parser = new Parser();
-    parser.setLanguage(language);
-    const tree = parser.parse(source)!;
-    try {
-      expect(tree.rootNode.hasError).toBe(true);
-    } finally {
-      tree.delete();
-      parser.delete();
-    }
-  }
-);
-
-test('an unfinished star property preserves the next declaration', () => {
+test.each([
+  'a { * display: inline; }',
+  'a { **display: inline; }',
+  'a { *: inline; }',
+  'a { *padding\n * display: inline; }',
+  'a { *padding\n **display: inline; }',
+])('does not accept malformed star-prefixed property names: %s', (source) => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const tree = parser.parse('a { *padding\n display: flex; color: red; }')!;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(['display', '*display'])('an unfinished star property preserves the next declaration %s', (nextProperty) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const tree = parser.parse(`a { *padding\n ${nextProperty}: flex; color: red; }`)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
     expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(['*padding']);
     expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
-      'display: flex;',
+      `${nextProperty}: flex;`,
       'color: red;',
     ]);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(['*', '*:hover', '*|div'])('recovery lookahead preserves a nested universal selector %s', (selector) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const tree = parser.parse(`a { padding\n ${selector} { color: red; } }`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('incomplete_declaration')).toHaveLength(0);
+    expect(tree.rootNode.descendantsOfType('universal_selector')).toHaveLength(1);
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual(['color: red;']);
   } finally {
     tree.delete();
     parser.delete();

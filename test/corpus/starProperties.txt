@@ -72,3 +72,20 @@ a { *display: inline; * { color: red; } b * { width: 1px; } }
       (declaration
         (property_name)
         (plain_value)))))
+
+==================
+Unfinished star property before another star declaration
+==================
+
+a { *padding
+ *display: inline; color: red; }
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (incomplete_declaration (property_name))
+      (declaration (property_name) (plain_value))
+      (declaration (property_name) (plain_value)))))

@@ -72,7 +72,15 @@ static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendan
         lexer->lookahead == '[' || lexer->lookahead == '-' || lexer->lookahead == '*' ||
         lexer->lookahead == '&' || lexer->lookahead == ':' || iswalnum(lexer->lookahead));
     lexer->result_symbol = DESCENDANT_OP;
-    if (!newline || !(is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\')) {
+    if (!newline) {
+        return descendant;
+    }
+    bool star_property = lexer->lookahead == '*';
+    if (star_property) {
+        advance(lexer);
+    }
+    if (!(is_name_start(lexer->lookahead) || lexer->lookahead == '-' ||
+        (!star_property && lexer->lookahead == '\\'))) {
         return descendant;
     }
     if (!scan_property_colon(lexer)) {
