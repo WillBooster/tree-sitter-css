@@ -207,6 +207,11 @@ test.each([
   ['--x: (a) and (b: c)', ['--x']],
   ['(--y: (a) or (b: c))', ['--y']],
   ['--x:', ['--x']],
+  ['style: initial', ['style']],
+  ['(STYLE: initial)', ['STYLE']],
+  ['selector (a:hover)', []],
+  ['selector /**/ (a:hover)', []],
+  ['"a" (b: c)', []],
   ['(not: initial)', ['not']],
   [String.raw`\6e ot: initial`, [String.raw`\6e ot`]],
 ])('support property captures cover only the leading declaration name: %s', (condition, properties) => {

@@ -321,6 +321,10 @@
                     "members": [
                       {
                         "type": "SYMBOL",
+                        "name": "_style_keyword"
+                      },
+                      {
+                        "type": "SYMBOL",
                         "name": "_query_not"
                       },
                       {
@@ -477,11 +481,28 @@
               {
                 "type": "ALIAS",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "_style_keyword"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_style_keyword"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_at_rule_slash"
+                    }
+                  ]
                 },
                 "named": true,
                 "value": "at_rule_value"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "at_rule_url"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "string_value"
               }
             ]
           },
@@ -489,36 +510,13 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_import_supports_function_arguments"
+              "name": "_import_supports_value_group"
             },
             "named": true,
             "value": "import_supports_group"
           }
         ]
       }
-    },
-    "_import_supports_function_arguments": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "("
-          }
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_supports_value_nested_component"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ]
     },
     "_import_supports_leaf": {
       "type": "CHOICE",

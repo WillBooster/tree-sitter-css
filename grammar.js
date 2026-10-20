@@ -147,7 +147,7 @@ module.exports = grammar({
 
     // Mirrors the generic at-rule components with own nodes, so that queries can tell support conditions from generic
     // at-rule preludes. A body that starts with a name and `:` is a declaration; groups in condition position may hold
-    // declarations, while groups in a declaration value or a function's arguments hold plain components.
+    // declarations, while groups in a declaration value or after a value hold plain components.
     import_supports: $ => seq(
       alias($._import_supports_start, 'supports('),
       choice($.import_supports_declaration, repeat1($._import_supports_condition_component)),
@@ -155,7 +155,10 @@ module.exports = grammar({
     ),
 
     import_supports_declaration: $ => prec(1, seq(
-      field('name', choice($.at_rule_value, alias(choice($._query_not, $._query_and, $._query_or), $.at_rule_value))),
+      field('name', choice(
+        $.at_rule_value,
+        alias(choice($._style_keyword, $._query_not, $._query_and, $._query_or), $.at_rule_value),
+      )),
       alias(':', $.at_rule_delimiter),
       repeat($._import_supports_value_nested_component),
     )),
@@ -177,15 +180,16 @@ module.exports = grammar({
       ')',
     ),
 
-    // Arguments directly after a value, as in `selector(a:hover)`, hold plain components rather than a declaration.
+    // A group after a value, such as the arguments of `selector(a:hover)`, holds plain components, not a declaration.
     _import_supports_function: $ => prec(1, seq(
-      choice($.at_rule_value, alias($._style_keyword, $.at_rule_value)),
-      alias($._import_supports_function_arguments, $.import_supports_group),
+      choice(
+        $.at_rule_value,
+        alias(choice($._style_keyword, $._at_rule_slash), $.at_rule_value),
+        $.at_rule_url,
+        $.string_value,
+      ),
+      alias($._import_supports_value_group, $.import_supports_group),
     )),
-
-    _import_supports_function_arguments: $ => seq(
-      token.immediate('('), repeat($._import_supports_value_nested_component), ')',
-    ),
 
     _import_supports_leaf: $ => choice(
       $.at_rule_value,
