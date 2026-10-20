@@ -4795,8 +4795,61 @@
       }
     },
     "_nth_functional_notation": {
-      "type": "PATTERN",
-      "value": "-?(\\d)*n\\s*(\\+\\s*\\d+)?"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[+-]?\\d*[nN][\\t\\n\\f\\r ]*[+-][\\t\\n\\f\\r ]*\\d+"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[+-]?\\d*[nN]"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[+-]\\d+"
+                    },
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "+"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "-"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "PATTERN",
+                          "value": "\\d+"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "pseudo_element_arguments": {
       "type": "SEQ",

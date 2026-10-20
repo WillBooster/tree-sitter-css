@@ -1779,6 +1779,11 @@
     }
   },
   {
+    "type": "plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "pseudo_class_selector",
     "named": true,
     "fields": {},
@@ -2723,10 +2728,6 @@
   {
     "type": "or",
     "named": false
-  },
-  {
-    "type": "plain_value",
-    "named": true
   },
   {
     "type": "property_name",

@@ -587,7 +587,10 @@ module.exports = grammar({
       $._value,
     )),
 
-    _nth_functional_notation: _ => /-?(\d)*n\s*(\+\s*\d+)?/,
+    _nth_functional_notation: _ => choice(
+      /[+-]?\d*[nN][\t\n\f\r ]*[+-][\t\n\f\r ]*\d+/,
+      seq(/[+-]?\d*[nN]/, optional(choice(/[+-]\d+/, seq(choice('+', '-'), /\d+/)))),
+    ),
 
     pseudo_element_arguments: $ => seq(
       token.immediate('('),
