@@ -181,8 +181,9 @@ static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiter
 }
 
 static bool is_import_components_end(int32_t character, int32_t terminator) {
-    // A rule or at-rule after an import missing its `;` ends the tail, as it does without a condition.
-    return character == terminator || (terminator == ';' && (character == '{' || character == '@'));
+    // A rule, at-rule or block end after an import missing its `;` ends the tail, as it does without a condition.
+    bool statement_boundary = character == '{' || character == '@' || character == '}';
+    return character == terminator || (terminator == ';' && statement_boundary);
 }
 
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component) {
@@ -215,11 +216,11 @@ static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed) {
     return supports_allowed ? scan_layer_tail(lexer) : scan_import_component_list(lexer, ';');
 }
 
-// Besides media queries, a tail may start the rule or at-rule that follows an import missing its `;`. `[` and quotes
-// are excluded so that malformed attribute selectors and quoted conditions recover as invalid import fragments.
+// Besides media queries, a tail may start the rule, at-rule or block end that follows an import missing its `;`. `[`
+// and quotes are excluded so that malformed attribute selectors and quoted conditions recover as invalid fragments.
 static bool is_import_tail_start(int32_t character) {
     switch (character) {
-        case '-': case '\\': case '(': case ';': case '.': case '#': case ':': case '*': case '@':
+        case '-': case '\\': case '(': case ';': case '.': case '#': case ':': case '*': case '@': case '}':
             return true;
         default:
             return is_name_start(character);
@@ -320,7 +321,8 @@ static bool scan_double_slash(TSLexer *lexer, bool url_allowed) {
     // Mirrors grammar.js: the at_rule_url token outranks the lower-precedence js_comment extra.
     bool url = url_allowed && !lexer->eof(lexer) && is_at_rule_url_character(lexer->lookahead);
     while (!lexer->eof(lexer)) {
-        bool inside = url ? is_at_rule_url_character(lexer->lookahead) : lexer->lookahead != '\n' && lexer->lookahead != '\r';
+        bool line_end = lexer->lookahead == '\n' || lexer->lookahead == '\r';
+        bool inside = url ? is_at_rule_url_character(lexer->lookahead) : !line_end;
         if (!inside) break;
         advance(lexer);
     }

@@ -747,6 +747,26 @@ test.each(
   }
 );
 
+test.each(['layer(a)', 'supports(a: b)', 'supports(a: b) screen', 'layer(a) supports(a: b) (width > 1px)'])(
+  'imports missing their semicolon before a block end keep their conditions: %s',
+  (condition) => {
+    const parser = new Parser().setLanguage(language);
+    const tree = parser.parse(`@media print { @import "x" ${condition} }\n.z { color: red; }`)!;
+    try {
+      const statement = tree.rootNode.descendantsOfType('import_statement')[0]!;
+      expect(statement.children.filter((node) => node.isError)).toHaveLength(0);
+      expect(statement.text).toBe(`@import "x" ${condition}`);
+      expect(statement.descendantsOfType(['import_layer', 'import_supports']).map((node) => node.text)).toEqual(
+        condition.match(/(?:layer|supports)\([^)]*\)/g)
+      );
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.z { color: red; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
 function expectUnfinishedImportCompletion(condition: string): void {
   const parser = new Parser().setLanguage(language);
   const prefix = `@import "x" ${condition}`;
