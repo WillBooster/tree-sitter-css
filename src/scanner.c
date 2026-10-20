@@ -30,6 +30,7 @@ static bool is_import_components_end(int32_t character, int32_t terminator);
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component);
 static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed);
 static bool scan_layer_tail(TSLexer *lexer);
+static bool is_import_tail_start(int32_t character);
 static bool scan_supports_word(TSLexer *lexer);
 static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsigned *length);
 static bool scan_supports_url(TSLexer *lexer);
@@ -210,10 +211,19 @@ static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed) {
     advance(lexer);
     bool whitespace = false;
     if (!scan_component_gap(lexer, &whitespace)) return false;
-    bool start = lexer->eof(lexer) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' ||
-        lexer->lookahead == '\\' || lexer->lookahead == '(' || lexer->lookahead == ';';
-    if (!start) return false;
+    if (!lexer->eof(lexer) && !is_import_tail_start(lexer->lookahead)) return false;
     return supports_allowed ? scan_layer_tail(lexer) : scan_import_component_list(lexer, ';');
+}
+
+// Besides media queries, a tail may start the rule or at-rule that follows an import missing its `;`. `[` and quotes
+// are excluded so that malformed attribute selectors and quoted conditions recover as invalid import fragments.
+static bool is_import_tail_start(int32_t character) {
+    switch (character) {
+        case '-': case '\\': case '(': case ';': case '.': case '#': case ':': case '*': case '@':
+            return true;
+        default:
+            return is_name_start(character);
+    }
 }
 
 // Scans a supports() after a layer with the body rules of a direct supports() lookahead, so a malformed body recovers

@@ -707,8 +707,17 @@ test.each(
 });
 
 test.each(
-  ['layer(a) screen', 'supports(a: b) screen', 'layer(a) supports(a: b) (width > 1px)'].flatMap((condition) =>
-    ['.b { color: red; }', '@import "b";', '@media screen {}'].map((following) => [condition, following])
+  [
+    'layer(a)',
+    'supports(a: b)',
+    'layer(a) screen',
+    'supports(a: b) screen',
+    'layer(a) supports(a: b) (width > 1px)',
+  ].flatMap((condition) =>
+    ['.b { color: red; }', '#a {}', ':root {}', '*{}', '@import "b";', '@media screen {}'].map((following) => [
+      condition,
+      following,
+    ])
   )
 )(
   'imports missing their semicolon keep their conditions and the following statement: %s, %s',
