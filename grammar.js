@@ -191,7 +191,14 @@ module.exports = grammar({
 
     _import_src: $ => seq(
       alias(cssKeyword('src'), $.function_name),
-      $.arguments,
+      alias($._import_src_arguments, $.arguments),
+    ),
+
+    _import_src_arguments: $ => seq(
+      token.immediate('('),
+      choice($.string_value, alias($._import_url_modifier, $.call_expression)),
+      importUrlModifiers($),
+      ')',
     ),
 
     _import_url: $ => seq(
@@ -204,10 +211,7 @@ module.exports = grammar({
       choice(
         seq(
           $.string_value,
-          repeat(choice(
-            alias(choice($.identifier, $._escaped_identifier), $.plain_value),
-            alias($._import_url_modifier, $.call_expression),
-          )),
+          importUrlModifiers($),
         ),
         alias(token(repeat1(choice(/[^\x00-\x20\x7F"'()\\]/, cssEscape))), $.plain_value),
       ),
@@ -965,6 +969,13 @@ module.exports = grammar({
     )),
   },
 });
+
+function importUrlModifiers($) {
+  return repeat(choice(
+    alias(choice($.identifier, $._escaped_identifier), $.plain_value),
+    alias($._import_url_modifier, $.call_expression),
+  ));
+}
 
 function declarationValue($) {
   return seq(

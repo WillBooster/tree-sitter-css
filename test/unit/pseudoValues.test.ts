@@ -22,7 +22,12 @@ test.each(pseudos.flatMap((pseudo) => argumentsLists.map(([args, value]) => [pse
       expect(tree.rootNode.firstNamedChild!.firstNamedChild!.text).toBe(selector);
       expect(tree.rootNode.descendantsOfType('arguments').map((node) => node.text)).toEqual([`(${args})`]);
       if (value.includes('\\') && !value.includes('/**/')) {
-        expect(tree.rootNode.descendantsOfType('plain_value').map((node) => node.text)).toContain(value);
+        const escaped = tree.rootNode
+          .descendantsOfType(['plain_value', 'tag_name'])
+          .find((node) => node.text === value)!;
+        expect(escaped).toBeDefined();
+        expect(escaped.startIndex).toBe(source.indexOf(value));
+        expect(escaped.endIndex).toBe(source.indexOf(value) + value.length);
       }
       expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(
         args.includes('/**/') ? ['/**/'] : []

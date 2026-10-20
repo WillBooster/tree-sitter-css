@@ -90,7 +90,15 @@ test.each(
     expect(pseudo.text).toBe(selector);
     expect(pseudo.startIndex).toBe(0);
     expect(pseudo.endIndex).toBe(selector.length);
-    expect(pseudo.descendantsOfType('class_selector').map((node) => node.text)).toContain('.a');
+    expect(pseudo.descendantsOfType('class_selector').map((node) => node.text)).toEqual(
+      expect.arrayContaining(['.a', '.b'])
+    );
+    expect(
+      query
+        .captures(pseudo)
+        .filter(({ name: capture }) => capture === 'property')
+        .map(({ node }) => node.text)
+    ).toEqual(expect.arrayContaining(['a', 'b']));
     expect(
       query.captures(pseudo).some(({ name: capture, node }) => capture === 'attribute' && node.text === name)
     ).toBe(true);

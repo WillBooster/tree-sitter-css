@@ -6,21 +6,22 @@ await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 
 test.each(
-  ['@import url("x.css"', '@import url(x.css'].flatMap((prefix) =>
-    ['\n', '\r\n', '\n/**/'].flatMap((gap) =>
-      [
-        '.after',
-        String.raw`.\61 fter`,
-        '.é',
-        '.after/**/',
-        '.after:hover',
-        '.after.child',
-        '.after[a]',
-        '.after#x',
-        '.after > a',
-        '.after .child',
-      ].flatMap((selector) => ['', '\n'].map((ending) => [prefix, gap, selector, ending] as const))
-    )
+  ['@import url("x.css"', '@import url(x.css', '@import src("x.css"', '@import src(var(--stylesheet)'].flatMap(
+    (prefix) =>
+      ['\n', '\r\n', '\n/**/'].flatMap((gap) =>
+        [
+          '.after',
+          String.raw`.\61 fter`,
+          '.é',
+          '.after/**/',
+          '.after:hover',
+          '.after.child',
+          '.after[a]',
+          '.after#x',
+          '.after > a',
+          '.after .child',
+        ].flatMap((selector) => ['', '\n'].map((ending) => [prefix, gap, selector, ending] as const))
+      )
   )
 )('unfinished imports retain a following class rule: %s%s%s%s', (prefix, gap, selector, ending) => {
   const parser = new Parser().setLanguage(language);
@@ -109,6 +110,8 @@ test.each(['b: .a/*', 'a { b: .a/*', 'a { b: f(.a/*', ':foo(.a/*'])(
 test.each([
   'url("x.css")',
   'src("x.css")',
+  'src(var(--stylesheet) type("text/css"))',
+  'src(attr(data-style type(<string>), "fallback.css"))',
   String.raw`s\72 c(var(--stylesheet))`,
   'URL("x.css" modifier type("text/css"))',
   String.raw`u\72 l("x.css" \6d odifier)`,

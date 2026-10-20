@@ -186,8 +186,82 @@
           "value": "function_name"
         },
         {
-          "type": "SYMBOL",
-          "name": "arguments"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_import_src_arguments"
+          },
+          "named": true,
+          "value": "arguments"
+        }
+      ]
+    },
+    "_import_src_arguments": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "("
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "string_value"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_import_url_modifier"
+              },
+              "named": true,
+              "value": "call_expression"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_escaped_identifier"
+                    }
+                  ]
+                },
+                "named": true,
+                "value": "plain_value"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_import_url_modifier"
+                },
+                "named": true,
+                "value": "call_expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
         }
       ]
     },
