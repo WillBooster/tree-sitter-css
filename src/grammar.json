@@ -2028,6 +2028,10 @@
               {
                 "type": "SYMBOL",
                 "name": "_custom_property_name"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_star_property_name"
               }
             ]
           },
@@ -2058,6 +2062,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "_custom_property_name"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_star_property_name"
                 }
               ]
             },
@@ -2145,6 +2153,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "_custom_property_name"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_star_property_name"
                 }
               ]
             },
@@ -2206,6 +2218,22 @@
                 "type": "BLANK"
               }
             ]
+          }
+        ]
+      }
+    },
+    "_star_property_name": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "PATTERN",
+            "value": "(--|-?[a-zA-Z_\\xA0-\\xFF])[a-zA-Z0-9-_\\xA0-\\xFF]*"
           }
         ]
       }
