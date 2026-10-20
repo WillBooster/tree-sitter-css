@@ -1,9 +1,28 @@
 import path from 'node:path';
-import { Language, Parser } from '@willbooster/web-tree-sitter';
+import { Edit, Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
+const multilineValues = [
+  '.token .next',
+  '& .token .next',
+  '* .token .next',
+  '& [a*=x]',
+  '* [a*=x]',
+  '& "{ text }"',
+  '* "{ text }"',
+  String.raw`& \{`,
+  String.raw`* \{`,
+  'calc(2 * 3)',
+  '.token/**/ .next',
+  '.token + .next',
+  '.5 .25',
+  String.raw`.\61 fter`,
+  '"{ text }"',
+  'url("https://example.test/{x}")',
+  '/* { } */ .token',
+];
 
 test.each(
   ['@import url("x.css"', '@import url(x.css', '@import src("x.css"', '@import src(var(--stylesheet)'].flatMap(
@@ -67,25 +86,7 @@ test.each(['calc', 'f'].flatMap((name) => ['\n', '\r\n', '\n/**/'].map((gap) => 
   }
 );
 
-test.each([
-  '.token .next',
-  '& .token .next',
-  '* .token .next',
-  '& [a*=x]',
-  '* [a*=x]',
-  '& "{ text }"',
-  '* "{ text }"',
-  String.raw`& \{`,
-  String.raw`* \{`,
-  'calc(2 * 3)',
-  '.token/**/ .next',
-  '.token + .next',
-  '.5 .25',
-  String.raw`.\61 fter`,
-  '"{ text }"',
-  'url("https://example.test/{x}")',
-  '/* { } */ .token',
-])('valid multiline function components retain their declaration: %s', (value) => {
+test.each(multilineValues)('valid multiline function components retain their declaration: %s', (value) => {
   const parser = new Parser().setLanguage(language);
   const call = `f(\n${value}\n)`;
   const source = `a { --x: ${call}; } .after { z: y; }`;
@@ -141,22 +142,27 @@ test.each([
   }
 });
 
+const recoverySelectors = [
+  '& .after',
+  '* .after',
+  '&.after',
+  '*.after',
+  '& * .after',
+  '* & .after',
+  '& & .after',
+  '* * .after',
+  '& * & .after',
+  '& [a*=x]',
+];
+const recoveryPairs = [
+  ...['(', '['].flatMap((opening) => recoverySelectors.map((selector) => [opening, selector] as const)),
+  ...['(word', '[word', '(f(x) '].flatMap((opening) =>
+    recoverySelectors.filter((selector) => selector.startsWith('&')).map((selector) => [opening, selector] as const)
+  ),
+];
 test.each(
-  ['(', '[', '(word', '[word', '(f(x) '].flatMap((opening) =>
-    ['\n', '\r\n', '\n/**/'].flatMap((gap) =>
-      [
-        '& .after',
-        '* .after',
-        '&.after',
-        '*.after',
-        '& * .after',
-        '* & .after',
-        '& & .after',
-        '* * .after',
-        '& * & .after',
-        '& [a*=x]',
-      ].map((selector) => [opening, gap, selector] as const)
-    )
+  recoveryPairs.flatMap(([opening, selector]) =>
+    ['\n', '\r\n', '\n/**/'].map((gap) => [opening, gap, selector] as const)
   )
 )('unfinished values retain complete nested selector boundaries: %s %s %s', (opening, gap, selector) => {
   const parser = new Parser().setLanguage(language);
@@ -172,6 +178,78 @@ test.each(
     expect(following.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color']);
   } finally {
     tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(['(', '['].flatMap((opening) => multilineValues.map((value) => [opening, value] as const)))(
+  'closed multiline groups remain complete declarations: %s %s',
+  (opening, value) => {
+    const parser = new Parser().setLanguage(language);
+    const closing = opening === '(' ? ')' : ']';
+    const component = `${opening}\n${value}\n${closing}`;
+    const source = `a { --x: ${component}; } .after { z: y; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const grouped = tree.rootNode.descendantsOfType(opening === '(' ? 'parenthesized_value' : 'grid_value')[0]!;
+      expect(grouped.text).toBe(component);
+      expect(grouped.startIndex).toBe(source.indexOf(component));
+      expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(['--x', 'z']);
+      expect(tree.rootNode.lastNamedChild?.text).toBe('.after { z: y; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test('closing and reopening a multiline group matches fresh parsing', () => {
+  const parser = new Parser().setLanguage(language);
+  const incomplete = 'a { --x: (\n.token .next\n; } .after { z: y; }';
+  const index = incomplete.indexOf(';');
+  const complete = `${incomplete.slice(0, index)})${incomplete.slice(index)}`;
+  const initial = parser.parse(incomplete)!;
+  initial.edit(
+    new Edit({
+      startIndex: index,
+      oldEndIndex: index,
+      newEndIndex: index + 1,
+      startPosition: { row: 2, column: 0 },
+      oldEndPosition: { row: 2, column: 0 },
+      newEndPosition: { row: 2, column: 1 },
+    })
+  );
+  const incremental = parser.parse(complete, initial)!;
+  const fresh = parser.parse(complete)!;
+  try {
+    expect(incremental.rootNode.hasError).toBe(false);
+    expect(incremental.rootNode.toString()).toBe(fresh.rootNode.toString());
+    expect(incremental.rootNode.descendantsOfType('parenthesized_value')[0]?.text).toBe('(\n.token .next\n)');
+    incremental.edit(
+      new Edit({
+        startIndex: index,
+        oldEndIndex: index + 1,
+        newEndIndex: index,
+        startPosition: { row: 2, column: 0 },
+        oldEndPosition: { row: 2, column: 1 },
+        newEndPosition: { row: 2, column: 0 },
+      })
+    );
+    const reopened = parser.parse(incomplete, incremental)!;
+    const freshIncomplete = parser.parse(incomplete)!;
+    try {
+      expect(reopened.rootNode.hasError).toBe(true);
+      expect(reopened.rootNode.toString()).toBe(freshIncomplete.rootNode.toString());
+      expect(reopened.rootNode.lastNamedChild?.text).toBe('.after { z: y; }');
+    } finally {
+      reopened.delete();
+      freshIncomplete.delete();
+    }
+  } finally {
+    initial.delete();
+    incremental.delete();
+    fresh.delete();
     parser.delete();
   }
 });

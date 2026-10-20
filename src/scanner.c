@@ -1,6 +1,18 @@
 #include "tree_sitter/parser.h"
 
 #include <wctype.h>
+#include <stdlib.h>
+
+typedef struct { uint32_t byte; bool used; bool result; } Memo;
+typedef struct { uint32_t byte; unsigned depth; } ProbePrefix;
+typedef struct {
+    Memo *memo;
+    size_t count;
+    size_t capacity;
+    ProbePrefix *prefixes;
+    size_t prefix_count;
+    size_t prefix_capacity;
+} Scanner;
 
 enum TokenType {
     DESCENDANT_OP,
@@ -13,10 +25,16 @@ enum TokenType {
     VALUE_ASTERISK,
 };
 
-static bool scan_rule_gap(TSLexer *lexer, const bool *valid_symbols);
+static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
 static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
-static bool scan_value_selector_prefix(TSLexer *lexer, TSSymbol symbol, bool guard_rule);
+static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, bool guard_rule);
+static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte);
+static bool scan_probe_component(TSLexer *lexer, bool *stop);
 static void scan_quoted_component(TSLexer *lexer);
+static bool remember_probe(Scanner *scanner, bool result, bool all_depths);
+static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth);
+static Memo *memo_slot(Scanner *scanner, uint32_t byte);
+static void grow_memo(Scanner *scanner);
 static bool scan_dot_following_gap(TSLexer *lexer);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
 static bool scan_property_colon(TSLexer *lexer);
@@ -32,20 +50,27 @@ static bool is_digit(int32_t character);
 static void advance(TSLexer *lexer);
 static void skip(TSLexer *lexer);
 
-void *tree_sitter_css_external_scanner_create() { return NULL; }
+void *tree_sitter_css_external_scanner_create() { return calloc(1, sizeof(Scanner)); }
 
-void tree_sitter_css_external_scanner_destroy(void *payload) {}
+void tree_sitter_css_external_scanner_destroy(void *payload) {
+    Scanner *scanner = payload;
+    free(scanner->memo);
+    free(scanner->prefixes);
+    free(scanner);
+}
 
+// The runtime recreates this payload for each parse; input-only memo entries must not enter serialized GLR state.
 unsigned tree_sitter_css_external_scanner_serialize(void *payload, char *buffer) { return 0; }
 
 void tree_sitter_css_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {}
 
 bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
+    Scanner *scanner = payload;
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
-    if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
-    if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
+    if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
+    if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[VALUE_DOT] && lexer->lookahead == '.') return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && !valid_symbols[AT_RULE_SLASH] &&
         (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
@@ -53,12 +78,12 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     }
     if (valid_symbols[AT_RULE_SLASH] || (iswspace(lexer->lookahead) &&
         (valid_symbols[DESCENDANT_OP] || valid_symbols[VALUE_DOT] || valid_symbols[VALUE_AMPERSAND] || valid_symbols[VALUE_ASTERISK]))) {
-        return scan_rule_gap(lexer, valid_symbols);
+        return scan_rule_gap(scanner, lexer, valid_symbols);
     }
     return false;
 }
 
-static bool scan_rule_gap(TSLexer *lexer, const bool *valid_symbols) {
+static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     bool whitespace = false;
     while (iswspace(lexer->lookahead)) {
         whitespace = true;
@@ -68,8 +93,8 @@ static bool scan_rule_gap(TSLexer *lexer, const bool *valid_symbols) {
     if (lexer->lookahead == '.' && valid_symbols[VALUE_DOT] &&
         !(whitespace && valid_symbols[DESCENDANT_OP])) return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
     bool value_prefix = !(whitespace && valid_symbols[DESCENDANT_OP]);
-    if (value_prefix && lexer->lookahead == '&' && valid_symbols[VALUE_AMPERSAND]) return scan_value_selector_prefix(lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
-    if (value_prefix && lexer->lookahead == '*' && valid_symbols[VALUE_ASTERISK]) return scan_value_selector_prefix(lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
+    if (value_prefix && lexer->lookahead == '&' && valid_symbols[VALUE_AMPERSAND]) return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
+    if (value_prefix && lexer->lookahead == '*' && valid_symbols[VALUE_ASTERISK]) return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
     if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
         return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP]);
     }
@@ -92,39 +117,59 @@ static bool scan_value_dot(TSLexer *lexer, bool allow_invalid) {
     return !scan_dot_following_gap(lexer) || lexer->lookahead != '{';
 }
 
-static bool scan_value_selector_prefix(TSLexer *lexer, TSSymbol symbol, bool guard_rule) {
+static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, bool guard_rule) {
+    TSLexerPosition position;
+    lexer->get_position(lexer, &position);
     advance(lexer);
     lexer->mark_end(lexer);
     lexer->result_symbol = symbol;
     if (!guard_rule) return true;
+    if (scanner->capacity) {
+        Memo *memo = memo_slot(scanner, position.bytes);
+        if (memo->used) return memo->result;
+    }
+    return probe_selector_boundary(scanner, lexer, position.bytes);
+}
+
+static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte) {
     unsigned depth = 0;
+    scanner->prefix_count = 0;
+    record_probe_prefix(scanner, byte, 0);
     while (!lexer->eof(lexer)) {
-        int32_t character = lexer->lookahead;
-        if (character == '\'' || character == '"') {
-            scan_quoted_component(lexer);
+        bool stop = false;
+        if (scan_probe_component(lexer, &stop)) {
+            if (stop) return remember_probe(scanner, true, true);
             continue;
-        } else if (character == '\\') {
-            if (!scan_escape(lexer)) return true;
-            continue;
-        } else if (character == '/') {
-            advance(lexer);
-            scan_comment_body(lexer);
-            continue;
-        } else if (character == '&' || character == '*') {
-            return true;
-        } else if (character == '(' || character == '[') {
-            depth++;
-        } else if (character == ')' || character == ']') {
-            if (!depth) return true;
-            depth--;
-        } else if (!depth && (character == ';' || character == '}')) {
-            return true;
-        } else if (!depth && character == '{') {
-            return false;
+        }
+        TSLexerPosition position;
+        switch (lexer->lookahead) {
+            case '&': case '*':
+                lexer->get_position(lexer, &position);
+                record_probe_prefix(scanner, position.bytes, depth);
+                break;
+            case '(': case '[': depth++; break;
+            case ')': case ']':
+                if (!depth) return remember_probe(scanner, true, true);
+                depth--;
+                break;
+            case ';': case '}':
+                if (!depth) return remember_probe(scanner, true, true);
+                break;
+            case '{': return remember_probe(scanner, depth != 0, false);
+            default: break;
         }
         advance(lexer);
     }
-    return true;
+    return remember_probe(scanner, true, true);
+}
+
+static bool scan_probe_component(TSLexer *lexer, bool *stop) {
+    switch (lexer->lookahead) {
+        case '\'': case '"': scan_quoted_component(lexer); return true;
+        case '\\': *stop = !scan_escape(lexer); return true;
+        case '/': advance(lexer); scan_comment_body(lexer); return true;
+        default: return false;
+    }
 }
 
 static void scan_quoted_component(TSLexer *lexer) {
@@ -136,6 +181,43 @@ static void scan_quoted_component(TSLexer *lexer) {
         if (character == quote) return;
         if (character == '\\' && !lexer->eof(lexer)) advance(lexer);
     }
+}
+
+static bool remember_probe(Scanner *scanner, bool result, bool all_depths) {
+    for (size_t i = 0; i < scanner->prefix_count; i++) {
+        ProbePrefix prefix = scanner->prefixes[i];
+        if (!all_depths && prefix.depth) continue;
+        if (scanner->count * 2 >= scanner->capacity) grow_memo(scanner);
+        Memo *memo = memo_slot(scanner, prefix.byte);
+        if (!memo->used) scanner->count++;
+        *memo = (Memo) {prefix.byte, true, result};
+    }
+    return result;
+}
+
+static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth) {
+    if (scanner->prefix_count == scanner->prefix_capacity) {
+        scanner->prefix_capacity = scanner->prefix_capacity ? scanner->prefix_capacity * 2 : 64;
+        scanner->prefixes = realloc(scanner->prefixes, scanner->prefix_capacity * sizeof(ProbePrefix));
+    }
+    scanner->prefixes[scanner->prefix_count++] = (ProbePrefix) {byte, depth};
+}
+
+static Memo *memo_slot(Scanner *scanner, uint32_t byte) {
+    size_t index = (byte * UINT32_C(2654435761)) & (scanner->capacity - 1);
+    while (scanner->memo[index].used && scanner->memo[index].byte != byte) index = (index + 1) & (scanner->capacity - 1);
+    return &scanner->memo[index];
+}
+
+static void grow_memo(Scanner *scanner) {
+    Memo *old = scanner->memo;
+    size_t old_capacity = scanner->capacity;
+    scanner->capacity = old_capacity ? old_capacity * 2 : 64;
+    scanner->memo = calloc(scanner->capacity, sizeof(Memo));
+    for (size_t i = 0; i < old_capacity; i++) {
+        if (old[i].used) *memo_slot(scanner, old[i].byte) = old[i];
+    }
+    free(old);
 }
 
 static bool scan_dot_following_gap(TSLexer *lexer) {

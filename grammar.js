@@ -607,15 +607,9 @@ module.exports = grammar({
 
     _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
 
-    incomplete_declaration: $ => choice(
-      seq(alias(propertyIdentifier($), $.property_name), $._incomplete_declaration_end),
-      prec.dynamic(10, seq(
-        alias(propertyIdentifier($), $.property_name),
-        ':',
-        choice('(', '['),
-        repeat($._value),
-        $.__error_recovery,
-      )),
+    incomplete_declaration: $ => seq(
+      alias(propertyIdentifier($), $.property_name),
+      $._incomplete_declaration_end,
     ),
 
     declaration: $ => prec.dynamic(1, seq(declarationValue($), ';')),
