@@ -34,6 +34,7 @@ static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsi
 static bool scan_supports_url(TSLexer *lexer);
 static bool scan_supports_string(TSLexer *lexer);
 static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowed);
+static bool scan_double_slash(TSLexer *lexer, bool url_allowed);
 static bool is_at_rule_url_character(int32_t character);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
@@ -282,12 +283,7 @@ static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowe
     advance(lexer);
     if (lexer->lookahead == '/') {
         advance(lexer);
-        // Mirrors grammar.js: the at_rule_url token outranks the lower-precedence js_comment extra.
-        if (url_allowed && !lexer->eof(lexer) && is_at_rule_url_character(lexer->lookahead)) {
-            *component = true;
-            return true;
-        }
-        while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
+        if (scan_double_slash(lexer, url_allowed)) *component = true;
         return true;
     }
     if (lexer->lookahead != '*') { *component = true; return true; }
@@ -301,6 +297,17 @@ static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowe
         }
     }
     return false;
+}
+
+static bool scan_double_slash(TSLexer *lexer, bool url_allowed) {
+    // Mirrors grammar.js: the at_rule_url token outranks the lower-precedence js_comment extra.
+    bool url = url_allowed && !lexer->eof(lexer) && is_at_rule_url_character(lexer->lookahead);
+    while (!lexer->eof(lexer)) {
+        bool inside = url ? is_at_rule_url_character(lexer->lookahead) : lexer->lookahead != '\n' && lexer->lookahead != '\r';
+        if (!inside) break;
+        advance(lexer);
+    }
+    return url;
 }
 
 static bool is_at_rule_url_character(int32_t character) {
