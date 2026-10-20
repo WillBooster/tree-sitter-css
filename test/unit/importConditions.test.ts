@@ -182,6 +182,30 @@ test.each(['', ' ', '/**/', '/* first *//* second */'])(
   }
 );
 
+test.each([
+  ['selector(a:hover)', []],
+  ['--x: foo: bar', ['--x']],
+  ['(--x: foo: bar)', ['--x']],
+  ['not (a: b) or SELECTOR(c:d)', ['a']],
+])('support property captures cover only the leading declaration name: %s', (condition, properties) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const tree = parser.parse(`@import "x" supports(${condition});`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'property')
+        .map(({ node }) => node.text)
+    ).toEqual(properties);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
 testCommand(
   'native import property highlights preserve Unicode, escapes and layer names',
   [
@@ -209,6 +233,7 @@ testCommand(
         '日本',
         String.raw`\A9 `,
         String.raw`--\2192 `,
+        '--x',
       ]);
     },
   }

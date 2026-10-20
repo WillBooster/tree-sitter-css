@@ -83,27 +83,18 @@
 ((at_rule_value) @number
  (#match? @number "^[+-]?([0-9]+(\\.[0-9]+)?|\\.[0-9]+)([eE][+-]?[0-9]+)?([a-zA-Z]+|%)?$"))
 
-(at_rule_parenthesized
- (at_rule_value) @property
- . (comment)*
- . (at_rule_delimiter) @_colon
- . (comment)*
- . (_) @_feature_value
+; A support declaration is the first component of its condition; `selector(...)` holds a selector, not a declaration.
+(
+ [
+  (import_supports . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value)
+  (_ . (at_rule_parenthesized . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+  ((_) @_previous . (at_rule_parenthesized . (comment)* . (at_rule_value) @property . (comment)* . (at_rule_delimiter) @_colon . (comment)* . (_) @_feature_value))
+ ]
  (#eq? @_colon ":")
  (#not-match? @_feature_value "^/[*/]")
  (#not-match? @property "^(?:-|\\\\(?:-|0{0,4}2[dD](?:[ \\t\\n\\f]|\\r\\n?)?)){2}$")
- (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
-
-(import_supports
- (at_rule_value) @property
- . (comment)*
- . (at_rule_delimiter) @_colon
- . (comment)*
- . (_) @_feature_value
- (#eq? @_colon ":")
- (#not-match? @_feature_value "^/[*/]")
- (#not-match? @property "^(?:-|\\\\(?:-|0{0,4}2[dD](?:[ \\t\\n\\f]|\\r\\n?)?)){2}$")
- (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$"))
+ (#match? @property "^(?:--|-?(?:[_a-zA-Z]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f])))(?:[-_a-zA-Z0-9]|[^\\x00-\\xB6\\xB8-\\xBF\\xD7\\xF7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF\\uFFFE\\uFFFF]|\\\\(?:[0-9a-fA-F]{1,6}(?:[ \\t\\n\\f]|\\r\\n?)?|[^0-9a-fA-F\\n\\r\\f]))*$")
+ (#not-match? @_previous "^[sS][eE][lL][eE][cC][tT][oO][rR]$"))
 
 (
  (at_rule_value) @_bang @keyword

@@ -11,3 +11,5 @@
 @import "x" supports(a→: initial);
 @import "x" supports(\A9 : initial);
 @import "x" supports(--\2192 : initial);
+@import "x" supports(selector(a:hover));
+@import "x" supports(--x: foo: bar);
