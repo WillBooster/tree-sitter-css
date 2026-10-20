@@ -563,15 +563,15 @@ module.exports = grammar({
       token.immediate('('),
       optional($._descendant_combinator),
       choice(
-        alias('even', $.plain_value),
-        alias('odd', $.plain_value),
+        alias(cssKeyword('even'), $.plain_value),
+        alias(cssKeyword('odd'), $.plain_value),
         $.integer_value,
         alias($._nth_functional_notation, $.plain_value),
       ),
       optional(
         seq(
           optional($._descendant_combinator),
-          'of',
+          alias(cssKeyword('of'), 'of'),
           optional($._descendant_combinator),
           sep1(seq(optional($._descendant_combinator), ','), $._selector),
         ),

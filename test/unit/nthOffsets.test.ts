@@ -32,14 +32,28 @@ const offsets = [
   '2n /**/',
   '2n /* gap */ ',
   '2n\r\n/**/\t',
+  'odd',
+  'ODD',
+  'eVeN',
+  String.raw`\6f dd`,
+  String.raw`\65 ven`,
+  String.raw`o\64 d`,
+  String.raw`ev\65 n`,
+];
+const filters = [
+  '',
+  ' of .a, .b',
+  ' OF .a, .b',
+  ' oF .a, .b',
+  String.raw` \6f f .a, .b`,
+  String.raw` o\66 .a, .b`,
+  String.raw` \6f\66 .a, .b`,
 ];
 
 test.each(
   ['nth-child', 'nth-last-child'].flatMap((name) =>
     offsets.flatMap((offset) =>
-      ['', ' of .a, .b'].flatMap((filter) =>
-        ['rule', 'start', 'end'].map((context) => [name, offset, filter, context] as const)
-      )
+      filters.flatMap((filter) => ['rule', 'start', 'end'].map((context) => [name, offset, filter, context] as const))
     )
   )
 )('nth notation retains selector boundaries: %s(%s%s) in %s', (name, offset, filter, context) => {
