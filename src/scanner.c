@@ -9,10 +9,14 @@ enum TokenType {
     INCOMPLETE_DECLARATION_END,
     VALUE_DOT,
     INVALID_VALUE_DOT,
+    VALUE_AMPERSAND,
+    VALUE_ASTERISK,
 };
 
 static bool scan_rule_gap(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
+static bool scan_value_selector_prefix(TSLexer *lexer, TSSymbol symbol, bool guard_rule);
+static void scan_quoted_component(TSLexer *lexer);
 static bool scan_dot_following_gap(TSLexer *lexer);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
 static bool scan_property_colon(TSLexer *lexer);
@@ -40,13 +44,15 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[ERROR_RECOVERY]) {
         return false;
     }
+    if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
+    if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[VALUE_DOT] && lexer->lookahead == '.') return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && !valid_symbols[AT_RULE_SLASH] &&
         (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
         return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP]);
     }
     if (valid_symbols[AT_RULE_SLASH] || (iswspace(lexer->lookahead) &&
-        (valid_symbols[DESCENDANT_OP] || valid_symbols[VALUE_DOT]))) {
+        (valid_symbols[DESCENDANT_OP] || valid_symbols[VALUE_DOT] || valid_symbols[VALUE_AMPERSAND] || valid_symbols[VALUE_ASTERISK]))) {
         return scan_rule_gap(lexer, valid_symbols);
     }
     return false;
@@ -61,6 +67,9 @@ static bool scan_rule_gap(TSLexer *lexer, const bool *valid_symbols) {
     lexer->mark_end(lexer);
     if (lexer->lookahead == '.' && valid_symbols[VALUE_DOT] &&
         !(whitespace && valid_symbols[DESCENDANT_OP])) return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
+    bool value_prefix = !(whitespace && valid_symbols[DESCENDANT_OP]);
+    if (value_prefix && lexer->lookahead == '&' && valid_symbols[VALUE_AMPERSAND]) return scan_value_selector_prefix(lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
+    if (value_prefix && lexer->lookahead == '*' && valid_symbols[VALUE_ASTERISK]) return scan_value_selector_prefix(lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
     if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
         return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP]);
     }
@@ -81,6 +90,52 @@ static bool scan_value_dot(TSLexer *lexer, bool allow_invalid) {
         }
     }
     return !scan_dot_following_gap(lexer) || lexer->lookahead != '{';
+}
+
+static bool scan_value_selector_prefix(TSLexer *lexer, TSSymbol symbol, bool guard_rule) {
+    advance(lexer);
+    lexer->mark_end(lexer);
+    lexer->result_symbol = symbol;
+    if (!guard_rule) return true;
+    unsigned depth = 0;
+    while (!lexer->eof(lexer)) {
+        int32_t character = lexer->lookahead;
+        if (character == '\'' || character == '"') {
+            scan_quoted_component(lexer);
+            continue;
+        } else if (character == '\\') {
+            if (!scan_escape(lexer)) return true;
+            continue;
+        } else if (character == '/') {
+            advance(lexer);
+            scan_comment_body(lexer);
+            continue;
+        } else if (character == '&' || character == '*') {
+            return true;
+        } else if (character == '(' || character == '[') {
+            depth++;
+        } else if (character == ')' || character == ']') {
+            if (!depth) return true;
+            depth--;
+        } else if (!depth && (character == ';' || character == '}')) {
+            return true;
+        } else if (!depth && character == '{') {
+            return false;
+        }
+        advance(lexer);
+    }
+    return true;
+}
+
+static void scan_quoted_component(TSLexer *lexer) {
+    int32_t quote = lexer->lookahead;
+    advance(lexer);
+    while (!lexer->eof(lexer)) {
+        int32_t character = lexer->lookahead;
+        advance(lexer);
+        if (character == quote) return;
+        if (character == '\\' && !lexer->eof(lexer)) advance(lexer);
+    }
 }
 
 static bool scan_dot_following_gap(TSLexer *lexer) {

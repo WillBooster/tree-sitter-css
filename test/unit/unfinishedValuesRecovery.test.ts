@@ -69,6 +69,15 @@ test.each(['calc', 'f'].flatMap((name) => ['\n', '\r\n', '\n/**/'].map((gap) => 
 
 test.each([
   '.token .next',
+  '& .token .next',
+  '* .token .next',
+  '& [a*=x]',
+  '* [a*=x]',
+  '& "{ text }"',
+  '* "{ text }"',
+  String.raw`& \{`,
+  String.raw`* \{`,
+  'calc(2 * 3)',
   '.token/**/ .next',
   '.token + .next',
   '.5 .25',
@@ -126,6 +135,30 @@ test.each([
     expect(tree.rootNode.firstNamedChild?.type).toBe('import_statement');
     expect(tree.rootNode.firstNamedChild?.text).toBe(`@import ${url} screen;`);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['(', '[', 'f('].flatMap((opening) =>
+    ['\n', '\r\n', '\n/**/'].flatMap((gap) =>
+      ['& .after', '* .after', '&.after', '*.after'].map((selector) => [opening, gap, selector] as const)
+    )
+  )
+)('unfinished values retain complete nested selector boundaries: %s %s %s', (opening, gap, selector) => {
+  const parser = new Parser().setLanguage(language);
+  const rule = `${selector} { color: red; }`;
+  const source = `a { --x: ${opening}${gap}${rule}\n`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    const following = tree.rootNode.descendantsOfType('rule_set').find((node) => node.text === rule)!;
+    expect(following).toBeDefined();
+    expect(following.startIndex).toBe(source.indexOf(selector));
+    expect(following.firstNamedChild?.text).toBe(selector);
+    expect(following.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color']);
   } finally {
     tree.delete();
     parser.delete();

@@ -60,6 +60,8 @@ module.exports = grammar({
     $._incomplete_declaration_end,
     $._value_dot,
     $._invalid_value_dot,
+    $._value_ampersand,
+    $._value_asterisk,
   ],
 
   inline: $ => [
@@ -440,9 +442,9 @@ module.exports = grammar({
       $.namespace_selector,
     ),
 
-    nesting_selector: _ => '&',
+    nesting_selector: $ => choice('&', alias($._value_ampersand, '&')),
 
-    universal_selector: _ => '*',
+    universal_selector: $ => choice('*', alias($._value_asterisk, '*')),
 
     class_selector: $ => prec(1, seq(
       optional($._selector),
@@ -583,7 +585,7 @@ module.exports = grammar({
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._value, alias($._pseudo_binary_expression, $.binary_expression)),
       optional($._descendant_combinator),
-      choice('+', '-', '*', '/'),
+      choice('+', '-', '*', alias($._value_asterisk, '*'), '/'),
       optional($._descendant_combinator),
       $._value,
     )),
@@ -845,7 +847,7 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, '=', '?', '@', '#', '&', '|', '^', '$', '~', '<', '>', '*', '+', '/', '`'), $.plain_value)),
+        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', '@', '#', '|', '^', '$', '~', '<', '>', '+', '/', '`'), $.plain_value)),
         alias(token(prec(-1, '%')), $.plain_value),
         alias(token(prec(-1, ':')), $.plain_value),
       )),
@@ -926,8 +928,8 @@ module.exports = grammar({
     ),
 
     binary_expression: $ => choice(
-      prec.left(2, seq($._value, choice('+', '-', '*', '/'), $._value)),
-      prec.left(1, seq($._value, choice('+', '-', '*', '/'))),
+      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), '/'), $._value)),
+      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), '/'))),
     ),
 
     arguments: $ => seq(

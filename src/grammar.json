@@ -2292,12 +2292,40 @@
       ]
     },
     "nesting_selector": {
-      "type": "STRING",
-      "value": "&"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "&"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_ampersand"
+          },
+          "named": false,
+          "value": "&"
+        }
+      ]
     },
     "universal_selector": {
-      "type": "STRING",
-      "value": "*"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "*"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_value_asterisk"
+          },
+          "named": false,
+          "value": "*"
+        }
+      ]
     },
     "class_selector": {
       "type": "PREC",
@@ -4781,6 +4809,15 @@
               },
               {
                 "type": "STRING",
+                "value": "*"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_value_asterisk"
+                },
+                "named": false,
                 "value": "*"
               },
               {
@@ -8492,6 +8529,14 @@
                         "name": "_value_dot"
                       },
                       {
+                        "type": "SYMBOL",
+                        "name": "_value_ampersand"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_value_asterisk"
+                      },
+                      {
                         "type": "STRING",
                         "value": "="
                       },
@@ -8506,10 +8551,6 @@
                       {
                         "type": "STRING",
                         "value": "#"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "&"
                       },
                       {
                         "type": "STRING",
@@ -8534,10 +8575,6 @@
                       {
                         "type": "STRING",
                         "value": ">"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "*"
                       },
                       {
                         "type": "STRING",
@@ -9358,6 +9395,15 @@
                     "value": "*"
                   },
                   {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_value_asterisk"
+                    },
+                    "named": false,
+                    "value": "*"
+                  },
+                  {
                     "type": "STRING",
                     "value": "/"
                   }
@@ -9393,6 +9439,15 @@
                   },
                   {
                     "type": "STRING",
+                    "value": "*"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_value_asterisk"
+                    },
+                    "named": false,
                     "value": "*"
                   },
                   {
@@ -10280,6 +10335,14 @@
     {
       "type": "SYMBOL",
       "name": "_invalid_value_dot"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_value_ampersand"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_value_asterisk"
     }
   ],
   "inline": [
