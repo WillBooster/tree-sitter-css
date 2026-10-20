@@ -189,6 +189,9 @@ test.each([
   ['--x: foo: bar', ['--x']],
   ['(--x: foo: bar)', ['--x']],
   ['not (a: b) or SELECTOR(c:d)', ['a']],
+  ['--x: (a: b)', ['--x']],
+  ['--x: foo (a: b)', ['--x']],
+  ['not /**/ (a: b) and (c: d)', ['a', 'c']],
 ])('support property captures cover only the leading declaration name: %s', (condition, properties) => {
   const parser = new Parser().setLanguage(language);
   const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
