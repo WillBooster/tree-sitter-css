@@ -23,6 +23,7 @@ const followingNames = [
   'height',
   'padding',
   'top',
+  String.raw`co\6c or`,
   '--x',
   String.raw`--co\6c or`,
 ];

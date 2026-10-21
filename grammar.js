@@ -82,6 +82,7 @@ module.exports = grammar({
     $._invalid_import_supports,
     $._invalid_import_layer,
     $._hash_slash_tail,
+    $._operator_gap,
   ],
 
   inline: $ => [
@@ -92,21 +93,21 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.namespace_selector, $._pseudo_operand],
+    [$.adjacent_sibling_selector, $._pseudo_operand],
+    [$.sibling_selector, $._pseudo_operand],
+    [$.child_selector, $._pseudo_operand],
+    [$.universal_selector, $._pseudo_operand],
+    [$.nesting_selector, $._pseudo_operand],
+    [$.pseudo_class_arguments, $._pseudo_operand],
+    [$._selector, $.pseudo_class_arguments, $._pseudo_operand],
+    [$._selector, $.pseudo_class_arguments],
     [$._nth_functional_notation],
     [$.child_selector],
     [$.sibling_selector],
     [$.adjacent_sibling_selector],
-    [$._selector, $.pseudo_class_arguments, $._value],
     [$.attribute_selector, $._value],
-    [$.pseudo_class_arguments, $._value],
-    [$.pseudo_element_arguments, $._value],
-    [$._selector, $._value],
-    [$.child_selector, $._value],
-    [$.sibling_selector, $._value],
-    [$.adjacent_sibling_selector, $._value],
-    [$.namespace_selector, $._value],
     [$.selectors, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
-    [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_arguments],
     [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_with_selector_arguments],
     [$._escaped_attribute_namespace, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
     [$.at_rule_bracketed, $._selector, $.attribute_selector],
@@ -114,11 +115,9 @@ module.exports = grammar({
     [$._at_rule_component, $._selector, $.attribute_selector],
     [$._selector, $.attribute_selector],
     [$.selectors],
-    [$.class_name],
     [$.pseudo_class_selector],
     [$.pseudo_element_selector],
     [$.selectors, $.pseudo_class_selector],
-    [$.selectors, $.descendant_selector],
     [$.selectors, $.child_selector],
     [$.selectors, $.sibling_selector],
     [$.selectors, $.adjacent_sibling_selector],
@@ -158,9 +157,7 @@ module.exports = grammar({
     [$._at_rule_component, $.general_enclosed_query, $.style_query],
     [$.container_statement, $._at_rule_component, $.general_enclosed_query, $.style_query],
     [$.at_rule_parenthesized, $._container_function_arguments],
-    [$.general_enclosed_query],
     [$.general_enclosed_query, $._style_range_operand],
-    [$.at_rule_value],
     [$.general_enclosed_query, $._at_rule_component],
     [$.general_enclosed_query, $._at_rule_component, $._style_range_operand],
     [$.at_rule_value, $._style_range_operand],
@@ -691,13 +688,25 @@ module.exports = grammar({
       ')',
     )),
 
+    // The standalone `#`, `:` and delimiter values of `_value` stay operands: as in declarations, they keep these
+    // single-character tokens from becoming conflict-free in the generator's error-recovery analysis, which would drop
+    // `#id`, `::` and custom-property names from the tokens error recovery can resume at.
+    _pseudo_operand: $ => choice(
+      pseudoValue($),
+      pseudoEscapedValue($),
+      '#',
+      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
+      alias(token(prec(-1, ':')), $.plain_value),
+    ),
+
     _pseudo_binary_expression: $ => prec.left(3, seq(
-      choice($._value, alias($._pseudo_binary_expression, $.binary_expression)),
-      optional($._descendant_combinator),
+      choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
+      optional($._operator_gap),
       choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash),
       optional($._descendant_combinator),
-      $._value,
+      $._pseudo_operand,
     )),
+
 
     _nth_functional_notation: $ => choice(
       /[+-]?\d*[nN][\t\n\f\r ]*[+-][\t\n\f\r ]*\d+/,
@@ -714,7 +723,7 @@ module.exports = grammar({
       ')',
     ),
 
-    _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end),
+    _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end, $._operator_gap),
 
     incomplete_declaration: $ => seq(
       alias(propertyIdentifier($), $.property_name),
@@ -1072,20 +1081,11 @@ module.exports = grammar({
       '/',
     )),
 
-    plain_value: _ => token(choice(
-      /<[a-zA-Z-]+>[+#]?/,
-      seq(
-        repeat(choice(
-          /[-_]/,
-          /\/[^\*\s,;:!{}()\[\]]/,
-        )),
-        /[a-zA-Z]/,
-        repeat(choice(
-          /[^/\s,;:!{}()\[\]]/,
-          /\/[^\*\s,;:!{}()\[\]]/,
-        )),
-      ),
-    )),
+    plain_value: _ => plainValue(),
+
+    // Plain values in generic pseudo arguments end at selector delimiters, so that compound and namespaced selectors
+    // such as `a.b:hover` and `svg|a` keep their selector interpretation.
+    _pseudo_plain_value: _ => plainValue('.#|>+~'),
   },
 });
 
@@ -1134,12 +1134,47 @@ function valueSequence($) {
 
 function pseudoArgument($) {
   return choice(
-    seq($._selector, optional($._descendant_combinator)),
-    prec.left(repeat1(seq(
-      choice($._value, alias(choice($._escaped_identifier, escapedName), $.plain_value), alias($._pseudo_binary_expression, $.binary_expression)),
-      optional($._descendant_combinator),
-    ))),
+    prec.dynamic(1, seq($._selector, optional($._descendant_combinator))),
+    prec.left(repeat1(seq(choice(pseudoComponent($), pseudoEscapedValue($)), optional($._descendant_combinator)))),
   );
+}
+
+function pseudoComponent($) {
+  return choice(prec(-1, pseudoValue($)), alias($._pseudo_binary_expression, $.binary_expression));
+}
+
+function pseudoValue($) {
+  return choice(
+    alias($.identifier, $.plain_value),
+    $.integer_value,
+    $.float_value,
+    $.string_value,
+    $.parenthesized_value,
+    $.call_expression,
+    $.url_value,
+    $.important,
+    alias($._pseudo_plain_value, $.plain_value),
+    $.color_value,
+    $.grid_value,
+    alias(token(seq('*-', genericName)), $.plain_value),
+  );
+}
+
+function pseudoEscapedValue($) {
+  return alias(choice($._escaped_identifier, escapedName), $.plain_value);
+}
+
+function plainValue(selectorDelimiters = '') {
+  const continuation = new RegExp(`[^/\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
+  const slashContinuation = new RegExp(`\\/[^\\*\\s,;:!{}()\\[\\]${selectorDelimiters}]`);
+  return token(choice(
+    /<[a-zA-Z-]+>[+#]?/,
+    seq(
+      repeat(choice(/[-_]/, slashContinuation)),
+      /[a-zA-Z]/,
+      repeat(choice(continuation, slashContinuation)),
+    ),
+  ));
 }
 
 function cssKeyword(word) {
