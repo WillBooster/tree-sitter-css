@@ -39,6 +39,7 @@ enum TokenType {
     IMPORT_LAYER_START,
     INVALID_IMPORT_SUPPORTS,
     INVALID_IMPORT_LAYER,
+    HASH_SLASH_TAIL,
 };
 
 typedef Array(char) SupportsDelimiters;
@@ -83,7 +84,9 @@ static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth)
 static Memo *memo_slot(Scanner *scanner, uint32_t byte);
 static void grow_memo(Scanner *scanner);
 static bool scan_dot_following_gap(TSLexer *lexer);
+static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant);
+static bool finish_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool comment);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
 static bool scan_comment_body(TSLexer *lexer);
@@ -142,6 +145,9 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[VALUE_DOT] && lexer->lookahead == '.') return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
+    if (valid_symbols[HASH_SLASH_TAIL] && !valid_symbols[AT_RULE_SLASH] && lexer->lookahead == '/') {
+        return scan_hash_slash_tail(lexer, valid_symbols);
+    }
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && !valid_symbols[AT_RULE_SLASH] &&
         (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
         return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP]);
@@ -657,11 +663,34 @@ static bool scan_dot_following_gap(TSLexer *lexer) {
     return true;
 }
 
+// A run of two or more slashes attached to a hash is delimiter components rather than a line comment, as it is inside
+// a plain value, but a slash followed by `*` opens a block comment, so the run ends before it. A lone slash leaves the
+// position to the incomplete-declaration scan it would otherwise reach.
+static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols) {
+    lexer->mark_end(lexer);
+    advance(lexer);
+    if (lexer->lookahead != '/') {
+        return valid_symbols[INCOMPLETE_DECLARATION_END] && scan_comment_body(lexer) &&
+            finish_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP], true);
+    }
+    lexer->mark_end(lexer);
+    while (lexer->lookahead == '/') {
+        advance(lexer);
+        if (lexer->lookahead == '*') break;
+        lexer->mark_end(lexer);
+    }
+    lexer->result_symbol = HASH_SLASH_TAIL;
+    return true;
+}
+
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant) {
+    lexer->mark_end(lexer);
+    return finish_incomplete_declaration_end(lexer, allow_descendant, false);
+}
+
+static bool finish_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool comment) {
     bool newline = false;
     bool whitespace = false;
-    bool comment = false;
-    lexer->mark_end(lexer);
     for (;;) {
         if (iswspace(lexer->lookahead)) {
             whitespace = true;
