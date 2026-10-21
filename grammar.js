@@ -79,6 +79,7 @@ module.exports = grammar({
     $._import_layer_start,
     $._invalid_import_supports,
     $._invalid_import_layer,
+    $._hash_slash_tail,
   ],
 
   inline: $ => [
@@ -945,8 +946,7 @@ module.exports = grammar({
       prec(-1, choice(
         alias($.identifier, $.plain_value),
         $.plain_value,
-        // `//` attached to a complete hash is two delimiter components, as after other names, not a line comment.
-        seq(choice($.color_value, $.hash_value), optional(alias(token.immediate(prec(1, /\/\/+/)), $.plain_value))),
+        seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
         '#',
         $.integer_value,
         $.float_value,

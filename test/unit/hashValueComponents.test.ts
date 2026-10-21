@@ -95,3 +95,24 @@ test.each([
     parser.delete();
   }
 });
+
+test.each(['#item', '#item/', '#item//', '#abc//'])(
+  'a block comment opened right after %s/ keeps its delimiters inside the comment',
+  (prefix) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `a { --x: ${prefix}/* ; } .bad {} */; color: red; } .after {}`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(['/* ; } .bad {} */']);
+      expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+        `--x: ${prefix}/* ; } .bad {} */;`,
+        'color: red;',
+      ]);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
