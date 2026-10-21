@@ -39,6 +39,7 @@ enum TokenType {
     IMPORT_LAYER_START,
     INVALID_IMPORT_SUPPORTS,
     INVALID_IMPORT_LAYER,
+    HASH_SLASH_TAIL,
     OPERATOR_GAP,
 };
 
@@ -84,7 +85,10 @@ static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth)
 static Memo *memo_slot(Scanner *scanner, uint32_t byte);
 static void grow_memo(Scanner *scanner);
 static bool scan_dot_following_gap(TSLexer *lexer);
+static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap);
+static bool finish_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap, bool comment);
+static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool gap, bool comment, bool *consumed, bool *spaced);
 static bool scan_property_start(TSLexer *lexer, int32_t first, bool first_consumed);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
@@ -145,6 +149,9 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[VALUE_DOT] && lexer->lookahead == '.') return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
+    if (valid_symbols[HASH_SLASH_TAIL] && !valid_symbols[AT_RULE_SLASH] && lexer->lookahead == '/') {
+        return scan_hash_slash_tail(lexer, valid_symbols);
+    }
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && !valid_symbols[AT_RULE_SLASH] &&
         (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
         return scan_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP], valid_symbols[OPERATOR_GAP]);
@@ -662,11 +669,34 @@ static bool scan_dot_following_gap(TSLexer *lexer) {
     return true;
 }
 
+// A run of two or more slashes attached to a hash is delimiter components rather than a line comment, as it is inside
+// a plain value, but a slash followed by `*` opens a block comment, so the run ends before it. A lone slash leaves the
+// position to the incomplete-declaration scan it would otherwise reach.
+static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols) {
+    lexer->mark_end(lexer);
+    advance(lexer);
+    if (lexer->lookahead != '/') {
+        return valid_symbols[INCOMPLETE_DECLARATION_END] && scan_comment_body(lexer) &&
+            finish_incomplete_declaration_end(lexer, valid_symbols[DESCENDANT_OP], valid_symbols[OPERATOR_GAP], true);
+    }
+    lexer->mark_end(lexer);
+    while (lexer->lookahead == '/') {
+        advance(lexer);
+        if (lexer->lookahead == '*') break;
+        lexer->mark_end(lexer);
+    }
+    lexer->result_symbol = HASH_SLASH_TAIL;
+    return true;
+}
+
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap) {
+    lexer->mark_end(lexer);
+    return finish_incomplete_declaration_end(lexer, allow_descendant, allow_gap, false);
+}
+
+static bool finish_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap, bool comment) {
     bool newline = false;
     bool whitespace = false;
-    bool comment = false;
-    lexer->mark_end(lexer);
     for (;;) {
         if (iswspace(lexer->lookahead)) {
             whitespace = true;
@@ -686,21 +716,27 @@ static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendan
         first == '[' || first == '-' || first == '*' ||
         first == '&' || first == ':' || first == '\\' || is_name_character(first));
     lexer->result_symbol = DESCENDANT_OP;
+    bool consumed = false;
+    bool spaced = false;
+    if (scan_gap_operator(lexer, allow_gap, whitespace || comment, comment, &consumed, &spaced)) {
+        return true;
+    }
+    if (newline && !spaced && scan_property_start(lexer, first, consumed)) {
+        lexer->result_symbol = INCOMPLETE_DECLARATION_END;
+        return true;
+    }
+    return descendant;
+}
+
+static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool gap, bool comment, bool *consumed, bool *spaced) {
+    int32_t first = lexer->lookahead;
     // After a comment gap, `+` and `/` cannot start a selector component, so they end the gap as an operator.
     if (allow_gap && comment && (first == '+' || first == '/')) {
         lexer->result_symbol = OPERATOR_GAP;
         return true;
     }
-    bool operator = (whitespace || comment) && (first == '*' || first == '-');
-    bool spaced = false;
-    if (operator && scan_operator_gap(lexer, allow_gap, &spaced)) {
-        return true;
-    }
-    if (newline && !spaced && scan_property_start(lexer, first, operator)) {
-        lexer->result_symbol = INCOMPLETE_DECLARATION_END;
-        return true;
-    }
-    return descendant;
+    *consumed = gap && (first == '*' || first == '-');
+    return *consumed && scan_operator_gap(lexer, allow_gap, spaced);
 }
 
 static bool scan_property_start(TSLexer *lexer, int32_t first, bool first_consumed) {

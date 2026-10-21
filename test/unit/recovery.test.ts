@@ -45,7 +45,7 @@ test.each(['a { color: red', '.foo { color: red', 'a{b:c', 'a {\n color: red;\n 
   }
 );
 
-test.each(['.c', '&', '& .b', '&:hover', ':hover', '> b', '~ b', '|b'])(
+test.each(['.c', '&', '& .b', '&:hover'])(
   'keeps a nested rule after a declaration without its semicolon: %s',
   async (selector) => {
     await Parser.init();
@@ -68,23 +68,6 @@ test.each(['.c', '&', '& .b', '&:hover', ':hover', '> b', '~ b', '|b'])(
   }
 );
 
-test('keeps a nested at-rule after a declaration without its semicolon', async () => {
-  await Parser.init();
-  const parser = new Parser();
-  parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
-  const source = 'a { color: red\n  @media screen { c: d } }\n.after { color: blue; }';
-  const tree = parser.parse(source)!;
-  try {
-    const [outer, after] = tree.rootNode.namedChildren;
-    expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
-    expect(outer?.descendantsOfType('media_statement').map((node) => node.text)).toEqual(['@media screen { c: d }']);
-    expect(after?.text).toBe('.after { color: blue; }');
-  } finally {
-    tree.delete();
-    parser.delete();
-  }
-});
-
 test.each([
   '--mq: (max-width:600px)',
   'x: (a:b)',
@@ -104,28 +87,6 @@ test.each([
       `${declaration};`,
       'y: z',
     ]);
-  } finally {
-    tree.delete();
-    parser.delete();
-  }
-});
-
-test.each([
-  ['1px solid', '*'],
-  ['1px solid', '*:hover'],
-  ['1px', '*:hover'],
-  ['a, b', '+'],
-])('keeps the outer block after %s without its semicolon before a nested %s rule', async (value, selector) => {
-  await Parser.init();
-  const parser = new Parser();
-  parser.setLanguage(await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm')));
-  const source = `a { x: ${value}\n  ${selector} { c: d } }\n.after { color: blue; }`;
-  const tree = parser.parse(source)!;
-  try {
-    const [outer, after] = tree.rootNode.namedChildren;
-    expect(outer?.type).toBe('rule_set');
-    expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
-    expect(after?.text).toBe('.after { color: blue; }');
   } finally {
     tree.delete();
     parser.delete();

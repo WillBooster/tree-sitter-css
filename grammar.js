@@ -26,6 +26,11 @@ const genericName = repeat1(genericNameCharacter);
 
 const nonAsciiNameStart = /[\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
 const nameStart = choice(/[a-zA-Z_]/, nonAsciiNameStart);
+// The non-ASCII code points that `nonAsciiNameStart` excludes, which CSS tokenizes as delimiters. The noncharacters
+// U+FFFE and U+FFFF form a token of their own because, in one set with the others, the generator emits an empty C
+// condition (WillBooster/tree-sitter#234).
+const nonAsciiDelimiter = /[\u0080-\u00B6\u00B8-\u00BF\u00D7\u00F7\u037E\u2000-\u200B\u200E-\u203E\u2041-\u206F\u2190-\u2BFF\u2FF0-\u3000\uE000-\uF8FF\uFDD0-\uFDEF]/u;
+const nonAsciiNoncharacterDelimiter = /[\uFFFE\uFFFF]/u;
 const nameContinue = choice(nameStart, /[0-9-]/);
 const idName = seq(
   choice('--', seq(optional('-'), choice(nameStart, cssEscape))),
@@ -76,6 +81,7 @@ module.exports = grammar({
     $._import_layer_start,
     $._invalid_import_supports,
     $._invalid_import_layer,
+    $._hash_slash_tail,
     $._operator_gap,
   ],
 
@@ -87,25 +93,21 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.namespace_selector, $._pseudo_operand],
+    [$.adjacent_sibling_selector, $._pseudo_operand],
+    [$.sibling_selector, $._pseudo_operand],
+    [$.child_selector, $._pseudo_operand],
+    [$.universal_selector, $._pseudo_operand],
+    [$.nesting_selector, $._pseudo_operand],
     [$.pseudo_class_arguments, $._pseudo_operand],
     [$._selector, $.pseudo_class_arguments, $._pseudo_operand],
     [$._selector, $.pseudo_class_arguments],
-    [$._selector, $._pseudo_operand],
     [$._nth_functional_notation],
     [$.child_selector],
     [$.sibling_selector],
     [$.adjacent_sibling_selector],
-    [$._selector, $.pseudo_class_arguments, $._value],
     [$.attribute_selector, $._value],
-    [$.pseudo_class_arguments, $._value],
-    [$.pseudo_element_arguments, $._value],
-    [$._selector, $._value],
-    [$.child_selector, $._value],
-    [$.sibling_selector, $._value],
-    [$.adjacent_sibling_selector, $._value],
-    [$.namespace_selector, $._value],
     [$.selectors, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
-    [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_arguments],
     [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_with_selector_arguments],
     [$._escaped_attribute_namespace, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
     [$.at_rule_bracketed, $._selector, $.attribute_selector],
@@ -113,11 +115,9 @@ module.exports = grammar({
     [$._at_rule_component, $._selector, $.attribute_selector],
     [$._selector, $.attribute_selector],
     [$.selectors],
-    [$.class_name],
     [$.pseudo_class_selector],
     [$.pseudo_element_selector],
     [$.selectors, $.pseudo_class_selector],
-    [$.selectors, $.descendant_selector],
     [$.selectors, $.child_selector],
     [$.selectors, $.sibling_selector],
     [$.selectors, $.adjacent_sibling_selector],
@@ -157,9 +157,7 @@ module.exports = grammar({
     [$._at_rule_component, $.general_enclosed_query, $.style_query],
     [$.container_statement, $._at_rule_component, $.general_enclosed_query, $.style_query],
     [$.at_rule_parenthesized, $._container_function_arguments],
-    [$.general_enclosed_query],
     [$.general_enclosed_query, $._style_range_operand],
-    [$.at_rule_value],
     [$.general_enclosed_query, $._at_rule_component],
     [$.general_enclosed_query, $._at_rule_component, $._style_range_operand],
     [$.at_rule_value, $._style_range_operand],
@@ -690,7 +688,16 @@ module.exports = grammar({
       ')',
     )),
 
-    _pseudo_operand: $ => choice(pseudoValue($), pseudoEscapedValue($)),
+    // The standalone `#`, `:` and delimiter values of `_value` stay operands: as in declarations, they keep these
+    // single-character tokens from becoming conflict-free in the generator's error-recovery analysis, which would drop
+    // `#id`, `::` and custom-property names from the tokens error recovery can resume at.
+    _pseudo_operand: $ => choice(
+      pseudoValue($),
+      pseudoEscapedValue($),
+      '#',
+      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
+      alias(token(prec(-1, ':')), $.plain_value),
+    ),
 
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
@@ -950,7 +957,8 @@ module.exports = grammar({
       prec(-1, choice(
         alias($.identifier, $.plain_value),
         $.plain_value,
-        $.color_value,
+        seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
+        '#',
         $.integer_value,
         $.float_value,
         $.string_value,
@@ -960,7 +968,7 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '#', '|', '^', '$', '~', '<', '>', '+', valueSlash, '`'), $.plain_value)),
+        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
         alias(token(prec(-1, '%')), $.plain_value),
         alias(token(prec(-1, ':')), $.plain_value),
       )),
@@ -973,7 +981,9 @@ module.exports = grammar({
       ')',
     ),
 
-    color_value: _ => seq('#', token.immediate(/[0-9a-fA-F]{3,8}/)),
+    color_value: _ => token(seq('#', choice(/[0-9a-fA-F]{3,4}/, /[0-9a-fA-F]{6}/, /[0-9a-fA-F]{8}/))),
+
+    hash_value: _ => token(seq('#', repeat1(choice(nameContinue, cssEscape)))),
 
     string_value: $ => choice(
       seq(
