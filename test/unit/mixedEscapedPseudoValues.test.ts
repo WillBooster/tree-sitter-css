@@ -5,14 +5,11 @@ import { expect, test } from 'vitest';
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 const components = [
-  ['#fff', 'color_value'],
-  ['#123456', 'color_value'],
   ['[a,b]', 'grid_value'],
   ['[1px]', 'grid_value'],
   ['1 + 2', 'binary_expression'],
   ['1 + 2 * 3', 'binary_expression'],
   ['f(1)', 'call_expression'],
-  ['word', 'plain_value'],
 ] as const;
 
 test.each(

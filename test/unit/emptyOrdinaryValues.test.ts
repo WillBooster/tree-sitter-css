@@ -25,6 +25,7 @@ const followingNames = [
   'top',
   String.raw`co\6c or`,
   '--x',
+  String.raw`--co\6c or`,
 ];
 const inputs = ['width', 'margin', 'color', 'background', 'padding'].flatMap((broken) =>
   followingNames.flatMap((name) => ['', '/**/', '\n/* comment */\n'].map((gap) => [broken, name, gap] as const))

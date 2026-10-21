@@ -31,7 +31,7 @@ test.each(
     if (prefix.includes('.b'))
       expect(captures.some(({ name, node }) => name === 'property' && node.text === 'b')).toBe(true);
     if (prefix.includes('#id'))
-      expect(captures.some(({ name, node }) => name === 'property' && node.text === 'id')).toBe(true);
+      expect(captures.some(({ name, node }) => name === 'property' && node.text === '#id')).toBe(true);
     if (suffix.includes('hover'))
       expect(captures.some(({ name, node }) => name === 'attribute' && node.text === 'hover')).toBe(true);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');

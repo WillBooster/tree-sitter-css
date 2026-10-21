@@ -51,6 +51,8 @@
 ((plain_value) @variable
  (#match? @variable "^--"))
 
+"@scope" @keyword
+(scope_statement "to" @keyword)
 "@container" @keyword
 "@media" @keyword
 "@import" @keyword

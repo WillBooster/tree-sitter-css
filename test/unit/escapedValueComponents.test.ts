@@ -61,7 +61,7 @@ test.each(
 });
 
 test.each(
-  ['.', '=', '%', '?', '#', '&', '|', '^', '$', '~', ':', '<', '>', '*', '+', '/', '`'].flatMap((delimiter) =>
+  ['.', '=', '%', '?', '@', '#', '&', '|', '^', '$', '~', ':', '<', '>', '*', '+', '/', '`'].flatMap((delimiter) =>
     ['', 'a'].flatMap((suffix) => [false, true].map((semicolon) => [delimiter, suffix, semicolon] as const))
   )
 )('escaped function values retain delimiter tails: %s%s %s', (delimiter, suffix, semicolon) => {
