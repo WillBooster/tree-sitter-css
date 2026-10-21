@@ -72,3 +72,26 @@ test('a separated line comment after a hash remains a comment', () => {
     parser.delete();
   }
 });
+
+test.each([
+  ['#abc©', 'color_value'],
+  ['#item→x', 'hash_value'],
+  ['#item …', 'hash_value'],
+  ['#abcdef\u{E000}', 'color_value'],
+])('non-name code points after %s stay value components', (value, type) => {
+  const parser = new Parser().setLanguage(language);
+  const source = `a { --x: ${value}; color: red; } .after {}`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType(type)[0]!.text).toBe(value.match(/^#[\w]+/)![0]);
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+      `--x: ${value};`,
+      'color: red;',
+    ]);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});

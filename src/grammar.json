@@ -9378,6 +9378,18 @@
                       {
                         "type": "STRING",
                         "value": "`"
+                      },
+                      {
+                        "type": "TOKEN",
+                        "content": {
+                          "type": "PREC",
+                          "value": -1,
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "[\\u0080-\\u00B6\\u00B8-\\u00BF\\u00D7\\u00F7\\u037E\\u2000-\\u200B\\u200E-\\u203E\\u2041-\\u206F\\u2190-\\u2BFF\\u2FF0-\\u3000\\uE000-\\uF8FF\\uFDD0-\\uFDEF]",
+                            "flags": "u"
+                          }
+                        }
                       }
                     ]
                   },

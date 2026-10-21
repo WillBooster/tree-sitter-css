@@ -26,6 +26,9 @@ const genericName = repeat1(genericNameCharacter);
 
 const nonAsciiNameStart = /[\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
 const nameStart = choice(/[a-zA-Z_]/, nonAsciiNameStart);
+// The non-ASCII code points that `nonAsciiNameStart` excludes, which CSS tokenizes as delimiters. The noncharacters
+// U+FFFE and U+FFFF are left out because, with them, the generator emits an empty C condition for this set.
+const nonAsciiDelimiter = /[\u0080-\u00B6\u00B8-\u00BF\u00D7\u00F7\u037E\u2000-\u200B\u200E-\u203E\u2041-\u206F\u2190-\u2BFF\u2FF0-\u3000\uE000-\uF8FF\uFDD0-\uFDEF]/u;
 const nameContinue = choice(nameStart, /[0-9-]/);
 const idName = seq(
   choice('--', seq(optional('-'), choice(nameStart, cssEscape))),
@@ -954,7 +957,7 @@ module.exports = grammar({
         $.call_expression,
         $.url_value,
         $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`'), $.plain_value)),
+        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter))), $.plain_value)),
         alias(token(prec(-1, '%')), $.plain_value),
         alias(token(prec(-1, ':')), $.plain_value),
       )),
