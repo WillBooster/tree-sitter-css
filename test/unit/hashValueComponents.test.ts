@@ -78,6 +78,8 @@ test.each([
   ['#item→x', 'hash_value'],
   ['#item …', 'hash_value'],
   ['#abcdef\u{E000}', 'color_value'],
+  ['#abc\u{FFFE}', 'color_value'],
+  ['#item\u{FFFF}', 'hash_value'],
 ])('non-name code points after %s stay value components', (value, type) => {
   const parser = new Parser().setLanguage(language);
   const source = `a { --x: ${value}; color: red; } .after {}`;
