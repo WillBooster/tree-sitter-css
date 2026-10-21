@@ -92,3 +92,20 @@ test.each(
     parser.delete();
   }
 });
+
+test.each([':not(.x/**/+.y)', ':is(a/**/+b)', ':has(a/* c */+b)', ':foo(a/**/+b)'])(
+  'a comment glued before `+` keeps the adjacent-sibling combinator: %s',
+  (selector) => {
+    const parser = new Parser().setLanguage(language);
+    const tree = parser.parse(`${selector} {}`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const argument = tree.rootNode.descendantsOfType('arguments')[0]!.firstNamedChild!;
+      expect(argument.type).toBe('adjacent_sibling_selector');
+      expect(argument.text).toBe(selector.slice(selector.indexOf('(') + 1, -1));
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);

@@ -88,7 +88,7 @@ static bool scan_dot_following_gap(TSLexer *lexer);
 static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap);
 static bool finish_incomplete_declaration_end(TSLexer *lexer, bool allow_descendant, bool allow_gap, bool comment);
-static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool gap, bool comment, bool *consumed, bool *spaced);
+static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool comment, bool *consumed, bool *spaced);
 static bool scan_property_start(TSLexer *lexer, int32_t first, bool first_consumed);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
@@ -718,7 +718,7 @@ static bool finish_incomplete_declaration_end(TSLexer *lexer, bool allow_descend
     lexer->result_symbol = DESCENDANT_OP;
     bool consumed = false;
     bool spaced = false;
-    if (scan_gap_operator(lexer, allow_gap, whitespace || comment, comment, &consumed, &spaced)) {
+    if (whitespace && scan_gap_operator(lexer, allow_gap, comment, &consumed, &spaced)) {
         return true;
     }
     if (newline && !spaced && scan_property_start(lexer, first, consumed)) {
@@ -728,14 +728,17 @@ static bool finish_incomplete_declaration_end(TSLexer *lexer, bool allow_descend
     return descendant;
 }
 
-static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool gap, bool comment, bool *consumed, bool *spaced) {
+// Called only after whitespace: a gap glued to the preceding component, as in `a/**/+b`, keeps `+` an adjacent-sibling
+// combinator instead of a descendant gap before a relative selector.
+static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool comment, bool *consumed, bool *spaced) {
     int32_t first = lexer->lookahead;
-    // After a comment gap, `+` and `/` cannot start a selector component, so they end the gap as an operator.
+    // A spaced gap containing a comment otherwise ends as a descendant combinator, which pseudo arithmetic such as
+    // `1 /* c */ + 2` cannot take before its operator.
     if (allow_gap && comment && (first == '+' || first == '/')) {
         lexer->result_symbol = OPERATOR_GAP;
         return true;
     }
-    *consumed = gap && (first == '*' || first == '-');
+    *consumed = first == '*' || first == '-';
     return *consumed && scan_operator_gap(lexer, allow_gap, spaced);
 }
 
