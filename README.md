@@ -21,6 +21,7 @@ Imports expose optional layer assignment and support conditions before media que
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
 Scope statements expose independently optional start and end selector fields.
 Custom properties accept empty and comment-only values, including important declarations.
+A custom property whose whole value is a `{}` block, as in `--mixin: { color: red; }`, exposes it as a `block_value`.
 Escaped function values remain complete in arithmetic and nested parentheses.
 Class names accept digit- or hyphen-starting continuations after escape sequences.
 Nesting selectors may follow descendant combinators, as in `b &`.

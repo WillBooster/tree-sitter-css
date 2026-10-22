@@ -1,0 +1,47 @@
+==============================
+Custom properties accept block values
+==============================
+
+:root {
+  --mixin: { color: red; b: c };
+  --empty: {} !important;
+  --nested:{a:{b}}
+}
+.after {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (pseudo_class_selector
+        (class_name
+          (identifier))))
+    (block
+      (declaration
+        (property_name)
+        (block_value
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_value)))
+      (declaration
+        (property_name)
+        (block_value)
+        (important))
+      (declaration
+        (property_name)
+        (block_value
+          (at_rule_value)
+          (at_rule_delimiter)
+          (at_rule_braced
+            (at_rule_value))))))
+  (rule_set
+    (selectors
+      (class_selector
+        (class_name
+          (identifier))))
+    (block)))

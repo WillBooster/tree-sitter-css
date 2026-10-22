@@ -7600,6 +7600,23 @@
                       {
                         "type": "STRING",
                         "value": ":"
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "at_rule_braced"
+                            },
+                            "named": true,
+                            "value": "block_value"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -7964,6 +7981,23 @@
                   {
                     "type": "STRING",
                     "value": ":"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "at_rule_braced"
+                        },
+                        "named": true,
+                        "value": "block_value"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
                   }
                 ]
               }

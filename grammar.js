@@ -1115,6 +1115,7 @@ function declarationValue($) {
         alias($._custom_property_component, $.property_name),
         optional($._descendant_combinator),
         ':',
+        optional(alias($.at_rule_braced, $.block_value)),
       ),
     ),
     optional($.important),
