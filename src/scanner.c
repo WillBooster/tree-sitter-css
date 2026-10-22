@@ -86,6 +86,7 @@ static bool scan_component_gap(TSLexer *lexer, bool *whitespace);
 static bool is_css_whitespace(int32_t character);
 static bool can_scan_value_join(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols);
+static bool scan_unquoted_url_tail(TSLexer *lexer);
 static bool is_unit_character(int32_t character);
 static bool scan_plain_value_tail(TSLexer *lexer);
 static bool is_plain_value_character(int32_t character);
@@ -570,10 +571,34 @@ static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols) {
         return true;
     }
     bool plain = lexer->lookahead != '%';
-    while (is_unit_character(lexer->lookahead)) advance(lexer);
-    lexer->result_symbol = plain && scan_plain_value_tail(lexer)
+    unsigned length = 0;
+    bool url_name = true;
+    while (is_unit_character(lexer->lookahead)) {
+        url_name = url_name && length < 3 && keyword_character(lexer->lookahead) == "url"[length];
+        length++;
+        advance(lexer);
+    }
+    bool continuation = plain && scan_plain_value_tail(lexer);
+    if (!continuation && url_name && length == 3 && lexer->lookahead == '(') continuation = scan_unquoted_url_tail(lexer);
+    lexer->result_symbol = continuation
         ? DECLARATION_CONTINUATION : VALUE_UNIT_START;
     return valid_symbols[lexer->result_symbol];
+}
+
+static bool scan_unquoted_url_tail(TSLexer *lexer) {
+    advance(lexer);
+    while (is_css_whitespace(lexer->lookahead)) advance(lexer);
+    while (!lexer->eof(lexer) && lexer->lookahead != ')' && !is_css_whitespace(lexer->lookahead)) {
+        if (lexer->lookahead <= 0x20 || lexer->lookahead == 0x7F || lexer->lookahead == '\'' ||
+            lexer->lookahead == '"' || lexer->lookahead == '(') return false;
+        if (lexer->lookahead != '\\') {
+            advance(lexer);
+            continue;
+        }
+        if (!scan_escape(lexer)) return false;
+    }
+    while (is_css_whitespace(lexer->lookahead)) advance(lexer);
+    return lexer->lookahead == ')';
 }
 
 static bool is_unit_character(int32_t character) {

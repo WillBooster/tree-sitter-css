@@ -105,6 +105,7 @@ const editedValues = [
   'alpha:beta:\n gamma:\n delta;',
   'alpha\n beta\n gamma;',
   'alpha/**/\n beta/**/\n gamma;',
+  '1url(x\n )\n beta;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
