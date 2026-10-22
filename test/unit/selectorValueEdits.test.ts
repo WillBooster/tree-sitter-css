@@ -7,24 +7,36 @@ import { expect, test } from 'vitest';
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 const highlights = fs.readFileSync(path.join(import.meta.dirname, '../../queries/highlights.scm'), 'utf8');
-const editCases = ['', '/* pad */ ', '/* Ω🙂\r\n */ '].flatMap((prefix) =>
-  [' ', '\n', '\r\n', '\n/**/'].flatMap((gap) => {
-    const source = `${prefix}a { --x: f(& alpha${gap}& beta); } .after { z: y; }`;
-    return [
-      [source.indexOf('beta'), 4, 'word'],
-      [source.indexOf('beta'), 4, '{   '],
-      [source.indexOf('alpha'), 5, '"{ }"'],
-      [source.indexOf('beta'), 4, '\n& * .nested { z: y; }'],
-      [0, 0, '/* inserted Ω🙂\n */ '],
-      [0, prefix.length, ''],
-      [source.indexOf(');'), 1, '{'],
-    ].map(([index, removed, inserted]) => ({
-      source,
-      index: Number(index),
-      removed: Number(removed),
-      inserted: String(inserted),
-    }));
-  })
+const valueParts = [
+  ['& ', ''],
+  ['', ' * 1'],
+] as const;
+const editCases = valueParts.flatMap(([before, after]) =>
+  ['', '/* pad */ ', '/* Ω🙂\r\n */ '].flatMap((prefix) =>
+    [' ', '\n', '\r\n', '\n/**/'].flatMap((gap) => {
+      const source = `${prefix}a { --x: f(${before}alpha${after}${gap}${before}beta${after}); } .after { z: y; }`;
+      return [
+        [source.indexOf('beta'), 4, 'word'],
+        [source.indexOf('beta'), 4, '{   '],
+        [source.indexOf('alpha'), 5, '"{ }"'],
+        [source.indexOf('beta'), 4, '\n& * .nested { z: y; }'],
+        [0, 0, '/* inserted Ω🙂\n */ '],
+        [0, prefix.length, ''],
+        [source.indexOf(');'), 1, '{'],
+        ...(after
+          ? [
+              [source.indexOf('* 1') + 2, 1, 'word'],
+              [source.indexOf('* 1') + 2, 1, '.nested { z: y; }'],
+            ]
+          : []),
+      ].map(([index, removed, inserted]) => ({
+        source,
+        index: Number(index),
+        removed: Number(removed),
+        inserted: String(inserted),
+      }));
+    })
+  )
 );
 
 test.each(editCases)('selector-like values survive real edits and undo: %j', ({ source, index, removed, inserted }) => {
@@ -51,53 +63,66 @@ test.each(editCases)('selector-like values survive real edits and undo: %j', ({ 
   }
 });
 
-test.each([' { x: y; } ', '\n{ x: y; }\n', '/* Ω🙂 */ { x:y; }'])(
-  'included ranges can change after a selector-like value: %s',
-  (gap) => {
-    const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
-    const source = `a { --x: f(& alpha${gap}& beta); } .after { z: y; }`;
-    const start = source.indexOf(gap);
-    const end = start + gap.length;
-    const variants = [[range(source, 0, start), range(source, end, source.length)], [range(source, 0, source.length)]];
-    let previous = parser.parse(source, undefined, { includedRanges: variants[0] })!;
-    try {
-      expect(previous.rootNode.hasError).toBe(false);
-      for (let iteration = 0; iteration < 12; iteration++) {
-        const includedRanges = variants[(iteration + 1) % 2];
-        const next = parser.parse(source, previous, { includedRanges })!;
-        const other = new Parser().setLanguage(language);
-        const fresh = other.parse(source, undefined, { includedRanges })!;
-        try {
-          expectEquivalent(next, fresh, query);
-        } finally {
-          previous.delete();
-          fresh.delete();
-          other.delete();
-          previous = next;
-        }
+test.each([
+  ...valueParts.flatMap(([before, after]) =>
+    [' { x: y; } ', '\n{ x: y; }\n', '/* Ω🙂 */ { x:y; }'].map((gap) => ({
+      source: `a { --x: f(${before}alpha${after}${gap}${before}beta${after}); } .after { z: y; }`,
+      gap,
+      hasError: false,
+    }))
+  ),
+  ...['word * ', 'var(--a) * ', '"text" * '].map((term) => ({
+    source: `/* Ω🙂\r\n */ a { --x: f(${term.repeat(24)}{ x: y; } } .after { z: y; }`,
+    gap: '{ x: y; }',
+    hasError: true,
+  })),
+])('included ranges can change after a selector-like value: %j', ({ source, gap, hasError }) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const start = source.indexOf(gap);
+  const end = start + gap.length;
+  const variants = [[range(source, 0, start), range(source, end, source.length)], [range(source, 0, source.length)]];
+  let previous = parser.parse(source, undefined, { includedRanges: variants[0] })!;
+  try {
+    expect(previous.rootNode.hasError).toBe(hasError);
+    for (let iteration = 0; iteration < 12; iteration++) {
+      const includedRanges = variants[(iteration + 1) % 2];
+      const next = parser.parse(source, previous, { includedRanges })!;
+      const other = new Parser().setLanguage(language);
+      const fresh = other.parse(source, undefined, { includedRanges })!;
+      try {
+        expectEquivalent(next, fresh, query);
+      } finally {
+        previous.delete();
+        fresh.delete();
+        other.delete();
+        previous = next;
       }
-    } finally {
-      previous.delete();
-      query.delete();
-      parser.delete();
     }
+  } finally {
+    previous.delete();
+    query.delete();
+    parser.delete();
   }
-);
+});
 
 test('independent parses cannot retain selector-like value lookahead from the preceding input', () => {
   const parser = new Parser().setLanguage(language);
   const query = new Query(language, highlights);
+  const sources = [
+    'a { --x: f(& word & item); } .after { z: y; }',
+    'a { --x: (\n& * .after { z: y; }\n}',
+    'a { --x: f(word * var(--a) * "text" * {} } .after { z: y; }',
+  ];
   try {
     for (let iteration = 0; iteration < 40; iteration++) {
-      const source =
-        iteration % 2 ? 'a { --x: (\n& * .after { z: y; }\n}' : 'a { --x: f(& word & item); } .after { z: y; }';
+      const source = sources[iteration % sources.length]!;
       const reused = parser.parse(source)!;
       const other = new Parser().setLanguage(language);
       const fresh = other.parse(source)!;
       try {
         expectEquivalent(reused, fresh, query);
-        expect(reused.rootNode.hasError).toBe(Boolean(iteration % 2));
+        expect(reused.rootNode.hasError).toBe(iteration % sources.length !== 0);
       } finally {
         reused.delete();
         fresh.delete();
@@ -109,6 +134,50 @@ test('independent parses cannot retain selector-like value lookahead from the pr
     parser.delete();
   }
 });
+
+test.each(
+  ['a { --x: f(', 'a { --x: [', '@media (a: '].flatMap((opening) =>
+    ['word * ', 'var(--a) * ', '"text" * '].flatMap((term) => {
+      const source = `/* Ω🙂\r\n */ ${opening}${term.repeat(24)}{} } .after { z: y; }`;
+      return [
+        [source.indexOf('{}'), 1, ')'],
+        [source.indexOf(term) + term.indexOf('*'), 1, '&'],
+        [0, 0, ' '],
+        [0, 0, '\n'],
+        [3, 1, 'a'],
+        [0, source.indexOf(opening), ''],
+      ].map(([index, removed, inserted]) => ({
+        source,
+        index: Number(index),
+        removed: Number(removed),
+        inserted: String(inserted),
+      }));
+    })
+  )
+)(
+  'unfinished arithmetic retains tree ranges and highlights through edits and undo: %j',
+  ({ source, index, removed, inserted }) => {
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const original = parser.parse(source)!;
+    const changed = edit(original, source, index, removed, inserted);
+    const incremental = parser.parse(changed, original)!;
+    const fresh = parser.parse(changed)!;
+    const trees = [original, incremental, fresh];
+    try {
+      expectEquivalent(incremental, fresh, query);
+      const restored = edit(incremental, changed, index, inserted.length, source.slice(index, index + removed));
+      const undo = parser.parse(restored, incremental)!;
+      const freshUndo = parser.parse(source)!;
+      trees.push(undo, freshUndo);
+      expectEquivalent(undo, freshUndo, query);
+    } finally {
+      for (const tree of trees) tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
 
 function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));

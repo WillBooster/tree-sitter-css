@@ -85,6 +85,7 @@ module.exports = grammar({
     $._hash_slash_tail,
     $._operator_gap,
     $._combinator_gap,
+    $._binary_asterisk,
   ],
 
   inline: $ => [
@@ -556,7 +557,7 @@ module.exports = grammar({
 
     nesting_selector: $ => choice('&', alias($._value_ampersand, '&')),
 
-    universal_selector: $ => choice('*', alias($._value_asterisk, '*')),
+    universal_selector: $ => choice('*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*')),
 
     class_selector: $ => prec(1, seq(
       optional($._selector),
@@ -710,7 +711,7 @@ module.exports = grammar({
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
       optional(choice($._operator_gap, $._combinator_gap)),
-      choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash),
+      choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash),
       optional($._descendant_combinator),
       $._pseudo_operand,
     )),
@@ -1059,8 +1060,8 @@ module.exports = grammar({
     ),
 
     binary_expression: $ => choice(
-      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash), $._value)),
-      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash))),
+      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash), $._value)),
+      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash))),
     ),
 
     arguments: $ => seq(
