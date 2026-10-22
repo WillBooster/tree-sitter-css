@@ -2902,6 +2902,15 @@
           },
           "named": false,
           "value": "*"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_binary_asterisk"
+          },
+          "named": false,
+          "value": "*"
         }
       ]
     },
@@ -6109,6 +6118,15 @@
                 "content": {
                   "type": "SYMBOL",
                   "name": "_value_asterisk"
+                },
+                "named": false,
+                "value": "*"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_binary_asterisk"
                 },
                 "named": false,
                 "value": "*"
@@ -11259,6 +11277,15 @@
                     "value": "*"
                   },
                   {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_binary_asterisk"
+                    },
+                    "named": false,
+                    "value": "*"
+                  },
+                  {
                     "type": "TOKEN",
                     "content": {
                       "type": "PREC",
@@ -11308,6 +11335,15 @@
                     "content": {
                       "type": "SYMBOL",
                       "name": "_value_asterisk"
+                    },
+                    "named": false,
+                    "value": "*"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_binary_asterisk"
                     },
                     "named": false,
                     "value": "*"
@@ -12305,6 +12341,10 @@
     {
       "type": "SYMBOL",
       "name": "_combinator_gap"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_binary_asterisk"
     }
   ],
   "inline": [

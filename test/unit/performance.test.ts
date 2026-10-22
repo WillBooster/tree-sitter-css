@@ -87,25 +87,38 @@ test.each(['&', '*'])(
 
 test.each(
   ['a { --x: f(', 'a { --x: (', 'a { --x: [', '@media (a: ', '@supports (a: ', 'a { color: '].flatMap((opening) =>
-    ['1 * ', '+.5 * ', '-1e2px * ', '1 * /**/ '].map((term) => [opening, term])
+    [
+      '1 * ',
+      '+.5 * ',
+      '-1e2px * ',
+      '1 * /**/ ',
+      'a * ',
+      'var(--a) * ',
+      '"a" * ',
+      '#fff * ',
+      'f(2) * ',
+      '-a * ',
+      '1 * a * ',
+    ].map((term) => [opening, term])
   )
 )('unfinished arithmetic in %s with %s has linear input read growth', (opening, term) => {
   const source = (count: number): string => `${opening}${term.repeat(count)}{} }`;
-  expect(parseReadCount(source(3200)) / parseReadCount(source(800))).toBeLessThan(8);
+  const selector = opening === 'a { color: ' && (term === 'a * ' || term === '-a * ');
+  expect(parseReadCount(source(3200), !selector) / parseReadCount(source(800), !selector)).toBeLessThan(8);
 });
 
 test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
   expect(parseGrowth(repeatedImportInput(250), repeatedImportInput(1000), true)).toBeLessThan(8);
 });
 
-function parseReadCount(source: string): number {
+function parseReadCount(source: string, hasError: boolean): number {
   let reads = 0;
   const tree = parser.parse((offset) => {
     reads++;
     return source.slice(offset, offset + 32);
   })!;
   try {
-    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.hasError).toBe(hasError);
     expect(tree.rootNode.endIndex).toBe(source.length);
     return reads;
   } finally {
