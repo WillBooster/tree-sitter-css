@@ -24,6 +24,7 @@ Custom properties accept empty and comment-only values, including important decl
 Escaped function values remain complete in arithmetic and nested parentheses.
 Class names accept digit- or hyphen-starting continuations after escape sequences.
 Nesting selectors may follow descendant combinators, as in `b &`.
+A comment before an explicit combinator keeps both operands, as in `b /* c */ > d`.
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
 Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, including `+` and `#` list multipliers.
 Declaration property names accept CSS escape sequences, including custom-property names (`\63 olor`, `co\6c or`, `--\63 olor`).

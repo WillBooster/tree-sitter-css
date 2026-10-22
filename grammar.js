@@ -83,6 +83,7 @@ module.exports = grammar({
     $._invalid_import_layer,
     $._hash_slash_tail,
     $._operator_gap,
+    $._combinator_gap,
   ],
 
   inline: $ => [
@@ -90,6 +91,7 @@ module.exports = grammar({
     $._escaped_identifier,
     $._top_level_item,
     $._block_item,
+    $._binary_combinator_gap,
   ],
 
   conflicts: $ => [
@@ -102,6 +104,7 @@ module.exports = grammar({
     [$.pseudo_class_arguments, $._pseudo_operand],
     [$._selector, $.pseudo_class_arguments, $._pseudo_operand],
     [$._selector, $.pseudo_class_arguments],
+    [$._selector, $._pseudo_operand],
     [$._nth_functional_notation],
     [$.child_selector],
     [$.sibling_selector],
@@ -632,19 +635,21 @@ module.exports = grammar({
     attribute_flag: _ => /[iIsS]/,
 
     child_selector: $ => choice(
-      prec.left(seq($._selector, optional($._descendant_combinator), '>', $._selector)),
+      prec.left(seq($._selector, optional($._binary_combinator_gap), '>', $._selector)),
       prec.left(seq('>', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
+
+    _binary_combinator_gap: $ => choice($._descendant_combinator, $._combinator_gap),
 
     descendant_selector: $ => prec.left(seq($._selector, $._descendant_combinator, $._selector)),
 
     sibling_selector: $ => choice(
-      prec.left(seq($._selector, optional($._descendant_combinator), '~', $._selector)),
+      prec.left(seq($._selector, optional($._binary_combinator_gap), '~', $._selector)),
       prec.left(seq('~', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
 
     adjacent_sibling_selector: $ => choice(
-      prec.left(seq($._selector, optional($._descendant_combinator), '+', $._selector)),
+      prec.left(seq($._selector, optional($._binary_combinator_gap), '+', $._selector)),
       prec.left(seq('+', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
 
@@ -701,7 +706,7 @@ module.exports = grammar({
 
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
-      optional($._operator_gap),
+      optional(choice($._operator_gap, $._combinator_gap)),
       choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash),
       optional($._descendant_combinator),
       $._pseudo_operand,
