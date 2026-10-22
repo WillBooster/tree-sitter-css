@@ -997,7 +997,7 @@ module.exports = grammar({
       seq(
         '\'',
         repeat(choice(
-          alias(/[^\\'\n\r\f]+/, $.string_content),
+          alias(token(prec(1, /[^\\'\n\r\f]+/)), $.string_content),
           $.escape_sequence,
           alias($._string_continuation, $.escape_sequence),
         )),
@@ -1006,7 +1006,7 @@ module.exports = grammar({
       seq(
         '"',
         repeat(choice(
-          alias(/[^\\"\n\r\f]+/, $.string_content),
+          alias(token(prec(1, /[^\\"\n\r\f]+/)), $.string_content),
           $.escape_sequence,
           alias($._string_continuation, $.escape_sequence),
         )),

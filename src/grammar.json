@@ -10753,8 +10753,15 @@
                   {
                     "type": "ALIAS",
                     "content": {
-                      "type": "PATTERN",
-                      "value": "[^\\\\'\\n\\r\\f]+"
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[^\\\\'\\n\\r\\f]+"
+                        }
+                      }
                     },
                     "named": true,
                     "value": "string_content"
@@ -10796,8 +10803,15 @@
                   {
                     "type": "ALIAS",
                     "content": {
-                      "type": "PATTERN",
-                      "value": "[^\\\\\"\\n\\r\\f]+"
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[^\\\\\"\\n\\r\\f]+"
+                        }
+                      }
                     },
                     "named": true,
                     "value": "string_content"
