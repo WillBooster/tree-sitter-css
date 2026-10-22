@@ -83,6 +83,7 @@ module.exports = grammar({
     $._invalid_import_layer,
     $._hash_slash_tail,
     $._operator_gap,
+    $._combinator_gap,
   ],
 
   inline: $ => [
@@ -90,6 +91,7 @@ module.exports = grammar({
     $._escaped_identifier,
     $._top_level_item,
     $._block_item,
+    $._binary_combinator_gap,
   ],
 
   conflicts: $ => [
@@ -632,19 +634,21 @@ module.exports = grammar({
     attribute_flag: _ => /[iIsS]/,
 
     child_selector: $ => choice(
-      prec.left(seq($._selector, optional($._descendant_combinator), '>', $._selector)),
+      prec.left(seq($._selector, optional($._binary_combinator_gap), '>', $._selector)),
       prec.left(seq('>', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
+
+    _binary_combinator_gap: $ => choice($._descendant_combinator, $._combinator_gap),
 
     descendant_selector: $ => prec.left(seq($._selector, $._descendant_combinator, $._selector)),
 
     sibling_selector: $ => choice(
-      prec.left(seq($._selector, optional($._descendant_combinator), '~', $._selector)),
+      prec.left(seq($._selector, optional($._binary_combinator_gap), '~', $._selector)),
       prec.left(seq('~', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
 
     adjacent_sibling_selector: $ => choice(
-      prec.left(seq($._selector, optional($._descendant_combinator), '+', $._selector)),
+      prec.left(seq($._selector, optional($._binary_combinator_gap), '+', $._selector)),
       prec.left(seq('+', optional($._descendant_combinator), $._selector, optional($._descendant_combinator))),
     ),
 

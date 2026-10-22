@@ -4216,7 +4216,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_descendant_combinator"
+                    "name": "_binary_combinator_gap"
                   },
                   {
                     "type": "BLANK"
@@ -4277,6 +4277,19 @@
         }
       ]
     },
+    "_binary_combinator_gap": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_descendant_combinator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_combinator_gap"
+        }
+      ]
+    },
     "descendant_selector": {
       "type": "PREC_LEFT",
       "value": 0,
@@ -4316,7 +4329,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_descendant_combinator"
+                    "name": "_binary_combinator_gap"
                   },
                   {
                     "type": "BLANK"
@@ -4395,7 +4408,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_descendant_combinator"
+                    "name": "_binary_combinator_gap"
                   },
                   {
                     "type": "BLANK"
@@ -12207,13 +12220,18 @@
     {
       "type": "SYMBOL",
       "name": "_operator_gap"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_combinator_gap"
     }
   ],
   "inline": [
     "_range_comparison",
     "_escaped_identifier",
     "_top_level_item",
-    "_block_item"
+    "_block_item",
+    "_binary_combinator_gap"
   ],
   "supertypes": [],
   "reserved": {}
