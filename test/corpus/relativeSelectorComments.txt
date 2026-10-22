@@ -61,7 +61,8 @@ Comments before explicit combinators keep both operands
 b /* c */ > d,
 b /* c */ ~ d,
 b // c
-+ d {}
++ d,
+b /* c */ + .d {}
 @scope (b /* c */ > d) {}
 x:is(b /* c */ + d) {}
 
@@ -81,7 +82,13 @@ x:is(b /* c */ + d) {}
       (adjacent_sibling_selector
         (tag_name)
         (js_comment)
-        (tag_name)))
+        (tag_name))
+      (adjacent_sibling_selector
+        (tag_name)
+        (comment)
+        (class_selector
+          (class_name
+            (identifier)))))
     (block))
   (scope_statement
     start: (selectors

@@ -844,7 +844,8 @@ static bool scan_explicit_combinator(TSLexer *lexer) {
     if (lexer->lookahead == '=') return false;
     if (combinator != '+') return true;
     while (iswspace(lexer->lookahead)) advance(lexer);
-    return !is_digit(lexer->lookahead) && lexer->lookahead != '.';
+    if (lexer->lookahead == '.') advance(lexer);
+    return !is_digit(lexer->lookahead);
 }
 
 static bool scan_escape(TSLexer *lexer) {
