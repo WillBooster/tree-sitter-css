@@ -104,6 +104,7 @@ module.exports = grammar({
     [$.pseudo_class_arguments, $._pseudo_operand],
     [$._selector, $.pseudo_class_arguments, $._pseudo_operand],
     [$._selector, $.pseudo_class_arguments],
+    [$._selector, $._pseudo_operand],
     [$._nth_functional_notation],
     [$.child_selector],
     [$.sibling_selector],
@@ -705,7 +706,7 @@ module.exports = grammar({
 
     _pseudo_binary_expression: $ => prec.left(3, seq(
       choice($._pseudo_operand, alias($._pseudo_binary_expression, $.binary_expression)),
-      optional($._operator_gap),
+      optional(choice($._operator_gap, $._combinator_gap)),
       choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash),
       optional($._descendant_combinator),
       $._pseudo_operand,

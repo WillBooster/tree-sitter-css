@@ -835,17 +835,12 @@ static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow
     return true;
 }
 
-// Called where the gap token is zero-width, so it may advance past the combinator. `~=` is an attribute operator, and a
-// `+` before a number continues pseudo arithmetic such as `:foo(a /* c */ + 2)`, as it does without the comment.
+// Called where the gap token is zero-width, so it may advance past the combinator to reject the `~=` attribute operator.
 static bool scan_explicit_combinator(TSLexer *lexer) {
     int32_t combinator = lexer->lookahead;
     if (combinator != '>' && combinator != '~' && combinator != '+') return false;
     advance(lexer);
-    if (lexer->lookahead == '=') return false;
-    if (combinator != '+') return true;
-    while (iswspace(lexer->lookahead)) advance(lexer);
-    if (lexer->lookahead == '.') advance(lexer);
-    return !is_digit(lexer->lookahead);
+    return lexer->lookahead != '=';
 }
 
 static bool scan_escape(TSLexer *lexer) {

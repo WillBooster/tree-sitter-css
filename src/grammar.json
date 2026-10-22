@@ -6056,8 +6056,17 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_operator_gap"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_operator_gap"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_combinator_gap"
+                  }
+                ]
               },
               {
                 "type": "BLANK"
@@ -11812,6 +11821,10 @@
     [
       "_selector",
       "pseudo_class_arguments"
+    ],
+    [
+      "_selector",
+      "_pseudo_operand"
     ],
     [
       "_nth_functional_notation"

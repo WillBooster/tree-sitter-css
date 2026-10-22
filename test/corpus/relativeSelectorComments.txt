@@ -114,7 +114,8 @@ Comments before operators that are not combinators
 =====================================
 
 :foo(a /* c */ + 2) {}
-@scope (:foo(a /* c */ + 2)) {}
+@scope (:foo(a /* c */ + /* d */ 2)) {}
+:foo(a /* c */ + (2 + 3)) {}
 [class /* c */ ~= 'bar'] {}
 
 ---
@@ -140,7 +141,22 @@ Comments before operators that are not combinators
           (binary_expression
             (plain_value)
             (comment)
+            (comment)
             (integer_value)))))
+    (block))
+  (rule_set
+    (selectors
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (binary_expression
+            (plain_value)
+            (comment)
+            (parenthesized_value
+              (binary_expression
+                (integer_value)
+                (integer_value)))))))
     (block))
   (rule_set
     (selectors
