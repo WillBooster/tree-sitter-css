@@ -13,7 +13,7 @@ const parser = new Parser();
 parser.setLanguage(await Language.load(WasmPath));
 
 test('uses a Wasm build built from the current parser', () => {
-  const sources = ['grammar.js', 'src/parser.c', 'src/scanner.c', 'src/tree_sitter/parser.h'].map(
+  const sources = ['grammar.js', 'src/parser.c', 'src/scanner.c', 'src/lexer.h', 'src/tree_sitter/parser.h'].map(
     (name) => fs.statSync(path.join(Root, name)).mtimeMs
   );
   expect(

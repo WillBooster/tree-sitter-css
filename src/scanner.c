@@ -1,5 +1,6 @@
 #include "tree_sitter/parser.h"
 #include "tree_sitter/array.h"
+#include "lexer.h"
 
 #include <wctype.h>
 #include <stdlib.h>
@@ -74,27 +75,20 @@ static bool scan_supports_string(TSLexer *lexer);
 static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowed);
 static bool scan_double_slash(TSLexer *lexer, bool url_allowed);
 static bool is_at_rule_url_character(int32_t character);
-static bool is_regex_whitespace(int32_t character);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
 static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
 static bool scan_name_character(TSLexer *lexer, int32_t *character);
-static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded);
-static char keyword_character(int32_t character);
-static void scan_escape_terminator(TSLexer *lexer);
 static bool scan_component_gap(TSLexer *lexer, bool *whitespace);
-static bool is_css_whitespace(int32_t character);
 static bool can_scan_value_join(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols);
-static bool scan_unquoted_url_tail(TSLexer *lexer);
-static bool is_unit_character(int32_t character);
-static bool scan_plain_value_tail(TSLexer *lexer);
-static bool is_plain_value_character(int32_t character);
 static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
 static Memo *find_probe(Scanner *scanner, uint32_t byte);
 static bool scan_arithmetic_prefix(TSLexer *lexer);
-static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *slash);
-static bool scan_declaration_comment(TSLexer *lexer, bool *slash);
+static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix);
+static bool scan_declaration_marker(TSLexer *lexer, bool *arithmetic);
+static bool is_html_marker_prefix(int32_t character);
+static bool scan_declaration_comment(TSLexer *lexer, bool *arithmetic);
 static bool scan_plain_slash_prefix(TSLexer *lexer);
 static bool is_selector_prefix(int32_t character);
 static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
@@ -119,15 +113,10 @@ static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
 static bool scan_comment_body(TSLexer *lexer);
 static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow_combinator);
-static bool scan_escape(TSLexer *lexer);
 static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool allow_gap);
 static bool scan_operator_gap(TSLexer *lexer, bool allow_gap, bool *spaced);
 static bool is_name_character(int32_t character);
 static bool is_name_start(int32_t character);
-static bool is_hex_digit(int32_t character);
-static bool is_digit(int32_t character);
-static void advance(TSLexer *lexer);
-static void skip(TSLexer *lexer);
 
 void *tree_sitter_css_external_scanner_create() {
     Scanner *scanner = calloc(1, sizeof(Scanner));
@@ -457,12 +446,6 @@ static bool is_at_rule_url_character(int32_t character) {
     }
 }
 
-// The generated lexer matches the `\s` that grammar.js excludes from at_rule_url as ASCII whitespace only, which
-// includes the vertical tab that CSS does not treat as whitespace.
-static bool is_regex_whitespace(int32_t character) {
-    return (character >= '\t' && character <= '\r') || character == ' ';
-}
-
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols) {
     while (is_css_whitespace(lexer->lookahead)) skip(lexer);
     if (!scan_layer_name_token(lexer)) {
@@ -518,11 +501,6 @@ static bool scan_name_character(TSLexer *lexer, int32_t *character) {
     return true;
 }
 
-static char keyword_character(int32_t character) {
-    if (character >= 'A' && character <= 'Z') return (char)(character + 'a' - 'A');
-    return character < 0x80 ? (char)character : '?';
-}
-
 static bool scan_component_gap(TSLexer *lexer, bool *whitespace) {
     for (;;) {
         if (is_css_whitespace(lexer->lookahead)) {
@@ -534,10 +512,6 @@ static bool scan_component_gap(TSLexer *lexer, bool *whitespace) {
             return true;
         }
     }
-}
-
-static bool is_css_whitespace(int32_t character) {
-    return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '\f';
 }
 
 static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
@@ -585,62 +559,30 @@ static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols) {
     return valid_symbols[lexer->result_symbol];
 }
 
-static bool scan_unquoted_url_tail(TSLexer *lexer) {
-    advance(lexer);
-    while (is_css_whitespace(lexer->lookahead)) advance(lexer);
-    while (!lexer->eof(lexer) && lexer->lookahead != ')' && !is_css_whitespace(lexer->lookahead)) {
-        if (lexer->lookahead <= 0x20 || lexer->lookahead == 0x7F || lexer->lookahead == '\'' ||
-            lexer->lookahead == '"' || lexer->lookahead == '(') return false;
-        if (lexer->lookahead != '\\') {
-            advance(lexer);
-            continue;
-        }
-        if (!scan_escape(lexer)) return false;
-    }
-    while (is_css_whitespace(lexer->lookahead)) advance(lexer);
-    return lexer->lookahead == ')';
-}
-
-static bool is_unit_character(int32_t character) {
-    return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || character == '%';
-}
-
-static bool scan_plain_value_tail(TSLexer *lexer) {
-    if (lexer->eof(lexer)) return false;
-    if (lexer->lookahead == '/') {
-        advance(lexer);
-        return !lexer->eof(lexer) && lexer->lookahead != '*' && is_plain_value_character(lexer->lookahead);
-    }
-    return is_plain_value_character(lexer->lookahead);
-}
-
-static bool is_plain_value_character(int32_t character) {
-    switch (character) {
-        case ',': case ';': case ':': case '!': case '{': case '}': case '(': case ')': case '[': case ']':
-            return false;
-        default: return !is_regex_whitespace(character);
-    }
-}
-
 static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     TSLexerPosition start;
     lexer->get_position(lexer, &start);
     lexer->mark_end(lexer);
     lexer->result_symbol = valid_symbols[DECLARATION_OPERAND_GAP] ? DECLARATION_OPERAND_GAP : DECLARATION_CONTINUATION;
     bool newline = false;
-    bool slash = false;
-    if (!scan_declaration_gap(lexer, &newline, &slash)) {
-        if (slash && !valid_symbols[DECLARATION_OPERAND_GAP] && valid_symbols[DECLARATION_OPERATOR_GAP]) {
+    bool arithmetic = false;
+    bool consumed_prefix = false;
+    if (!scan_declaration_gap(lexer, &newline, &arithmetic, &consumed_prefix)) {
+        if (arithmetic && !valid_symbols[DECLARATION_OPERAND_GAP] && valid_symbols[DECLARATION_OPERATOR_GAP]) {
             lexer->result_symbol = DECLARATION_OPERATOR_GAP;
         }
         return valid_symbols[lexer->result_symbol];
     }
-    if (lexer->eof(lexer) || lexer->lookahead == ';' || lexer->lookahead == ',' || lexer->lookahead == '}') return false;
+    if (!consumed_prefix && (lexer->eof(lexer) || lexer->lookahead == ';' || lexer->lookahead == ',' || lexer->lookahead == '}')) return false;
     TSLexerPosition component;
     lexer->get_position(lexer, &component);
     newline |= component.row != start.row;
-    bool selector_prefix = is_selector_prefix(lexer->lookahead);
-    if (!valid_symbols[DECLARATION_OPERAND_GAP] && valid_symbols[DECLARATION_OPERATOR_GAP] && scan_arithmetic_prefix(lexer)) {
+    bool selector_prefix = !consumed_prefix && is_selector_prefix(lexer->lookahead);
+    if (!consumed_prefix && valid_symbols[DECLARATION_OPERAND_GAP] && lexer->lookahead == '+') {
+        selector_prefix = scan_arithmetic_prefix(lexer);
+    }
+    if (!valid_symbols[DECLARATION_OPERAND_GAP] && valid_symbols[DECLARATION_OPERATOR_GAP] &&
+        (arithmetic || (!consumed_prefix && scan_arithmetic_prefix(lexer)))) {
         lexer->result_symbol = DECLARATION_OPERATOR_GAP;
         selector_prefix = false;
     } else if (!valid_symbols[DECLARATION_CONTINUATION] && !valid_symbols[DECLARATION_BOUNDARY] && !valid_symbols[DECLARATION_OPERAND_GAP]) {
@@ -669,30 +611,51 @@ static bool scan_arithmetic_prefix(TSLexer *lexer) {
     return !is_digit(lexer->lookahead);
 }
 
-static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *slash) {
+static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix) {
     for (;;) {
         if (iswspace(lexer->lookahead)) {
             *newline |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
             advance(lexer);
         } else if (lexer->lookahead == '/') {
-            if (!scan_declaration_comment(lexer, slash)) return false;
+            if (!scan_declaration_comment(lexer, arithmetic)) return false;
+        } else if (is_html_marker_prefix(lexer->lookahead)) {
+            *consumed_prefix = true;
+            if (!scan_declaration_marker(lexer, arithmetic)) return true;
+            *consumed_prefix = false;
         } else {
             return true;
         }
     }
 }
 
-static bool scan_declaration_comment(TSLexer *lexer, bool *slash) {
+static bool scan_declaration_marker(TSLexer *lexer, bool *arithmetic) {
+    const char *tail = "<!--";
+    if (lexer->lookahead == '-') {
+        *arithmetic = scan_arithmetic_prefix(lexer);
+        tail = "->";
+    }
+    for (; *tail; tail++) {
+        if (lexer->lookahead != *tail) return false;
+        advance(lexer);
+    }
+    return true;
+}
+
+static bool is_html_marker_prefix(int32_t character) {
+    return character == '<' || character == '-';
+}
+
+static bool scan_declaration_comment(TSLexer *lexer, bool *arithmetic) {
     advance(lexer);
     if (lexer->lookahead == '*') {
         bool comment = scan_comment_body(lexer);
-        *slash = !comment;
+        *arithmetic = !comment;
         return comment;
     }
     bool line_comment = lexer->lookahead == '/';
     if (scan_plain_slash_prefix(lexer)) return false;
     if (!line_comment) {
-        *slash = true;
+        *arithmetic = true;
         return false;
     }
     while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
@@ -786,7 +749,8 @@ static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t b
 }
 
 static void record_probe_cursor(Scanner *scanner, TSLexer *lexer, unsigned depth) {
-    if (!iswspace(lexer->lookahead) && !is_selector_prefix(lexer->lookahead) && lexer->lookahead != '/') return;
+    if (!iswspace(lexer->lookahead) && !is_selector_prefix(lexer->lookahead) && lexer->lookahead != '/' &&
+        !is_html_marker_prefix(lexer->lookahead)) return;
     TSLexerPosition position;
     lexer->get_position(lexer, &position);
     record_probe_prefix(scanner, position.bytes, depth);
@@ -796,7 +760,11 @@ static bool scan_probe_component(TSLexer *lexer, bool *stop) {
     switch (lexer->lookahead) {
         case '\'': case '"': scan_quoted_component(lexer); return true;
         case '\\': *stop = !scan_escape(lexer); return true;
-        case '/': advance(lexer); scan_comment_body(lexer); return true;
+        case '/': {
+            bool arithmetic = false;
+            scan_declaration_comment(lexer, &arithmetic);
+            return true;
+        }
         default: return false;
     }
 }
@@ -1059,42 +1027,6 @@ static bool scan_explicit_combinator(TSLexer *lexer) {
     return lexer->lookahead != '=';
 }
 
-static bool scan_escape(TSLexer *lexer) {
-    return scan_decoded_escape(lexer, NULL);
-}
-
-static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded) {
-    advance(lexer);
-    if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f') {
-        return false;
-    }
-    if (!is_hex_digit(lexer->lookahead)) {
-        if (decoded) *decoded = lexer->lookahead;
-        advance(lexer);
-        return true;
-    }
-    unsigned digits = 0;
-    int32_t value = 0;
-    while (digits < 6 && is_hex_digit(lexer->lookahead)) {
-        int32_t digit = lexer->lookahead;
-        value = value * 16 + (digit <= '9' ? digit - '0' : (digit | 32) - 'a' + 10);
-        advance(lexer);
-        digits++;
-    }
-    if (decoded) *decoded = value == 0 ? 0xFFFD : value;
-    scan_escape_terminator(lexer);
-    return true;
-}
-
-static void scan_escape_terminator(TSLexer *lexer) {
-    if (lexer->lookahead == '\r') {
-        advance(lexer);
-        if (lexer->lookahead == '\n') advance(lexer);
-    } else if (is_css_whitespace(lexer->lookahead)) {
-        advance(lexer);
-    }
-}
-
 static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool allow_gap) {
     lexer->result_symbol = DESCENDANT_OP;
     if (lexer->lookahead == '*' || lexer->lookahead == '-') {
@@ -1142,13 +1074,3 @@ static bool is_name_start(int32_t character) {
     }
     return false;
 }
-
-static bool is_hex_digit(int32_t character) {
-    return is_digit(character) || (character >= 'a' && character <= 'f') || (character >= 'A' && character <= 'F');
-}
-
-static bool is_digit(int32_t character) { return character >= '0' && character <= '9'; }
-
-static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
-
-static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }

@@ -1126,7 +1126,20 @@ function propertyIdentifier($) {
 }
 
 function selectorIdentifier($) {
-  return choice($.identifier, $._recovery_identifier, escapedName, selectorFunctionName, queryKeyword($), $._custom_property_component);
+  return choice(
+    $.identifier,
+    $._recovery_identifier,
+    $.from,
+    $.to,
+    'and',
+    'or',
+    'only',
+    'selector',
+    escapedName,
+    selectorFunctionName,
+    queryKeyword($),
+    $._custom_property_component,
+  );
 }
 
 function queryKeyword($) {

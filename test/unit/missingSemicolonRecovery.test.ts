@@ -19,6 +19,7 @@ const preludes = [
   ['#id', 'rule_set'],
   ['[x]', 'rule_set'],
   ['b', 'rule_set'],
+  ['-b', 'rule_set'],
   ['.c', 'rule_set'],
   ['&', 'rule_set'],
   ['@media screen', 'media_statement'],
@@ -37,7 +38,9 @@ const declarationValues = [
 test.each(
   preludes.flatMap(([prelude, type]) =>
     declarationValues.flatMap(([value, numbers, plain]) =>
-      ['\n  ', '\r\n  ', '\n/**/ ', '/* note */\n'].map((gap) => [prelude, type, gap, value, numbers, plain] as const)
+      ['\n  ', '\r\n  ', '\n/**/ ', '/* note */\n', ' <!--\n ', ' -->\n '].map(
+        (gap) => [prelude, type, gap, value, numbers, plain] as const
+      )
     )
   )
 )(
@@ -105,7 +108,9 @@ const editedValues = [
   'alpha:beta:\n gamma:\n delta;',
   'alpha\n beta\n gamma;',
   'alpha/**/\n beta/**/\n gamma;',
+  'alpha <!--\n beta -->\n gamma;',
   '1url(x\n )\n beta;',
+  'https://example.com/a; color: red;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -223,30 +228,73 @@ test('numeric and slash-prefixed components retain NUL source characters', () =>
   }
 });
 
-test.each(['\n', '/**/\n'])('multiline declaration values retain linear public input-read growth: %j', (gap) => {
-  const parser = new Parser().setLanguage(language);
-  const reads = (count: number): number => {
-    const source = `a { font-family: ${`word${gap}`.repeat(count)}; }`;
-    let calls = 0;
-    const tree = parser.parse((offset) => {
-      calls++;
-      return source.slice(offset, offset + 32);
-    })!;
+test.each(['https://example.com/a;', 'http://x.y/z', 'http://x.y/z, 1e3px;'])(
+  'scheme-like value %s preserves its declaration and the following rule',
+  (value) => {
+    const source = `a { --u: ${value} }\n.after { c: d }`;
+    const parser = new Parser().setLanguage(language);
+    const tree = parser.parse(source)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
-      expect(tree.rootNode.descendantsOfType('plain_value')).toHaveLength(count);
-      expect(tree.rootNode.endIndex).toBe(source.length);
-      return calls;
+      const [outer, after] = tree.rootNode.namedChildren;
+      expect(outer!.descendantsOfType('declaration').map((node) => node.text)).toEqual([`--u: ${value}`]);
+      expect(after!.text).toBe('.after { c: d }');
+      expect(after!.startIndex).toBe(source.indexOf('.after'));
     } finally {
       tree.delete();
+      parser.delete();
     }
-  };
-  try {
-    expect(reads(3200) / reads(800)).toBeLessThan(8);
-  } finally {
-    parser.delete();
   }
-});
+);
+
+test.each(['red', '1px', '1 + 2', '1url(x)'].flatMap((value) => ['<!--', '-->'].map((marker) => [value, marker])))(
+  'HTML marker extras after %s do not require another value: %s',
+  (value, marker) => {
+    const source = `a { --x: ${value} ${marker}; color: red; } .after {}`;
+    const parser = new Parser().setLanguage(language);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+        `--x: ${value} ${marker};`,
+        'color: red;',
+      ]);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+      expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(['\n', '/**/\n', ' <!--\n', ' -->\n'])(
+  'multiline declaration values retain linear public input-read growth: %j',
+  (gap) => {
+    const parser = new Parser().setLanguage(language);
+    const reads = (count: number): number => {
+      const source = `a { font-family: ${`word${gap}`.repeat(count)}; }`;
+      let calls = 0;
+      const tree = parser.parse((offset) => {
+        calls++;
+        return source.slice(offset, offset + 32);
+      })!;
+      try {
+        expect(tree.rootNode.hasError).toBe(false);
+        expect(tree.rootNode.descendantsOfType('plain_value')).toHaveLength(count);
+        expect(tree.rootNode.endIndex).toBe(source.length);
+        return calls;
+      } finally {
+        tree.delete();
+      }
+    };
+    try {
+      expect(reads(3200) / reads(800)).toBeLessThan(8);
+    } finally {
+      parser.delete();
+    }
+  }
+);
 
 function sourceFor(prelude: string, gap: string, value = '1px solid'): string {
   return `/* Ω🙂 */ a { border: ${value}${gap}${prelude} { c: d } }\n.after { color: blue; }`;

@@ -2593,6 +2593,30 @@
                 "name": "_recovery_identifier"
               },
               {
+                "type": "SYMBOL",
+                "name": "from"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "to"
+              },
+              {
+                "type": "STRING",
+                "value": "and"
+              },
+              {
+                "type": "STRING",
+                "value": "or"
+              },
+              {
+                "type": "STRING",
+                "value": "only"
+              },
+              {
+                "type": "STRING",
+                "value": "selector"
+              },
+              {
                 "type": "TOKEN",
                 "content": {
                   "type": "PREC",
@@ -3139,6 +3163,30 @@
                 "name": "_recovery_identifier"
               },
               {
+                "type": "SYMBOL",
+                "name": "from"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "to"
+              },
+              {
+                "type": "STRING",
+                "value": "and"
+              },
+              {
+                "type": "STRING",
+                "value": "or"
+              },
+              {
+                "type": "STRING",
+                "value": "only"
+              },
+              {
+                "type": "STRING",
+                "value": "selector"
+              },
+              {
                 "type": "TOKEN",
                 "content": {
                   "type": "PREC",
@@ -3566,6 +3614,30 @@
                     "name": "_recovery_identifier"
                   },
                   {
+                    "type": "SYMBOL",
+                    "name": "from"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "to"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "and"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "or"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "only"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "selector"
+                  },
+                  {
                     "type": "TOKEN",
                     "content": {
                       "type": "PREC",
@@ -3876,6 +3948,30 @@
                           {
                             "type": "SYMBOL",
                             "name": "_recovery_identifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "from"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "to"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "and"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "or"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "only"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "selector"
                           },
                           {
                             "type": "TOKEN",
@@ -7067,6 +7163,30 @@
                     "name": "_recovery_identifier"
                   },
                   {
+                    "type": "SYMBOL",
+                    "name": "from"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "to"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "and"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "or"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "only"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "selector"
+                  },
+                  {
                     "type": "TOKEN",
                     "content": {
                       "type": "PREC",
@@ -7343,6 +7463,30 @@
                                 {
                                   "type": "SYMBOL",
                                   "name": "_recovery_identifier"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "from"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "to"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "and"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "or"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "only"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "selector"
                                 },
                                 {
                                   "type": "TOKEN",
@@ -7744,6 +7888,30 @@
                             {
                               "type": "SYMBOL",
                               "name": "_recovery_identifier"
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "from"
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "to"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "and"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "or"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "only"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "selector"
                             },
                             {
                               "type": "TOKEN",
