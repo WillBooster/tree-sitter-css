@@ -64,6 +64,7 @@ module.exports = grammar({
     /\s/,
     $.comment,
     $.js_comment,
+    $._html_comment_marker,
   ],
 
   externals: $ => [
@@ -190,6 +191,8 @@ module.exports = grammar({
       repeat(choice(';', $._top_level_item)),
       optional(alias($.last_declaration, $.declaration)),
     ),
+
+    _html_comment_marker: _ => token(choice('<!--', '-->')),
 
     _top_level_item: $ => choice(
       $.declaration,
@@ -994,7 +997,7 @@ module.exports = grammar({
       seq(
         '\'',
         repeat(choice(
-          alias(/[^\\'\n\r\f]+/, $.string_content),
+          alias(token(prec(1, /[^\\'\n\r\f]+/)), $.string_content),
           $.escape_sequence,
           alias($._string_continuation, $.escape_sequence),
         )),
@@ -1003,7 +1006,7 @@ module.exports = grammar({
       seq(
         '"',
         repeat(choice(
-          alias(/[^\\"\n\r\f]+/, $.string_content),
+          alias(token(prec(1, /[^\\"\n\r\f]+/)), $.string_content),
           $.escape_sequence,
           alias($._string_continuation, $.escape_sequence),
         )),
