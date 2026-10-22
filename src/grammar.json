@@ -40,6 +40,22 @@
         }
       ]
     },
+    "_html_comment_marker": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "<!--"
+          },
+          {
+            "type": "STRING",
+            "value": "-->"
+          }
+        ]
+      }
+    },
     "_top_level_item": {
       "type": "CHOICE",
       "members": [
@@ -11816,6 +11832,10 @@
     {
       "type": "SYMBOL",
       "name": "js_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_html_comment_marker"
     }
   ],
   "conflicts": [

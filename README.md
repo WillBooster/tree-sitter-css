@@ -32,6 +32,7 @@ Declaration property names accept CSS escape sequences, including custom-propert
 Generic pseudo arguments keep compound and namespaced selectors, as in `:matches(a.b:hover)` and `:foo(svg|a)`.
 Legacy star-prefixed declaration names, such as `*display`, remain single property names.
 Blocks, inline declaration lists, and stylesheets accept empty semicolon statements, including between top-level rules.
+The HTML comment markers `<!--` and `-->` are skipped like comments and are absent from the tree; CSS ignores them between top-level statements.
 A stylesheet may end with a declaration without a trailing semicolon, as in inline style content such as `color: red`.
 Incomplete input can produce an `ERROR` root instead of `stylesheet`, including a single block with an
 unterminated string (`a { content: "x`) and nested unclosed blocks. Consumers must handle

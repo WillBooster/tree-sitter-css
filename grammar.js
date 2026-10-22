@@ -64,6 +64,7 @@ module.exports = grammar({
     /\s/,
     $.comment,
     $.js_comment,
+    $._html_comment_marker,
   ],
 
   externals: $ => [
@@ -190,6 +191,8 @@ module.exports = grammar({
       repeat(choice(';', $._top_level_item)),
       optional(alias($.last_declaration, $.declaration)),
     ),
+
+    _html_comment_marker: _ => token(choice('<!--', '-->')),
 
     _top_level_item: $ => choice(
       $.declaration,
