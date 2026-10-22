@@ -103,10 +103,12 @@ x:is(b /* c */ + d) {}
     (block)))
 
 =====================================
-Comments before a plus keep pseudo arithmetic
+Comments before operators that are not combinators
 =====================================
 
 :foo(a /* c */ + 2) {}
+@scope (:foo(a /* c */ + 2)) {}
+[class /* c */ ~= 'bar'] {}
 
 ---
 
@@ -121,4 +123,23 @@ Comments before a plus keep pseudo arithmetic
             (plain_value)
             (comment)
             (integer_value)))))
+    (block))
+  (scope_statement
+    start: (selectors
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (binary_expression
+            (plain_value)
+            (comment)
+            (integer_value)))))
+    (block))
+  (rule_set
+    (selectors
+      (attribute_selector
+        (attribute_name)
+        (comment)
+        (string_value
+          (string_content))))
     (block)))

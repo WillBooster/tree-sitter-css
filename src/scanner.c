@@ -89,9 +89,8 @@ static bool scan_dot_following_gap(TSLexer *lexer);
 static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, const bool *valid_symbols);
 static bool finish_incomplete_declaration_end(TSLexer *lexer, const bool *valid_symbols, bool comment);
-static bool is_explicit_combinator(int32_t character);
-static bool scan_numeric_operand_after_plus(TSLexer *lexer);
-static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool comment, bool *consumed, bool *spaced);
+static bool scan_explicit_combinator(TSLexer *lexer);
+static bool scan_gap_operator(TSLexer *lexer, int32_t first, bool allow_gap, bool comment, bool *consumed, bool *spaced);
 static bool scan_property_start(TSLexer *lexer, int32_t first, bool first_consumed);
 static bool scan_property_colon(TSLexer *lexer);
 static bool scan_separator_comment(TSLexer *lexer);
@@ -717,11 +716,9 @@ static bool finish_incomplete_declaration_end(TSLexer *lexer, const bool *valid_
         }
     }
     int32_t first = lexer->lookahead;
-    // A descendant gap here would let the combinator start a relative selector nested in a descendant selector. A `+`
-    // before a number still continues pseudo arithmetic such as `:foo(a /* c */ + 2)`, as it does without the comment.
-    if (comment && whitespace && valid_symbols[COMBINATOR_GAP] && is_explicit_combinator(first)) {
-        bool arithmetic = first == '+' && allow_gap && scan_numeric_operand_after_plus(lexer);
-        lexer->result_symbol = arithmetic ? OPERATOR_GAP : COMBINATOR_GAP;
+    // A descendant gap here would let the combinator start a relative selector nested in a descendant selector.
+    if (comment && whitespace && valid_symbols[COMBINATOR_GAP] && scan_explicit_combinator(lexer)) {
+        lexer->result_symbol = COMBINATOR_GAP;
         return true;
     }
     bool descendant = allow_descendant && whitespace && (comment || first == '#' || first == '.' ||
@@ -730,7 +727,7 @@ static bool finish_incomplete_declaration_end(TSLexer *lexer, const bool *valid_
     lexer->result_symbol = DESCENDANT_OP;
     bool consumed = false;
     bool spaced = false;
-    if (whitespace && scan_gap_operator(lexer, allow_gap, comment, &consumed, &spaced)) {
+    if (whitespace && scan_gap_operator(lexer, first, allow_gap, comment, &consumed, &spaced)) {
         return true;
     }
     if (newline && !spaced && scan_property_start(lexer, first, consumed)) {
@@ -742,8 +739,8 @@ static bool finish_incomplete_declaration_end(TSLexer *lexer, const bool *valid_
 
 // Called only after whitespace: a gap glued to the preceding component, as in `a/**/+b`, keeps `+` an adjacent-sibling
 // combinator instead of a descendant gap before a relative selector.
-static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool comment, bool *consumed, bool *spaced) {
-    int32_t first = lexer->lookahead;
+// `first` is the character after the gap; a rejected combinator scan may already have advanced past it.
+static bool scan_gap_operator(TSLexer *lexer, int32_t first, bool allow_gap, bool comment, bool *consumed, bool *spaced) {
     // A spaced gap containing a comment otherwise ends as a descendant combinator, which pseudo arithmetic such as
     // `1 /* c */ + 2` cannot take before its operator.
     if (allow_gap && comment && (first == '+' || first == '/')) {
@@ -830,7 +827,7 @@ static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow
                 return false;
             }
         }
-        lexer->result_symbol = allow_combinator && is_explicit_combinator(lexer->lookahead) ? COMBINATOR_GAP : DESCENDANT_OP;
+        lexer->result_symbol = allow_combinator && scan_explicit_combinator(lexer) ? COMBINATOR_GAP : DESCENDANT_OP;
         return true;
     }
     lexer->mark_end(lexer);
@@ -838,14 +835,16 @@ static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow
     return true;
 }
 
-static bool is_explicit_combinator(int32_t character) {
-    return character == '>' || character == '~' || character == '+';
-}
-
-static bool scan_numeric_operand_after_plus(TSLexer *lexer) {
+// Called where the gap token is zero-width, so it may advance past the combinator. `~=` is an attribute operator, and a
+// `+` before a number continues pseudo arithmetic such as `:foo(a /* c */ + 2)`, as it does without the comment.
+static bool scan_explicit_combinator(TSLexer *lexer) {
+    int32_t combinator = lexer->lookahead;
+    if (combinator != '>' && combinator != '~' && combinator != '+') return false;
     advance(lexer);
+    if (lexer->lookahead == '=') return false;
+    if (combinator != '+') return true;
     while (iswspace(lexer->lookahead)) advance(lexer);
-    return is_digit(lexer->lookahead) || lexer->lookahead == '.';
+    return !is_digit(lexer->lookahead) && lexer->lookahead != '.';
 }
 
 static bool scan_escape(TSLexer *lexer) {
