@@ -86,6 +86,13 @@ module.exports = grammar({
     $._operator_gap,
     $._combinator_gap,
     $._binary_asterisk,
+    $._declaration_continuation,
+    $._declaration_operator_gap,
+    $._value_call_start,
+    $._value_unit_start,
+    $._recovery_identifier,
+    $._declaration_boundary,
+    $._declaration_operand_gap,
   ],
 
   inline: $ => [
@@ -961,27 +968,13 @@ module.exports = grammar({
 
     _style_unary_query: $ => seq(alias($._query_not, 'not'), $._style_in_parens),
 
-    _value: $ => choice(
-      seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
-      prec(-1, choice(
-        alias($.identifier, $.plain_value),
-        $.plain_value,
-        seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
-        '#',
-        $.integer_value,
-        $.float_value,
-        $.string_value,
-        $.grid_value,
-        $.binary_expression,
-        $.parenthesized_value,
-        $.call_expression,
-        $.url_value,
-        $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
-        alias(token(prec(-1, '%')), $.plain_value),
-        alias(token(prec(-1, ':')), $.plain_value),
-      )),
-      alias(choice($._escaped_identifier, escapedName), $.plain_value),
+    _value: $ => value($, $.binary_expression),
+
+    _declaration_value: $ => value($, alias($._declaration_binary_expression, $.binary_expression)),
+
+    _declaration_binary_expression: $ => choice(
+      prec.left(2, seq($._declaration_value, $._declaration_operator_gap, arithmeticOperator($), $._declaration_operand_gap, $._declaration_value)),
+      prec.left(1, seq($._declaration_value, $._declaration_operator_gap, arithmeticOperator($))),
     ),
 
     parenthesized_value: $ => seq(
@@ -1025,9 +1018,9 @@ module.exports = grammar({
       ),
     )),
 
-    integer_value: $ => seq($._integer, optional($.unit)),
+    integer_value: $ => seq($._integer, optional(seq(optional($._value_unit_start), $.unit))),
 
-    float_value: $ => seq($._float, optional($.unit)),
+    float_value: $ => seq($._float, optional(seq(optional($._value_unit_start), $.unit))),
 
     _integer: _ => token(seq(
       optional(choice('+', '-')),
@@ -1056,12 +1049,13 @@ module.exports = grammar({
 
     call_expression: $ => seq(
       alias($.identifier, $.function_name),
+      optional($._value_call_start),
       $.arguments,
     ),
 
     binary_expression: $ => choice(
-      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash), $._value)),
-      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash))),
+      prec.left(2, seq($._value, arithmeticOperator($), $._value)),
+      prec.left(1, seq($._value, arithmeticOperator($))),
     ),
 
     arguments: $ => seq(
@@ -1112,8 +1106,8 @@ function declarationValue($) {
         alias(propertyIdentifier($), $.property_name),
         optional($._descendant_combinator),
         ':',
-        $._value,
-        repeat(seq(optional(','), $._value)),
+        $._declaration_value,
+        repeat(seq(optional(','), $._declaration_continuation, $._declaration_value)),
       ),
       seq(
         alias($._custom_property_component, $.property_name),
@@ -1123,6 +1117,7 @@ function declarationValue($) {
       ),
     ),
     optional($.important),
+    optional($._declaration_boundary),
   );
 }
 
@@ -1131,11 +1126,40 @@ function propertyIdentifier($) {
 }
 
 function selectorIdentifier($) {
-  return choice($.identifier, escapedName, selectorFunctionName, queryKeyword($), $._custom_property_component);
+  return choice($.identifier, $._recovery_identifier, escapedName, selectorFunctionName, queryKeyword($), $._custom_property_component);
 }
 
 function queryKeyword($) {
   return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
+}
+
+function value($, binaryExpression) {
+  return choice(
+    seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
+    prec(-1, choice(
+      alias($.identifier, $.plain_value),
+      $.plain_value,
+      seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
+      '#',
+      $.integer_value,
+      $.float_value,
+      $.string_value,
+      $.grid_value,
+      binaryExpression,
+      $.parenthesized_value,
+      $.call_expression,
+      $.url_value,
+      $.important,
+      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
+      alias(token(prec(-1, '%')), $.plain_value),
+      alias(token(prec(-1, ':')), $.plain_value),
+    )),
+    alias(choice($._escaped_identifier, escapedName), $.plain_value),
+  );
+}
+
+function arithmeticOperator($) {
+  return choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash);
 }
 
 function valueSequence($) {
