@@ -26,36 +26,49 @@ const preludes = [
   ['@layer theme', 'at_rule'],
   ['@container (width > 1px)', 'container_statement'],
 ] as const;
+const declarationValues = [
+  ['1px solid', ['1px'], ['solid']],
+  ['1px + 2px', ['1px', '2px'], []],
+  ['1 + 2', ['1', '2'], []],
+  ['1px * 2px', ['1px', '2px'], []],
+  ['1px / 2px', ['1px', '2px'], []],
+] as const;
 
 test.each(
   preludes.flatMap(([prelude, type]) =>
-    ['\n  ', '\r\n  ', '\n/**/ ', '/* note */\n'].map((gap) => [prelude, type, gap] as const)
+    declarationValues.flatMap(([value, numbers, plain]) =>
+      ['\n  ', '\r\n  ', '\n/**/ ', '/* note */\n'].map((gap) => [prelude, type, gap, value, numbers, plain] as const)
+    )
   )
-)('missing semicolon retains the following %s node and its ranges: %s %s', (prelude, type, gap) => {
-  const parser = new Parser().setLanguage(language);
-  const source = sourceFor(prelude, gap);
-  const tree = parser.parse(source)!;
-  try {
-    expect(tree.rootNode.hasError).toBe(true);
-    const [outer, after] = tree.rootNode.namedChildren.filter((node) => node.type !== 'comment');
-    expect(outer?.type).toBe('rule_set');
-    expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
-    const block = outer!.namedChildren.find((node) => node.type === 'block')!;
-    const children = block.namedChildren.filter((node) => node.type !== 'comment');
-    expect(children.map((node) => node.type)).toEqual(['declaration', type]);
-    expect(children[0]!.descendantsOfType('plain_value').map((node) => node.text)).toEqual(['solid']);
-    const nested = children[1]!;
-    expect(nested.text).toBe(`${prelude} { c: d }`);
-    expect(nested.startIndex).toBe(source.indexOf(`${prelude} { c: d }`, source.indexOf('solid') + 'solid'.length));
-    expect(nested.descendantsOfType('property_name').map((node) => [node.text, node.startIndex])).toEqual([
-      ['c', source.indexOf('c: d')],
-    ]);
-    expect(after?.text).toBe('.after { color: blue; }');
-  } finally {
-    tree.delete();
-    parser.delete();
+)(
+  'missing semicolon retains the following %s node and its ranges: %s %s %s',
+  (prelude, type, gap, value, numbers, plain) => {
+    const parser = new Parser().setLanguage(language);
+    const source = sourceFor(prelude, gap, value);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(true);
+      const [outer, after] = tree.rootNode.namedChildren.filter((node) => node.type !== 'comment');
+      expect(outer?.type).toBe('rule_set');
+      expect(outer?.endIndex).toBe(source.indexOf('\n.after'));
+      const block = outer!.namedChildren.find((node) => node.type === 'block')!;
+      const children = block.namedChildren.filter((node) => node.type !== 'comment');
+      expect(children.map((node) => node.type)).toEqual(['declaration', type]);
+      expect(children[0]!.descendantsOfType('plain_value').map((node) => node.text)).toEqual(plain);
+      expect(children[0]!.descendantsOfType('integer_value').map((node) => node.text)).toEqual(numbers);
+      const nested = children[1]!;
+      expect(nested.text).toBe(`${prelude} { c: d }`);
+      expect(nested.startIndex).toBe(source.indexOf(`${prelude} { c: d }`, source.indexOf(value) + value.length));
+      expect(nested.descendantsOfType('property_name').map((node) => [node.text, node.startIndex])).toEqual([
+        ['c', source.indexOf('c: d')],
+      ]);
+      expect(after?.text).toBe('.after { color: blue; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
   }
-});
+);
 
 test.each(preludes)(
   'inserting and removing the semicolon before %s matches fresh tree ranges and highlights',
@@ -94,6 +107,8 @@ const editedValues = [
   'alpha/**/\n beta/**/\n gamma;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
+  '1px + 2px\n :hover { c: d }',
+  '1 + 2\n .b { c: d }',
 ];
 
 test.each(
@@ -232,8 +247,8 @@ test.each(['\n', '/**/\n'])('multiline declaration values retain linear public i
   }
 });
 
-function sourceFor(prelude: string, gap: string): string {
-  return `/* Ω🙂 */ a { border: 1px solid${gap}${prelude} { c: d } }\n.after { color: blue; }`;
+function sourceFor(prelude: string, gap: string, value = '1px solid'): string {
+  return `/* Ω🙂 */ a { border: ${value}${gap}${prelude} { c: d } }\n.after { color: blue; }`;
 }
 
 function equivalent(actual: Tree, expected: Tree, query: Query): void {

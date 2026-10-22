@@ -617,6 +617,7 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
     bool selector_prefix = is_selector_prefix(lexer->lookahead);
     if (!valid_symbols[DECLARATION_OPERAND_GAP] && valid_symbols[DECLARATION_OPERATOR_GAP] && scan_arithmetic_prefix(lexer)) {
         lexer->result_symbol = DECLARATION_OPERATOR_GAP;
+        selector_prefix = false;
     } else if (!valid_symbols[DECLARATION_CONTINUATION] && !valid_symbols[DECLARATION_BOUNDARY] && !valid_symbols[DECLARATION_OPERAND_GAP]) {
         return false;
     }
