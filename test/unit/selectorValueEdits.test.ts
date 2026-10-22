@@ -23,6 +23,12 @@ const editCases = valueParts.flatMap(([before, after]) =>
         [0, 0, '/* inserted Ω🙂\n */ '],
         [0, prefix.length, ''],
         [source.indexOf(');'), 1, '{'],
+        ...(after
+          ? [
+              [source.indexOf('* 1') + 2, 1, 'word'],
+              [source.indexOf('* 1') + 2, 1, '.nested { z: y; }'],
+            ]
+          : []),
       ].map(([index, removed, inserted]) => ({
         source,
         index: Number(index),
