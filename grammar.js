@@ -957,28 +957,9 @@ module.exports = grammar({
 
     _style_unary_query: $ => seq(alias($._query_not, 'not'), $._style_in_parens),
 
-    _value: $ => choice(
-      seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
-      prec(-1, choice(
-        alias($.identifier, $.plain_value),
-        $.plain_value,
-        seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
-        '#',
-        $.integer_value,
-        $.float_value,
-        $.string_value,
-        $.grid_value,
-        $.binary_expression,
-        $.parenthesized_value,
-        $.call_expression,
-        $.url_value,
-        $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
-        alias(token(prec(-1, '%')), $.plain_value),
-        alias(token(prec(-1, ':')), $.plain_value),
-      )),
-      alias(choice($._escaped_identifier, escapedName), $.plain_value),
-    ),
+    _value: $ => value($, false),
+
+    _nested_value: $ => value($, true),
 
     parenthesized_value: $ => seq(
       '(',
@@ -1055,10 +1036,9 @@ module.exports = grammar({
       $.arguments,
     ),
 
-    binary_expression: $ => choice(
-      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash), $._value)),
-      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), valueSlash))),
-    ),
+    binary_expression: $ => binaryExpression($._value, choice('*', alias($._value_asterisk, '*'))),
+
+    _nested_binary_expression: $ => binaryExpression($._nested_value, '*'),
 
     arguments: $ => seq(
       token.immediate('('),
@@ -1101,6 +1081,39 @@ function importUrlModifiers($) {
   ));
 }
 
+function value($, nested) {
+  const selectorDelimiters = nested ? choice($._value_dot, '&', '*') : choice($._value_dot, $._value_ampersand, $._value_asterisk);
+  return choice(
+    seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
+    prec(-1, choice(
+      alias($.identifier, $.plain_value),
+      $.plain_value,
+      seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
+      '#',
+      $.integer_value,
+      $.float_value,
+      $.string_value,
+      $.grid_value,
+      nested ? alias($._nested_binary_expression, $.binary_expression) : $.binary_expression,
+      $.parenthesized_value,
+      $.call_expression,
+      $.url_value,
+      $.important,
+      prec.dynamic(-1, alias(choice(selectorDelimiters, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
+      alias(token(prec(-1, '%')), $.plain_value),
+      alias(token(prec(-1, ':')), $.plain_value),
+    )),
+    alias(choice($._escaped_identifier, escapedName), $.plain_value),
+  );
+}
+
+function binaryExpression(operand, asterisk) {
+  return choice(
+    prec.left(2, seq(operand, choice('+', '-', asterisk, valueSlash), operand)),
+    prec.left(1, seq(operand, choice('+', '-', asterisk, valueSlash))),
+  );
+}
+
 function declarationValue($) {
   return seq(
     choice(
@@ -1135,7 +1148,7 @@ function queryKeyword($) {
 }
 
 function valueSequence($) {
-  return sep(choice(',', ';'), repeat1($._value));
+  return sep(choice(',', ';'), repeat1($._nested_value));
 }
 
 function pseudoArgument($) {

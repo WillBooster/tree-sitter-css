@@ -85,9 +85,29 @@ test.each(['&', '*'])(
   }
 );
 
+test.each(['f(', '(', '['])('unfinished arithmetic in %s has linear input read growth', (opening) => {
+  const source = (count: number): string => `a { --x: ${opening}${'1 * '.repeat(count)}{} }`;
+  expect(parseReadCount(source(3200)) / parseReadCount(source(800))).toBeLessThan(8);
+});
+
 test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
   expect(parseGrowth(repeatedImportInput(250), repeatedImportInput(1000), true)).toBeLessThan(8);
 });
+
+function parseReadCount(source: string): number {
+  let reads = 0;
+  const tree = parser.parse((offset) => {
+    reads++;
+    return source.slice(offset, offset + 32);
+  })!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.endIndex).toBe(source.length);
+    return reads;
+  } finally {
+    tree.delete();
+  }
+}
 
 function parseGrowth(small: string, large: string, expectedError: boolean): number {
   parseCpuTime(large, expectedError);

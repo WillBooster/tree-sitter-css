@@ -7,24 +7,26 @@ import { expect, test } from 'vitest';
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 const highlights = fs.readFileSync(path.join(import.meta.dirname, '../../queries/highlights.scm'), 'utf8');
-const editCases = ['', '/* pad */ ', '/* Ω🙂\r\n */ '].flatMap((prefix) =>
-  [' ', '\n', '\r\n', '\n/**/'].flatMap((gap) => {
-    const source = `${prefix}a { --x: f(& alpha${gap}& beta); } .after { z: y; }`;
-    return [
-      [source.indexOf('beta'), 4, 'word'],
-      [source.indexOf('beta'), 4, '{   '],
-      [source.indexOf('alpha'), 5, '"{ }"'],
-      [source.indexOf('beta'), 4, '\n& * .nested { z: y; }'],
-      [0, 0, '/* inserted Ω🙂\n */ '],
-      [0, prefix.length, ''],
-      [source.indexOf(');'), 1, '{'],
-    ].map(([index, removed, inserted]) => ({
-      source,
-      index: Number(index),
-      removed: Number(removed),
-      inserted: String(inserted),
-    }));
-  })
+const editCases = ['& ', '1 * '].flatMap((operand) =>
+  ['', '/* pad */ ', '/* Ω🙂\r\n */ '].flatMap((prefix) =>
+    [' ', '\n', '\r\n', '\n/**/'].flatMap((gap) => {
+      const source = `${prefix}a { --x: f(${operand}alpha${gap}${operand}beta); } .after { z: y; }`;
+      return [
+        [source.indexOf('beta'), 4, 'word'],
+        [source.indexOf('beta'), 4, '{   '],
+        [source.indexOf('alpha'), 5, '"{ }"'],
+        [source.indexOf('beta'), 4, '\n& * .nested { z: y; }'],
+        [0, 0, '/* inserted Ω🙂\n */ '],
+        [0, prefix.length, ''],
+        [source.indexOf(');'), 1, '{'],
+      ].map(([index, removed, inserted]) => ({
+        source,
+        index: Number(index),
+        removed: Number(removed),
+        inserted: String(inserted),
+      }));
+    })
+  )
 );
 
 test.each(editCases)('selector-like values survive real edits and undo: %j', ({ source, index, removed, inserted }) => {
@@ -51,39 +53,40 @@ test.each(editCases)('selector-like values survive real edits and undo: %j', ({ 
   }
 });
 
-test.each([' { x: y; } ', '\n{ x: y; }\n', '/* Ω🙂 */ { x:y; }'])(
-  'included ranges can change after a selector-like value: %s',
-  (gap) => {
-    const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
-    const source = `a { --x: f(& alpha${gap}& beta); } .after { z: y; }`;
-    const start = source.indexOf(gap);
-    const end = start + gap.length;
-    const variants = [[range(source, 0, start), range(source, end, source.length)], [range(source, 0, source.length)]];
-    let previous = parser.parse(source, undefined, { includedRanges: variants[0] })!;
-    try {
-      expect(previous.rootNode.hasError).toBe(false);
-      for (let iteration = 0; iteration < 12; iteration++) {
-        const includedRanges = variants[(iteration + 1) % 2];
-        const next = parser.parse(source, previous, { includedRanges })!;
-        const other = new Parser().setLanguage(language);
-        const fresh = other.parse(source, undefined, { includedRanges })!;
-        try {
-          expectEquivalent(next, fresh, query);
-        } finally {
-          previous.delete();
-          fresh.delete();
-          other.delete();
-          previous = next;
-        }
+test.each(
+  ['& ', '1 * '].flatMap((operand) =>
+    [' { x: y; } ', '\n{ x: y; }\n', '/* Ω🙂 */ { x:y; }'].map((gap) => [operand, gap])
+  )
+)('included ranges can change after a selector-like value: %s %s', (operand, gap) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const source = `a { --x: f(${operand}alpha${gap}${operand}beta); } .after { z: y; }`;
+  const start = source.indexOf(gap);
+  const end = start + gap.length;
+  const variants = [[range(source, 0, start), range(source, end, source.length)], [range(source, 0, source.length)]];
+  let previous = parser.parse(source, undefined, { includedRanges: variants[0] })!;
+  try {
+    expect(previous.rootNode.hasError).toBe(false);
+    for (let iteration = 0; iteration < 12; iteration++) {
+      const includedRanges = variants[(iteration + 1) % 2];
+      const next = parser.parse(source, previous, { includedRanges })!;
+      const other = new Parser().setLanguage(language);
+      const fresh = other.parse(source, undefined, { includedRanges })!;
+      try {
+        expectEquivalent(next, fresh, query);
+      } finally {
+        previous.delete();
+        fresh.delete();
+        other.delete();
+        previous = next;
       }
-    } finally {
-      previous.delete();
-      query.delete();
-      parser.delete();
     }
+  } finally {
+    previous.delete();
+    query.delete();
+    parser.delete();
   }
-);
+});
 
 test('independent parses cannot retain selector-like value lookahead from the preceding input', () => {
   const parser = new Parser().setLanguage(language);
