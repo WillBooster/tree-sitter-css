@@ -111,6 +111,7 @@ const editedValues = [
   'alpha <!--\n beta -->\n gamma;',
   '1url(x\n )\n beta;',
   'https://example.com/a; color: red;',
+  'http://x/**/\n* 1;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -227,6 +228,34 @@ test('numeric and slash-prefixed components retain NUL source characters', () =>
     parser.delete();
   }
 });
+
+test.each(['*', '+', '/'])(
+  'attached scheme comments preserve the following %s arithmetic node and highlight',
+  (operator) => {
+    const source = `a { --x: http://x/**/\n${operator} 1; }\n.after { c: d }`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const expressions = tree.rootNode.descendantsOfType('binary_expression');
+      expect(expressions.map((node) => [node.text, node.startIndex])).toEqual([
+        [`://x/**/\n${operator} 1`, source.indexOf('://x')],
+      ]);
+      expect(
+        query
+          .captures(tree.rootNode)
+          .filter(({ name }) => name === 'operator')
+          .map(({ node }) => [node.text, node.startIndex, node.endIndex])
+      ).toEqual([[operator, source.indexOf(`\n${operator}`) + 1, source.indexOf(`\n${operator}`) + 2]]);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after { c: d }');
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
 
 test.each(['https://example.com/a;', 'http://x.y/z', 'http://x.y/z, 1e3px;'])(
   'scheme-like value %s preserves its declaration and the following rule',

@@ -653,7 +653,7 @@ static bool scan_declaration_comment(TSLexer *lexer, bool *arithmetic) {
         return comment;
     }
     bool line_comment = lexer->lookahead == '/';
-    if (scan_plain_slash_prefix(lexer)) return false;
+    if (scan_plain_slash_prefix(lexer) && (!line_comment || scan_plain_slash_tail(lexer))) return false;
     if (!line_comment) {
         *arithmetic = true;
         return false;

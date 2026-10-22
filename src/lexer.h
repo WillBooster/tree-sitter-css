@@ -5,6 +5,7 @@
 
 static bool scan_unquoted_url_tail(TSLexer *lexer);
 static bool scan_plain_value_tail(TSLexer *lexer);
+static bool scan_plain_slash_tail(TSLexer *lexer);
 static bool is_plain_value_character(int32_t character);
 static bool scan_escape(TSLexer *lexer);
 static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded);
@@ -41,6 +42,19 @@ static bool scan_plain_value_tail(TSLexer *lexer) {
         return !lexer->eof(lexer) && lexer->lookahead != '*' && is_plain_value_character(lexer->lookahead);
     }
     return is_plain_value_character(lexer->lookahead);
+}
+
+static bool scan_plain_slash_tail(TSLexer *lexer) {
+    while (!lexer->eof(lexer)) {
+        if (lexer->lookahead == '/') {
+            advance(lexer);
+            if (lexer->eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
+        } else if (!is_plain_value_character(lexer->lookahead)) {
+            return true;
+        }
+        advance(lexer);
+    }
+    return true;
 }
 
 static bool is_plain_value_character(int32_t character) {
