@@ -77,6 +77,7 @@ static bool scan_component_gap(TSLexer *lexer, bool *whitespace);
 static bool is_css_whitespace(int32_t character);
 static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
 static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, bool guard_rule);
+static bool scan_numeric_operand(TSLexer *lexer);
 static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte);
 static bool scan_probe_component(TSLexer *lexer, bool *stop);
 static void scan_quoted_component(TSLexer *lexer);
@@ -536,11 +537,27 @@ static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbo
     lexer->mark_end(lexer);
     lexer->result_symbol = symbol;
     if (!guard_rule) return true;
+    if (symbol == VALUE_ASTERISK && scan_numeric_operand(lexer)) return true;
     if (scanner->capacity && scanner->active_cookie == scanner->cookie) {
         Memo *memo = memo_slot(scanner, position.bytes);
         if (memo->used && memo->origin == scanner->active_origin) return memo->result;
     }
     return probe_selector_boundary(scanner, lexer, position.bytes);
+}
+
+static bool scan_numeric_operand(TSLexer *lexer) {
+    for (;;) {
+        if (iswspace(lexer->lookahead)) {
+            advance(lexer);
+        } else if (lexer->lookahead == '/') {
+            if (!scan_separator_comment(lexer)) return false;
+        } else {
+            break;
+        }
+    }
+    if (lexer->lookahead == '+' || lexer->lookahead == '-') advance(lexer);
+    if (lexer->lookahead == '.') advance(lexer);
+    return is_digit(lexer->lookahead);
 }
 
 static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte) {

@@ -85,8 +85,12 @@ test.each(['&', '*'])(
   }
 );
 
-test.each(['f(', '(', '['])('unfinished arithmetic in %s has linear input read growth', (opening) => {
-  const source = (count: number): string => `a { --x: ${opening}${'1 * '.repeat(count)}{} }`;
+test.each(
+  ['a { --x: f(', 'a { --x: (', 'a { --x: [', '@media (a: ', '@supports (a: ', 'a { color: '].flatMap((opening) =>
+    ['1 * ', '+.5 * ', '-1e2px * ', '1 * /**/ '].map((term) => [opening, term])
+  )
+)('unfinished arithmetic in %s with %s has linear input read growth', (opening, term) => {
+  const source = (count: number): string => `${opening}${term.repeat(count)}{} }`;
   expect(parseReadCount(source(3200)) / parseReadCount(source(800))).toBeLessThan(8);
 });
 

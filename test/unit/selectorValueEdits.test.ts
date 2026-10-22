@@ -7,10 +7,14 @@ import { expect, test } from 'vitest';
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 const highlights = fs.readFileSync(path.join(import.meta.dirname, '../../queries/highlights.scm'), 'utf8');
-const editCases = ['& ', '1 * '].flatMap((operand) =>
+const valueParts = [
+  ['& ', ''],
+  ['', ' * 1'],
+] as const;
+const editCases = valueParts.flatMap(([before, after]) =>
   ['', '/* pad */ ', '/* Ω🙂\r\n */ '].flatMap((prefix) =>
     [' ', '\n', '\r\n', '\n/**/'].flatMap((gap) => {
-      const source = `${prefix}a { --x: f(${operand}alpha${gap}${operand}beta); } .after { z: y; }`;
+      const source = `${prefix}a { --x: f(${before}alpha${after}${gap}${before}beta${after}); } .after { z: y; }`;
       return [
         [source.indexOf('beta'), 4, 'word'],
         [source.indexOf('beta'), 4, '{   '],
@@ -54,13 +58,13 @@ test.each(editCases)('selector-like values survive real edits and undo: %j', ({ 
 });
 
 test.each(
-  ['& ', '1 * '].flatMap((operand) =>
-    [' { x: y; } ', '\n{ x: y; }\n', '/* Ω🙂 */ { x:y; }'].map((gap) => [operand, gap])
+  valueParts.flatMap(([before, after]) =>
+    [' { x: y; } ', '\n{ x: y; }\n', '/* Ω🙂 */ { x:y; }'].map((gap) => [before, after, gap] as const)
   )
-)('included ranges can change after a selector-like value: %s %s', (operand, gap) => {
+)('included ranges can change after a selector-like value: %s%s %s', (before, after, gap) => {
   const parser = new Parser().setLanguage(language);
   const query = new Query(language, highlights);
-  const source = `a { --x: f(${operand}alpha${gap}${operand}beta); } .after { z: y; }`;
+  const source = `a { --x: f(${before}alpha${after}${gap}${before}beta${after}); } .after { z: y; }`;
   const start = source.indexOf(gap);
   const end = start + gap.length;
   const variants = [[range(source, 0, start), range(source, end, source.length)], [range(source, 0, source.length)]];
