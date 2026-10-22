@@ -33,6 +33,8 @@ test.each(
 });
 
 test.each([
+  ['#item/', 'hash_value'],
+  ['#abc/', 'color_value'],
   ['#item//', 'hash_value'],
   ['#item//bar', 'hash_value'],
   ['#item///', 'hash_value'],
@@ -73,6 +75,27 @@ test('a separated line comment after a hash remains a comment', () => {
   }
 });
 
+test.each(['#abc', '#item', String.raw`#a\62 c`].flatMap((hash) => ['', '/**/'].map((gap) => [hash, gap])))(
+  'slash-prefixed words after %s%s retain plain component ownership',
+  (hash, gap) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `a { --x: ${hash}${gap}/foo; color: red; } .after {}`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
+      expect(declaration.descendantsOfType('binary_expression')).toHaveLength(0);
+      expect(
+        declaration.descendantsOfType('plain_value').map((node) => [node.text, node.startIndex, node.endIndex])
+      ).toEqual([['/foo', source.indexOf('/foo'), source.indexOf('/foo') + 4]]);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
 test.each([
   ['#abc©', 'color_value'],
   ['#item→x', 'hash_value'],
@@ -98,7 +121,7 @@ test.each([
   }
 });
 
-test.each(['#item', '#item/', '#item//', '#abc//'])(
+test.each(['#item', '#abc', '#item/', '#item//', '#abc//'])(
   'a block comment opened right after %s/ keeps its delimiters inside the comment',
   (prefix) => {
     const parser = new Parser().setLanguage(language);

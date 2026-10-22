@@ -91,6 +91,7 @@ test.each(preludes)(
 const editedValues = [
   'alpha:beta:\n gamma:\n delta;',
   'alpha\n beta\n gamma;',
+  'alpha/**/\n beta/**/\n gamma;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
 ];
@@ -206,10 +207,10 @@ test('numeric and slash-prefixed components retain NUL source characters', () =>
   }
 });
 
-test('multiline declaration values retain linear public input-read growth', () => {
+test.each(['\n', '/**/\n'])('multiline declaration values retain linear public input-read growth: %j', (gap) => {
   const parser = new Parser().setLanguage(language);
   const reads = (count: number): number => {
-    const source = `a { font-family: ${'word\n'.repeat(count)}; }`;
+    const source = `a { font-family: ${`word${gap}`.repeat(count)}; }`;
     let calls = 0;
     const tree = parser.parse((offset) => {
       calls++;

@@ -177,7 +177,10 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[HASH_SLASH_TAIL] && !valid_symbols[AT_RULE_SLASH] && lexer->lookahead == '/') {
         return scan_hash_slash_tail(lexer, valid_symbols);
     }
-    if (valid_symbols[DECLARATION_CONTINUATION] || valid_symbols[DECLARATION_OPERATOR_GAP] || valid_symbols[DECLARATION_BOUNDARY] || valid_symbols[DECLARATION_OPERAND_GAP]) return scan_declaration_continuation(scanner, lexer, valid_symbols);
+    if (valid_symbols[DECLARATION_CONTINUATION] || valid_symbols[DECLARATION_OPERATOR_GAP] || valid_symbols[DECLARATION_BOUNDARY] || valid_symbols[DECLARATION_OPERAND_GAP]) {
+        return valid_symbols[VALUE_ASTERISK] ? scan_rule_gap(scanner, lexer, valid_symbols)
+            : scan_declaration_continuation(scanner, lexer, valid_symbols);
+    }
     if (valid_symbols[INCOMPLETE_DECLARATION_END] && !valid_symbols[AT_RULE_SLASH] &&
         (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
         return scan_incomplete_declaration_end(lexer, valid_symbols);
@@ -757,7 +760,7 @@ static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t b
 }
 
 static void record_probe_cursor(Scanner *scanner, TSLexer *lexer, unsigned depth) {
-    if (!iswspace(lexer->lookahead) && !is_selector_prefix(lexer->lookahead)) return;
+    if (!iswspace(lexer->lookahead) && !is_selector_prefix(lexer->lookahead) && lexer->lookahead != '/') return;
     TSLexerPosition position;
     lexer->get_position(lexer, &position);
     record_probe_prefix(scanner, position.bytes, depth);
@@ -856,12 +859,15 @@ static bool scan_dot_following_gap(TSLexer *lexer) {
 }
 
 // A run of two or more slashes attached to a hash is delimiter components rather than a line comment, as it is inside
-// a plain value, but a slash followed by `*` opens a block comment, so the run ends before it. A lone slash leaves the
-// position to the incomplete-declaration scan it would otherwise reach.
+// a plain value, but a slash followed by `*` opens a block comment, so the run ends before it.
 static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols) {
     lexer->mark_end(lexer);
     advance(lexer);
     if (lexer->lookahead != '/') {
+        if (lexer->lookahead != '*' && valid_symbols[DECLARATION_OPERATOR_GAP]) {
+            lexer->result_symbol = scan_plain_slash_prefix(lexer) ? DECLARATION_CONTINUATION : DECLARATION_OPERATOR_GAP;
+            return valid_symbols[lexer->result_symbol];
+        }
         return valid_symbols[INCOMPLETE_DECLARATION_END] && scan_comment_body(lexer) &&
             finish_incomplete_declaration_end(lexer, valid_symbols, true);
     }
