@@ -101,3 +101,24 @@ x:is(b /* c */ + d) {}
             (comment)
             (tag_name)))))
     (block)))
+
+=====================================
+Comments before a plus keep pseudo arithmetic
+=====================================
+
+:foo(a /* c */ + 2) {}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors
+      (pseudo_class_selector
+        (class_name
+          (identifier))
+        (arguments
+          (binary_expression
+            (plain_value)
+            (comment)
+            (integer_value)))))
+    (block)))

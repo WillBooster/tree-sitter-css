@@ -90,6 +90,7 @@ static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_incomplete_declaration_end(TSLexer *lexer, const bool *valid_symbols);
 static bool finish_incomplete_declaration_end(TSLexer *lexer, const bool *valid_symbols, bool comment);
 static bool is_explicit_combinator(int32_t character);
+static bool scan_numeric_operand_after_plus(TSLexer *lexer);
 static bool scan_gap_operator(TSLexer *lexer, bool allow_gap, bool comment, bool *consumed, bool *spaced);
 static bool scan_property_start(TSLexer *lexer, int32_t first, bool first_consumed);
 static bool scan_property_colon(TSLexer *lexer);
@@ -716,9 +717,11 @@ static bool finish_incomplete_declaration_end(TSLexer *lexer, const bool *valid_
         }
     }
     int32_t first = lexer->lookahead;
-    // A descendant gap here would let the combinator start a relative selector nested in a descendant selector.
+    // A descendant gap here would let the combinator start a relative selector nested in a descendant selector. A `+`
+    // before a number still continues pseudo arithmetic such as `:foo(a /* c */ + 2)`, as it does without the comment.
     if (comment && whitespace && valid_symbols[COMBINATOR_GAP] && is_explicit_combinator(first)) {
-        lexer->result_symbol = COMBINATOR_GAP;
+        bool arithmetic = first == '+' && allow_gap && scan_numeric_operand_after_plus(lexer);
+        lexer->result_symbol = arithmetic ? OPERATOR_GAP : COMBINATOR_GAP;
         return true;
     }
     bool descendant = allow_descendant && whitespace && (comment || first == '#' || first == '.' ||
@@ -837,6 +840,12 @@ static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow
 
 static bool is_explicit_combinator(int32_t character) {
     return character == '>' || character == '~' || character == '+';
+}
+
+static bool scan_numeric_operand_after_plus(TSLexer *lexer) {
+    advance(lexer);
+    while (iswspace(lexer->lookahead)) advance(lexer);
+    return is_digit(lexer->lookahead) || lexer->lookahead == '.';
 }
 
 static bool scan_escape(TSLexer *lexer) {
