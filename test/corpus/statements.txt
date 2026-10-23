@@ -1153,6 +1153,7 @@ Layer statements
 @layer { b {} }
 @layer initial;
 @layer a.b c;
+@layer a / b;
 
 ---
 
@@ -1186,6 +1187,11 @@ Layer statements
   (at_rule
     (at_keyword)
     (at_rule_value)
+    (at_rule_value)
+    (at_rule_value)
+    (at_rule_value))
+  (at_rule
+    (at_keyword)
     (at_rule_value)
     (at_rule_value)
     (at_rule_value)))

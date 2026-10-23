@@ -67,6 +67,7 @@ static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowe
 static bool scan_double_slash(TSLexer *lexer, bool url_allowed);
 static bool is_at_rule_url_character(int32_t character);
 static bool is_regex_whitespace(int32_t character);
+static bool scan_layer_name_or_slash(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
 static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
@@ -147,7 +148,7 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         return scan_import_condition_start(lexer, valid_symbols);
     }
     if (valid_symbols[LAYER_NAME_IDENTIFIER] || valid_symbols[LAYER_NAME_PREFIX]) {
-        return scan_layer_name_identifier(lexer, valid_symbols);
+        return scan_layer_name_or_slash(lexer, valid_symbols);
     }
     if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT], false);
     if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT], valid_symbols[BINARY_ASTERISK]);
@@ -413,6 +414,20 @@ static bool is_at_rule_url_character(int32_t character) {
 // includes the vertical tab that CSS does not treat as whitespace.
 static bool is_regex_whitespace(int32_t character) {
     return (character >= '\t' && character <= '\r') || character == ' ';
+}
+
+// The generic at-rule fallback after `@layer` shares these states, so a slash keeps its at-rule scan.
+static bool scan_layer_name_or_slash(TSLexer *lexer, const bool *valid_symbols) {
+    bool whitespace = false;
+    while (is_css_whitespace(lexer->lookahead)) {
+        whitespace = true;
+        skip(lexer);
+    }
+    if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
+        lexer->mark_end(lexer);
+        return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP], valid_symbols[COMBINATOR_GAP]);
+    }
+    return scan_layer_name_identifier(lexer, valid_symbols);
 }
 
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols) {
