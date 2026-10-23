@@ -13,7 +13,7 @@ const parser = new Parser();
 parser.setLanguage(await Language.load(WasmPath));
 
 test('uses a Wasm build built from the current parser', () => {
-  const sources = ['grammar.js', 'src/parser.c', 'src/scanner.c', 'src/tree_sitter/parser.h'].map(
+  const sources = ['grammar.js', 'src/parser.c', 'src/scanner.c', 'src/lexer.h', 'src/tree_sitter/parser.h'].map(
     (name) => fs.statSync(path.join(Root, name)).mtimeMs
   );
   expect(
@@ -105,6 +105,44 @@ test.each(
   const source = (count: number): string => `${opening}${term.repeat(count)}{} }`;
   const selector = opening === 'a { color: ' && (term === 'a * ' || term === '-a * ');
   expect(parseReadCount(source(3200), !selector) / parseReadCount(source(800), !selector)).toBeLessThan(8);
+});
+
+test.each(['<!--', '-->', '<!--\n'])(
+  'hash tails across repeated HTML marker extras %j have linear input read growth',
+  (marker) => {
+    const source = (count: number): string => `a { --x: #abc ${marker.repeat(count)}//\n1; }`;
+    expect(parseReadCount(source(400), false) / parseReadCount(source(100), false)).toBeLessThan(8);
+  }
+);
+
+test.each(
+  ['1', '1px', 'word', 'f(x)', '#abc'].flatMap((value) =>
+    ['/**/ ', '<!-- ', '--> '].flatMap((extra) => ['; }', '}', ', 2; }', ''].map((ending) => [value, extra, ending]))
+  )
+)('trailing declaration extras retain linear public input-read growth: %s %j %j', (value, extra, ending) => {
+  const source = (count: number): string => `a { x: ${value} ${extra.repeat(count)}${ending}`;
+  expect(parseReadCount(source(400), !ending) / parseReadCount(source(100), !ending)).toBeLessThan(8);
+});
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    ['/**/ ', '<!-- ', '--> '].flatMap((extra) => ['; }', '}', ''].map((ending) => [property, extra, ending]))
+  )
+)('empty declaration extras retain linear input reads: %s %j %j', (property, extra, ending) => {
+  const source = (count: number): string => `a { ${property}: ${extra.repeat(count)}${ending}`;
+  const hasError = property === 'x' || !ending;
+  expect(parseReadCount(source(400), hasError) / parseReadCount(source(100), hasError)).toBeLessThan(8);
+});
+
+test.each(
+  ['1', '1px solid'].flatMap((value) =>
+    [' /**/\n', ' <!--\n', ' -->\n'].flatMap((extra) =>
+      [':hover', '> b', '@media x'].map((prelude) => [value, extra, prelude])
+    )
+  )
+)('extras before a recovered nested rule retain linear input reads: %s %j %s', (value, extra, prelude) => {
+  const source = (count: number): string => `a { x: ${value}${extra.repeat(count)} ${prelude} {} }`;
+  expect(parseReadCount(source(400), true) / parseReadCount(source(100), true)).toBeLessThan(8);
 });
 
 test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {

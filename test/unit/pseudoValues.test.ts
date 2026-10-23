@@ -110,3 +110,32 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  ['from', 'to', 'only', 'selector', 'FROM', 'TO'].flatMap((name) =>
+    [':foo', '::foo'].flatMap((pseudo) => ['', ' ', '/**/'].map((gap) => [name, pseudo, gap]))
+  )
+)('keyword names retain generic argument value roles: %s %s %j', (name, pseudo, gap) => {
+  const selector = `${pseudo}(${name}${gap}(x))`;
+  const source = `${selector} {} .after { color: red; }`;
+  const parser = new Parser().setLanguage(language);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.firstNamedChild!.firstNamedChild!.text).toBe(selector);
+    const names = tree.rootNode.descendantsOfType('function_name');
+    const start = source.indexOf(name);
+    expect(names.map((node) => [node.text, node.startIndex, node.endIndex])).toEqual(
+      gap ? [] : [[name, start, start + name.length]]
+    );
+    expect(tree.rootNode.descendantsOfType('plain_value').map((node) => node.text)).toEqual(
+      gap ? [name, 'x', 'red'] : ['x', 'red']
+    );
+    expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(gap === '/**/' ? [gap] : []);
+    const after = tree.rootNode.lastNamedChild!;
+    expect([after.text, after.startIndex]).toEqual(['.after { color: red; }', source.indexOf('.after')]);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
