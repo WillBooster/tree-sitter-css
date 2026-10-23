@@ -1052,10 +1052,10 @@ module.exports = grammar({
 
     url_value: _ => token(unquotedUrl),
 
-    call_expression: $ => seq(alias($.identifier, $.function_name), $.arguments),
+    call_expression: $ => seq(alias(valueIdentifier($), $.function_name), $.arguments),
 
     _declaration_call_expression: $ => prec.dynamic(4, seq(
-      alias($.identifier, $.function_name),
+      alias(valueIdentifier($), $.function_name),
       optional($._value_call_start),
       $.arguments,
     )),
@@ -1134,19 +1134,19 @@ function propertyIdentifier($) {
 
 function selectorIdentifier($) {
   return choice(
-    $.identifier,
+    valueIdentifier($),
     $._recovery_identifier,
-    $.from,
-    $.to,
     'and',
     'or',
-    'only',
-    'selector',
     escapedName,
     selectorFunctionName,
     queryKeyword($),
     $._custom_property_component,
   );
+}
+
+function valueIdentifier($) {
+  return choice($.identifier, $.from, $.to, 'only', 'selector');
 }
 
 function queryKeyword($) {
@@ -1157,7 +1157,7 @@ function value($, binaryExpression, declaration = false) {
   return choice(
     seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
     prec(-1, choice(
-      alias($.identifier, $.plain_value),
+      alias(valueIdentifier($), $.plain_value),
       $.plain_value,
       hashValue($, declaration),
       '#',
@@ -1205,7 +1205,7 @@ function pseudoComponent($) {
 
 function pseudoValue($) {
   return choice(
-    alias($.identifier, $.plain_value),
+    alias(valueIdentifier($), $.plain_value),
     $.integer_value,
     $.float_value,
     $.string_value,

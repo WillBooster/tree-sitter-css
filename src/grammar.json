@@ -2585,20 +2585,33 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "identifier"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "from"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "to"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "only"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "selector"
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
                 "name": "_recovery_identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "from"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "to"
               },
               {
                 "type": "STRING",
@@ -2607,14 +2620,6 @@
               {
                 "type": "STRING",
                 "value": "or"
-              },
-              {
-                "type": "STRING",
-                "value": "only"
-              },
-              {
-                "type": "STRING",
-                "value": "selector"
               },
               {
                 "type": "TOKEN",
@@ -3155,20 +3160,33 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "identifier"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "from"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "to"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "only"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "selector"
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
                 "name": "_recovery_identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "from"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "to"
               },
               {
                 "type": "STRING",
@@ -3177,14 +3195,6 @@
               {
                 "type": "STRING",
                 "value": "or"
-              },
-              {
-                "type": "STRING",
-                "value": "only"
-              },
-              {
-                "type": "STRING",
-                "value": "selector"
               },
               {
                 "type": "TOKEN",
@@ -3606,20 +3616,33 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "identifier"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "from"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "to"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "only"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "selector"
+                      }
+                    ]
                   },
                   {
                     "type": "SYMBOL",
                     "name": "_recovery_identifier"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "from"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "to"
                   },
                   {
                     "type": "STRING",
@@ -3628,14 +3651,6 @@
                   {
                     "type": "STRING",
                     "value": "or"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "only"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "selector"
                   },
                   {
                     "type": "TOKEN",
@@ -3942,20 +3957,33 @@
                         "type": "CHOICE",
                         "members": [
                           {
-                            "type": "SYMBOL",
-                            "name": "identifier"
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "identifier"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "from"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "to"
+                              },
+                              {
+                                "type": "STRING",
+                                "value": "only"
+                              },
+                              {
+                                "type": "STRING",
+                                "value": "selector"
+                              }
+                            ]
                           },
                           {
                             "type": "SYMBOL",
                             "name": "_recovery_identifier"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "from"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "to"
                           },
                           {
                             "type": "STRING",
@@ -3964,14 +3992,6 @@
                           {
                             "type": "STRING",
                             "value": "or"
-                          },
-                          {
-                            "type": "STRING",
-                            "value": "only"
-                          },
-                          {
-                            "type": "STRING",
-                            "value": "selector"
                           },
                           {
                             "type": "TOKEN",
@@ -4714,8 +4734,29 @@
                                           {
                                             "type": "ALIAS",
                                             "content": {
-                                              "type": "SYMBOL",
-                                              "name": "identifier"
+                                              "type": "CHOICE",
+                                              "members": [
+                                                {
+                                                  "type": "SYMBOL",
+                                                  "name": "identifier"
+                                                },
+                                                {
+                                                  "type": "SYMBOL",
+                                                  "name": "from"
+                                                },
+                                                {
+                                                  "type": "SYMBOL",
+                                                  "name": "to"
+                                                },
+                                                {
+                                                  "type": "STRING",
+                                                  "value": "only"
+                                                },
+                                                {
+                                                  "type": "STRING",
+                                                  "value": "selector"
+                                                }
+                                              ]
                                             },
                                             "named": true,
                                             "value": "plain_value"
@@ -5079,8 +5120,29 @@
                                                 {
                                                   "type": "ALIAS",
                                                   "content": {
-                                                    "type": "SYMBOL",
-                                                    "name": "identifier"
+                                                    "type": "CHOICE",
+                                                    "members": [
+                                                      {
+                                                        "type": "SYMBOL",
+                                                        "name": "identifier"
+                                                      },
+                                                      {
+                                                        "type": "SYMBOL",
+                                                        "name": "from"
+                                                      },
+                                                      {
+                                                        "type": "SYMBOL",
+                                                        "name": "to"
+                                                      },
+                                                      {
+                                                        "type": "STRING",
+                                                        "value": "only"
+                                                      },
+                                                      {
+                                                        "type": "STRING",
+                                                        "value": "selector"
+                                                      }
+                                                    ]
                                                   },
                                                   "named": true,
                                                   "value": "plain_value"
@@ -5685,8 +5747,29 @@
             {
               "type": "ALIAS",
               "content": {
-                "type": "SYMBOL",
-                "name": "identifier"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "from"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "to"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "only"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "selector"
+                  }
+                ]
               },
               "named": true,
               "value": "plain_value"
@@ -6440,8 +6523,29 @@
                                           {
                                             "type": "ALIAS",
                                             "content": {
-                                              "type": "SYMBOL",
-                                              "name": "identifier"
+                                              "type": "CHOICE",
+                                              "members": [
+                                                {
+                                                  "type": "SYMBOL",
+                                                  "name": "identifier"
+                                                },
+                                                {
+                                                  "type": "SYMBOL",
+                                                  "name": "from"
+                                                },
+                                                {
+                                                  "type": "SYMBOL",
+                                                  "name": "to"
+                                                },
+                                                {
+                                                  "type": "STRING",
+                                                  "value": "only"
+                                                },
+                                                {
+                                                  "type": "STRING",
+                                                  "value": "selector"
+                                                }
+                                              ]
                                             },
                                             "named": true,
                                             "value": "plain_value"
@@ -6805,8 +6909,29 @@
                                                 {
                                                   "type": "ALIAS",
                                                   "content": {
-                                                    "type": "SYMBOL",
-                                                    "name": "identifier"
+                                                    "type": "CHOICE",
+                                                    "members": [
+                                                      {
+                                                        "type": "SYMBOL",
+                                                        "name": "identifier"
+                                                      },
+                                                      {
+                                                        "type": "SYMBOL",
+                                                        "name": "from"
+                                                      },
+                                                      {
+                                                        "type": "SYMBOL",
+                                                        "name": "to"
+                                                      },
+                                                      {
+                                                        "type": "STRING",
+                                                        "value": "only"
+                                                      },
+                                                      {
+                                                        "type": "STRING",
+                                                        "value": "selector"
+                                                      }
+                                                    ]
                                                   },
                                                   "named": true,
                                                   "value": "plain_value"
@@ -7155,20 +7280,33 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "identifier"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "from"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "to"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "only"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "selector"
+                      }
+                    ]
                   },
                   {
                     "type": "SYMBOL",
                     "name": "_recovery_identifier"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "from"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "to"
                   },
                   {
                     "type": "STRING",
@@ -7177,14 +7315,6 @@
                   {
                     "type": "STRING",
                     "value": "or"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "only"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "selector"
                   },
                   {
                     "type": "TOKEN",
@@ -7457,20 +7587,33 @@
                               "type": "CHOICE",
                               "members": [
                                 {
-                                  "type": "SYMBOL",
-                                  "name": "identifier"
+                                  "type": "CHOICE",
+                                  "members": [
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "identifier"
+                                    },
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "from"
+                                    },
+                                    {
+                                      "type": "SYMBOL",
+                                      "name": "to"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "only"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "selector"
+                                    }
+                                  ]
                                 },
                                 {
                                   "type": "SYMBOL",
                                   "name": "_recovery_identifier"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "from"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "to"
                                 },
                                 {
                                   "type": "STRING",
@@ -7479,14 +7622,6 @@
                                 {
                                   "type": "STRING",
                                   "value": "or"
-                                },
-                                {
-                                  "type": "STRING",
-                                  "value": "only"
-                                },
-                                {
-                                  "type": "STRING",
-                                  "value": "selector"
                                 },
                                 {
                                   "type": "TOKEN",
@@ -7882,20 +8017,33 @@
                           "type": "CHOICE",
                           "members": [
                             {
-                              "type": "SYMBOL",
-                              "name": "identifier"
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "identifier"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "from"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "to"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "only"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "selector"
+                                }
+                              ]
                             },
                             {
                               "type": "SYMBOL",
                               "name": "_recovery_identifier"
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "from"
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "to"
                             },
                             {
                               "type": "STRING",
@@ -7904,14 +8052,6 @@
                             {
                               "type": "STRING",
                               "value": "or"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "only"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "selector"
                             },
                             {
                               "type": "TOKEN",
@@ -10351,8 +10491,29 @@
               {
                 "type": "ALIAS",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "identifier"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "from"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "to"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "only"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "selector"
+                    }
+                  ]
                 },
                 "named": true,
                 "value": "plain_value"
@@ -10874,8 +11035,29 @@
               {
                 "type": "ALIAS",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "identifier"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "from"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "to"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "only"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "selector"
+                    }
+                  ]
                 },
                 "named": true,
                 "value": "plain_value"
@@ -12229,8 +12411,29 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "from"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "to"
+              },
+              {
+                "type": "STRING",
+                "value": "only"
+              },
+              {
+                "type": "STRING",
+                "value": "selector"
+              }
+            ]
           },
           "named": true,
           "value": "function_name"
@@ -12250,8 +12453,29 @@
           {
             "type": "ALIAS",
             "content": {
-              "type": "SYMBOL",
-              "name": "identifier"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "from"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "to"
+                },
+                {
+                  "type": "STRING",
+                  "value": "only"
+                },
+                {
+                  "type": "STRING",
+                  "value": "selector"
+                }
+              ]
             },
             "named": true,
             "value": "function_name"
