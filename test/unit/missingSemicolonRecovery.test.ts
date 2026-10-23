@@ -114,6 +114,7 @@ const editedValues = [
   'http://x/**/\n* 1;',
   'b -/foo;',
   'f(1/**/px) f(a/**/(x));',
+  'url(x)\u2000 1\u0085;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -230,6 +231,40 @@ test('numeric and slash-prefixed components retain NUL source characters', () =>
     }
     expect(tree.rootNode.lastNamedChild!.text).toBe('.after { z: y; }');
     expect(tree.rootNode.endIndex).toBe(source.length);
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['\u0085', '\u2000', '\u2028', '\u2029'].flatMap((separator) =>
+    ['url(x)', '1', '1px'].map((value) => [separator, value])
+  )
+)('non-ASCII value components retain their ranges after %j: %s', (separator, value) => {
+  const source = `a { x: ${value}${separator}; } .after { c: d; }`;
+  const parser = new Parser().setLanguage(language);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const declaration = tree.rootNode.firstNamedChild!.descendantsOfType('declaration')[0]!;
+    const scalar = value === 'url(x)' ? value : '1';
+    const component = value === '1px' ? `px${separator}` : separator;
+    expect(declaration.namedChildren.map((node) => [node.type, node.text])).toEqual([
+      ['property_name', 'x'],
+      [value === 'url(x)' ? 'url_value' : 'integer_value', scalar],
+      ['plain_value', component],
+    ]);
+    const last = declaration.namedChildren.at(-1)!;
+    const start = source.indexOf(value) + scalar.length;
+    expect([last.startIndex, last.endIndex, last.startPosition, last.endPosition]).toEqual([
+      start,
+      start + component.length,
+      point(source, start),
+      point(source, start + component.length),
+    ]);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after { c: d; }');
+    expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
   } finally {
     tree.delete();
     parser.delete();

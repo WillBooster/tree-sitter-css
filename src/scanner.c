@@ -617,7 +617,7 @@ static bool scan_arithmetic_prefix(TSLexer *lexer) {
 
 static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix) {
     for (;;) {
-        if (iswspace(lexer->lookahead)) {
+        if (is_regex_whitespace(lexer->lookahead)) {
             *newline |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
             advance(lexer);
         } else if (lexer->lookahead == '/') {
