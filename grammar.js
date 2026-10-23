@@ -97,6 +97,7 @@ module.exports = grammar({
     $._value_number_end,
     $._declaration_terminator_gap,
     $._declaration_comma_gap,
+    $._declaration_value_start,
   ],
 
   inline: $ => [
@@ -108,7 +109,6 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
-    [$.declaration, $.last_declaration],
     [$.namespace_selector, $._pseudo_operand],
     [$.adjacent_sibling_selector, $._pseudo_operand],
     [$.sibling_selector, $._pseudo_operand],
@@ -202,7 +202,7 @@ module.exports = grammar({
   rules: {
     stylesheet: $ => seq(
       repeat(choice(';', $._top_level_item)),
-      optional(seq(alias($.last_declaration, $.declaration), optional($._declaration_terminator_gap))),
+      optional(alias($.last_declaration, $.declaration)),
     ),
 
     _html_comment_marker: _ => token(choice('<!--', '-->')),
@@ -531,7 +531,7 @@ module.exports = grammar({
     block: $ => seq(
       '{',
       repeat(choice(';', $._block_item)),
-      optional(seq(alias($.last_declaration, $.declaration), optional($._declaration_terminator_gap))),
+      optional(alias($.last_declaration, $.declaration)),
       '}',
     ),
 
@@ -753,7 +753,7 @@ module.exports = grammar({
 
     declaration: $ => prec.dynamic(1, seq(declarationValue($), optional($._declaration_terminator_gap), ';')),
 
-    last_declaration: $ => prec.dynamic(1, declarationValue($)),
+    last_declaration: $ => prec.dynamic(1, declarationValue($, true)),
 
     _star_property_name: _ => token(seq('*', choice('--', seq(optional('-'), nameStart)), repeat(nameContinue))),
 
@@ -1126,25 +1126,32 @@ function importUrlModifiers($) {
   ));
 }
 
-function declarationValue($) {
-  return seq(
-    choice(
-      seq(
-        alias(propertyIdentifier($), $.property_name),
-        optional($._descendant_combinator),
-        ':',
-        $._declaration_value,
-        repeat(seq(optional(seq(optional($._declaration_comma_gap), ',')), $._declaration_continuation, $._declaration_value)),
-      ),
-      seq(
-        alias($._custom_property_component, $.property_name),
-        optional($._descendant_combinator),
-        ':',
-        optional(alias($.at_rule_braced, $.block_value)),
-      ),
-    ),
+function declarationValue($, final = false) {
+  const ending = seq(
     optional($.important),
     optional($._declaration_boundary),
+    ...(final ? [$._declaration_terminator_gap] : []),
+  );
+  return choice(
+    seq(
+      alias(propertyIdentifier($), $.property_name),
+      optional($._descendant_combinator),
+      ':',
+      $._declaration_value_start,
+      $._declaration_value,
+      repeat(seq(optional(seq(optional($._declaration_comma_gap), ',')), $._declaration_continuation, $._declaration_value)),
+      ending,
+    ),
+    seq(
+      alias($._custom_property_component, $.property_name),
+      optional($._descendant_combinator),
+      ':',
+      $._declaration_value_start,
+      choice(
+        seq(alias($.at_rule_braced, $.block_value), ending),
+        optional($._declaration_boundary),
+      ),
+    ),
   );
 }
 

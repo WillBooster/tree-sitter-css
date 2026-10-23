@@ -439,6 +439,91 @@ test.each(
   }
 );
 
+test.each(
+  ['*margin', 'margin', '*x', 'x'].flatMap((property) =>
+    ['0 auto', '1 +', '1 2', '1,2', '#abc', '!important'].flatMap((value) =>
+      [' /* ie7 */ ', ' /**/ /**/\n', ''].flatMap((gap) =>
+        ['-', ' f(1)'].map((inserted) => ({ property, value, gap, inserted }))
+      )
+    )
+  )
+)(
+  'editing final declaration tails retains fresh trees: $property $value $gap $inserted',
+  ({ property, value, gap, inserted }) => {
+    const source = `/* Ω🙂 */ .a { ${property}: ${value}${gap}} .after { z: y; }`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const original = parser.parse(source)!;
+    const trees = [original];
+    try {
+      expect(original.rootNode.hasError).toBe(false);
+      const index = source.indexOf('}');
+      const changed = edit(original, source, index, 0, inserted);
+      const incremental = parser.parse(changed, original)!;
+      const fresh = parser.parse(changed)!;
+      trees.push(incremental, fresh);
+      expectEquivalent(incremental, fresh, query);
+      const restored = edit(incremental, changed, index, inserted.length, '');
+      const undo = parser.parse(restored, incremental)!;
+      const freshUndo = parser.parse(source)!;
+      trees.push(undo, freshUndo);
+      expectEquivalent(undo, freshUndo, query);
+      expect(undo.rootNode.hasError).toBe(false);
+    } finally {
+      for (const tree of trees) tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(
+  ['--x', '--😀', String.raw`\2d\2d x`].flatMap((property) =>
+    [
+      { extra: '/**/', comments: ['/**/'] },
+      { extra: '/**/ /**/', comments: ['/**/', '/**/'] },
+      { extra: '<!--', comments: [] },
+      { extra: '// note\rbody\n', comments: ['// note\rbody'] },
+    ].flatMap(({ extra, comments }) => [false, true].map((block) => ({ property, extra, comments, block })))
+  )
+)(
+  'empty final checkpoints retain extras and tail edits: $property $extra block=$block',
+  ({ property, extra, comments, block }) => {
+    const declaration = `${property}:`;
+    const source = block ? `a { ${declaration}${extra}} .after { z: y; }` : `${declaration}${extra}`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const original = parser.parse(source)!;
+    const trees = [original];
+    try {
+      expect(original.rootNode.hasError).toBe(false);
+      const empty = original.rootNode.descendantsOfType('declaration')[0]!;
+      expect(empty.text).toBe(declaration);
+      expect(empty.endIndex).toBe(source.indexOf(declaration) + declaration.length);
+      const extras = original.rootNode.descendantsOfType(['comment', 'js_comment']);
+      expect(extras.map((node) => node.text)).toEqual(comments);
+      expect(extras.map((node) => node.parent!.type)).toEqual(comments.map(() => (block ? 'block' : 'stylesheet')));
+      const index = block ? source.indexOf('}') : source.length;
+      const changed = edit(original, source, index, 0, ' word');
+      const incremental = parser.parse(changed, original)!;
+      const fresh = parser.parse(changed)!;
+      trees.push(incremental, fresh);
+      expectEquivalent(incremental, fresh, query);
+      expect(incremental.rootNode.hasError).toBe(false);
+      const restored = edit(incremental, changed, index, ' word'.length, '');
+      const undo = parser.parse(restored, incremental)!;
+      const freshUndo = parser.parse(source)!;
+      trees.push(undo, freshUndo);
+      expectEquivalent(undo, freshUndo, query);
+      expect(undo.rootNode.hasError).toBe(false);
+    } finally {
+      for (const tree of trees) tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
 function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));
   const captures = (tree: Tree): unknown[] =>

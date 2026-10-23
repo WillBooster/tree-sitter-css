@@ -6,6 +6,7 @@
 
 typedef enum { PROBE_GAP, PROBE_PREFIX, PROBE_PLAIN, PROBE_HASH, PROBE_NAME } ProbeContext;
 
+static void scan_value_start_gap(TSLexer *lexer);
 static bool scan_probe_component(TSLexer *lexer, bool *stop, ProbeContext *context, ProbeContext *memo_context);
 static void scan_probe_slash(TSLexer *lexer, ProbeContext *context, ProbeContext *memo_context);
 static bool scan_probe_marker(TSLexer *lexer, ProbeContext *context);
@@ -35,6 +36,18 @@ static bool is_hex_digit(int32_t character);
 static bool is_digit(int32_t character);
 static void advance(TSLexer *lexer);
 static void skip(TSLexer *lexer);
+
+static void scan_value_start_gap(TSLexer *lexer) {
+    ProbeContext context = PROBE_GAP;
+    ProbeContext memo_context = PROBE_GAP;
+    while (!lexer->eof(lexer)) {
+        if (is_regex_whitespace(lexer->lookahead)) advance(lexer);
+        else if (lexer->lookahead == '/') scan_probe_slash(lexer, &context, &memo_context);
+        else if (is_html_marker_prefix(lexer->lookahead)) scan_probe_marker(lexer, &context);
+        else break;
+        if (context != PROBE_GAP) break;
+    }
+}
 
 static bool scan_probe_component(TSLexer *lexer, bool *stop, ProbeContext *context, ProbeContext *memo_context) {
     switch (lexer->lookahead) {
