@@ -117,6 +117,8 @@ const editedValues = [
   'url(x)\u2000 1\u0085;',
   '1 + -;',
   'url(x)\u2000 * 2;',
+  '1\u2000*x;',
+  '#abc\n/**///f();',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -304,6 +306,68 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    ['\u0085', '\u2000', '\u2028', '\u2029'].flatMap((gap) =>
+      ['x', 'f()', ' x', ' f()'].map((operand) => [property, gap, operand])
+    )
+  )
+)('Unicode arithmetic retains attached operands: %s %j %s', (property, gap, operand) => {
+  const source = `a { ${property}: 1${gap}*${operand}; }`;
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('binary_expression').map((node) => node.text)).toEqual([
+      `1${gap}*${operand}`,
+    ]);
+    expect(tree.rootNode.descendantsOfType('function_name').map((node) => node.text)).toEqual(
+      operand.includes('(') ? ['f'] : []
+    );
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'operator')
+        .map(({ node }) => [node.text, node.startIndex, node.endIndex])
+    ).toEqual([['*', source.indexOf('*'), source.indexOf('*') + 1]]);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each(['x', '--x'].flatMap((property) => ['\n/**/', '\r\n/**/', '\n/*a*/', ' /**/'].map((gap) => [property, gap])))(
+  'hash slash tails retain following function ownership across extras: %s %j',
+  (property, gap) => {
+    const source = `a { ${property}: #abc${gap}//f(); }`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const start = source.indexOf('//f');
+      const tail = tree.rootNode.descendantsOfType('plain_value')[0]!;
+      expect([tail.text, tail.startIndex, tail.endIndex]).toEqual(['//', start, start + 2]);
+      expect(
+        tree.rootNode.descendantsOfType('function_name').map((node) => [node.text, node.startIndex, node.endIndex])
+      ).toEqual([['f', start + 2, start + 3]]);
+      expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual([gap.trim()]);
+      expect(
+        query
+          .captures(tree.rootNode)
+          .filter(({ name }) => name === 'function')
+          .map(({ node }) => [node.text, node.startIndex, node.endIndex])
+      ).toEqual([['f', start + 2, start + 3]]);
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
 
 test.each(
   ['\u0085', '\u2000', '\u2028', '\u2029'].flatMap((separator) =>

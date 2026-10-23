@@ -54,6 +54,7 @@ enum TokenType {
 };
 
 typedef Array(char) SupportsDelimiters;
+typedef enum { DECLARATION_COMPONENT, DECLARATION_PREFIX, DECLARATION_HASH_TAIL } DeclarationGap;
 
 static bool scan_recovery_identifier(TSLexer *lexer);
 static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
@@ -86,14 +87,14 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
 static Memo *find_probe(Scanner *scanner, uint32_t byte);
 static bool scan_arithmetic_prefix(TSLexer *lexer);
 static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline);
-static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix);
+static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix, bool hash_tail_allowed);
 static bool scan_declaration_marker(TSLexer *lexer, bool *arithmetic);
 static bool is_html_marker_prefix(int32_t character);
 static bool scan_declaration_comment(TSLexer *lexer, bool *arithmetic);
 static bool scan_plain_slash_prefix(TSLexer *lexer);
 static bool is_selector_prefix(int32_t character);
 static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
-static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, bool guard_rule, bool binary_allowed);
+static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, const bool *valid_symbols);
 static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte, bool witness);
 static void record_probe_cursor(Scanner *scanner, TSLexer *lexer, unsigned depth);
 static bool scan_probe_component(TSLexer *lexer, bool *stop);
@@ -162,8 +163,8 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         return scan_layer_name_identifier(lexer, valid_symbols);
     }
     if (can_scan_value_join(lexer, valid_symbols)) return scan_value_join(lexer, valid_symbols);
-    if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT], false);
-    if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT], valid_symbols[BINARY_ASTERISK]);
+    if (valid_symbols[VALUE_AMPERSAND] && lexer->lookahead == '&') return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols);
+    if (valid_symbols[VALUE_ASTERISK] && lexer->lookahead == '*') return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols);
     if (valid_symbols[VALUE_DOT] && lexer->lookahead == '.') return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
     if (valid_symbols[HASH_SLASH_TAIL] && !valid_symbols[AT_RULE_SLASH] && lexer->lookahead == '/') {
         return scan_hash_slash_tail(lexer, valid_symbols);
@@ -525,8 +526,8 @@ static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_sy
     if (lexer->lookahead == '.' && valid_symbols[VALUE_DOT] &&
         !(whitespace && valid_symbols[DESCENDANT_OP])) return scan_value_dot(lexer, valid_symbols[INVALID_VALUE_DOT]);
     bool value_prefix = !(whitespace && valid_symbols[DESCENDANT_OP]);
-    if (value_prefix && lexer->lookahead == '&' && valid_symbols[VALUE_AMPERSAND]) return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols[INVALID_VALUE_DOT], false);
-    if (value_prefix && lexer->lookahead == '*' && valid_symbols[VALUE_ASTERISK]) return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols[INVALID_VALUE_DOT], valid_symbols[BINARY_ASTERISK]);
+    if (value_prefix && lexer->lookahead == '&' && valid_symbols[VALUE_AMPERSAND]) return scan_value_selector_prefix(scanner, lexer, VALUE_AMPERSAND, valid_symbols);
+    if (value_prefix && lexer->lookahead == '*' && valid_symbols[VALUE_ASTERISK]) return scan_value_selector_prefix(scanner, lexer, VALUE_ASTERISK, valid_symbols);
     if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
         return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP], valid_symbols[COMBINATOR_GAP]);
     }
@@ -568,7 +569,9 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
     bool newline = false;
     bool arithmetic = false;
     bool consumed_prefix = false;
-    if (!scan_declaration_gap(lexer, &newline, &arithmetic, &consumed_prefix)) {
+    DeclarationGap gap = scan_declaration_gap(lexer, &newline, &arithmetic, &consumed_prefix, valid_symbols[HASH_SLASH_TAIL]);
+    if (gap == DECLARATION_HASH_TAIL) return false;
+    if (gap == DECLARATION_PREFIX) {
         if (arithmetic && !valid_symbols[DECLARATION_OPERAND_GAP] && valid_symbols[DECLARATION_OPERATOR_GAP]) {
             lexer->result_symbol = DECLARATION_OPERATOR_GAP;
         }
@@ -634,20 +637,24 @@ static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline) {
     return arithmetic;
 }
 
-static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix) {
+static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix, bool hash_tail_allowed) {
+    bool comment = false;
     for (;;) {
         if (is_regex_whitespace(lexer->lookahead)) {
             *newline |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
             advance(lexer);
-        } else if (lexer->lookahead == '/') {
-            if (!scan_declaration_comment(lexer, arithmetic)) return false;
-        } else if (is_html_marker_prefix(lexer->lookahead)) {
-            *consumed_prefix = true;
-            if (!scan_declaration_marker(lexer, arithmetic)) return true;
-            *consumed_prefix = false;
-        } else {
-            return true;
+            continue;
         }
+        if (lexer->lookahead == '/') {
+            if (comment && hash_tail_allowed) return DECLARATION_HASH_TAIL;
+            if (!scan_declaration_comment(lexer, arithmetic)) return DECLARATION_PREFIX;
+            comment = true;
+            continue;
+        }
+        if (!is_html_marker_prefix(lexer->lookahead)) return DECLARATION_COMPONENT;
+        *consumed_prefix = true;
+        if (!scan_declaration_marker(lexer, arithmetic)) return DECLARATION_COMPONENT;
+        *consumed_prefix = false;
     }
 }
 
@@ -723,13 +730,15 @@ static bool scan_value_dot(TSLexer *lexer, bool allow_invalid) {
     return !scan_dot_following_gap(lexer) || lexer->lookahead != '{';
 }
 
-static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, bool guard_rule, bool binary_allowed) {
+static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, const bool *valid_symbols) {
+    bool guard_rule = valid_symbols[INVALID_VALUE_DOT];
+    bool binary_allowed = symbol == VALUE_ASTERISK && valid_symbols[BINARY_ASTERISK];
     TSLexerPosition position;
     lexer->get_position(lexer, &position);
     advance(lexer);
     // Outside values, a name right after `*` is a legacy star-prefixed property such as `*zoom`, which the internal
     // lexer tokenizes.
-    if (symbol == VALUE_ASTERISK && !guard_rule && (is_name_start(lexer->lookahead) || lexer->lookahead == '-')) return false;
+    if (symbol == VALUE_ASTERISK && !guard_rule && valid_symbols[RECOVERY_IDENTIFIER] && (is_name_start(lexer->lookahead) || lexer->lookahead == '-')) return false;
     lexer->mark_end(lexer);
     lexer->result_symbol = symbol;
     if (!guard_rule) return true;
