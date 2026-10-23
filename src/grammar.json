@@ -10904,6 +10904,18 @@
                     "type": "CHOICE",
                     "members": [
                       {
+                        "type": "SYMBOL",
+                        "name": "_hash_tail_gap"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
                         "type": "ALIAS",
                         "content": {
                           "type": "SYMBOL",
@@ -13389,6 +13401,10 @@
     {
       "type": "SYMBOL",
       "name": "_declaration_operand_gap"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_hash_tail_gap"
     }
   ],
   "inline": [

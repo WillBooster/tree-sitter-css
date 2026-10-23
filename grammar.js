@@ -93,6 +93,7 @@ module.exports = grammar({
     $._recovery_identifier,
     $._declaration_boundary,
     $._declaration_operand_gap,
+    $._hash_tail_gap,
   ],
 
   inline: $ => [
@@ -1158,7 +1159,7 @@ function value($, binaryExpression, declaration = false) {
     prec(-1, choice(
       alias($.identifier, $.plain_value),
       $.plain_value,
-      seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
+      hashValue($, declaration),
       '#',
       declaration ? alias($._declaration_integer_value, $.integer_value) : $.integer_value,
       declaration ? alias($._declaration_float_value, $.float_value) : $.float_value,
@@ -1175,6 +1176,12 @@ function value($, binaryExpression, declaration = false) {
     )),
     alias(choice($._escaped_identifier, escapedName), $.plain_value),
   );
+}
+
+function hashValue($, declaration) {
+  const hash = choice($.color_value, $.hash_value);
+  const tail = optional(alias($._hash_slash_tail, $.plain_value));
+  return declaration ? seq(hash, optional($._hash_tail_gap), tail) : seq(hash, tail);
 }
 
 function arithmeticOperator($) {

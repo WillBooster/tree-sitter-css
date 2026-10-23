@@ -119,6 +119,7 @@ const editedValues = [
   'url(x)\u2000 * 2;',
   '1\u2000*x;',
   '#abc\n/**///f();',
+  '#abc<!--//\n1;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -365,6 +366,66 @@ test.each(['x', '--x'].flatMap((property) => ['\n/**/', '\r\n/**/', '\n/*a*/', '
       tree.delete();
       query.delete();
       parser.delete();
+    }
+  }
+);
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    ['#abc', '#item'].flatMap((hash) =>
+      ['<!--', '-->'].flatMap((marker) => ['//\n1', '//f()'].map((tail) => [property, hash, marker, tail]))
+    )
+  )
+)('hash tails retain value ownership across HTML marker extras: %s %s %s %j', (property, hash, marker, tail) => {
+  const source = `a { ${property}: ${hash} ${marker}${tail}; }`;
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const start = source.indexOf('//');
+    const slash = tree.rootNode.descendantsOfType('plain_value')[0]!;
+    expect([slash.text, slash.startIndex, slash.endIndex]).toEqual(['//', start, start + 2]);
+    expect(tree.rootNode.descendantsOfType('js_comment')).toHaveLength(0);
+    expect(tree.rootNode.descendantsOfType('function_name').map((node) => node.text)).toEqual(
+      tail.endsWith('()') ? ['f'] : []
+    );
+    expect(query.captures(tree.rootNode).filter(({ name }) => name === 'comment')).toHaveLength(0);
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each(['marker', 'tail', 'gap'])(
+  'hash-tail lookahead edits inside the %s match fresh trees and highlights',
+  (part) => {
+    const source = 'a { --x: #abc <!--<!--//f(); } .after {}';
+    const index =
+      part === 'tail' ? source.indexOf('//') : part === 'gap' ? source.indexOf('<!--') : source.lastIndexOf('<!--');
+    const removed = part === 'gap' ? '<!--<!--'.length : 1;
+    const inserted = part === 'tail' ? '*' : '';
+    const parser = new Parser().setLanguage(language);
+    const freshParser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const original = parser.parse(source)!;
+    const changed = change(original, source, index, removed, inserted);
+    const incremental = parser.parse(changed, original)!;
+    const fresh = freshParser.parse(changed)!;
+    const trees = [original, incremental, fresh];
+    try {
+      equivalent(incremental, fresh, query);
+      const restored = change(incremental, changed, index, inserted.length, source.slice(index, index + removed));
+      const undo = parser.parse(restored, incremental)!;
+      const freshUndo = freshParser.parse(source)!;
+      trees.push(undo, freshUndo);
+      equivalent(undo, freshUndo, query);
+    } finally {
+      for (const tree of trees) tree.delete();
+      query.delete();
+      parser.delete();
+      freshParser.delete();
     }
   }
 );

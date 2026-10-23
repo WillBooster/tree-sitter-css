@@ -107,6 +107,14 @@ test.each(
   expect(parseReadCount(source(3200), !selector) / parseReadCount(source(800), !selector)).toBeLessThan(8);
 });
 
+test.each(['<!--', '-->', '<!--\n'])(
+  'hash tails across repeated HTML marker extras %j have linear input read growth',
+  (marker) => {
+    const source = (count: number): string => `a { --x: #abc ${marker.repeat(count)}//\n1; }`;
+    expect(parseReadCount(source(400), false) / parseReadCount(source(100), false)).toBeLessThan(8);
+  }
+);
+
 test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
   expect(parseGrowth(repeatedImportInput(250), repeatedImportInput(1000), true)).toBeLessThan(8);
 });
