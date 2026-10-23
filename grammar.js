@@ -1019,11 +1019,11 @@ module.exports = grammar({
       ),
     )),
 
-    integer_value: $ => seq($._integer, optional($.unit)),
+    integer_value: $ => seq($._integer, optional(valueUnit($))),
 
     _declaration_integer_value: $ => seq($._integer, optional(seq(optional($._value_unit_start), $.unit))),
 
-    float_value: $ => seq($._float, optional($.unit)),
+    float_value: $ => seq($._float, optional(valueUnit($))),
 
     _declaration_float_value: $ => seq($._float, optional(seq(optional($._value_unit_start), $.unit))),
 
@@ -1142,6 +1142,13 @@ function selectorIdentifier($) {
     selectorFunctionName,
     queryKeyword($),
     $._custom_property_component,
+  );
+}
+
+function valueUnit($) {
+  return choice(
+    $.unit,
+    ...['from', 'to', 'only', 'selector'].map(name => alias(token.immediate(name), $.unit)),
   );
 }
 
