@@ -141,3 +141,39 @@ test.each(['#item', '#abc', '#item/', '#item//', '#abc//'])(
     }
   }
 );
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    [
+      ['#abc', 'color_value'],
+      ['#item', 'hash_value'],
+      [String.raw`#a\62 c`, 'hash_value'],
+    ].flatMap(([hash, kind]) =>
+      ['', '2'].flatMap((payload) => [';', ''].map((ending) => ({ property, hash, kind, payload, ending })))
+    )
+  )
+)(
+  'unfinished comments after hashes retain slash values: $property $hash $payload $ending',
+  ({ property, hash, kind, payload, ending }) => {
+    const parser = new Parser().setLanguage(language);
+    const declaration = `${property}: ${hash}/*${payload}${ending}`;
+    const source = `a { ${declaration} } .after { color: red; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const parsed = tree.rootNode.descendantsOfType('declaration')[0]!;
+      expect(parsed.text).toBe(declaration);
+      const binary = parsed.descendantsOfType('binary_expression')[0]!;
+      expect(binary.text).toBe(`${hash}/*`);
+      expect(binary.namedChildren.map((node) => [node.type, node.text])).toEqual([
+        [kind, hash],
+        ['plain_value', '*'],
+      ]);
+      expect(parsed.descendantsOfType('integer_value').map((node) => node.text)).toEqual(payload ? [payload] : []);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);

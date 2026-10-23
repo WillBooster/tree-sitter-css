@@ -191,7 +191,7 @@ module.exports = grammar({
     [$._container_unary_query, $.general_enclosed_query, $._at_rule_component],
     [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
-    [$.range_query, $._range_value],
+    [$.range_query, $._range_start_value],
     [$._selector, $.declaration],
     [$._selector, $.declaration, $.last_declaration],
     [$._selector, $.incomplete_declaration, $.declaration, $.last_declaration],
@@ -365,7 +365,7 @@ module.exports = grammar({
 
     namespace_statement: $ => seq(
       '@namespace',
-      optional(alias($.identifier, $.namespace_name)),
+      optional(alias(valueIdentifier($), $.namespace_name)),
       choice($.string_value, $.call_expression, $.url_value),
       ';',
     ),
@@ -770,7 +770,7 @@ module.exports = grammar({
     important: _ => /![ \t\n\r\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]/,
 
     _query: $ => choice(
-      alias($.identifier, $.keyword_query),
+      alias(featureIdentifier($), $.keyword_query),
       $.feature_query,
       $.binary_query,
       $.unary_query,
@@ -780,14 +780,14 @@ module.exports = grammar({
 
     feature_query: $ => seq(
       '(',
-      alias($.identifier, $.feature_name),
+      alias(featureIdentifier($), $.feature_name),
       ':',
       repeat1($._value),
       ')',
     ),
 
     _media_query: $ => choice(
-      alias($.identifier, $.keyword_query),
+      alias(featureIdentifier($), $.keyword_query),
       $.feature_query,
       $.range_query,
       alias($._media_binary_query, $.binary_query),
@@ -805,20 +805,30 @@ module.exports = grammar({
     range_query: $ => seq(
       '(',
       choice(
-        prec.dynamic(1, seq(alias(choice($.identifier, $._escaped_identifier), $.feature_name), $._range_comparison, $._range_value)),
-        seq($._range_value, $._range_comparison, alias(choice($.identifier, $._escaped_identifier), $.feature_name)),
-        seq($._range_value, choice('<', '<='), alias(choice($.identifier, $._escaped_identifier), $.feature_name), choice('<', '<='), $._range_value),
-        seq($._range_value, choice('>', '>='), alias(choice($.identifier, $._escaped_identifier), $.feature_name), choice('>', '>='), $._range_value),
+        prec.dynamic(1, seq(alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name), $._range_comparison, $._range_value)),
+        seq($._range_start_value, $._range_comparison, alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name)),
+        seq($._range_start_value, choice('<', '<='), alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name), choice('<', '<='), $._range_value),
+        seq($._range_start_value, choice('>', '>='), alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name), choice('>', '>='), $._range_value),
       ),
       ')',
     ),
 
     _range_comparison: _ => choice('<', '<=', '>', '>=', '='),
 
+    _range_start_value: $ => choice(
+      $.integer_value,
+      $.float_value,
+      alias(choice(featureIdentifier($), $._escaped_identifier), $.plain_value),
+      $.ratio_value,
+      alias($._range_start_call_expression, $.call_expression),
+    ),
+
+    _range_start_call_expression: $ => seq(alias(featureIdentifier($), $.function_name), $.arguments),
+
     _range_value: $ => choice(
       $.integer_value,
       $.float_value,
-      alias(choice($.identifier, $._escaped_identifier), $.plain_value),
+      alias(choice(valueIdentifier($), $._escaped_identifier), $.plain_value),
       $.ratio_value,
       $.call_expression,
     ),
@@ -1164,6 +1174,10 @@ function valueUnit($) {
 
 function valueIdentifier($) {
   return choice($.identifier, $.from, $.to, 'only', 'selector');
+}
+
+function featureIdentifier($) {
+  return choice($.identifier, $.from, $.to);
 }
 
 function queryKeyword($) {

@@ -8,8 +8,8 @@
 #include <string.h>
 #include <limits.h>
 
-typedef struct { uint32_t byte; uint32_t origin; bool used; bool result; ProbeContext context; } Memo;
-typedef struct { uint32_t byte; unsigned depth; size_t previous; bool result; ProbeContext context; } ProbePrefix;
+typedef struct { uint32_t byte; uint32_t origin; bool used; bool result; } Memo;
+typedef struct { uint32_t byte; unsigned depth; size_t previous; bool result; } ProbePrefix;
 static atomic_uint_fast64_t next_parse_cookie = 1;
 typedef struct {
     uint64_t cookie;
@@ -91,7 +91,7 @@ static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
 static HashGapContext declaration_hash_context(const bool *valid_symbols);
 static TSSymbol declaration_delimiter_token(TSLexer *lexer);
-static Memo *find_probe(Scanner *scanner, uint32_t byte, ProbeContext context);
+static Memo *find_probe(Scanner *scanner, uint32_t byte);
 static bool scan_arithmetic_prefix(TSLexer *lexer);
 static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline);
 static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix, HashGapContext hash_context);
@@ -99,11 +99,11 @@ static bool scan_declaration_marker(TSLexer *lexer, bool *arithmetic);
 static DeclarationGap scan_declaration_slash_tail(TSLexer *lexer, bool *arithmetic, HashGapContext context, bool defer_hash);
 static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
 static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbol symbol, const bool *valid_symbols);
-static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte, bool witness, ProbeContext context);
+static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte, bool witness);
 static bool remember_probe(Scanner *scanner, bool result, unsigned brace_depth, bool witness);
 static void finish_probe_level(Scanner *scanner, unsigned depth);
-static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth, ProbeContext context);
-static Memo *memo_slot(Scanner *scanner, uint32_t byte, ProbeContext context);
+static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth);
+static Memo *memo_slot(Scanner *scanner, uint32_t byte);
 static void grow_memo(Scanner *scanner);
 static bool scan_dot_following_gap(TSLexer *lexer);
 static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols);
@@ -616,8 +616,8 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
         return false;
     }
     if (!newline && !selector_prefix) return valid_symbols[lexer->result_symbol];
-    Memo *memo = find_probe(scanner, start.bytes, PROBE_GAP);
-    bool continuation = memo ? memo->result : probe_selector_boundary(scanner, lexer, start.bytes, false, PROBE_GAP);
+    Memo *memo = find_probe(scanner, start.bytes);
+    bool continuation = memo ? memo->result : probe_selector_boundary(scanner, lexer, start.bytes, false);
     if (!continuation) lexer->result_symbol = DECLARATION_BOUNDARY;
     return valid_symbols[lexer->result_symbol];
 }
@@ -632,9 +632,9 @@ static HashGapContext declaration_hash_context(const bool *valid_symbols) {
     return valid_symbols[HASH_SLASH_TAIL] ? HASH_GAP_TAIL : NO_HASH_GAP;
 }
 
-static Memo *find_probe(Scanner *scanner, uint32_t byte, ProbeContext context) {
+static Memo *find_probe(Scanner *scanner, uint32_t byte) {
     if (!scanner->capacity || scanner->active_cookie != scanner->cookie) return NULL;
-    Memo *memo = memo_slot(scanner, byte, context);
+    Memo *memo = memo_slot(scanner, byte);
     return memo->used && memo->origin == scanner->active_origin ? memo : NULL;
 }
 
@@ -752,18 +752,19 @@ static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbo
     lexer->mark_end(lexer);
     lexer->result_symbol = symbol;
     if (!guard_rule) return true;
-    Memo *memo = find_probe(scanner, position.bytes, PROBE_GAP);
-    bool result = memo ? memo->result : probe_selector_boundary(scanner, lexer, position.bytes, binary_allowed, PROBE_GAP);
+    Memo *memo = find_probe(scanner, position.bytes);
+    bool result = memo ? memo->result : probe_selector_boundary(scanner, lexer, position.bytes, binary_allowed);
     lexer->result_symbol = result ? symbol : BINARY_ASTERISK;
     return result || binary_allowed;
 }
 
-static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte, bool witness, ProbeContext context) {
+static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte, bool witness) {
     unsigned depth = 0;
+    ProbeContext context = PROBE_GAP;
     scanner->prefix_count = 0;
     scanner->pending = SIZE_MAX;
     scanner->probe_origin = byte;
-    record_probe_prefix(scanner, byte, 0, context);
+    record_probe_prefix(scanner, byte, 0);
     while (!lexer->eof(lexer)) {
         int32_t character = lexer->lookahead;
         bool cursor = is_probe_cursor(character);
@@ -772,7 +773,7 @@ static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t b
         ProbeContext memo_context = is_plain_value_character(character) ? context : PROBE_GAP;
         bool stop = false;
         bool component = scan_probe_component(lexer, &stop, &context, &memo_context);
-        if (cursor) record_probe_prefix(scanner, position.bytes, depth, memo_context);
+        if (cursor && memo_context == PROBE_GAP) record_probe_prefix(scanner, position.bytes, depth);
         if (component) {
             if (stop) return remember_probe(scanner, true, UINT_MAX, witness);
             continue;
@@ -809,9 +810,9 @@ static bool remember_probe(Scanner *scanner, bool result, unsigned brace_depth, 
     for (size_t i = 0; i < scanner->prefix_count; i++) {
         ProbePrefix prefix = scanner->prefixes[i];
         if (scanner->count * 2 >= scanner->capacity) grow_memo(scanner);
-        Memo *memo = memo_slot(scanner, prefix.byte, prefix.context);
+        Memo *memo = memo_slot(scanner, prefix.byte);
         if (!memo->used) scanner->count++;
-        *memo = (Memo) {prefix.byte, scanner->active_origin, true, prefix.result, prefix.context};
+        *memo = (Memo) {prefix.byte, scanner->active_origin, true, prefix.result};
     }
     return result;
 }
@@ -824,18 +825,18 @@ static void finish_probe_level(Scanner *scanner, unsigned depth) {
     }
 }
 
-static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth, ProbeContext context) {
+static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth) {
     if (scanner->prefix_count == scanner->prefix_capacity) {
         scanner->prefix_capacity = scanner->prefix_capacity ? scanner->prefix_capacity * 2 : 64;
         scanner->prefixes = realloc(scanner->prefixes, scanner->prefix_capacity * sizeof(ProbePrefix));
     }
-    scanner->prefixes[scanner->prefix_count] = (ProbePrefix) {byte, depth, scanner->pending, false, context};
+    scanner->prefixes[scanner->prefix_count] = (ProbePrefix) {byte, depth, scanner->pending, false};
     scanner->pending = scanner->prefix_count++;
 }
 
-static Memo *memo_slot(Scanner *scanner, uint32_t byte, ProbeContext context) {
-    size_t index = (byte * UINT32_C(2654435761) + (uint32_t) context) & (scanner->capacity - 1);
-    while (scanner->memo[index].used && (scanner->memo[index].byte != byte || scanner->memo[index].context != context)) index = (index + 1) & (scanner->capacity - 1);
+static Memo *memo_slot(Scanner *scanner, uint32_t byte) {
+    size_t index = (byte * UINT32_C(2654435761)) & (scanner->capacity - 1);
+    while (scanner->memo[index].used && scanner->memo[index].byte != byte) index = (index + 1) & (scanner->capacity - 1);
     return &scanner->memo[index];
 }
 
@@ -845,7 +846,7 @@ static void grow_memo(Scanner *scanner) {
     scanner->capacity = old_capacity ? old_capacity * 2 : 64;
     scanner->memo = calloc(scanner->capacity, sizeof(Memo));
     for (size_t i = 0; i < old_capacity; i++) {
-        if (old[i].used) *memo_slot(scanner, old[i].byte, old[i].context) = old[i];
+        if (old[i].used) *memo_slot(scanner, old[i].byte) = old[i];
     }
     free(old);
 }
@@ -870,7 +871,7 @@ static bool scan_dot_following_gap(TSLexer *lexer) {
 }
 
 // A run of two or more slashes attached to a hash is delimiter components rather than a line comment, as it is inside
-// a plain value, but a slash followed by `*` opens a block comment, so the run ends before it.
+// a plain value, but the run ends before a possible `/*` comment.
 static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols) {
     lexer->mark_end(lexer);
     advance(lexer);
@@ -879,7 +880,12 @@ static bool scan_hash_slash_tail(TSLexer *lexer, const bool *valid_symbols) {
             lexer->result_symbol = scan_plain_slash_prefix(lexer) ? DECLARATION_CONTINUATION : DECLARATION_OPERATOR_GAP;
             return valid_symbols[lexer->result_symbol];
         }
-        return valid_symbols[INCOMPLETE_DECLARATION_END] && scan_comment_body(lexer) &&
+        bool comment = scan_comment_body(lexer);
+        if (!comment && valid_symbols[DECLARATION_OPERATOR_GAP]) {
+            lexer->result_symbol = DECLARATION_OPERATOR_GAP;
+            return true;
+        }
+        return comment && valid_symbols[INCOMPLETE_DECLARATION_END] &&
             finish_incomplete_declaration_end(lexer, valid_symbols, true);
     }
     lexer->mark_end(lexer);
