@@ -269,6 +269,91 @@ test('successive edits to adjacent number-name tails retain fresh trees and high
   }
 });
 
+test.each(
+  ['foo ', 'foo/**/', 'f(x)'].flatMap((component) =>
+    ['\n', '\r\n'].flatMap((newline) => ['', '/* Ω🙂 */ '].map((prefix) => [component, newline, prefix]))
+  )
+)('declaration line comments keep their body through edits and undo: %j %j %j', (component, newline, prefix) => {
+  const source = `${prefix}a { x: 1${newline}${component}// { };${newline}bar; } .after {}`;
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const original = parser.parse(source)!;
+  const commentIndex = source.indexOf('// {');
+  const commentEnd = source.indexOf('\n', commentIndex);
+  const trees = [original];
+  try {
+    expect(original.rootNode.hasError).toBe(false);
+    expect(
+      original.rootNode.descendantsOfType('js_comment').map((node) => [node.text, node.startIndex, node.endIndex])
+    ).toEqual([[source.slice(commentIndex, commentEnd), commentIndex, commentEnd]]);
+    expect(original.rootNode.descendantsOfType('declaration')[0]?.text).toBe(
+      `x: 1${newline}${component}// { };${newline}bar;`
+    );
+    expect(original.rootNode.lastNamedChild?.text).toBe('.after {}');
+    const changed = edit(original, source, commentIndex, 0, 'word');
+    const incremental = parser.parse(changed, original)!;
+    const fresh = parser.parse(changed)!;
+    trees.push(incremental, fresh);
+    expectEquivalent(incremental, fresh, query);
+    const restored = edit(incremental, changed, commentIndex, 'word'.length, '');
+    const undo = parser.parse(restored, incremental)!;
+    const freshUndo = parser.parse(source)!;
+    trees.push(undo, freshUndo);
+    expectEquivalent(undo, freshUndo, query);
+    expect(undo.rootNode.hasError).toBe(false);
+  } finally {
+    for (const tree of trees) tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['1', '#abc'].flatMap((value) =>
+    ['/**/', '/**/ /**/\n'].flatMap((extra) =>
+      ['; }', ' }'].flatMap((ending) => [' other', '\n :hover {}'].map((inserted) => [value, extra, ending, inserted]))
+    )
+  )
+)(
+  'editing a declaration then its comment tail matches fresh parsing: %j %j %j %j',
+  (value, extra, ending, inserted) => {
+    const source = `/* Ω🙂 */ a { x: ${value}${extra}${ending} .after { z: y; }`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const original = parser.parse(source)!;
+    const trees = [original];
+    try {
+      expect(original.rootNode.hasError).toBe(false);
+      const firstIndex = source.indexOf('x:');
+      const property = 'other-property';
+      const firstSource = edit(original, source, firstIndex, 1, property);
+      const first = parser.parse(firstSource, original)!;
+      trees.push(first);
+      const index = firstSource.indexOf(ending);
+      const changed = edit(first, firstSource, index, 0, inserted);
+      const incremental = parser.parse(changed, first)!;
+      const fresh = parser.parse(changed)!;
+      trees.push(incremental, fresh);
+      expectEquivalent(incremental, fresh, query);
+      const restored = edit(incremental, changed, index, inserted.length, '');
+      const undo = parser.parse(restored, incremental)!;
+      const freshUndo = parser.parse(firstSource)!;
+      trees.push(undo, freshUndo);
+      expectEquivalent(undo, freshUndo, query);
+      const originalSource = edit(undo, restored, firstIndex, property.length, 'x');
+      const undoFirst = parser.parse(originalSource, undo)!;
+      const freshOriginal = parser.parse(source)!;
+      trees.push(undoFirst, freshOriginal);
+      expectEquivalent(undoFirst, freshOriginal, query);
+      expect(undoFirst.rootNode.hasError).toBe(false);
+    } finally {
+      for (const tree of trees) tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
 function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));
   const captures = (tree: Tree): unknown[] =>

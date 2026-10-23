@@ -124,6 +124,17 @@ test.each(
   expect(parseReadCount(source(400), !ending) / parseReadCount(source(100), !ending)).toBeLessThan(8);
 });
 
+test.each(
+  ['1', '1px solid'].flatMap((value) =>
+    [' /**/\n', ' <!--\n', ' -->\n'].flatMap((extra) =>
+      [':hover', '> b', '@media x'].map((prelude) => [value, extra, prelude])
+    )
+  )
+)('extras before a recovered nested rule retain linear input reads: %s %j %s', (value, extra, prelude) => {
+  const source = (count: number): string => `a { x: ${value}${extra.repeat(count)} ${prelude} {} }`;
+  expect(parseReadCount(source(400), true) / parseReadCount(source(100), true)).toBeLessThan(8);
+});
+
 test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
   expect(parseGrowth(repeatedImportInput(250), repeatedImportInput(1000), true)).toBeLessThan(8);
 });
