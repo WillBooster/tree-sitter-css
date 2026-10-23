@@ -123,6 +123,7 @@ static ProbeContext probe_character_context(ProbeContext context, int32_t charac
     if (context == PROBE_PLAIN) return context;
     if ((context == PROBE_HASH || context == PROBE_NAME) && is_name_character(character)) return context;
     if (character == '#') return PROBE_HASH;
+    if (character == '@') return PROBE_NAME;
     if ((character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z')) return PROBE_PLAIN;
     if (character == '-' || character == '_') return PROBE_PREFIX;
     return is_name_start(character) ? PROBE_NAME : PROBE_GAP;

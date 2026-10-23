@@ -125,6 +125,16 @@ test.each(
 });
 
 test.each(
+  ['x', '--x'].flatMap((property) =>
+    ['/**/ ', '<!-- ', '--> '].flatMap((extra) => ['; }', '}', ''].map((ending) => [property, extra, ending]))
+  )
+)('empty declaration extras retain linear input reads: %s %j %j', (property, extra, ending) => {
+  const source = (count: number): string => `a { ${property}: ${extra.repeat(count)}${ending}`;
+  const hasError = property === 'x' || !ending;
+  expect(parseReadCount(source(400), hasError) / parseReadCount(source(100), hasError)).toBeLessThan(8);
+});
+
+test.each(
   ['1', '1px solid'].flatMap((value) =>
     [' /**/\n', ' <!--\n', ' -->\n'].flatMap((extra) =>
       [':hover', '> b', '@media x'].map((prelude) => [value, extra, prelude])

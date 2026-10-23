@@ -98,6 +98,7 @@ module.exports = grammar({
     $._declaration_terminator_gap,
     $._declaration_comma_gap,
     $._declaration_value_start,
+    $._missing_declaration_value,
   ],
 
   inline: $ => [
@@ -192,10 +193,10 @@ module.exports = grammar({
     [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
     [$.range_query, $._range_start_value],
-    [$._selector, $.declaration],
-    [$._selector, $.declaration, $.last_declaration],
-    [$._selector, $.incomplete_declaration, $.declaration, $.last_declaration],
-    [$._selector, $.incomplete_declaration, $.declaration],
+    [$._selector, $._missing_declaration, $.declaration],
+    [$._selector, $._missing_declaration, $.declaration, $.last_declaration],
+    [$._selector, $.incomplete_declaration, $._missing_declaration, $.declaration, $.last_declaration],
+    [$._selector, $.incomplete_declaration, $._missing_declaration, $.declaration],
     [$._descendant_combinator, $.incomplete_declaration],
   ],
 
@@ -210,6 +211,7 @@ module.exports = grammar({
     _top_level_item: $ => choice(
       $.declaration,
       $.incomplete_declaration,
+      alias($._missing_declaration, $.declaration),
       $.rule_set,
       $.import_statement,
       $.media_statement,
@@ -538,6 +540,7 @@ module.exports = grammar({
     _block_item: $ => choice(
       $.declaration,
       $.incomplete_declaration,
+      alias($._missing_declaration, $.declaration),
       $.rule_set,
       $.import_statement,
       $.media_statement,
@@ -749,6 +752,15 @@ module.exports = grammar({
     incomplete_declaration: $ => seq(
       alias(propertyIdentifier($), $.property_name),
       $._incomplete_declaration_end,
+    ),
+
+    _missing_declaration: $ => seq(
+      alias(propertyIdentifier($), $.property_name),
+      optional($._descendant_combinator),
+      ':',
+      $._declaration_value_start,
+      choice($._declaration_continuation, $._declaration_boundary),
+      alias($._missing_declaration_value, $.plain_value),
     ),
 
     declaration: $ => prec.dynamic(1, seq(declarationValue($), optional($._declaration_terminator_gap), ';')),
@@ -1138,6 +1150,7 @@ function declarationValue($, final = false) {
       optional($._descendant_combinator),
       ':',
       $._declaration_value_start,
+      $._declaration_continuation,
       $._declaration_value,
       repeat(seq(optional(seq(optional($._declaration_comma_gap), ',')), $._declaration_continuation, $._declaration_value)),
       ending,
@@ -1147,6 +1160,7 @@ function declarationValue($, final = false) {
       optional($._descendant_combinator),
       ':',
       $._declaration_value_start,
+      choice($._declaration_continuation, $._declaration_boundary),
       choice(
         seq(alias($.at_rule_braced, $.block_value), ending),
         optional($._declaration_boundary),
@@ -1156,13 +1170,12 @@ function declarationValue($, final = false) {
 }
 
 function propertyIdentifier($) {
-  return choice(selectorIdentifier($), $._custom_property_name, $._star_property_name);
+  return choice(selectorIdentifier($), $._recovery_identifier, $._custom_property_name, $._star_property_name);
 }
 
 function selectorIdentifier($) {
   return choice(
     valueIdentifier($),
-    $._recovery_identifier,
     'and',
     'or',
     escapedName,
