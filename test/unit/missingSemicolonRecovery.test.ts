@@ -115,6 +115,8 @@ const editedValues = [
   'b -/foo;',
   'f(1/**/px) f(a/**/(x));',
   'url(x)\u2000 1\u0085;',
+  '1 + -;',
+  'url(x)\u2000 * 2;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -233,6 +235,72 @@ test('numeric and slash-prefixed components retain NUL source characters', () =>
     expect(tree.rootNode.endIndex).toBe(source.length);
   } finally {
     tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    ['+', '-'].flatMap((operator) =>
+      [' ', '/**/', '\n', ' /* c */\n '].flatMap((gap) => ['-', '-2'].map((tail) => [property, operator, gap, tail]))
+    )
+  )
+)('consecutive declaration operators retain arithmetic ownership: %s %s %j %s', (property, operator, gap, tail) => {
+  const value = `1 ${operator}${gap}${tail}`;
+  const source = `a { ${property}: ${value}; }`;
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
+    expect(declaration.descendantsOfType('binary_expression')).toHaveLength(tail === '-' ? 2 : 1);
+    expect(declaration.descendantsOfType('integer_value').map((node) => node.text)).toEqual(
+      tail === '-' ? ['1'] : ['1', '-2']
+    );
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'operator')
+        .map(({ node }) => [node.text, node.startIndex, node.endIndex])
+    ).toEqual(
+      tail === '-'
+        ? [
+            [operator, source.indexOf(value) + 2, source.indexOf(value) + 3],
+            ['-', source.indexOf(';') - 1, source.indexOf(';')],
+          ]
+        : [[operator, source.indexOf(value) + 2, source.indexOf(value) + 3]]
+    );
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    ['url(x)', '1'].flatMap((value) => ['\u0085', '\u2000', '\u2028', '\u2029'].map((gap) => [property, value, gap]))
+  )
+)('Unicode gaps preserve asterisk arithmetic and highlights: %s %s %j', (property, value, gap) => {
+  const source = `a { ${property}: ${value}${gap} * 2; }`;
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const expression = tree.rootNode.descendantsOfType('binary_expression');
+    expect(expression.map((node) => node.text)).toEqual([`${value}${gap} * 2`]);
+    expect(tree.rootNode.descendantsOfType('plain_value')).toHaveLength(0);
+    expect(
+      query
+        .captures(tree.rootNode)
+        .filter(({ name }) => name === 'operator')
+        .map(({ node }) => [node.text, node.startIndex, node.endIndex])
+    ).toEqual([['*', source.indexOf('*'), source.indexOf('*') + 1]]);
+  } finally {
+    tree.delete();
+    query.delete();
     parser.delete();
   }
 });

@@ -85,6 +85,7 @@ static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
 static Memo *find_probe(Scanner *scanner, uint32_t byte);
 static bool scan_arithmetic_prefix(TSLexer *lexer);
+static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline);
 static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix);
 static bool scan_declaration_marker(TSLexer *lexer, bool *arithmetic);
 static bool is_html_marker_prefix(int32_t character);
@@ -577,12 +578,19 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
     TSLexerPosition component;
     lexer->get_position(lexer, &component);
     newline |= component.row != start.row;
-    bool selector_prefix = !consumed_prefix && is_selector_prefix(lexer->lookahead);
-    if (!consumed_prefix && valid_symbols[DECLARATION_OPERAND_GAP] && lexer->lookahead == '+') {
-        selector_prefix = scan_arithmetic_prefix(lexer);
+    bool operand_operator = consumed_prefix && arithmetic;
+    if (!consumed_prefix && iswspace(lexer->lookahead) && !is_regex_whitespace(lexer->lookahead)) {
+        consumed_prefix = true;
+        arithmetic = scan_unicode_value_gap(lexer, &newline);
     }
-    if (!valid_symbols[DECLARATION_OPERAND_GAP] && valid_symbols[DECLARATION_OPERATOR_GAP] &&
-        (arithmetic || (!consumed_prefix && scan_arithmetic_prefix(lexer)))) {
+    bool selector_prefix = !consumed_prefix && is_selector_prefix(lexer->lookahead);
+    bool plus_operand = !consumed_prefix && valid_symbols[DECLARATION_OPERAND_GAP] && lexer->lookahead == '+';
+    if (!consumed_prefix && (valid_symbols[DECLARATION_OPERATOR_GAP] || plus_operand)) {
+        arithmetic = scan_arithmetic_prefix(lexer);
+        if (plus_operand) selector_prefix = arithmetic;
+    }
+    if (arithmetic && valid_symbols[DECLARATION_OPERATOR_GAP] &&
+        (!valid_symbols[DECLARATION_OPERAND_GAP] || operand_operator)) {
         lexer->result_symbol = DECLARATION_OPERATOR_GAP;
         selector_prefix = false;
     } else if (!valid_symbols[DECLARATION_CONTINUATION] && !valid_symbols[DECLARATION_BOUNDARY] && !valid_symbols[DECLARATION_OPERAND_GAP]) {
@@ -613,6 +621,17 @@ static bool scan_arithmetic_prefix(TSLexer *lexer) {
     }
     if (lexer->lookahead == '.') advance(lexer);
     return !is_digit(lexer->lookahead);
+}
+
+static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline) {
+    bool line_break = false;
+    do {
+        line_break |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
+        advance(lexer);
+    } while (iswspace(lexer->lookahead));
+    bool arithmetic = lexer->lookahead == '*';
+    *newline |= arithmetic && line_break;
+    return arithmetic;
 }
 
 static bool scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix) {
