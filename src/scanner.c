@@ -435,6 +435,8 @@ static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols
     if (!scan_layer_name_token(lexer)) {
         return false;
     }
+    // A name directly followed by `(` is a function token, such as the `url(` of an at_rule_url, not a layer name.
+    if (lexer->lookahead == '(') return false;
     lexer->mark_end(lexer);
     lexer->result_symbol = LAYER_NAME_IDENTIFIER;
     bool whitespace = false;
