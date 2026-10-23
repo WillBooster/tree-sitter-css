@@ -166,21 +166,26 @@ test.each(
 );
 
 test.each(editedValues)('declaration continuation remains fresh when included ranges change: %s', (value) => {
-  const source = `/* Ω🙂 */ a { x: ${value} } .after { z: y; }`;
-  const start = source.indexOf('\n');
-  const end = source.indexOf('\n', start + 1);
-  const finish = end === -1 ? source.indexOf(' { c: d }') : end;
-  const variants = [[range(source, 0, start), range(source, finish, source.length)], [range(source, 0, source.length)]];
+  const prefix = '/* Ω🙂 */ a { x: ';
+  const excluded = '/* excluded */';
+  const source = `${prefix}${excluded}${value} } .after { z: y; }`;
+  const variants = [
+    [range(source, 0, prefix.length), range(source, prefix.length + excluded.length, source.length)],
+    [range(source, 0, source.length)],
+  ];
   const parser = new Parser().setLanguage(language);
   const query = new Query(language, highlights);
   let previous = parser.parse(source, undefined, { includedRanges: variants[0] })!;
   try {
+    expect(parser.getIncludedRanges()).toEqual(variants[0]);
     for (let iteration = 0; iteration < 6; iteration++) {
       const includedRanges = variants[(iteration + 1) % 2];
       const incremental = parser.parse(source, previous, { includedRanges })!;
       const freshParser = new Parser().setLanguage(language);
       const fresh = freshParser.parse(source, undefined, { includedRanges })!;
       try {
+        expect(parser.getIncludedRanges()).toEqual(includedRanges);
+        expect(freshParser.getIncludedRanges()).toEqual(includedRanges);
         equivalent(incremental, fresh, query);
       } finally {
         previous.delete();
