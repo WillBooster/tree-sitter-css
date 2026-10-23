@@ -726,7 +726,7 @@ static DeclarationGap scan_declaration_slash_tail(TSLexer *lexer, bool *arithmet
         bool comment = scan_comment_body(lexer);
         *arithmetic = !comment;
         if (comment) return DECLARATION_EXTRA;
-        return defer_hash ? DECLARATION_HASH_TAIL : DECLARATION_PREFIX;
+        return DECLARATION_PREFIX;
     }
     bool line_comment = lexer->lookahead == '/';
     if (scan_plain_slash_prefix(lexer) && (!line_comment || scan_plain_slash_tail(lexer))) return DECLARATION_PREFIX;
@@ -734,7 +734,7 @@ static DeclarationGap scan_declaration_slash_tail(TSLexer *lexer, bool *arithmet
         *arithmetic = true;
         return DECLARATION_PREFIX;
     }
-    while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
+    while (!lexer->eof(lexer) && lexer->lookahead != '\n') advance(lexer);
     return DECLARATION_EXTRA;
 }
 

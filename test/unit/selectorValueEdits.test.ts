@@ -402,12 +402,14 @@ test.each(
 
 test.each(
   ['x', '--x'].flatMap((property) =>
-    ['#abc', '#item', String.raw`#a\62 c`].flatMap((hash) => [';', ''].map((ending) => ({ property, hash, ending })))
+    ['#abc', '#item', String.raw`#a\62 c`].flatMap((hash) =>
+      ['', ' // note\n', ' // note\r\n'].flatMap((gap) => [';', ''].map((ending) => ({ property, hash, gap, ending })))
+    )
   )
 )(
-  'closing unfinished hash comments after a property edit matches fresh parsing: $property $hash $ending',
-  ({ property, hash, ending }) => {
-    const source = `a { ${property}: ${hash}/*2${ending} } .after { z: y; }`;
+  'closing unfinished hash comments after a property edit matches fresh parsing: $property $hash $gap $ending',
+  ({ property, hash, gap, ending }) => {
+    const source = `a { ${property}: ${hash}${gap}/*2${ending} } .after { z: y; }`;
     const parser = new Parser().setLanguage(language);
     const query = new Query(language, highlights);
     const original = parser.parse(source)!;
@@ -550,6 +552,50 @@ test.each(
     }
   }
 );
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    ['1', 'foo', '#abc', '1px, 2px'].flatMap((value) => [
+      ...['; ', '} ', '{ ', '@media screen {b{y:z}} ', '" ', '/* ', ''].map((payload) => ({
+        property,
+        value,
+        comment: `// comment\r${payload}`,
+      })),
+      { property, value, comment: '// comment' },
+    ])
+  )
+)('carriage returns remain inside standalone value comments: %j', ({ property, value, comment }) => {
+  const source = `a { ${property}: ${value} ${comment}\n 2; } .after {}`;
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const original = parser.parse(source)!;
+  const trees = [original];
+  try {
+    expect(original.rootNode.hasError).toBe(false);
+    const declaration = original.rootNode.firstNamedChild!.descendantsOfType('declaration')[0]!;
+    expect(declaration.descendantsOfType('js_comment').map((node) => node.text)).toEqual([comment]);
+    expect(declaration.descendantsOfType('integer_value').at(-1)?.text).toBe('2');
+    expect(original.rootNode.lastNamedChild?.text).toBe('.after {}');
+    const index = source.indexOf('\n');
+    const inserted = '} ; {';
+    const changed = edit(original, source, index, 0, inserted);
+    const incremental = parser.parse(changed, original)!;
+    const fresh = parser.parse(changed)!;
+    trees.push(incremental, fresh);
+    expect(incremental.rootNode.hasError).toBe(false);
+    expectEquivalent(incremental, fresh, query);
+    const restored = edit(incremental, changed, index, inserted.length, '');
+    const undo = parser.parse(restored, incremental)!;
+    const freshUndo = parser.parse(source)!;
+    trees.push(undo, freshUndo);
+    expectEquivalent(undo, freshUndo, query);
+    expect(undo.rootNode.hasError).toBe(false);
+  } finally {
+    for (const tree of trees) tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
 
 function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));

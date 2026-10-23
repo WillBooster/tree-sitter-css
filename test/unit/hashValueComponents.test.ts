@@ -149,14 +149,16 @@ test.each(
       ['#item', 'hash_value'],
       [String.raw`#a\62 c`, 'hash_value'],
     ].flatMap(([hash, kind]) =>
-      ['', '2'].flatMap((payload) => [';', ''].map((ending) => ({ property, hash, kind, payload, ending })))
+      ['', ' // note\n', ' // note\r\n'].flatMap((gap) =>
+        ['', '2'].flatMap((payload) => [';', ''].map((ending) => ({ property, hash, kind, gap, payload, ending })))
+      )
     )
   )
 )(
-  'unfinished comments after hashes retain slash values: $property $hash $payload $ending',
-  ({ property, hash, kind, payload, ending }) => {
+  'unfinished comments after hashes retain slash values: $property $hash $gap $payload $ending',
+  ({ property, hash, kind, gap, payload, ending }) => {
     const parser = new Parser().setLanguage(language);
-    const declaration = `${property}: ${hash}/*${payload}${ending}`;
+    const declaration = `${property}: ${hash}${gap}/*${payload}${ending}`;
     const source = `a { ${declaration} } .after { color: red; }`;
     const tree = parser.parse(source)!;
     try {
@@ -164,9 +166,10 @@ test.each(
       const parsed = tree.rootNode.descendantsOfType('declaration')[0]!;
       expect(parsed.text).toBe(declaration);
       const binary = parsed.descendantsOfType('binary_expression')[0]!;
-      expect(binary.text).toBe(`${hash}/*`);
+      expect(binary.text).toBe(`${hash}${gap}/*`);
       expect(binary.namedChildren.map((node) => [node.type, node.text])).toEqual([
         [kind, hash],
+        ...(gap ? [['js_comment', gap.slice(1, -1)]] : []),
         ['plain_value', '*'],
       ]);
       expect(parsed.descendantsOfType('integer_value').map((node) => node.text)).toEqual(payload ? [payload] : []);
