@@ -112,6 +112,8 @@ const editedValues = [
   '1url(x\n )\n beta;',
   'https://example.com/a; color: red;',
   'http://x/**/\n* 1;',
+  'b -/foo;',
+  'f(1/**/px) f(a/**/(x));',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -228,6 +230,69 @@ test('numeric and slash-prefixed components retain NUL source characters', () =>
     parser.delete();
   }
 });
+
+test.each(['b', '1px'].flatMap((left) => ['-/foo', '-//x'].map((right) => [left, right])))(
+  'attached slash value after %s retains its component and highlight: %s',
+  (left, right) => {
+    const source = `a { color: ${left} ${right}; }`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
+      expect(declaration.descendantsOfType('binary_expression')).toHaveLength(0);
+      const component = declaration.namedChildren.at(-1)!;
+      expect([component.type, component.text, component.startIndex, component.endIndex]).toEqual([
+        'plain_value',
+        right,
+        source.indexOf(right),
+        source.indexOf(right) + right.length,
+      ]);
+      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'operator')).toHaveLength(0);
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(['f(1/**/px)', '(1 /**/px)', '[1 /**/px]', 'calc(1 /**/ + 2/**/px)', 'f(a/**/(x))'])(
+  'comments in nested values preserve sibling ownership: %s',
+  (value) => {
+    const source = `a { b: ${value}; }`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.descendantsOfType('unit')).toHaveLength(0);
+      expect(tree.rootNode.descendantsOfType('call_expression').map((node) => node.text)).toEqual(
+        value.startsWith('f(') || value.startsWith('calc(') ? [value] : []
+      );
+      for (const comment of tree.rootNode.descendantsOfType('comment')) {
+        expect(['arguments', 'parenthesized_value', 'grid_value', 'binary_expression']).toContain(comment.parent!.type);
+        expect(comment.text).toBe('/**/');
+        expect(source.slice(comment.startIndex, comment.endIndex)).toBe('/**/');
+      }
+      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'type')).toHaveLength(0);
+      if (value === 'f(a/**/(x))') {
+        expect(tree.rootNode.descendantsOfType('parenthesized_value').map((node) => node.text)).toEqual(['(x)']);
+        expect(tree.rootNode.descendantsOfType('function_name').map((node) => node.text)).toEqual(['f']);
+      } else {
+        expect(tree.rootNode.descendantsOfType('plain_value').map((node) => node.text)).toContain('px');
+        expect(tree.rootNode.descendantsOfType('integer_value').map((node) => node.text)).toEqual(
+          value.startsWith('calc(') ? ['1', '2'] : ['1']
+        );
+      }
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
 
 test.each(['*', '+', '/'])(
   'attached scheme comments preserve the following %s arithmetic node and highlight',

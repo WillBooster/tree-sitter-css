@@ -970,7 +970,7 @@ module.exports = grammar({
 
     _value: $ => value($, $.binary_expression),
 
-    _declaration_value: $ => value($, alias($._declaration_binary_expression, $.binary_expression)),
+    _declaration_value: $ => value($, alias($._declaration_binary_expression, $.binary_expression), true),
 
     _declaration_binary_expression: $ => choice(
       prec.left(2, seq($._declaration_value, $._declaration_operator_gap, arithmeticOperator($), $._declaration_operand_gap, $._declaration_value)),
@@ -1018,9 +1018,13 @@ module.exports = grammar({
       ),
     )),
 
-    integer_value: $ => seq($._integer, optional(seq(optional($._value_unit_start), $.unit))),
+    integer_value: $ => seq($._integer, optional($.unit)),
 
-    float_value: $ => seq($._float, optional(seq(optional($._value_unit_start), $.unit))),
+    _declaration_integer_value: $ => seq($._integer, optional(seq(optional($._value_unit_start), $.unit))),
+
+    float_value: $ => seq($._float, optional($.unit)),
+
+    _declaration_float_value: $ => seq($._float, optional(seq(optional($._value_unit_start), $.unit))),
 
     _integer: _ => token(seq(
       optional(choice('+', '-')),
@@ -1047,7 +1051,9 @@ module.exports = grammar({
 
     url_value: _ => token(unquotedUrl),
 
-    call_expression: $ => seq(
+    call_expression: $ => seq(alias($.identifier, $.function_name), $.arguments),
+
+    _declaration_call_expression: $ => seq(
       alias($.identifier, $.function_name),
       optional($._value_call_start),
       $.arguments,
@@ -1146,7 +1152,7 @@ function queryKeyword($) {
   return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
 }
 
-function value($, binaryExpression) {
+function value($, binaryExpression, declaration = false) {
   return choice(
     seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
     prec(-1, choice(
@@ -1154,13 +1160,13 @@ function value($, binaryExpression) {
       $.plain_value,
       seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
       '#',
-      $.integer_value,
-      $.float_value,
+      declaration ? alias($._declaration_integer_value, $.integer_value) : $.integer_value,
+      declaration ? alias($._declaration_float_value, $.float_value) : $.float_value,
       $.string_value,
       $.grid_value,
       binaryExpression,
       $.parenthesized_value,
-      $.call_expression,
+      declaration ? alias($._declaration_call_expression, $.call_expression) : $.call_expression,
       $.url_value,
       $.important,
       prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),

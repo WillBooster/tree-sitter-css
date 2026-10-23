@@ -10924,12 +10924,22 @@
                 "value": "#"
               },
               {
-                "type": "SYMBOL",
-                "name": "integer_value"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_declaration_integer_value"
+                },
+                "named": true,
+                "value": "integer_value"
               },
               {
-                "type": "SYMBOL",
-                "name": "float_value"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_declaration_float_value"
+                },
+                "named": true,
+                "value": "float_value"
               },
               {
                 "type": "SYMBOL",
@@ -10953,8 +10963,13 @@
                 "name": "parenthesized_value"
               },
               {
-                "type": "SYMBOL",
-                "name": "call_expression"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_declaration_call_expression"
+                },
+                "named": true,
+                "value": "call_expression"
               },
               {
                 "type": "SYMBOL",
@@ -11805,6 +11820,27 @@
           "type": "CHOICE",
           "members": [
             {
+              "type": "SYMBOL",
+              "name": "unit"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_declaration_integer_value": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_integer"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
               "type": "SEQ",
               "members": [
                 {
@@ -11833,6 +11869,27 @@
       ]
     },
     "float_value": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_float"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "unit"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_declaration_float_value": {
       "type": "SEQ",
       "members": [
         {
@@ -12151,6 +12208,24 @@
       }
     },
     "call_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "function_name"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "arguments"
+        }
+      ]
+    },
+    "_declaration_call_expression": {
       "type": "SEQ",
       "members": [
         {

@@ -607,6 +607,10 @@ static bool scan_arithmetic_prefix(TSLexer *lexer) {
     if (sign != '+' && sign != '-') return false;
     advance(lexer);
     if (sign == '-' && (is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\')) return false;
+    if (sign == '-' && lexer->lookahead == '/') {
+        advance(lexer);
+        return !scan_plain_slash_prefix(lexer);
+    }
     if (lexer->lookahead == '.') advance(lexer);
     return !is_digit(lexer->lookahead);
 }
