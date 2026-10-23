@@ -18,6 +18,7 @@ number (`0x57420009`) and is tested with that fork's runtime 13.0.0. Upstream's 
 rejects it; newer fork runtimes with a different minimum grammar ABI also require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
 Imports expose optional layer assignment and support conditions before media queries.
+`@layer` statements expose their names as `layer_name` nodes, as imports do; a prelude that is not a list of layer names, such as `@layer initial;`, stays a generic `at_rule`.
 Declarations accept CSS whitespace between `!` and `important` and ASCII case variants of that keyword.
 Scope statements expose independently optional start and end selector fields.
 Custom properties accept empty and comment-only values, including important declarations.

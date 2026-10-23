@@ -54,6 +54,7 @@
 "@scope" @keyword
 (scope_statement "to" @keyword)
 "@container" @keyword
+"@layer" @keyword
 "@media" @keyword
 "@import" @keyword
 "@charset" @keyword

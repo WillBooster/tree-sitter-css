@@ -320,9 +320,9 @@ PostCSS
         (at_rule_value)
         (at_rule_value)
         (at_rule_value))))
-  (at_rule
-    (at_keyword)
-    (at_rule_value)
+  (layer_statement
+    (layer_name
+      (identifier))
     (block
       (rule_set
         (selectors
