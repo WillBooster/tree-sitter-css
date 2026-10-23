@@ -403,7 +403,18 @@ test.each(
 test.each(
   ['x', '--x'].flatMap((property) =>
     ['#abc', '#item', String.raw`#a\62 c`].flatMap((hash) =>
-      ['', ' // note\n', ' // note\r\n'].flatMap((gap) => [';', ''].map((ending) => ({ property, hash, gap, ending })))
+      [
+        '',
+        ' // note\n',
+        ' // note\r\n',
+        ' /**/ // note\n',
+        '/**/ // note\r\n',
+        ' // a\n// b\n',
+        ' <!-- // note\n',
+        ' --> // note\r\n',
+        '/**/<!-- // note\n',
+        ' /**/ // a\n// b\n',
+      ].flatMap((gap) => [';', ''].map((ending) => ({ property, hash, gap, ending })))
     )
   )
 )(

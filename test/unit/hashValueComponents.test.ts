@@ -149,14 +149,58 @@ test.each(
       ['#item', 'hash_value'],
       [String.raw`#a\62 c`, 'hash_value'],
     ].flatMap(([hash, kind]) =>
-      ['', ' // note\n', ' // note\r\n'].flatMap((gap) =>
-        ['', '2'].flatMap((payload) => [';', ''].map((ending) => ({ property, hash, kind, gap, payload, ending })))
+      [
+        { gap: '', comments: [] },
+        { gap: ' // note\n', comments: [['js_comment', '// note']] },
+        { gap: ' // note\r\n', comments: [['js_comment', '// note\r']] },
+        {
+          gap: ' /**/ // note\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// note'],
+          ],
+        },
+        {
+          gap: '/**/ // note\r\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// note\r'],
+          ],
+        },
+        {
+          gap: ' // a\n// b\n',
+          comments: [
+            ['js_comment', '// a'],
+            ['js_comment', '// b'],
+          ],
+        },
+        { gap: ' <!-- // note\n', comments: [['js_comment', '// note']] },
+        { gap: ' --> // note\r\n', comments: [['js_comment', '// note\r']] },
+        {
+          gap: '/**/<!-- // note\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// note'],
+          ],
+        },
+        {
+          gap: ' /**/ // a\n// b\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// a'],
+            ['js_comment', '// b'],
+          ],
+        },
+      ].flatMap(({ gap, comments }) =>
+        ['', '2'].flatMap((payload) =>
+          [';', ''].map((ending) => ({ property, hash, kind, gap, comments, payload, ending }))
+        )
       )
     )
   )
 )(
   'unfinished comments after hashes retain slash values: $property $hash $gap $payload $ending',
-  ({ property, hash, kind, gap, payload, ending }) => {
+  ({ property, hash, kind, gap, comments, payload, ending }) => {
     const parser = new Parser().setLanguage(language);
     const declaration = `${property}: ${hash}${gap}/*${payload}${ending}`;
     const source = `a { ${declaration} } .after { color: red; }`;
@@ -169,7 +213,7 @@ test.each(
       expect(binary.text).toBe(`${hash}${gap}/*`);
       expect(binary.namedChildren.map((node) => [node.type, node.text])).toEqual([
         [kind, hash],
-        ...(gap ? [['js_comment', gap.slice(1, -1)]] : []),
+        ...comments,
         ['plain_value', '*'],
       ]);
       expect(parsed.descendantsOfType('integer_value').map((node) => node.text)).toEqual(payload ? [payload] : []);

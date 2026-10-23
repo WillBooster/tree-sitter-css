@@ -680,18 +680,22 @@ static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *
     if (initial != DECLARATION_EXTRA) return initial;
     bool extra = after_slash;
     bool defer_hash = false;
+    bool hash_tail_adjacent = hash_context != NO_HASH_GAP;
     for (;;) {
         if (is_regex_whitespace(lexer->lookahead)) {
+            hash_tail_adjacent = false;
+            defer_hash = false;
             *newline |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
             advance(lexer);
             continue;
         }
         if (lexer->lookahead == '/') {
-            if (extra && hash_context == HASH_GAP_START) defer_hash = true;
+            if (extra && hash_context == HASH_GAP_START && hash_tail_adjacent) defer_hash = true;
             advance(lexer);
             DeclarationGap slash = scan_declaration_slash_tail(lexer, arithmetic, hash_context, defer_hash);
             if (slash != DECLARATION_EXTRA) return slash;
             extra = true;
+            hash_tail_adjacent = hash_context != NO_HASH_GAP;
             continue;
         }
         if (!is_html_marker_prefix(lexer->lookahead)) {
@@ -702,6 +706,7 @@ static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *
         if (hash_context == HASH_GAP_TAIL) return DECLARATION_HASH_TAIL;
         *consumed_prefix = false;
         extra = true;
+        hash_tail_adjacent = hash_context != NO_HASH_GAP;
     }
 }
 
