@@ -115,6 +115,15 @@ test.each(['<!--', '-->', '<!--\n'])(
   }
 );
 
+test.each(
+  ['1', '1px', 'word', 'f(x)', '#abc'].flatMap((value) =>
+    ['/**/ ', '<!-- ', '--> '].flatMap((extra) => ['; }', '}', ', 2; }', ''].map((ending) => [value, extra, ending]))
+  )
+)('trailing declaration extras retain linear public input-read growth: %s %j %j', (value, extra, ending) => {
+  const source = (count: number): string => `a { x: ${value} ${extra.repeat(count)}${ending}`;
+  expect(parseReadCount(source(400), !ending) / parseReadCount(source(100), !ending)).toBeLessThan(8);
+});
+
 test('repeated unfinished import conditions parse in linear time', { timeout: 60_000 }, () => {
   expect(parseGrowth(repeatedImportInput(250), repeatedImportInput(1000), true)).toBeLessThan(8);
 });

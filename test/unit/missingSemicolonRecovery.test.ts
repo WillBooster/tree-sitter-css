@@ -768,6 +768,52 @@ test('editing a stray keyframe token and undoing it matches fresh ranges and hig
   }
 });
 
+test.each(
+  ['#abc', '1px', 'f(x)'].flatMap((value) =>
+    ['', ' '].flatMap((gap) =>
+      [1, 4].flatMap((count) => ['}', ';}'].map((ending) => [value, gap, count, ending] as const))
+    )
+  )
+)('trailing comments retain their declaration or block ownership: %s %j %i %s', (value, gap, count, ending) => {
+  const source = `a { x: ${value}${gap}${'/**/ '.repeat(count)}${ending}`;
+  const parser = new Parser().setLanguage(language);
+  const freshParser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const tree = parser.parse(source)!;
+  const trees = [tree];
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
+    const end = ending === '}' ? source.indexOf(value) + value.length : source.indexOf(';') + 1;
+    expect([declaration.text, declaration.endIndex]).toEqual([source.slice(source.indexOf('x:'), end), end]);
+    const comments = tree.rootNode.descendantsOfType('comment');
+    expect(comments).toHaveLength(count);
+    for (const comment of comments) {
+      expect(comment.parent!.type).toBe(ending === '}' ? 'block' : 'declaration');
+      expect(comment.text).toBe('/**/');
+      expect(source.slice(comment.startIndex, comment.endIndex)).toBe('/**/');
+    }
+    const index = ending === '}' ? source.indexOf('}') : source.indexOf(';');
+    const inserted = ending === '}' ? ';' : '';
+    const changed = change(tree, source, index, ending === '}' ? 0 : 1, inserted);
+    const incremental = parser.parse(changed, tree)!;
+    const fresh = freshParser.parse(changed)!;
+    trees.push(incremental, fresh);
+    expect(incremental.rootNode.hasError).toBe(false);
+    equivalent(incremental, fresh, query);
+    const restored = change(incremental, changed, index, inserted.length, ending === '}' ? '' : ';');
+    const undo = parser.parse(restored, incremental)!;
+    const freshUndo = freshParser.parse(source)!;
+    trees.push(undo, freshUndo);
+    equivalent(undo, freshUndo, query);
+  } finally {
+    for (const parsed of trees) parsed.delete();
+    query.delete();
+    freshParser.delete();
+    parser.delete();
+  }
+});
+
 function sourceFor(prelude: string, gap: string, value = '1px solid'): string {
   return `/* Ω🙂 */ a { border: ${value}${gap}${prelude} { c: d } }\n.after { color: blue; }`;
 }

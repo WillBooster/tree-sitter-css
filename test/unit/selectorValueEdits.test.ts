@@ -179,6 +179,96 @@ test.each(
   }
 );
 
+test.each(
+  ['', '/* Ω🙂 */ ', '/* Ω🙂\n */ ', '/* Ω🙂\r\n */ '].flatMap((prefix) =>
+    ['12px/1.5', '.5px/1.5', '1e2px/1.5', '1url(x)', '.5url(x)', '1e2url(x)'].map((value) => [prefix, value])
+  )
+)('two successive edits invalidate a numeric unit decision: %j %s', (prefix, value) => {
+  const source = `${prefix}a { margin: 0 ${value} Arial }`;
+  const parser = new Parser().setLanguage(language);
+  const freshParser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const original = parser.parse(source)!;
+  const firstIndex = source.indexOf('margin');
+  const firstSource = edit(original, source, firstIndex, 0, 'x');
+  const first = parser.parse(firstSource, original)!;
+  const tail = value.includes('/') ? '/' : '(x)';
+  const index = firstSource.indexOf(tail, firstSource.indexOf(value));
+  const changed = edit(first, firstSource, index, tail.length, ' ');
+  const incremental = parser.parse(changed, first)!;
+  const fresh = freshParser.parse(changed)!;
+  const trees = [original, first, incremental, fresh];
+  try {
+    expect(incremental.rootNode.hasError).toBe(false);
+    expectEquivalent(incremental, fresh, query);
+    expect(incremental.rootNode.descendantsOfType('unit').map((node) => node.text)).toEqual([
+      value.includes('/') ? 'px' : 'url',
+    ]);
+    const restored = edit(incremental, changed, index, 1, tail);
+    const undo = parser.parse(restored, incremental)!;
+    const freshUndo = freshParser.parse(firstSource)!;
+    trees.push(undo, freshUndo);
+    expectEquivalent(undo, freshUndo, query);
+    expect(undo.rootNode.descendantsOfType('unit')).toHaveLength(0);
+    const originalSource = edit(undo, restored, firstIndex, 1, '');
+    const undoFirst = parser.parse(originalSource, undo)!;
+    const freshOriginal = freshParser.parse(source)!;
+    trees.push(undoFirst, freshOriginal);
+    expectEquivalent(undoFirst, freshOriginal, query);
+    if (prefix) {
+      let previous = undoFirst;
+      for (const includedRanges of [[range(source, prefix.length, source.length)], [range(source, 0, source.length)]]) {
+        const ranged = parser.parse(source, previous, { includedRanges })!;
+        const freshRanged = freshParser.parse(source, undefined, { includedRanges })!;
+        trees.push(ranged, freshRanged);
+        expect(parser.getIncludedRanges()).toEqual(includedRanges);
+        expect(freshParser.getIncludedRanges()).toEqual(includedRanges);
+        expectEquivalent(ranged, freshRanged, query);
+        previous = ranged;
+      }
+    }
+  } finally {
+    for (const tree of trees) tree.delete();
+    query.delete();
+    freshParser.delete();
+    parser.delete();
+  }
+});
+
+test('successive edits to adjacent number-name tails retain fresh trees and highlights', () => {
+  const source = 'a { b: 0from-x 0from-x; }';
+  const parser = new Parser().setLanguage(language);
+  const freshParser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const original = parser.parse(source)!;
+  const firstIndex = source.indexOf('from-x');
+  const firstSource = edit(original, source, firstIndex, 1, 'x');
+  const first = parser.parse(firstSource, original)!;
+  const index = firstSource.lastIndexOf('from-x') + 1;
+  const changed = edit(first, firstSource, index, 0, '{');
+  const incremental = parser.parse(changed, first)!;
+  const fresh = freshParser.parse(changed)!;
+  const trees = [original, first, incremental, fresh];
+  try {
+    expectEquivalent(incremental, fresh, query);
+    const restored = edit(incremental, changed, index, 1, '');
+    const undo = parser.parse(restored, incremental)!;
+    const freshUndo = freshParser.parse(firstSource)!;
+    trees.push(undo, freshUndo);
+    expectEquivalent(undo, freshUndo, query);
+    const originalSource = edit(undo, restored, firstIndex, 1, 'f');
+    const undoFirst = parser.parse(originalSource, undo)!;
+    const freshOriginal = freshParser.parse(source)!;
+    trees.push(undoFirst, freshOriginal);
+    expectEquivalent(undoFirst, freshOriginal, query);
+  } finally {
+    for (const tree of trees) tree.delete();
+    query.delete();
+    freshParser.delete();
+    parser.delete();
+  }
+});
+
 function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));
   const captures = (tree: Tree): unknown[] =>

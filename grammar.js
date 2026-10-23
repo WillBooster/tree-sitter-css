@@ -94,6 +94,8 @@ module.exports = grammar({
     $._declaration_boundary,
     $._declaration_operand_gap,
     $._hash_tail_gap,
+    $._value_number_end,
+    $._declaration_terminator_gap,
   ],
 
   inline: $ => [
@@ -105,6 +107,7 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    [$.declaration, $.last_declaration],
     [$.namespace_selector, $._pseudo_operand],
     [$.adjacent_sibling_selector, $._pseudo_operand],
     [$.sibling_selector, $._pseudo_operand],
@@ -198,7 +201,7 @@ module.exports = grammar({
   rules: {
     stylesheet: $ => seq(
       repeat(choice(';', $._top_level_item)),
-      optional(alias($.last_declaration, $.declaration)),
+      optional(seq(alias($.last_declaration, $.declaration), optional($._declaration_terminator_gap))),
     ),
 
     _html_comment_marker: _ => token(choice('<!--', '-->')),
@@ -527,7 +530,7 @@ module.exports = grammar({
     block: $ => seq(
       '{',
       repeat(choice(';', $._block_item)),
-      optional(alias($.last_declaration, $.declaration)),
+      optional(seq(alias($.last_declaration, $.declaration), optional($._declaration_terminator_gap))),
       '}',
     ),
 
@@ -747,7 +750,7 @@ module.exports = grammar({
       $._incomplete_declaration_end,
     ),
 
-    declaration: $ => prec.dynamic(1, seq(declarationValue($), ';')),
+    declaration: $ => prec.dynamic(1, seq(declarationValue($), optional($._declaration_terminator_gap), ';')),
 
     last_declaration: $ => prec.dynamic(1, declarationValue($)),
 
@@ -1021,11 +1024,17 @@ module.exports = grammar({
 
     integer_value: $ => seq($._integer, optional(valueUnit($))),
 
-    _declaration_integer_value: $ => seq($._integer, optional(seq(optional($._value_unit_start), $.unit))),
+    _declaration_integer_value: $ => seq($._integer, choice(
+      seq($._value_unit_start, $.unit),
+      $._value_number_end,
+    )),
 
     float_value: $ => seq($._float, optional(valueUnit($))),
 
-    _declaration_float_value: $ => seq($._float, optional(seq(optional($._value_unit_start), $.unit))),
+    _declaration_float_value: $ => seq($._float, choice(
+      seq($._value_unit_start, $.unit),
+      $._value_number_end,
+    )),
 
     _integer: _ => token(seq(
       optional(choice('+', '-')),
@@ -1114,7 +1123,7 @@ function declarationValue($) {
         optional($._descendant_combinator),
         ':',
         $._declaration_value,
-        repeat(seq(optional(','), $._declaration_continuation, $._declaration_value)),
+        repeat(seq(optional(seq(optional($._declaration_terminator_gap), ',')), $._declaration_continuation, $._declaration_value)),
       ),
       seq(
         alias($._custom_property_component, $.property_name),

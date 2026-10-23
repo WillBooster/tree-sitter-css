@@ -52,10 +52,12 @@ enum TokenType {
     DECLARATION_BOUNDARY,
     DECLARATION_OPERAND_GAP,
     HASH_TAIL_GAP,
+    VALUE_NUMBER_END,
+    DECLARATION_TERMINATOR_GAP,
 };
 
 typedef Array(char) SupportsDelimiters;
-typedef enum { DECLARATION_COMPONENT, DECLARATION_PREFIX, DECLARATION_HASH_TAIL } DeclarationGap;
+typedef enum { DECLARATION_COMPONENT, DECLARATION_PREFIX, DECLARATION_HASH_TAIL, DECLARATION_EXTRA } DeclarationGap;
 typedef enum { NO_HASH_GAP, HASH_GAP_START, HASH_GAP_TAIL } HashGapContext;
 
 static bool scan_recovery_identifier(TSLexer *lexer);
@@ -87,13 +89,14 @@ static bool can_scan_value_join(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
 static HashGapContext declaration_hash_context(const bool *valid_symbols);
+static bool is_declaration_terminator(TSLexer *lexer);
 static Memo *find_probe(Scanner *scanner, uint32_t byte);
 static bool scan_arithmetic_prefix(TSLexer *lexer);
 static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline);
 static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix, HashGapContext hash_context);
 static bool scan_declaration_marker(TSLexer *lexer, bool *arithmetic);
 static bool is_html_marker_prefix(int32_t character);
-static bool scan_declaration_slash_tail(TSLexer *lexer, bool *arithmetic);
+static DeclarationGap scan_declaration_slash_tail(TSLexer *lexer, bool *arithmetic, HashGapContext context, bool defer_hash);
 static bool scan_plain_slash_prefix(TSLexer *lexer);
 static bool is_selector_prefix(int32_t character);
 static bool scan_value_dot(TSLexer *lexer, bool allow_invalid);
@@ -172,7 +175,7 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
     if (valid_symbols[HASH_SLASH_TAIL] && !valid_symbols[AT_RULE_SLASH] && lexer->lookahead == '/') {
         return scan_hash_slash_tail(lexer, valid_symbols);
     }
-    if (valid_symbols[DECLARATION_CONTINUATION] || valid_symbols[DECLARATION_OPERATOR_GAP] || valid_symbols[DECLARATION_BOUNDARY] || valid_symbols[DECLARATION_OPERAND_GAP] || valid_symbols[HASH_TAIL_GAP]) {
+    if (valid_symbols[DECLARATION_CONTINUATION] || valid_symbols[DECLARATION_OPERATOR_GAP] || valid_symbols[DECLARATION_BOUNDARY] || valid_symbols[DECLARATION_OPERAND_GAP] || valid_symbols[HASH_TAIL_GAP] || valid_symbols[DECLARATION_TERMINATOR_GAP]) {
         return valid_symbols[VALUE_ASTERISK] ? scan_rule_gap(scanner, lexer, valid_symbols)
             : scan_declaration_continuation(scanner, lexer, valid_symbols);
     }
@@ -539,15 +542,19 @@ static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_sy
 }
 
 static bool can_scan_value_join(TSLexer *lexer, const bool *valid_symbols) {
-    return (valid_symbols[VALUE_CALL_START] && lexer->lookahead == '(') ||
+    return valid_symbols[VALUE_NUMBER_END] || (valid_symbols[VALUE_CALL_START] && lexer->lookahead == '(') ||
         (valid_symbols[VALUE_UNIT_START] && is_unit_character(lexer->lookahead));
 }
 
 static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols) {
     lexer->mark_end(lexer);
-    if (lexer->lookahead == '(') {
+    if (valid_symbols[VALUE_CALL_START] && lexer->lookahead == '(') {
         lexer->result_symbol = VALUE_CALL_START;
         return true;
+    }
+    if (!is_unit_character(lexer->lookahead)) {
+        lexer->result_symbol = VALUE_NUMBER_END;
+        return valid_symbols[VALUE_NUMBER_END];
     }
     bool plain = lexer->lookahead != '%';
     unsigned length = 0;
@@ -560,7 +567,7 @@ static bool scan_value_join(TSLexer *lexer, const bool *valid_symbols) {
     bool continuation = plain && scan_plain_value_tail(lexer);
     if (!continuation && url_name && length == 3 && lexer->lookahead == '(') continuation = scan_unquoted_url_tail(lexer);
     lexer->result_symbol = continuation
-        ? DECLARATION_CONTINUATION : VALUE_UNIT_START;
+        ? VALUE_NUMBER_END : VALUE_UNIT_START;
     return valid_symbols[lexer->result_symbol];
 }
 
@@ -584,7 +591,10 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
         }
         return valid_symbols[lexer->result_symbol];
     }
-    if (!consumed_prefix && (lexer->eof(lexer) || lexer->lookahead == ';' || lexer->lookahead == ',' || lexer->lookahead == '}')) return false;
+    if (!consumed_prefix && is_declaration_terminator(lexer)) {
+        lexer->result_symbol = DECLARATION_TERMINATOR_GAP;
+        return valid_symbols[DECLARATION_TERMINATOR_GAP];
+    }
     TSLexerPosition component;
     lexer->get_position(lexer, &component);
     newline |= component.row != start.row;
@@ -611,6 +621,10 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
     bool continuation = memo ? memo->result : probe_selector_boundary(scanner, lexer, start.bytes, false);
     if (!continuation) lexer->result_symbol = DECLARATION_BOUNDARY;
     return valid_symbols[lexer->result_symbol];
+}
+
+static bool is_declaration_terminator(TSLexer *lexer) {
+    return lexer->eof(lexer) || lexer->lookahead == ';' || lexer->lookahead == ',' || lexer->lookahead == '}';
 }
 
 static HashGapContext declaration_hash_context(const bool *valid_symbols) {
@@ -651,6 +665,7 @@ static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline) {
 
 static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix, HashGapContext hash_context) {
     bool extra = false;
+    bool defer_hash = false;
     for (;;) {
         if (is_regex_whitespace(lexer->lookahead)) {
             *newline |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
@@ -658,16 +673,18 @@ static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *
             continue;
         }
         if (lexer->lookahead == '/') {
-            if (extra && hash_context == HASH_GAP_START) return DECLARATION_HASH_TAIL;
+            if (extra && hash_context == HASH_GAP_START) defer_hash = true;
             advance(lexer);
-            if (hash_context == HASH_GAP_TAIL && lexer->lookahead == '*') return DECLARATION_HASH_TAIL;
-            if (!scan_declaration_slash_tail(lexer, arithmetic)) return DECLARATION_PREFIX;
+            DeclarationGap slash = scan_declaration_slash_tail(lexer, arithmetic, hash_context, defer_hash);
+            if (slash != DECLARATION_EXTRA) return slash;
             extra = true;
             continue;
         }
-        if (!is_html_marker_prefix(lexer->lookahead)) return DECLARATION_COMPONENT;
+        if (!is_html_marker_prefix(lexer->lookahead)) {
+            return defer_hash && !is_declaration_terminator(lexer) ? DECLARATION_HASH_TAIL : DECLARATION_COMPONENT;
+        }
         *consumed_prefix = true;
-        if (!scan_declaration_marker(lexer, arithmetic)) return DECLARATION_COMPONENT;
+        if (!scan_declaration_marker(lexer, arithmetic)) return defer_hash ? DECLARATION_HASH_TAIL : DECLARATION_COMPONENT;
         if (hash_context == HASH_GAP_TAIL) return DECLARATION_HASH_TAIL;
         *consumed_prefix = false;
         extra = true;
@@ -691,20 +708,24 @@ static bool is_html_marker_prefix(int32_t character) {
     return character == '<' || character == '-';
 }
 
-static bool scan_declaration_slash_tail(TSLexer *lexer, bool *arithmetic) {
+static DeclarationGap scan_declaration_slash_tail(TSLexer *lexer, bool *arithmetic, HashGapContext context, bool defer_hash) {
+    if ((context == HASH_GAP_TAIL && lexer->lookahead == '*') || (defer_hash && lexer->lookahead != '*')) {
+        return DECLARATION_HASH_TAIL;
+    }
     if (lexer->lookahead == '*') {
         bool comment = scan_comment_body(lexer);
         *arithmetic = !comment;
-        return comment;
+        if (comment) return DECLARATION_EXTRA;
+        return defer_hash ? DECLARATION_HASH_TAIL : DECLARATION_PREFIX;
     }
     bool line_comment = lexer->lookahead == '/';
-    if (scan_plain_slash_prefix(lexer) && (!line_comment || scan_plain_slash_tail(lexer))) return false;
+    if (scan_plain_slash_prefix(lexer) && (!line_comment || scan_plain_slash_tail(lexer))) return DECLARATION_PREFIX;
     if (!line_comment) {
         *arithmetic = true;
-        return false;
+        return DECLARATION_PREFIX;
     }
     while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
-    return true;
+    return DECLARATION_EXTRA;
 }
 
 static bool scan_plain_slash_prefix(TSLexer *lexer) {
