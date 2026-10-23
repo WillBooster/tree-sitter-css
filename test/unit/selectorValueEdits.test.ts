@@ -439,18 +439,45 @@ test.each(
   }
 );
 
-test.each(
-  ['*margin', 'margin', '*x', 'x'].flatMap((property) =>
+test.each([
+  ...['*margin', 'margin', '*x', 'x'].flatMap((property) =>
     ['0 auto', '1 +', '1 2', '1,2', '#abc', '!important'].flatMap((value) =>
       [' /* ie7 */ ', ' /**/ /**/\n', ''].flatMap((gap) =>
-        ['-', ' f(1)'].map((inserted) => ({ property, value, gap, inserted }))
+        ['-', ' f(1)'].map((inserted) => ({
+          prefix: '/* Ω🙂 */ .a { ',
+          property,
+          colonSpace: ' ',
+          value,
+          gap,
+          inserted,
+          suffix: ' .after { z: y; }',
+        }))
       )
     )
-  )
-)(
-  'editing final declaration tails retains fresh trees: $property $value $gap $inserted',
-  ({ property, value, gap, inserted }) => {
-    const source = `/* Ω🙂 */ .a { ${property}: ${value}${gap}} .after { z: y; }`;
+  ),
+  ...['a{', 'a { ', '.a{', '.a { '].flatMap((prefix) =>
+    ['a', '*a'].flatMap((property) =>
+      ['1px, 2px', '0px, 1px, 2px'].flatMap((value) =>
+        [' /**/ ', '/**/'].flatMap((gap) =>
+          ['+', '-', '*', '/'].flatMap((inserted) =>
+            ['', ' .after { z: y; }'].map((suffix) => ({
+              prefix,
+              property,
+              colonSpace: '',
+              value,
+              gap,
+              inserted,
+              suffix,
+            }))
+          )
+        )
+      )
+    )
+  ),
+])(
+  'editing final declaration tails retains fresh trees: $prefix $property $value $gap $inserted $suffix',
+  ({ prefix, property, colonSpace, value, gap, inserted, suffix }) => {
+    const source = `${prefix}${property}:${colonSpace}${value}${gap}}${suffix}`;
     const parser = new Parser().setLanguage(language);
     const query = new Query(language, highlights);
     const original = parser.parse(source)!;
