@@ -7934,7 +7934,7 @@
                                       "members": [
                                         {
                                           "type": "SYMBOL",
-                                          "name": "_declaration_terminator_gap"
+                                          "name": "_declaration_comma_gap"
                                         },
                                         {
                                           "type": "BLANK"
@@ -8393,7 +8393,7 @@
                                   "members": [
                                     {
                                       "type": "SYMBOL",
-                                      "name": "_declaration_terminator_gap"
+                                      "name": "_declaration_comma_gap"
                                     },
                                     {
                                       "type": "BLANK"
@@ -13821,6 +13821,10 @@
     {
       "type": "SYMBOL",
       "name": "_declaration_terminator_gap"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_declaration_comma_gap"
     }
   ],
   "inline": [

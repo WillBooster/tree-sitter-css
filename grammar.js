@@ -96,6 +96,7 @@ module.exports = grammar({
     $._hash_tail_gap,
     $._value_number_end,
     $._declaration_terminator_gap,
+    $._declaration_comma_gap,
   ],
 
   inline: $ => [
@@ -1123,7 +1124,7 @@ function declarationValue($) {
         optional($._descendant_combinator),
         ':',
         $._declaration_value,
-        repeat(seq(optional(seq(optional($._declaration_terminator_gap), ',')), $._declaration_continuation, $._declaration_value)),
+        repeat(seq(optional(seq(optional($._declaration_comma_gap), ',')), $._declaration_continuation, $._declaration_value)),
       ),
       seq(
         alias($._custom_property_component, $.property_name),

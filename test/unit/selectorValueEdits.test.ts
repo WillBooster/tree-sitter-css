@@ -354,6 +354,52 @@ test.each(
   }
 );
 
+test.each(
+  ['', '/**/', '\n'].flatMap((gap) =>
+    ['word', 'url(x)'].flatMap((value) => [';', ''].map((ending) => ({ gap, value, ending })))
+  )
+)(
+  'important comma edits after custom-property edits match fresh parsing: $gap $value $ending',
+  ({ gap, value, ending }) => {
+    const source = `a { --x: !important${gap} ${value}${ending} } .after { z: y; }`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const original = parser.parse(source)!;
+    const trees = [original];
+    try {
+      expect(original.rootNode.hasError).toBe(false);
+      const propertyIndex = source.indexOf('--x');
+      const property = '--long-name';
+      const renamed = edit(original, source, propertyIndex, 3, property);
+      const first = parser.parse(renamed, original)!;
+      trees.push(first);
+      const commaIndex = renamed.indexOf('!important') + '!important'.length;
+      const changed = edit(first, renamed, commaIndex, 0, ',');
+      const incremental = parser.parse(changed, first)!;
+      const fresh = parser.parse(changed)!;
+      trees.push(incremental, fresh);
+      expectEquivalent(incremental, fresh, query);
+      expect(incremental.rootNode.hasError).toBe(false);
+      expect(incremental.rootNode.firstNamedChild!.descendantsOfType('declaration')).toHaveLength(1);
+      const restored = edit(incremental, changed, commaIndex, 1, '');
+      const undo = parser.parse(restored, incremental)!;
+      const freshUndo = parser.parse(renamed)!;
+      trees.push(undo, freshUndo);
+      expectEquivalent(undo, freshUndo, query);
+      const originalSource = edit(undo, restored, propertyIndex, property.length, '--x');
+      const undoFirst = parser.parse(originalSource, undo)!;
+      const freshOriginal = parser.parse(source)!;
+      trees.push(undoFirst, freshOriginal);
+      expectEquivalent(undoFirst, freshOriginal, query);
+      expect(undoFirst.rootNode.hasError).toBe(false);
+    } finally {
+      for (const tree of trees) tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
 function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));
   const captures = (tree: Tree): unknown[] =>
