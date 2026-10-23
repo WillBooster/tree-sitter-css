@@ -597,6 +597,65 @@ test.each(
   }
 });
 
+test.each(
+  ['a', '--x'].flatMap((property) =>
+    [String.raw`\66 oo(x)`, String.raw`\31 xf(x)`, String.raw`f\6f o(x)`].flatMap((value) =>
+      ['/* c */\n', ' // c\n', ' /*c*/ ', '/**/\r\n'].flatMap((gap) =>
+        ['@media screen', '@supports (a:b)'].map((prelude) => ({ property, value, gap, prelude }))
+      )
+    )
+  )
+)('escaped function-shaped values retain following rules through edits: %j', ({ property, value, gap, prelude }) => {
+  const source = `/* Ω🙂 */ x { ${property}: ${value}${gap}${prelude} { c: d } }\n.after { e: f }`;
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const original = parser.parse(source)!;
+  const trees = [original];
+  try {
+    expect(original.rootNode.hasError).toBe(true);
+    const rules = original.rootNode.namedChildren.filter((node) => node.type === 'rule_set');
+    expect(rules).toHaveLength(2);
+    expect(rules[0]!.endIndex).toBe(source.indexOf('\n.after'));
+    expect(rules[1]!.text).toBe('.after { e: f }');
+    const declaration = rules[0]!.descendantsOfType('declaration')[0]!;
+    expect(
+      declaration.namedChildren.some(
+        (node) => node.type === 'plain_value' && node.text === value.slice(0, value.indexOf('('))
+      )
+    ).toBe(true);
+    expect(declaration.descendantsOfType('parenthesized_value').map((node) => node.text)).toEqual(['(x)']);
+    expect(declaration.descendantsOfType('call_expression')).toHaveLength(0);
+    const index = source.indexOf(value) + value.length;
+    const complete = edit(original, source, index, 0, ';');
+    const incremental = parser.parse(complete, original)!;
+    const fresh = parser.parse(complete)!;
+    trees.push(incremental, fresh);
+    expect(incremental.rootNode.hasError).toBe(false);
+    expectEquivalent(incremental, fresh, query);
+    const restored = edit(incremental, complete, index, 1, '');
+    const undo = parser.parse(restored, incremental)!;
+    const freshUndo = parser.parse(source)!;
+    trees.push(undo, freshUndo);
+    expectEquivalent(undo, freshUndo, query);
+    expect(undo.rootNode.hasError).toBe(true);
+    const argumentIndex = source.indexOf('(', source.indexOf(value));
+    const separated = edit(undo, source, argumentIndex, 0, '/**/');
+    const spaced = parser.parse(separated, undo)!;
+    const freshSpaced = parser.parse(separated)!;
+    trees.push(spaced, freshSpaced);
+    expectEquivalent(spaced, freshSpaced, query);
+    const rejoined = edit(spaced, separated, argumentIndex, 4, '');
+    const joined = parser.parse(rejoined, spaced)!;
+    const freshJoined = parser.parse(source)!;
+    trees.push(joined, freshJoined);
+    expectEquivalent(joined, freshJoined, query);
+  } finally {
+    for (const tree of trees) tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
 function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));
   const captures = (tree: Tree): unknown[] =>

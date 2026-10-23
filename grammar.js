@@ -1212,6 +1212,10 @@ function value($, binaryExpression, declaration = false) {
       alias(token(prec(-1, '%')), $.plain_value),
       alias(token(prec(-1, ':')), $.plain_value),
     )),
+    ...(declaration ? [prec.dynamic(4, seq(
+      alias(choice($._escaped_identifier, escapedName), $.plain_value),
+      $._value_call_start,
+    ))] : []),
     alias(choice($._escaped_identifier, escapedName), $.plain_value),
   );
 }
