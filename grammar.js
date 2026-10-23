@@ -1054,11 +1054,11 @@ module.exports = grammar({
 
     call_expression: $ => seq(alias($.identifier, $.function_name), $.arguments),
 
-    _declaration_call_expression: $ => seq(
+    _declaration_call_expression: $ => prec.dynamic(4, seq(
       alias($.identifier, $.function_name),
       optional($._value_call_start),
       $.arguments,
-    ),
+    )),
 
     binary_expression: $ => choice(
       prec.left(2, seq($._value, arithmeticOperator($), $._value)),
@@ -1168,7 +1168,7 @@ function value($, binaryExpression, declaration = false) {
       binaryExpression,
       $.parenthesized_value,
       declaration ? alias($._declaration_call_expression, $.call_expression) : $.call_expression,
-      $.url_value,
+      declaration ? prec.dynamic(4, $.url_value) : $.url_value,
       $.important,
       prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
       alias(token(prec(-1, '%')), $.plain_value),

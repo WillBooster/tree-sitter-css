@@ -206,7 +206,7 @@ static bool scan_recovery_identifier(TSLexer *lexer) {
     }
     lexer->mark_end(lexer);
     lexer->result_symbol = RECOVERY_IDENTIFIER;
-    return true;
+    return scan_property_colon(lexer);
 }
 
 static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols) {
@@ -666,9 +666,9 @@ static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *
             continue;
         }
         if (!is_html_marker_prefix(lexer->lookahead)) return DECLARATION_COMPONENT;
-        if (hash_context == HASH_GAP_TAIL) return DECLARATION_HASH_TAIL;
         *consumed_prefix = true;
         if (!scan_declaration_marker(lexer, arithmetic)) return DECLARATION_COMPONENT;
+        if (hash_context == HASH_GAP_TAIL) return DECLARATION_HASH_TAIL;
         *consumed_prefix = false;
         extra = true;
     }
@@ -808,9 +808,9 @@ static bool scan_probe_component(TSLexer *lexer, bool *stop) {
         case '\'': case '"': scan_quoted_component(lexer); return true;
         case '\\': *stop = !scan_escape(lexer); return true;
         case '/': {
-            bool arithmetic = false;
             advance(lexer);
-            scan_declaration_slash_tail(lexer, &arithmetic);
+            if (lexer->lookahead == '*') scan_comment_body(lexer);
+            else if (scan_plain_slash_prefix(lexer)) scan_plain_slash_tail(lexer);
             return true;
         }
         default: return false;

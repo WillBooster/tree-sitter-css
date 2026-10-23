@@ -35,12 +35,19 @@ const declarationValues = [
   ['1px / 2px', ['1px', '2px'], []],
 ] as const;
 
+const callValues = [
+  ['f(x)', [], ['x']],
+  ['url(x)', [], []],
+  ['var(--x)', [], ['--x']],
+] as const;
+
 test.each(
   preludes.flatMap(([prelude, type]) =>
-    declarationValues.flatMap(([value, numbers, plain]) =>
-      ['\n  ', '\r\n  ', '\n/**/ ', '/* note */\n', ' <!--\n ', ' -->\n '].map(
-        (gap) => [prelude, type, gap, value, numbers, plain] as const
-      )
+    (type === 'rule_set' ? declarationValues : [...declarationValues, ...callValues]).flatMap(
+      ([value, numbers, plain]) =>
+        ['\n  ', '\r\n  ', '\n/**/ ', '/* note */\n', ' <!--\n ', ' -->\n '].map(
+          (gap) => [prelude, type, gap, value, numbers, plain] as const
+        )
     )
   )
 )(
@@ -72,6 +79,36 @@ test.each(
     }
   }
 );
+
+test.each(
+  preludes
+    .filter(([, type]) => type === 'rule_set')
+    .flatMap(([prelude]) =>
+      callValues.flatMap(([value]) =>
+        ['\n  ', '\r\n  ', '\n/**/ ', '/* note */\n', ' <!--\n ', ' -->\n '].map(
+          (gap) => [prelude, value, gap] as const
+        )
+      )
+    )
+)('function-shaped pseudo selectors remain nested rules: %s %s %j', (prelude, value, gap) => {
+  const source = sourceFor(prelude, gap, value);
+  const parser = new Parser().setLanguage(language);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const [outer, after] = tree.rootNode.namedChildren.filter((node) => node.type !== 'comment');
+    expect(outer!.endIndex).toBe(source.indexOf('\n.after'));
+    const block = outer!.namedChildren.find((node) => node.type === 'block')!;
+    const nested = block.namedChildren.filter((node) => node.type !== 'comment');
+    expect(nested.map((node) => node.type)).toEqual(['rule_set']);
+    expect(nested[0]!.text).toBe(`border: ${value}${gap}${prelude} { c: d }`);
+    expect(nested[0]!.descendantsOfType('declaration').map((node) => node.text)).toEqual(['c: d']);
+    expect(after!.text).toBe('.after { color: blue; }');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
 
 test.each(preludes)(
   'inserting and removing the semicolon before %s matches fresh tree ranges and highlights',
@@ -120,6 +157,12 @@ const editedValues = [
   '1\u2000*x;',
   '#abc\n/**///f();',
   '#abc<!--//\n1;',
+  '#abc /**/ /**/-a;',
+  'f(x) /*c*/\n@media screen { c: d }',
+  'url(x) /*c*/\n@media screen { c: d }',
+  '#abc <!--/**/-2;',
+  '1px #abc//;',
+  '1 .c// z;',
   '1\n + 2\n + 3;',
   'solid\n :hover { c: d }',
   '1px + 2px\n :hover { c: d }',
@@ -622,6 +665,108 @@ test.each(['\n', '/**/\n', ' <!--\n', ' -->\n'])(
     }
   }
 );
+
+test.each(['/**/ /**/', '<!--/**/', '-->/**/', '/**/<!--'].flatMap((gap) => ['-a', '-2'].map((value) => [gap, value])))(
+  'minus components after hash extras retain ownership: %s %s',
+  (gap, value) => {
+    const source = `a { --x: #abc ${gap}${value}; } .after {}`;
+    const parser = new Parser().setLanguage(language);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const [outer, after] = tree.rootNode.namedChildren;
+      expect(after!.text).toBe('.after {}');
+      const component = outer!.descendantsOfType(value === '-a' ? 'plain_value' : 'integer_value').at(-1)!;
+      const start = source.indexOf(value);
+      expect([component.text, component.startIndex, component.endIndex]).toEqual([value, start, start + value.length]);
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(['1px #abc//', '1 .c// z', '1 x:y// z', '1 @#a//'])(
+  'delimiter slashes in a value preserve its closing brace and following rule: %s',
+  (value) => {
+    const source = `a { b: ${value}; }\n.after {}`;
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(language, highlights);
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const [outer, after] = tree.rootNode.namedChildren;
+      expect(outer!.text).toBe(`a { b: ${value}; }`);
+      expect(outer!.descendantsOfType('declaration').map((node) => node.text)).toEqual([`b: ${value};`]);
+      expect(after!.text).toBe('.after {}');
+      expect(after!.startIndex).toBe(source.indexOf('.after'));
+      expect(tree.rootNode.descendantsOfType('js_comment')).toHaveLength(0);
+      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'comment')).toHaveLength(0);
+    } finally {
+      tree.delete();
+      query.delete();
+      parser.delete();
+    }
+  }
+);
+
+test('a stray token between keyframes preserves both blocks and the enclosing statement', () => {
+  const source = '@keyframes x { from { a: b } ) to { a: c } } .after {}';
+  const parser = new Parser().setLanguage(language);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    const [statement, after] = tree.rootNode.namedChildren;
+    expect([statement!.type, statement!.text, statement!.startIndex, statement!.endIndex]).toEqual([
+      'keyframes_statement',
+      source.slice(0, source.indexOf(' .after')),
+      0,
+      source.indexOf(' .after'),
+    ]);
+    expect(statement!.descendantsOfType('keyframe_block').map((node) => node.text)).toEqual([
+      'from { a: b }',
+      'to { a: c }',
+    ]);
+    expect(statement!.descendantsOfType('ERROR').map((node) => [node.text, node.startIndex, node.endIndex])).toEqual([
+      [')', source.indexOf(')'), source.indexOf(')') + 1],
+    ]);
+    expect(after!.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test('editing a stray keyframe token and undoing it matches fresh ranges and highlights', () => {
+  const source = '@keyframes x { from { a: b } ) to { a: c } } .after {}';
+  const parser = new Parser().setLanguage(language);
+  const freshParser = new Parser().setLanguage(language);
+  const query = new Query(language, highlights);
+  const original = parser.parse(source)!;
+  const index = source.indexOf(')');
+  const changed = change(original, source, index, 1, '');
+  const incremental = parser.parse(changed, original)!;
+  const fresh = freshParser.parse(changed)!;
+  const trees = [original, incremental, fresh];
+  try {
+    expect(incremental.rootNode.hasError).toBe(false);
+    equivalent(incremental, fresh, query);
+    const restored = change(incremental, changed, index, 0, ')');
+    const undo = parser.parse(restored, incremental)!;
+    const freshUndo = freshParser.parse(source)!;
+    trees.push(undo, freshUndo);
+    expect(undo.rootNode.descendantsOfType('keyframe_block').map((node) => node.text)).toEqual([
+      'from { a: b }',
+      'to { a: c }',
+    ]);
+    equivalent(undo, freshUndo, query);
+  } finally {
+    for (const tree of trees) tree.delete();
+    query.delete();
+    parser.delete();
+    freshParser.delete();
+  }
+});
 
 function sourceFor(prelude: string, gap: string, value = '1px solid'): string {
   return `/* Ω🙂 */ a { border: ${value}${gap}${prelude} { c: d } }\n.after { color: blue; }`;
