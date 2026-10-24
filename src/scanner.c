@@ -486,7 +486,7 @@ static bool is_at_rule_url_character(int32_t character) {
 // The generic at-rule fallback after `@layer` shares these states, so a slash keeps its at-rule scan.
 static bool scan_layer_name_or_slash(TSLexer *lexer, const bool *valid_symbols) {
     bool whitespace = false;
-    while (is_css_whitespace(lexer->lookahead)) {
+    while (iswspace(lexer->lookahead)) {
         whitespace = true;
         skip(lexer);
     }

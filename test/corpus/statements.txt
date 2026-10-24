@@ -1154,6 +1154,7 @@ Layer statements
 @layer initial;
 @layer a.b c;
 @layer a / b;
+@layer a/;
 @layer url(a{b);
 
 ---
@@ -1194,6 +1195,10 @@ Layer statements
   (at_rule
     (at_keyword)
     (at_rule_value)
+    (at_rule_value)
+    (at_rule_value))
+  (at_rule
+    (at_keyword)
     (at_rule_value)
     (at_rule_value))
   (at_rule
