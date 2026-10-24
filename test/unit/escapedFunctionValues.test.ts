@@ -1,7 +1,8 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import { expect, test } from 'vitest';
+import path from 'node:path';
+
 import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
@@ -47,3 +48,53 @@ test.each(
     parser.delete();
   }
 });
+
+test.each(
+  ['url', 'URL', 'uRl', String.raw`u\72l`, String.raw`ur\6c`, String.raw`\75rl`].flatMap((name) =>
+    ['1', '1.5'].map((number) => [number, `${name}(x)`])
+  )
+)('a URL immediately after %s keeps its own token and highlights: %s', (number, url) => {
+  const parser = new Parser().setLanguage(language);
+  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
+  const source = `a { --x: ${number}${url}; color: red; } .after {}`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
+    expect(declaration.descendantsOfType('unit')).toHaveLength(0);
+    expect(
+      declaration.descendantsOfType('url_value').map((node) => [node.text, node.startIndex, node.endIndex])
+    ).toEqual([[url, source.indexOf(url), source.indexOf(url) + url.length]]);
+    expect(
+      query
+        .captures(declaration)
+        .filter(({ name }) => name === 'string.special')
+        .map(({ node }) => node.text)
+    ).toEqual([url]);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+  } finally {
+    tree.delete();
+    query.delete();
+    parser.delete();
+  }
+});
+
+test.each(['"x"', "'x'", 'x y', 'f(x)'])(
+  'URL-shaped components that do not form an unquoted URL retain their unit: %s',
+  (body) => {
+    const parser = new Parser().setLanguage(language);
+    const tree = parser.parse(`a { --x: 1url(${body}); color: red; }`)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.descendantsOfType('url_value')).toHaveLength(0);
+      expect(tree.rootNode.descendantsOfType('unit').map((node) => node.text)).toEqual(['url']);
+      expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.firstNamedChild!.text)).toEqual([
+        '--x',
+        'color',
+      ]);
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);

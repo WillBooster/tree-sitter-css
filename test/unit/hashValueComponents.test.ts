@@ -1,6 +1,7 @@
 import path from 'node:path';
-import { expect, test } from 'vitest';
+
 import { Language, Parser } from '@willbooster/web-tree-sitter';
+import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
@@ -33,6 +34,8 @@ test.each(
 });
 
 test.each([
+  ['#item/', 'hash_value'],
+  ['#abc/', 'color_value'],
   ['#item//', 'hash_value'],
   ['#item//bar', 'hash_value'],
   ['#item///', 'hash_value'],
@@ -73,6 +76,27 @@ test('a separated line comment after a hash remains a comment', () => {
   }
 });
 
+test.each(['#abc', '#item', String.raw`#a\62 c`].flatMap((hash) => ['', '/**/'].map((gap) => [hash, gap])))(
+  'slash-prefixed words after %s%s retain plain component ownership',
+  (hash, gap) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `a { --x: ${hash}${gap}/foo; color: red; } .after {}`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
+      expect(declaration.descendantsOfType('binary_expression')).toHaveLength(0);
+      expect(
+        declaration.descendantsOfType('plain_value').map((node) => [node.text, node.startIndex, node.endIndex])
+      ).toEqual([['/foo', source.indexOf('/foo'), source.indexOf('/foo') + 4]]);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
 test.each([
   ['#abc©', 'color_value'],
   ['#item→x', 'hash_value'],
@@ -98,7 +122,7 @@ test.each([
   }
 });
 
-test.each(['#item', '#item/', '#item//', '#abc//'])(
+test.each(['#item', '#abc', '#item/', '#item//', '#abc//'])(
   'a block comment opened right after %s/ keeps its delimiters inside the comment',
   (prefix) => {
     const parser = new Parser().setLanguage(language);
@@ -112,6 +136,89 @@ test.each(['#item', '#item/', '#item//', '#abc//'])(
         'color: red;',
       ]);
       expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(
+  ['x', '--x'].flatMap((property) =>
+    [
+      ['#abc', 'color_value'],
+      ['#item', 'hash_value'],
+      [String.raw`#a\62 c`, 'hash_value'],
+    ].flatMap(([hash, kind]) =>
+      [
+        { gap: '', comments: [] },
+        { gap: ' // note\n', comments: [['js_comment', '// note']] },
+        { gap: ' // note\r\n', comments: [['js_comment', '// note\r']] },
+        {
+          gap: ' /**/ // note\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// note'],
+          ],
+        },
+        {
+          gap: '/**/ // note\r\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// note\r'],
+          ],
+        },
+        {
+          gap: ' // a\n// b\n',
+          comments: [
+            ['js_comment', '// a'],
+            ['js_comment', '// b'],
+          ],
+        },
+        { gap: ' <!-- // note\n', comments: [['js_comment', '// note']] },
+        { gap: ' --> // note\r\n', comments: [['js_comment', '// note\r']] },
+        {
+          gap: '/**/<!-- // note\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// note'],
+          ],
+        },
+        {
+          gap: ' /**/ // a\n// b\n',
+          comments: [
+            ['comment', '/**/'],
+            ['js_comment', '// a'],
+            ['js_comment', '// b'],
+          ],
+        },
+      ].flatMap(({ gap, comments }) =>
+        ['', '2'].flatMap((payload) =>
+          [';', ''].map((ending) => ({ property, hash, kind, gap, comments, payload, ending }))
+        )
+      )
+    )
+  )
+)(
+  'unfinished comments after hashes retain slash values: $property $hash $gap $payload $ending',
+  ({ property, hash, kind, gap, comments, payload, ending }) => {
+    const parser = new Parser().setLanguage(language);
+    const declaration = `${property}: ${hash}${gap}/*${payload}${ending}`;
+    const source = `a { ${declaration} } .after { color: red; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const parsed = tree.rootNode.descendantsOfType('declaration')[0]!;
+      expect(parsed.text).toBe(declaration);
+      const binary = parsed.descendantsOfType('binary_expression')[0]!;
+      expect(binary.text).toBe(`${hash}${gap}/*`);
+      expect(binary.namedChildren.map((node) => [node.type, node.text])).toEqual([
+        [kind, hash],
+        ...comments,
+        ['plain_value', '*'],
+      ]);
+      expect(parsed.descendantsOfType('integer_value').map((node) => node.text)).toEqual(payload ? [payload] : []);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
     } finally {
       tree.delete();
       parser.delete();

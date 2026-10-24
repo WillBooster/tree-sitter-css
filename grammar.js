@@ -86,6 +86,19 @@ module.exports = grammar({
     $._operator_gap,
     $._combinator_gap,
     $._binary_asterisk,
+    $._declaration_continuation,
+    $._declaration_operator_gap,
+    $._value_call_start,
+    $._value_unit_start,
+    $._recovery_identifier,
+    $._declaration_boundary,
+    $._declaration_operand_gap,
+    $._hash_tail_gap,
+    $._value_number_end,
+    $._declaration_terminator_gap,
+    $._declaration_comma_gap,
+    $._declaration_value_start,
+    $._missing_declaration_value,
   ],
 
   inline: $ => [
@@ -181,11 +194,11 @@ module.exports = grammar({
     [$._container_unary_query, $.general_enclosed_query, $._at_rule_component],
     [$._container_unary_query, $._at_rule_component],
     [$._style_parenthesized_query, $.at_rule_parenthesized],
-    [$.range_query, $._range_value],
-    [$._selector, $.declaration],
-    [$._selector, $.declaration, $.last_declaration],
-    [$._selector, $.incomplete_declaration, $.declaration, $.last_declaration],
-    [$._selector, $.incomplete_declaration, $.declaration],
+    [$.range_query, $._range_start_value],
+    [$._selector, $._missing_declaration, $.declaration],
+    [$._selector, $._missing_declaration, $.declaration, $.last_declaration],
+    [$._selector, $.incomplete_declaration, $._missing_declaration, $.declaration, $.last_declaration],
+    [$._selector, $.incomplete_declaration, $._missing_declaration, $.declaration],
     [$._descendant_combinator, $.incomplete_declaration],
   ],
 
@@ -200,6 +213,7 @@ module.exports = grammar({
     _top_level_item: $ => choice(
       $.declaration,
       $.incomplete_declaration,
+      alias($._missing_declaration, $.declaration),
       $.rule_set,
       $.import_statement,
       $.media_statement,
@@ -356,7 +370,7 @@ module.exports = grammar({
 
     namespace_statement: $ => seq(
       '@namespace',
-      optional(alias($.identifier, $.namespace_name)),
+      optional(alias(valueIdentifier($), $.namespace_name)),
       choice($.string_value, $.call_expression, $.url_value),
       ';',
     ),
@@ -542,6 +556,7 @@ module.exports = grammar({
     _block_item: $ => choice(
       $.declaration,
       $.incomplete_declaration,
+      alias($._missing_declaration, $.declaration),
       $.rule_set,
       $.import_statement,
       $.media_statement,
@@ -756,9 +771,18 @@ module.exports = grammar({
       $._incomplete_declaration_end,
     ),
 
-    declaration: $ => prec.dynamic(1, seq(declarationValue($), ';')),
+    _missing_declaration: $ => seq(
+      alias(propertyIdentifier($), $.property_name),
+      optional($._descendant_combinator),
+      ':',
+      $._declaration_value_start,
+      choice($._declaration_continuation, $._declaration_boundary),
+      alias($._missing_declaration_value, $.plain_value),
+    ),
 
-    last_declaration: $ => prec.dynamic(1, declarationValue($)),
+    declaration: $ => prec.dynamic(1, seq(declarationValue($), optional($._declaration_terminator_gap), ';')),
+
+    last_declaration: $ => prec.dynamic(1, declarationValue($, true)),
 
     _star_property_name: _ => token(seq('*', choice('--', seq(optional('-'), nameStart)), repeat(nameContinue))),
 
@@ -775,7 +799,7 @@ module.exports = grammar({
     important: _ => /![ \t\n\r\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]/,
 
     _query: $ => choice(
-      alias($.identifier, $.keyword_query),
+      alias(featureIdentifier($), $.keyword_query),
       $.feature_query,
       $.binary_query,
       $.unary_query,
@@ -785,14 +809,14 @@ module.exports = grammar({
 
     feature_query: $ => seq(
       '(',
-      alias($.identifier, $.feature_name),
+      alias(featureIdentifier($), $.feature_name),
       ':',
       repeat1($._value),
       ')',
     ),
 
     _media_query: $ => choice(
-      alias($.identifier, $.keyword_query),
+      alias(featureIdentifier($), $.keyword_query),
       $.feature_query,
       $.range_query,
       alias($._media_binary_query, $.binary_query),
@@ -810,20 +834,30 @@ module.exports = grammar({
     range_query: $ => seq(
       '(',
       choice(
-        prec.dynamic(1, seq(alias(choice($.identifier, $._escaped_identifier), $.feature_name), $._range_comparison, $._range_value)),
-        seq($._range_value, $._range_comparison, alias(choice($.identifier, $._escaped_identifier), $.feature_name)),
-        seq($._range_value, choice('<', '<='), alias(choice($.identifier, $._escaped_identifier), $.feature_name), choice('<', '<='), $._range_value),
-        seq($._range_value, choice('>', '>='), alias(choice($.identifier, $._escaped_identifier), $.feature_name), choice('>', '>='), $._range_value),
+        prec.dynamic(1, seq(alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name), $._range_comparison, $._range_value)),
+        seq($._range_start_value, $._range_comparison, alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name)),
+        seq($._range_start_value, choice('<', '<='), alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name), choice('<', '<='), $._range_value),
+        seq($._range_start_value, choice('>', '>='), alias(choice(featureIdentifier($), $._escaped_identifier), $.feature_name), choice('>', '>='), $._range_value),
       ),
       ')',
     ),
 
     _range_comparison: _ => choice('<', '<=', '>', '>=', '='),
 
+    _range_start_value: $ => choice(
+      $.integer_value,
+      $.float_value,
+      alias(choice(featureIdentifier($), $._escaped_identifier), $.plain_value),
+      $.ratio_value,
+      alias($._range_start_call_expression, $.call_expression),
+    ),
+
+    _range_start_call_expression: $ => seq(alias(featureIdentifier($), $.function_name), $.arguments),
+
     _range_value: $ => choice(
       $.integer_value,
       $.float_value,
-      alias(choice($.identifier, $._escaped_identifier), $.plain_value),
+      alias(choice(valueIdentifier($), $._escaped_identifier), $.plain_value),
       $.ratio_value,
       $.call_expression,
     ),
@@ -978,27 +1012,13 @@ module.exports = grammar({
 
     _style_unary_query: $ => seq(alias($._query_not, 'not'), $._style_in_parens),
 
-    _value: $ => choice(
-      seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
-      prec(-1, choice(
-        alias($.identifier, $.plain_value),
-        $.plain_value,
-        seq(choice($.color_value, $.hash_value), optional(alias($._hash_slash_tail, $.plain_value))),
-        '#',
-        $.integer_value,
-        $.float_value,
-        $.string_value,
-        $.grid_value,
-        $.binary_expression,
-        $.parenthesized_value,
-        $.call_expression,
-        $.url_value,
-        $.important,
-        prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
-        alias(token(prec(-1, '%')), $.plain_value),
-        alias(token(prec(-1, ':')), $.plain_value),
-      )),
-      alias(choice($._escaped_identifier, escapedName), $.plain_value),
+    _value: $ => value($, $.binary_expression),
+
+    _declaration_value: $ => value($, alias($._declaration_binary_expression, $.binary_expression), true),
+
+    _declaration_binary_expression: $ => choice(
+      prec.left(2, seq($._declaration_value, $._declaration_operator_gap, arithmeticOperator($), $._declaration_operand_gap, $._declaration_value)),
+      prec.left(1, seq($._declaration_value, $._declaration_operator_gap, arithmeticOperator($))),
     ),
 
     parenthesized_value: $ => seq(
@@ -1042,9 +1062,19 @@ module.exports = grammar({
       ),
     )),
 
-    integer_value: $ => seq($._integer, optional($.unit)),
+    integer_value: $ => seq($._integer, optional(valueUnit($))),
 
-    float_value: $ => seq($._float, optional($.unit)),
+    _declaration_integer_value: $ => seq($._integer, choice(
+      seq($._value_unit_start, $.unit),
+      $._value_number_end,
+    )),
+
+    float_value: $ => seq($._float, optional(valueUnit($))),
+
+    _declaration_float_value: $ => seq($._float, choice(
+      seq($._value_unit_start, $.unit),
+      $._value_number_end,
+    )),
 
     _integer: _ => token(seq(
       optional(choice('+', '-')),
@@ -1071,14 +1101,17 @@ module.exports = grammar({
 
     url_value: _ => token(unquotedUrl),
 
-    call_expression: $ => seq(
-      alias($.identifier, $.function_name),
+    call_expression: $ => seq(alias(valueIdentifier($), $.function_name), $.arguments),
+
+    _declaration_call_expression: $ => prec.dynamic(4, seq(
+      alias(valueIdentifier($), $.function_name),
+      optional($._value_call_start),
       $.arguments,
-    ),
+    )),
 
     binary_expression: $ => choice(
-      prec.left(2, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash), $._value)),
-      prec.left(1, seq($._value, choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash))),
+      prec.left(2, seq($._value, arithmeticOperator($), $._value)),
+      prec.left(1, seq($._value, arithmeticOperator($))),
     ),
 
     arguments: $ => seq(
@@ -1122,37 +1155,109 @@ function importUrlModifiers($) {
   ));
 }
 
-function declarationValue($) {
-  return seq(
-    choice(
-      seq(
-        alias(propertyIdentifier($), $.property_name),
-        optional($._descendant_combinator),
-        ':',
-        $._value,
-        repeat(seq(optional(','), $._value)),
-      ),
-      seq(
-        alias($._custom_property_component, $.property_name),
-        optional($._descendant_combinator),
-        ':',
-        optional(alias($.at_rule_braced, $.block_value)),
+function declarationValue($, final = false) {
+  const ending = seq(
+    optional($.important),
+    optional($._declaration_boundary),
+    ...(final ? [$._declaration_terminator_gap] : []),
+  );
+  return choice(
+    seq(
+      alias(propertyIdentifier($), $.property_name),
+      optional($._descendant_combinator),
+      ':',
+      $._declaration_value_start,
+      $._declaration_continuation,
+      $._declaration_value,
+      repeat(seq(optional(seq(optional($._declaration_comma_gap), ',')), $._declaration_continuation, $._declaration_value)),
+      ending,
+    ),
+    seq(
+      alias($._custom_property_component, $.property_name),
+      optional($._descendant_combinator),
+      ':',
+      $._declaration_value_start,
+      choice($._declaration_continuation, $._declaration_boundary),
+      choice(
+        seq(alias($.at_rule_braced, $.block_value), ending),
+        optional($._declaration_boundary),
       ),
     ),
-    optional($.important),
   );
 }
 
 function propertyIdentifier($) {
-  return choice(selectorIdentifier($), $._custom_property_name, $._star_property_name);
+  return choice(selectorIdentifier($), $._recovery_identifier, $._custom_property_name, $._star_property_name);
 }
 
 function selectorIdentifier($) {
-  return choice($.identifier, escapedName, selectorFunctionName, queryKeyword($), $._custom_property_component);
+  return choice(
+    valueIdentifier($),
+    'and',
+    'or',
+    escapedName,
+    selectorFunctionName,
+    queryKeyword($),
+    $._custom_property_component,
+  );
+}
+
+function valueUnit($) {
+  return choice(
+    $.unit,
+    ...['from', 'to', 'only', 'selector'].map(name => alias(token.immediate(name), $.unit)),
+  );
+}
+
+function valueIdentifier($) {
+  return choice($.identifier, $.from, $.to, 'only', 'selector');
+}
+
+function featureIdentifier($) {
+  return choice($.identifier, $.from, $.to);
 }
 
 function queryKeyword($) {
   return choice($._style_keyword, $._query_not, $._query_and, $._query_or);
+}
+
+function value($, binaryExpression, declaration = false) {
+  return choice(
+    seq(alias($._invalid_value_dot, $.plain_value), $.__error_recovery),
+    prec(-1, choice(
+      alias(valueIdentifier($), $.plain_value),
+      $.plain_value,
+      hashValue($, declaration),
+      '#',
+      declaration ? alias($._declaration_integer_value, $.integer_value) : $.integer_value,
+      declaration ? alias($._declaration_float_value, $.float_value) : $.float_value,
+      $.string_value,
+      $.grid_value,
+      binaryExpression,
+      $.parenthesized_value,
+      declaration ? alias($._declaration_call_expression, $.call_expression) : $.call_expression,
+      declaration ? prec.dynamic(4, $.url_value) : $.url_value,
+      $.important,
+      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
+      alias(token(prec(-1, '%')), $.plain_value),
+      alias(token(prec(-1, ':')), $.plain_value),
+    )),
+    ...(declaration ? [prec.dynamic(4, seq(
+      alias(choice($._escaped_identifier, escapedName), $.plain_value),
+      $._value_call_start,
+    ))] : []),
+    alias(choice($._escaped_identifier, escapedName), $.plain_value),
+  );
+}
+
+function hashValue($, declaration) {
+  const hash = choice($.color_value, $.hash_value);
+  const tail = optional(alias($._hash_slash_tail, $.plain_value));
+  return declaration ? seq(hash, optional($._hash_tail_gap), tail) : seq(hash, tail);
+}
+
+function arithmeticOperator($) {
+  return choice('+', '-', '*', alias($._value_asterisk, '*'), alias($._binary_asterisk, '*'), valueSlash);
 }
 
 function valueSequence($) {
@@ -1172,7 +1277,7 @@ function pseudoComponent($) {
 
 function pseudoValue($) {
   return choice(
-    alias($.identifier, $.plain_value),
+    alias(valueIdentifier($), $.plain_value),
     $.integer_value,
     $.float_value,
     $.string_value,

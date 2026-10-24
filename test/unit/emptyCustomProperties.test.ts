@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { expect, test } from 'vitest';
+
 import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
@@ -75,6 +76,54 @@ test.each(['--', String.raw`\2d\2d `, String.raw`-\2d `])(
       expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
     } finally {
       tree.delete();
+      parser.delete();
+    }
+  }
+);
+
+test.each(
+  ['--x', String.raw`\2d\2d x`].flatMap((name) =>
+    ['', '/**/', '\n'].flatMap((gap) =>
+      [
+        ['word', 'plain_value'],
+        ['1px', 'integer_value'],
+        ['url(x)', 'url_value'],
+        ['f(1)', 'call_expression'],
+      ].flatMap(([value, kind]) => [false, true].map((final) => ({ name, gap, value, kind, final })))
+    )
+  )
+)(
+  'custom important comma lists retain their declaration: $name $gap $value, final=$final',
+  ({ name, gap, value, kind, final }) => {
+    const parser = new Parser().setLanguage(language);
+    const query = new Query(
+      language,
+      fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8')
+    );
+    const declaration = `${name}: !important${gap}, ${value}${final ? '' : ';'}`;
+    const source = `a { ${declaration} } .after { color: blue; }`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const declarations = tree.rootNode.firstNamedChild!.descendantsOfType('declaration');
+      expect(declarations).toHaveLength(1);
+      const parsed = declarations[0]!;
+      expect(parsed.text).toBe(declaration);
+      expect(parsed.startIndex).toBe(source.indexOf(declaration));
+      expect(parsed.endIndex).toBe(source.indexOf(declaration) + declaration.length);
+      expect(parsed.descendantsOfType('property_name').map((node) => node.text)).toEqual([name]);
+      expect(parsed.descendantsOfType(kind!).some((node) => node.text === value)).toBe(true);
+      expect(
+        query
+          .captures(parsed)
+          .filter(({ name: capture }) => capture === 'keyword')
+          .map(({ node }) => node.text)
+      ).toEqual(['!important']);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: blue; }');
+      expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
+    } finally {
+      tree.delete();
+      query.delete();
       parser.delete();
     }
   }
