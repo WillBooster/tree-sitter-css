@@ -1,6 +1,8 @@
 import path from 'node:path';
-import { expect, test } from 'vitest';
+
 import { Language, Parser } from '@willbooster/web-tree-sitter';
+import { expect, test } from 'vitest';
+
 import nodeTypes from '../../src/node-types.json';
 
 await Parser.init();
