@@ -7,7 +7,7 @@
 #endif
 
 #define TS_GENERATION_PROFILED 1
-#define LANGUAGE_VERSION 0x57420009
+#define LANGUAGE_VERSION 0x5742000a
 #define STATE_COUNT 2245
 #define LARGE_STATE_COUNT 53
 #define LEX_STATE_COUNT 3521
@@ -8088,23 +8088,23 @@ static const TSCharacterRange ts_lex_sym__pseudo_plain_value_character_set_2[] =
   {0x80, 0x10ffff},
 };
 
-static uint8_t ts_lex_0(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_1(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_2(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_3(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_4(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_5(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_6(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_7(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_8(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_9(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_10(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_11(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_12(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
-static uint8_t ts_lex_13(TSLexer *, TSStateId *, bool *, TSLexerPosition *);
+static uint8_t ts_lex_0(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_1(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_2(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_3(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_4(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_5(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_6(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_7(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_8(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_9(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_10(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_11(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_12(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
+static uint8_t ts_lex_13(TSLexer *, TSStateId *, bool *, TSLexerCheckpoint *);
 
 static bool ts_lex(TSLexer *lexer, TSStateId state) {
-  UNUSED TSLexerPosition start_tags[1];
+  UNUSED TSLexerCheckpoint start_tags[1];
   bool result = false;
   for (;;) {
     uint8_t status;
@@ -8129,7 +8129,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
   }
 }
 
-static uint8_t ts_lex_0(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_0(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -8146,2091 +8146,2091 @@ static uint8_t ts_lex_0(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   switch (state) {
     case 0:
       if (eof) ADVANCE(483);
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1987); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3007); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1929); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(889); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2015); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(504); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1998); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'I') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1965); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2556); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1963); }
-      if (lookahead == 'T') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2604); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(80); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2645); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1964); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2544); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2549); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1961); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2546); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(896); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(887); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1987); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3007); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1929); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(889); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2015); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(504); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1998); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'I') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1965); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2556); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1963); }
+      if (lookahead == 'T') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2604); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(80); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2645); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1964); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2544); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2549); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1961); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2546); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(896); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(887); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2290); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2290); }
       if (lookahead == 'L' ||
-          lookahead == 'l') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2558); }
+          lookahead == 'l') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2558); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2605); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2605); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(37);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2026); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2026); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 'A' &&
           (lookahead < '{' || 0xb6 < lookahead) &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 1:
       if (eof) ADVANCE(483);
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1930); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(159); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(160); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2557); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2670); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(161); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2649); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2650); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2545); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2551); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2669); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2640); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1930); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(159); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(160); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2557); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2670); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(161); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2649); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2650); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2545); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2551); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2669); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2640); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(29);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2027); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2027); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 2:
       ts_lex_state_2:
       if (eof) ADVANCE(483);
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1989); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3007); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2019); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2010); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2007); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2304); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2518); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2511); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2506); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2513); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1989); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3007); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2019); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2010); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2007); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2304); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2518); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2511); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2506); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2513); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2288); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2288); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2534); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2534); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_2);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
-      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2530); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2530); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 3:
       ts_lex_state_3:
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(183); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2598); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(471); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2565); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2586); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2548); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2574); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(183); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2598); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(471); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2565); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2586); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2548); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2574); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2597); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2597); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2599); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2599); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2600); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2600); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_3);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2603); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2603); }
       END_STATE();
     case 4:
       ts_lex_state_4:
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2021); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(471); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2021); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(471); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2597); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2597); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2598); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2598); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2599); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2599); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2600); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2600); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_4);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2603); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2603); }
       END_STATE();
     case 5:
       if (lookahead == '%' ||
           ('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3127); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3127); }
       END_STATE();
     case 6:
       ts_lex_state_6:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2016); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2557); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2670); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(161); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2649); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2650); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2545); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2551); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2669); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2640); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2016); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2557); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2670); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(161); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2649); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2650); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2545); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2551); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2669); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2640); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_6);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 7:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1989); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3127); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2019); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2010); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2007); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2304); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3084); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3079); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3075); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3080); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1989); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3127); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2019); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2010); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2007); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2304); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3084); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3079); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3075); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3080); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3072); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3072); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3089); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3089); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(58);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
-      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3087); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3087); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 8:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(40);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
-          (lookahead < '[' || '^' < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '[' || '^' < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 9:
       ts_lex_state_9:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1988); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1931); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(164); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(504); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2009); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2006); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2445); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2446); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2447); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2449); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(162); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2301); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2441); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2469); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2450); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2471); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2442); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2443); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2448); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2464); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2458); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1988); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1931); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(164); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(504); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2009); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2006); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2445); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2446); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2447); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2449); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(162); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2301); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2441); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2469); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2450); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2471); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2442); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2443); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2448); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2464); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2458); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2289); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2289); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2485); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2485); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_9);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       if (('B' <= lookahead && lookahead <= 'Z') ||
-          ('b' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2481); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+          ('b' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2481); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 10:
       ts_lex_state_10:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3038); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(81); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3038); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(81); }
       if (lookahead == '\t' ||
           lookahead == 0x0b ||
-          lookahead == ' ') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3039); }
+          lookahead == ' ') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3039); }
       if (('\n' <= lookahead && lookahead <= '\r')) TS_LEX_REPEAT(true, ts_lex_state_10);
-      if (!eof) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3040); }
+      if (!eof) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3040); }
       END_STATE();
     case 11:
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2017); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(883); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(395); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(274); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(403); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(394); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_1, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1958); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2017); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(883); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(395); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(274); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(403); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(394); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_1, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1958); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(151);
       END_STATE();
     case 12:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1990); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3127); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1931); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2020); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2009); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2006); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2301); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3103); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3098); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3094); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3099); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1990); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3127); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1931); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2020); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2009); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2006); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2301); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3103); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3098); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3094); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3099); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3091); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3091); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3108); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3108); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(16);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       if (('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3106); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3106); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 13:
       ts_lex_state_13:
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3032); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(81); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3032); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(81); }
       if (lookahead == '\t' ||
           lookahead == 0x0b ||
-          lookahead == ' ') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3033); }
+          lookahead == ' ') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3033); }
       if (('\n' <= lookahead && lookahead <= '\r')) TS_LEX_REPEAT(true, ts_lex_state_13);
-      if (!eof) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3034); }
+      if (!eof) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3034); }
       END_STATE();
     case 14:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(372); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1934); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(159); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2557); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2670); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(161); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(373); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2649); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2650); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2545); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2551); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2669); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2640); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(896); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(887); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(372); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1934); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(159); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2557); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2670); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(161); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(373); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2649); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2650); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2545); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2551); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2669); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2640); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(896); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(887); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(49);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 15:
       ts_lex_state_15:
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(171); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2708); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2703); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2702); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2698); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2704); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(171); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2708); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2703); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2702); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2698); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2704); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_15);
-      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_1_ascii, ts_lex_sym__star_property_name_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2712); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_1_ascii, ts_lex_sym__star_property_name_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2712); }
       END_STATE();
     case 16:
       ts_lex_state_16:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1990); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1931); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2020); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2009); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2006); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2301); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2469); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2462); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2457); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2464); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1990); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1931); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2020); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2009); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2006); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2301); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2469); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2462); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2457); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2464); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2289); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2289); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2485); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2485); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_16);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       if (('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2481); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2481); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 17:
       ts_lex_state_17:
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(184); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(176); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(883); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(472); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2689); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2685); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2683); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2679); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2686); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(184); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(176); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(883); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(472); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2689); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2685); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2683); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2679); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2686); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2292); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2292); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_17);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2694); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2694); }
       END_STATE();
     case 18:
       ts_lex_state_18:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(159); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2557); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2670); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(161); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2649); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2650); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2545); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2551); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2669); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2640); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(159); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2557); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2670); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(161); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2649); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2650); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2545); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2551); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2669); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2640); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_18);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 19:
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2017); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3124); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3119); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3115); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3120); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2017); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3124); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3119); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3115); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3120); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(53);
       if (lookahead == '%' ||
           ('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3127); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3127); }
       END_STATE();
     case 20:
       ts_lex_state_20:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1989); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3007); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(180); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2010); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2007); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2494); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2495); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2496); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2498); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(162); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2304); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2490); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2518); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2499); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2520); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2491); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2492); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2497); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2513); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2507); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1989); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3007); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(180); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2010); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2007); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2494); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2495); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2496); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2498); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(162); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2304); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2490); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2518); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2499); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2520); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2491); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2492); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2497); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2513); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2507); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2288); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2288); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2534); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2534); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_20);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       if (('B' <= lookahead && lookahead <= 'Z') ||
-          ('b' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2530); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+          ('b' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2530); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 21:
       ts_lex_state_21:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(443); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(174); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(204); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(443); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(174); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(204); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(380); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(380); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(381); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(381); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2023); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2023); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(382); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(382); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(388); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(388); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(389); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(389); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_21);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3067); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3067); }
       END_STATE();
     case 22:
       ts_lex_state_22:
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(184); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(173); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(406); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(404); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(184); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(173); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(406); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(404); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(408); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(408); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_22);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       END_STATE();
     case 23:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(59);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 24:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(132);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 25:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1989); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3007); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2019); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2010); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2007); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2304); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2518); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2511); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2506); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2513); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1989); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3007); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2019); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2010); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2007); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2304); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2518); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2511); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2506); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2513); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2288); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2288); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2534); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2534); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(58);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
-      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2530); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2530); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 26:
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(168); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(168); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(142);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
       if (((!eof && ts_lex_set_contains_with_ascii(ts_lex_aux_sym__style_range_value_token1_character_set_1_ascii, ts_lex_aux_sym__style_range_value_token1_character_set_1, 1, lookahead))) &&
           (lookahead < '@' || 'Z' < lookahead) &&
           lookahead != '_' &&
           (lookahead < 'a' || 'z' < lookahead) &&
-          (lookahead < 0x80 || 0x10ffff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+          (lookahead < 0x80 || 0x10ffff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 27:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2999); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2993); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(170); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2999); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2993); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(170); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2369); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2369); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2375); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2375); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2386); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2386); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2380); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2380); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2379); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2379); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(48);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2438); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2438); }
       END_STATE();
     case 28:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(134);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_4, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
-      if (lookahead > 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_4, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (lookahead > 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 29:
       ts_lex_state_29:
       if (eof) ADVANCE(483);
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1930); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(159); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(160); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2557); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2670); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(161); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2649); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2650); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2545); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2551); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2669); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2640); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1930); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(159); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(160); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2557); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2670); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(161); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2649); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2650); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2545); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2551); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2669); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2640); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_29);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2027); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2027); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 30:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2992); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(167); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2992); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(167); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2364); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2364); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2370); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2370); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2385); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2385); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2372); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2372); }
       if (lookahead == 'T' ||
-          lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2378); }
+          lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2378); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2371); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2371); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(52);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2434); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2434); }
       END_STATE();
     case 31:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2992); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2370); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2418); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2427); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2311); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2423); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2992); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2370); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2418); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2427); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2311); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2423); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2364); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2364); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2385); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2385); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2372); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2372); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2371); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2371); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(57);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2434); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2434); }
       END_STATE();
     case 32:
       ts_lex_state_32:
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(171); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(171); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_32);
-      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_1_ascii, ts_lex_sym__star_property_name_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2712); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_1_ascii, ts_lex_sym__star_property_name_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2712); }
       END_STATE();
     case 33:
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(892); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2018); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(883); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3124); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3119); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3115); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3120); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(892); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2018); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(883); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3124); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3119); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3115); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3120); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(152);
       if (lookahead == '%' ||
           ('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3127); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3127); }
       END_STATE();
     case 34:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2992); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2370); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2418); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2427); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2311); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2423); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2992); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2370); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2418); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2427); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2311); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2423); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2364); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2364); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2385); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2385); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2372); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2372); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2371); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2371); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(128);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2434); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2434); }
       END_STATE();
     case 35:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(138);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 36:
       ts_lex_state_36:
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(177); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(472); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2689); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2686); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(177); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(472); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2689); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2686); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_36);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2694); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2694); }
       END_STATE();
     case 37:
       ts_lex_state_37:
       if (eof) ADVANCE(483);
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1987); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3007); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1929); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(889); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2015); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(504); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1998); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'I') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1965); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2556); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1963); }
-      if (lookahead == 'T') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2604); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(80); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2649); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1964); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2544); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2550); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1962); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2547); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(896); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(887); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1987); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3007); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1929); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(889); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2015); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(504); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1998); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'I') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1965); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2556); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1963); }
+      if (lookahead == 'T') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2604); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(80); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2649); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1964); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2544); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2550); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1962); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2547); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(896); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(887); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2290); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2290); }
       if (lookahead == 'L' ||
-          lookahead == 'l') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2558); }
+          lookahead == 'l') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2558); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2605); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2605); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_37);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2026); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2026); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 'A' &&
           (lookahead < '{' || 0xb6 < lookahead) &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 38:
       ts_lex_state_38:
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(184); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(176); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(472); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2689); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2683); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2679); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2686); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(184); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(176); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(472); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2689); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2683); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2679); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2686); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2292); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2292); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_38);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2694); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2694); }
       END_STATE();
     case 39:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1988); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1931); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2020); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(504); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2009); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2006); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2301); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2469); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2462); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2457); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2464); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1988); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1931); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2020); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(504); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2009); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2006); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2301); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2469); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2462); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2457); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2464); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2289); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2289); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2485); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2485); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(41);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       if (('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2481); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2481); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 40:
       ts_lex_state_40:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_40);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
-          (lookahead < '[' || '^' < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '[' || '^' < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 41:
       ts_lex_state_41:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1988); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1931); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2020); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(504); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2009); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2006); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2301); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2469); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2462); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2457); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2464); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1988); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1931); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2020); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(504); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2009); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2006); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2301); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2469); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2462); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2457); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2464); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2289); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2289); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2485); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2485); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_41);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       if (('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2481); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2481); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 42:
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(172); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3112); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(274); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3124); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3111); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3115); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3120); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(172); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3112); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(274); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3124); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3111); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3115); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3120); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(153);
       if (lookahead == '%' ||
           ('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3127); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3127); }
       END_STATE();
     case 43:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(171); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(216); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2708); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2702); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2698); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2704); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(171); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(216); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2708); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2702); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2698); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2704); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2609); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2609); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(140);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2712); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2712); }
       END_STATE();
     case 44:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1990); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1931); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2020); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2009); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2006); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2301); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2469); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2462); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2457); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2464); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1990); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1931); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2020); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2009); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2006); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2301); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2469); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2462); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2457); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2464); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2289); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2289); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2485); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2485); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(16);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
       if (('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2481); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+          ('a' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2481); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 45:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(177); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(883); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(472); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(177); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(883); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(472); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(139);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2694); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2694); }
       END_STATE();
     case 46:
       ts_lex_state_46:
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(171); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(200); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2708); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2703); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2702); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2698); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2704); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(171); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(200); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2708); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2703); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2702); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2698); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2704); }
       if (lookahead == 'L' ||
-          lookahead == 'l') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2608); }
+          lookahead == 'l') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2608); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_46);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2712); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2712); }
       END_STATE();
     case 47:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1927); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1932); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2991); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2358); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2365); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2382); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2361); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(165); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2308); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2405); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2388); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2407); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2309); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2312); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2360); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2400); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2395); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1927); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1932); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2991); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2358); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2365); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2382); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2361); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(165); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2308); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2405); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2388); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2407); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2309); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2312); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2360); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2400); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2395); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2359); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2359); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(127);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2416); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2416); }
       END_STATE();
     case 48:
       ts_lex_state_48:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2999); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2993); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(170); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2999); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2993); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(170); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2369); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2369); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2375); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2375); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2386); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2386); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2380); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2380); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2379); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2379); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_48);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2438); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2438); }
       END_STATE();
     case 49:
       ts_lex_state_49:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(372); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1926); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1934); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(159); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2554); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2555); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2557); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2670); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(161); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(373); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2543); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2649); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2610); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2650); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2545); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2551); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2669); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2640); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2624); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(896); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(887); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(372); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1926); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1934); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(159); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2554); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2555); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2557); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2670); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(161); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(373); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2543); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2649); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2610); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2650); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2545); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2551); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2669); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2640); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2624); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(896); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(887); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_49);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 50:
       ts_lex_state_50:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(559); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(555); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(554); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(474); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(559); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(555); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(554); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(474); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_50);
       if (lookahead > ' ' &&
           (lookahead < '\'' || ')' < lookahead) &&
-          lookahead != 0x7f) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(564); }
+          lookahead != 0x7f) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(564); }
       END_STATE();
     case 51:
       ts_lex_state_51:
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(892); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2018); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(274); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(892); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2018); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(274); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(395); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(395); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_51);
       END_STATE();
     case 52:
       ts_lex_state_52:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2992); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(167); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2992); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(167); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2364); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2364); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2370); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2370); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2385); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2385); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2372); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2372); }
       if (lookahead == 'T' ||
-          lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2378); }
+          lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2378); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2371); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2371); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_52);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2434); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2434); }
       END_STATE();
     case 53:
       ts_lex_state_53:
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(175); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2017); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(502); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_1, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1958); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(175); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2017); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(502); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_1, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1958); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_53);
       END_STATE();
     case 54:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2996); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2351); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(471); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2317); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2338); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2310); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2329); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2996); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2351); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(471); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2317); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2338); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2310); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2329); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2350); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2350); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2353); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2353); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2354); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2354); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2352); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2352); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(133);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2357); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2357); }
       END_STATE();
     case 55:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(136);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 56:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(137);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 57:
       ts_lex_state_57:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2992); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2370); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2418); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2427); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2311); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2423); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2992); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2370); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2418); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2427); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2311); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2423); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2364); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2364); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2385); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2385); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2372); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2372); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2371); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2371); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_57);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2434); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2434); }
       END_STATE();
     case 58:
       ts_lex_state_58:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1989); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3007); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2019); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2010); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2007); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2304); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2518); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2511); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2506); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2513); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1989); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3007); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2019); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2010); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2007); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2304); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2518); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2511); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2506); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2513); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2288); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2288); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2534); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2534); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_58);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
-      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2530); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2530); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 59:
       ts_lex_state_59:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_59);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 60:
       END_STATE();
@@ -10778,832 +10778,832 @@ static uint8_t ts_lex_0(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       END_STATE();
     case 122:
       ts_lex_state_122:
-      if (lookahead == '!') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(441); }
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1989); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2003); }
-      if (lookahead == '%') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3007); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(890); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2019); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(451); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2010); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2014); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2007); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(880); }
-      if (lookahead == '?') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1991); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1999); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(232); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2002); }
-      if (lookahead == '_') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2304); }
-      if (lookahead == '`') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2011); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2518); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2511); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1959); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2513); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(893); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(884); }
+      if (lookahead == '!') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(441); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1989); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2003); }
+      if (lookahead == '%') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3007); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(890); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2019); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(451); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2010); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2014); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2007); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(880); }
+      if (lookahead == '?') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1991); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1999); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(232); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2002); }
+      if (lookahead == '_') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2304); }
+      if (lookahead == '`') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2011); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2518); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2511); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1959); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2513); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(893); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(884); }
       if (lookahead == 'E' ||
-          lookahead == 'e') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2288); }
+          lookahead == 'e') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2288); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2534); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2534); }
       if (lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2013); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2013); }
       if (lookahead == 'I' ||
           lookahead == 'S' ||
-          lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1960); }
+          lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1960); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_122);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3066); }
-      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2530); }
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2012); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3066); }
+      if (('A' <= lookahead && lookahead <= 'z')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2530); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2012); }
       if (lookahead > 0xb6 &&
-          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2667); }
+          (lookahead < 0xe000 || 0xf8ff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2667); }
       END_STATE();
     case 123:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1927); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1933); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2991); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2358); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2365); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2382); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2361); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(165); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2308); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2405); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2388); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2407); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2309); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2312); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2360); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2400); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2395); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1927); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1933); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2991); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2358); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2365); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2382); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2361); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(165); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2308); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2405); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2388); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2407); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2309); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2312); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2360); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2400); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2395); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2359); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2359); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(124);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_6, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_6, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2416); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2416); }
       END_STATE();
     case 124:
       ts_lex_state_124:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1927); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1933); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2991); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2358); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2365); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2382); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2361); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(165); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2308); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2405); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2388); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2407); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2309); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2312); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2360); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2400); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2395); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1927); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1933); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2991); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2358); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2365); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2382); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2361); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(165); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2308); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2405); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2388); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2407); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2309); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2312); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2360); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2400); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2395); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2359); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2359); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_124);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_6, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_6, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2416); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2416); }
       END_STATE();
     case 125:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2999); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2993); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(170); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2999); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2993); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(170); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2369); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2369); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2375); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2375); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2386); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2386); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2380); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2380); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2379); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2379); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(126);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2438); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2438); }
       END_STATE();
     case 126:
       ts_lex_state_126:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2999); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2993); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(170); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2999); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2993); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(170); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2369); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2369); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2375); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2375); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2386); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2386); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2380); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2380); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2379); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2379); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_126);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2438); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2438); }
       END_STATE();
     case 127:
       ts_lex_state_127:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '&') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1927); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1932); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2991); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2358); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2365); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2382); }
-      if (lookahead == 'S') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2361); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(165); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2308); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2405); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2388); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2407); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2309); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2312); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2360); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2400); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2395); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '&') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1927); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1932); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2991); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2358); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2365); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2382); }
+      if (lookahead == 'S') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2361); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(165); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2308); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2405); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2388); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2407); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2309); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2312); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2360); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2400); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2395); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2359); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2359); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_127);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2416); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2416); }
       END_STATE();
     case 128:
       ts_lex_state_128:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '#') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2995); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2992); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(506); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2370); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2418); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2427); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2311); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2423); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '#') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2995); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2992); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(506); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2370); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2418); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2427); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2311); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2423); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2364); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2364); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2385); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2385); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2372); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2372); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2371); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2371); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_128);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2434); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2434); }
       END_STATE();
     case 129:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2999); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2996); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2351); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(471); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2317); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2338); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2310); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2329); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2999); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2996); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2351); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(471); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2317); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2338); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2310); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2329); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2350); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2350); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2353); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2353); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2354); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2354); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2352); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2352); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(130);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2357); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2357); }
       END_STATE();
     case 130:
       ts_lex_state_130:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '$') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3000); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2999); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2996); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2351); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(471); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '^') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3001); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2317); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2338); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2310); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2329); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(895); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(886); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '$') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3000); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2999); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2996); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2351); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(471); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '^') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3001); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2317); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2338); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2310); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2329); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(895); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(886); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2350); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2350); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2353); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2353); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2354); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2354); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2352); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2352); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_130);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_3, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2357); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2357); }
       END_STATE();
     case 131:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(508); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(508); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(135);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 132:
       ts_lex_state_132:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(899); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(899); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_132);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 133:
       ts_lex_state_133:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2996); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == 'N') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2351); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(471); }
-      if (lookahead == 'h') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2317); }
-      if (lookahead == 'i') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2338); }
-      if (lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2310); }
-      if (lookahead == 'w') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2329); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2996); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == 'N') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2351); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(471); }
+      if (lookahead == 'h') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2317); }
+      if (lookahead == 'i') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2338); }
+      if (lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2310); }
+      if (lookahead == 'w') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2329); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2350); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2350); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2353); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2353); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2354); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2354); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2352); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2352); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_133);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_0, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token2_character_set_1, 12, lookahead) ||
           lookahead == 0xfffe ||
-          lookahead == 0xffff) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          lookahead == 0xffff) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2357); }
+          (lookahead < '{' || 0xb6 < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2357); }
       END_STATE();
     case 134:
       ts_lex_state_134:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(509); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '}') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(512); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(509); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '}') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(512); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_134);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_4, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
-      if (lookahead > 'A') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_4, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (lookahead > 'A') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 135:
       ts_lex_state_135:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2004); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2004); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_135);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 136:
       ts_lex_state_136:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(882); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(882); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_136);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 137:
       ts_lex_state_137:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_137);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_2, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 138:
       ts_lex_state_138:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(891); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(503); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(155); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(881); }
-      if (lookahead == '[') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(897); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(166); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (lookahead == '|') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(894); }
-      if (lookahead == '~') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(885); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(891); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(503); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(155); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(881); }
+      if (lookahead == '[') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(897); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(166); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '|') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(894); }
+      if (lookahead == '~') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(885); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2969); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2969); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_138);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_5, lookahead))) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 139:
       ts_lex_state_139:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(177); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(883); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(472); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(177); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(883); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(472); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_139);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2694); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2694); }
       END_STATE();
     case 140:
       ts_lex_state_140:
-      if (lookahead == '"') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3035); }
-      if (lookahead == '\'') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3029); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(171); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(216); }
-      if (lookahead == 'f') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2708); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2702); }
-      if (lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2698); }
-      if (lookahead == 't') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2704); }
+      if (lookahead == '"') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3035); }
+      if (lookahead == '\'') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3029); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(171); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(216); }
+      if (lookahead == 'f') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2708); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2702); }
+      if (lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2698); }
+      if (lookahead == 't') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2704); }
       if (lookahead == 'U' ||
-          lookahead == 'u') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2609); }
+          lookahead == 'u') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2609); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_140);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2712); }
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2712); }
       END_STATE();
     case 141:
       if (lookahead == '(') ADVANCE(144);
       END_STATE();
     case 142:
       ts_lex_state_142:
-      if (lookahead == '(') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(507); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2997); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2994); }
-      if (lookahead == '.') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3006); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(941); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(168); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
+      if (lookahead == '(') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(507); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2997); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2994); }
+      if (lookahead == '.') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3006); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(941); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(168); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
       if (lookahead == '#' ||
-          lookahead == '@') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(3004); }
+          lookahead == '@') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(3004); }
       if (lookahead == 'A' ||
-          lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2966); }
+          lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2966); }
       if (lookahead == 'N' ||
-          lookahead == 'n') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2968); }
+          lookahead == 'n') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2968); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2975); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2975); }
       if (lookahead == 'S' ||
-          lookahead == 's') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2970); }
+          lookahead == 's') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2970); }
       if (lookahead == '=' ||
-          lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(942); }
+          lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(942); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_142);
-      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2987); }
+      if (('0' <= lookahead && lookahead <= '9')) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2987); }
       if (((!eof && ts_lex_set_contains_with_ascii(ts_lex_aux_sym__style_range_value_token1_character_set_1_ascii, ts_lex_aux_sym__style_range_value_token1_character_set_1, 1, lookahead))) &&
           (lookahead < '@' || 'Z' < lookahead) &&
           lookahead != '_' &&
           (lookahead < 'a' || 'z' < lookahead) &&
-          (lookahead < 0x80 || 0x10ffff < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2998); }
+          (lookahead < 0x80 || 0x10ffff < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2998); }
       if (lookahead > 'A' &&
           (lookahead < '[' || '^' < lookahead) &&
-          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2976); }
+          (lookahead < '{' || 0x7f < lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2976); }
       END_STATE();
     case 143:
       if (lookahead == ')') ADVANCE(3128);
@@ -11707,48 +11707,48 @@ static uint8_t ts_lex_0(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       END_STATE();
     case 151:
       ts_lex_state_151:
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '*') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1928); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(888); }
-      if (lookahead == ',') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(488); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2017); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == ':') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(505); }
-      if (lookahead == ';') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(484); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(883); }
-      if (lookahead == 'O') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(395); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(274); }
-      if (lookahead == ']') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(510); }
-      if (lookahead == 'a') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(403); }
-      if (lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(394); }
-      if (lookahead == '{') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(511); }
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_1, lookahead)) { lexer->get_position(lexer, &start_tags[0]); ADVANCE(1958); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '*') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1928); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(888); }
+      if (lookahead == ',') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(488); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2017); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == ':') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(505); }
+      if (lookahead == ';') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(484); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(883); }
+      if (lookahead == 'O') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(395); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(274); }
+      if (lookahead == ']') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(510); }
+      if (lookahead == 'a') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(403); }
+      if (lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(394); }
+      if (lookahead == '{') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(511); }
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_1, lookahead)) { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(1958); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_151);
       END_STATE();
     case 152:
       ts_lex_state_152:
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '+') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(892); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2018); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2008); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(2005); }
-      if (lookahead == '=') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(898); }
-      if (lookahead == '>') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(883); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '+') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(892); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2018); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2008); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(2005); }
+      if (lookahead == '=') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(898); }
+      if (lookahead == '>') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(883); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_152);
       END_STATE();
     case 153:
       ts_lex_state_153:
-      if (lookahead == ')') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(489); }
-      if (lookahead == '-') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(172); }
-      if (lookahead == '/') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(154); }
-      if (lookahead == '<') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(121); }
-      if (lookahead == '\\') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(274); }
+      if (lookahead == ')') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(489); }
+      if (lookahead == '-') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(172); }
+      if (lookahead == '/') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(154); }
+      if (lookahead == '<') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(121); }
+      if (lookahead == '\\') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(274); }
       if (lookahead == 'O' ||
-          lookahead == 'o') { lexer->get_position(lexer, &start_tags[0]); ADVANCE(395); }
+          lookahead == 'o') { lexer->get_checkpoint(lexer, &start_tags[0]); ADVANCE(395); }
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') TS_LEX_REPEAT(true, ts_lex_state_153);
       END_STATE();
@@ -12735,7 +12735,7 @@ static uint8_t ts_lex_0(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_1(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_1(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -14348,7 +14348,7 @@ static uint8_t ts_lex_1(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -18807,7 +18807,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -22449,7 +22449,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_4(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_4(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -29146,7 +29146,7 @@ static uint8_t ts_lex_4(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_5(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_5(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -32510,7 +32510,7 @@ static uint8_t ts_lex_5(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_6(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_6(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -37016,7 +37016,7 @@ static uint8_t ts_lex_6(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -40697,7 +40697,7 @@ static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_8(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_8(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -44786,7 +44786,7 @@ static uint8_t ts_lex_8(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_9(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_9(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -50041,7 +50041,7 @@ static uint8_t ts_lex_9(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
   }
 }
 
-static uint8_t ts_lex_10(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_10(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -52487,7 +52487,7 @@ static uint8_t ts_lex_10(TSLexer *lexer, TSStateId *state_out, bool *result_out,
   }
 }
 
-static uint8_t ts_lex_11(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_11(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -55809,7 +55809,7 @@ static uint8_t ts_lex_11(TSLexer *lexer, TSStateId *state_out, bool *result_out,
   }
 }
 
-static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
@@ -59390,7 +59390,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
   }
 }
 
-static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerPosition *start_tags) {
+static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out, TSLexerCheckpoint *start_tags) {
   (void)start_tags;
   TSStateId state = *state_out;
   bool result = *result_out;
