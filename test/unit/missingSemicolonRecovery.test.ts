@@ -25,7 +25,7 @@ const preludes = [
   ['&', 'rule_set'],
   ['@media screen', 'media_statement'],
   ['@supports (display: grid)', 'supports_statement'],
-  ['@layer theme', 'at_rule'],
+  ['@layer theme', 'layer_statement'],
   ['@container (width > 1px)', 'container_statement'],
 ] as const;
 const declarationValues = [

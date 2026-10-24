@@ -692,6 +692,10 @@
           "named": true
         },
         {
+          "type": "layer_statement",
+          "named": true
+        },
+        {
           "type": "media_statement",
           "named": true
         },
@@ -1751,6 +1755,25 @@
     }
   },
   {
+    "type": "layer_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "layer_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "media_statement",
     "named": true,
     "fields": {},
@@ -2654,6 +2677,10 @@
           "named": true
         },
         {
+          "type": "layer_statement",
+          "named": true
+        },
+        {
           "type": "media_statement",
           "named": true
         },
@@ -2873,6 +2900,10 @@
   },
   {
     "type": "@keyframes",
+    "named": false
+  },
+  {
+    "type": "@layer",
     "named": false
   },
   {

@@ -184,6 +184,8 @@ module.exports = grammar({
     [$._style_in_parens, $._style_range_operand],
     [$._at_rule_nested_component, $._style_range_operand],
     [$.container_statement, $._at_rule_component],
+    [$.layer_statement, $.at_rule],
+    [$.layer_name, $.at_rule],
     [$.container_statement, $._style_range_value],
     [$._container_feature_query, $._style_range_value],
     [$.style_feature, $._style_range_value],
@@ -221,6 +223,7 @@ module.exports = grammar({
       $.supports_statement,
       $.container_statement,
       $.scope_statement,
+      $.layer_statement,
       $.at_rule,
     ),
 
@@ -420,6 +423,13 @@ module.exports = grammar({
       $.block,
     )),
 
+    _layer_keyword: _ => cssKeyword('@layer'),
+
+    layer_statement: $ => prec.dynamic(1, seq(
+      alias($._layer_keyword, '@layer'),
+      choice(seq(sep1(',', $.layer_name), ';'), seq(optional($.layer_name), $.block)),
+    )),
+
     _scope_keyword: _ => cssKeyword('@scope'),
 
     _scope_to: _ => cssKeyword('to'),
@@ -433,6 +443,12 @@ module.exports = grammar({
 
     at_rule: $ => choice(
       seq(choice($.at_keyword, alias($._container_keyword, $.at_keyword)), repeat($._at_rule_component), choice(';', $.block)),
+      // The layer-name tokens that layer_statement scans after `@layer` keep an invalid layer prelude a generic at-rule.
+      seq(
+        alias($._layer_keyword, $.at_keyword),
+        repeat(choice($._at_rule_component, alias(choice($._layer_name_identifier, $._layer_name_prefix, '.'), $.at_rule_value))),
+        choice(';', $.block),
+      ),
       seq(
         alias($._scope_keyword, $.at_keyword),
         repeat(choice(
@@ -550,6 +566,7 @@ module.exports = grammar({
       $.supports_statement,
       $.container_statement,
       $.scope_statement,
+      $.layer_statement,
       $.at_rule,
     ),
 

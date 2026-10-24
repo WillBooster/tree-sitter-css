@@ -85,6 +85,7 @@ static bool scan_supports_string(TSLexer *lexer);
 static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowed);
 static bool scan_double_slash(TSLexer *lexer, bool url_allowed);
 static bool is_at_rule_url_character(int32_t character);
+static bool scan_layer_name_or_slash(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_layer_name_token(TSLexer *lexer);
 static bool scan_layer_name_tail(TSLexer *lexer, char *prefix, unsigned length);
@@ -165,7 +166,7 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         return scan_import_condition_start(lexer, valid_symbols);
     }
     if (valid_symbols[LAYER_NAME_IDENTIFIER] || valid_symbols[LAYER_NAME_PREFIX]) {
-        return scan_layer_name_identifier(lexer, valid_symbols);
+        return scan_layer_name_or_slash(lexer, valid_symbols);
     }
     if (can_scan_recovery_identifier(lexer, valid_symbols)) return scan_recovery_identifier(lexer, false);
     if (can_scan_initial_declaration(valid_symbols)) return scan_initial_declaration_component(scanner, lexer, valid_symbols);
@@ -482,11 +483,27 @@ static bool is_at_rule_url_character(int32_t character) {
     }
 }
 
+// The generic at-rule fallback after `@layer` shares these states, so a slash keeps its at-rule scan.
+static bool scan_layer_name_or_slash(TSLexer *lexer, const bool *valid_symbols) {
+    bool whitespace = false;
+    while (iswspace(lexer->lookahead)) {
+        whitespace = true;
+        skip(lexer);
+    }
+    if (lexer->lookahead == '/' && valid_symbols[AT_RULE_SLASH]) {
+        lexer->mark_end(lexer);
+        return scan_at_rule_slash(lexer, whitespace && valid_symbols[DESCENDANT_OP], valid_symbols[COMBINATOR_GAP]);
+    }
+    return scan_layer_name_identifier(lexer, valid_symbols);
+}
+
 static bool scan_layer_name_identifier(TSLexer *lexer, const bool *valid_symbols) {
     while (is_css_whitespace(lexer->lookahead)) skip(lexer);
     if (!scan_layer_name_token(lexer)) {
         return false;
     }
+    // A name directly followed by `(` is a function token, such as the `url(` of an at_rule_url, not a layer name.
+    if (lexer->lookahead == '(') return false;
     lexer->mark_end(lexer);
     lexer->result_symbol = LAYER_NAME_IDENTIFIER;
     bool whitespace = false;
