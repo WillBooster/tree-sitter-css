@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { expect, test } from 'vitest';
 
 import { Language, Parser } from '@willbooster/web-tree-sitter';
+import { expect, test } from 'vitest';
 
 test('reports an empty-value error and preserves the following declaration range', async () => {
   await Parser.init();

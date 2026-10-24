@@ -1,7 +1,8 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import { expect, test } from 'vitest';
+import path from 'node:path';
+
 import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
