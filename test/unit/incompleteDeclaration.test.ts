@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { Edit, Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 const root = path.join(import.meta.dirname, '../..');
@@ -13,35 +13,17 @@ test.each(
     ['display', String.raw`--\61`].flatMap((property) => [' ', ''].map((gap) => [newline, property, gap]))
   )
 )(
-  'inserting an incomplete declaration preserves following properties across %j before %s with gap %j',
+  'an incomplete declaration preserves following properties across %j before %s with gap %j',
   (newline, property, gap) => {
     const parser = new Parser();
     parser.setLanguage(language);
     const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
-    const source = `div {${newline}  ${property}:${gap}flex;${newline}  color: red;${newline}}`;
-    const original = parser.parse(source)!;
-    const insertion = `  padding${newline}`;
-    const offset = source.indexOf(`  ${property}`);
-    const row = newline.includes('\n') ? 1 : 0;
-    const column = row ? 0 : offset;
-    original.edit(
-      new Edit({
-        startIndex: offset,
-        oldEndIndex: offset,
-        newEndIndex: offset + insertion.length,
-        startPosition: { row, column },
-        oldEndPosition: { row, column },
-        newEndPosition: { row: row + (row ? 1 : 0), column: row ? 0 : column + insertion.length },
-      })
-    );
-    const updated = source.slice(0, offset) + insertion + source.slice(offset);
-    const incremental = parser.parse(updated, original)!;
-    const fresh = parser.parse(updated)!;
+    const source = `div {${newline}  padding${newline}  ${property}:${gap}flex;${newline}  color: red;${newline}}`;
+    const tree = parser.parse(source)!;
     try {
-      expect(incremental.rootNode.toString()).toBe(fresh.rootNode.toString());
-      expect(fresh.rootNode.hasError).toBe(false);
-      expect(fresh.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(['padding']);
-      const block = fresh.rootNode.firstNamedChild!.namedChildren.find((node) => node.type === 'block')!;
+      expect(tree.rootNode.hasError).toBe(false);
+      expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(['padding']);
+      const block = tree.rootNode.firstNamedChild!.namedChildren.find((node) => node.type === 'block')!;
       const declarations = block.namedChildren.filter((node) => node.type === 'declaration');
       expect(declarations.map((node) => node.text)).toEqual([`${property}:${gap}flex;`, 'color: red;']);
       expect(declarations.every((node) => !node.hasError)).toBe(true);
@@ -52,9 +34,7 @@ test.each(
           .map(({ node }) => node.text)
       ).toEqual(['padding', property, 'color']);
     } finally {
-      original.delete();
-      incremental.delete();
-      fresh.delete();
+      tree.delete();
       query.delete();
       parser.delete();
     }

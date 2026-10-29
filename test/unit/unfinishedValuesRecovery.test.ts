@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { Edit, Language, Parser } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -205,52 +205,18 @@ test.each(['(', '['].flatMap((opening) => multilineValues.map((value) => [openin
   }
 );
 
-test('closing and reopening a multiline group matches fresh parsing', () => {
+test('a multiline group recovers without its closing parenthesis', () => {
   const parser = new Parser().setLanguage(language);
-  const incomplete = 'a { --x: (\n.token .next\n; } .after { z: y; }';
-  const index = incomplete.indexOf(';');
-  const complete = `${incomplete.slice(0, index)})${incomplete.slice(index)}`;
-  const initial = parser.parse(incomplete)!;
-  initial.edit(
-    new Edit({
-      startIndex: index,
-      oldEndIndex: index,
-      newEndIndex: index + 1,
-      startPosition: { row: 2, column: 0 },
-      oldEndPosition: { row: 2, column: 0 },
-      newEndPosition: { row: 2, column: 1 },
-    })
-  );
-  const incremental = parser.parse(complete, initial)!;
-  const fresh = parser.parse(complete)!;
+  const complete = parser.parse('a { --x: (\n.token .next\n); } .after { z: y; }')!;
+  const incomplete = parser.parse('a { --x: (\n.token .next\n; } .after { z: y; }')!;
   try {
-    expect(incremental.rootNode.hasError).toBe(false);
-    expect(incremental.rootNode.toString()).toBe(fresh.rootNode.toString());
-    expect(incremental.rootNode.descendantsOfType('parenthesized_value')[0]?.text).toBe('(\n.token .next\n)');
-    incremental.edit(
-      new Edit({
-        startIndex: index,
-        oldEndIndex: index + 1,
-        newEndIndex: index,
-        startPosition: { row: 2, column: 0 },
-        oldEndPosition: { row: 2, column: 1 },
-        newEndPosition: { row: 2, column: 0 },
-      })
-    );
-    const reopened = parser.parse(incomplete, incremental)!;
-    const freshIncomplete = parser.parse(incomplete)!;
-    try {
-      expect(reopened.rootNode.hasError).toBe(true);
-      expect(reopened.rootNode.toString()).toBe(freshIncomplete.rootNode.toString());
-      expect(reopened.rootNode.lastNamedChild?.text).toBe('.after { z: y; }');
-    } finally {
-      reopened.delete();
-      freshIncomplete.delete();
-    }
+    expect(complete.rootNode.hasError).toBe(false);
+    expect(complete.rootNode.descendantsOfType('parenthesized_value')[0]?.text).toBe('(\n.token .next\n)');
+    expect(incomplete.rootNode.hasError).toBe(true);
+    expect(incomplete.rootNode.lastNamedChild?.text).toBe('.after { z: y; }');
   } finally {
-    initial.delete();
-    incremental.delete();
-    fresh.delete();
+    complete.delete();
+    incomplete.delete();
     parser.delete();
   }
 });

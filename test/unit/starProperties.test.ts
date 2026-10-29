@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { Edit, Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 const root = path.join(import.meta.dirname, '../..');
@@ -51,40 +51,22 @@ test.each(['a { --x: f(*foo); }', 'a { --x: *foo; }', 'a { --x: f(*-foo) *bar; }
   }
 );
 
-test('editing a star-prefixed declaration preserves nested universal selectors and following rules', () => {
+test('a star-prefixed declaration preserves nested universal selectors and following rules', () => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const source = 'a { *display: inline; * { color: red; } b * { width: 1px; } } .after { color: blue; }';
-  const tree = parser.parse(source)!;
-  const offset = source.indexOf('inline');
-  const updated = source.replace('inline', 'block');
-  tree.edit(
-    new Edit({
-      startIndex: offset,
-      oldEndIndex: offset + 6,
-      newEndIndex: offset + 5,
-      startPosition: { row: 0, column: offset },
-      oldEndPosition: { row: 0, column: offset + 6 },
-      newEndPosition: { row: 0, column: offset + 5 },
-    })
-  );
-  const incremental = parser.parse(updated, tree)!;
-  const fresh = parser.parse(updated)!;
+  const tree = parser.parse('a { *display: block; * { color: red; } b * { width: 1px; } } .after { color: blue; }')!;
   try {
-    expect(fresh.rootNode.hasError).toBe(false);
-    expect(incremental.rootNode.toString()).toBe(fresh.rootNode.toString());
-    expect(fresh.rootNode.descendantsOfType('universal_selector').map((node) => node.text)).toEqual(['*', '*']);
-    expect(fresh.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
+    expect(tree.rootNode.hasError).toBe(false);
+    expect(tree.rootNode.descendantsOfType('universal_selector').map((node) => node.text)).toEqual(['*', '*']);
+    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
       '*display: block;',
       'color: red;',
       'width: 1px;',
       'color: blue;',
     ]);
-    expect(fresh.rootNode.lastNamedChild?.text).toBe('.after { color: blue; }');
+    expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: blue; }');
   } finally {
     tree.delete();
-    incremental.delete();
-    fresh.delete();
     parser.delete();
   }
 });

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { Edit, Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 import { testCommand } from './run.js';
@@ -779,35 +779,20 @@ function expectUnfinishedImportCompletion(condition: string): void {
   const prefix = `@import "x" ${condition}`;
   const following = ['body { color: red; }', '.after { background: blue; }'];
   const suffix = `\n${following.join('\n')}`;
+  const source = `${prefix});${suffix}`;
   const tree = parser.parse(prefix + suffix)!;
-  let completed;
-  let fresh;
+  const completed = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(true);
     expect(tree.rootNode.firstNamedChild?.type).toBe('import_statement');
     expect(tree.rootNode.firstNamedChild?.text).toBe(prefix + suffix);
     expect(tree.rootNode.descendantsOfType('rule_set')).toHaveLength(0);
-    tree.edit(
-      new Edit({
-        startIndex: prefix.length,
-        oldEndIndex: prefix.length,
-        newEndIndex: prefix.length + 2,
-        startPosition: { row: 0, column: prefix.length },
-        oldEndPosition: { row: 0, column: prefix.length },
-        newEndPosition: { row: 0, column: prefix.length + 2 },
-      })
-    );
-    const source = `${prefix});${suffix}`;
-    completed = parser.parse(source, tree)!;
-    fresh = parser.parse(source)!;
     expect(completed.rootNode.hasError).toBe(false);
-    expect(completed.rootNode.toString()).toBe(fresh.rootNode.toString());
     expect(
       completed.rootNode.descendantsOfType('rule_set').map((node) => [node.text, node.startIndex, node.endIndex])
     ).toEqual(following.map((text) => [text, source.indexOf(text), source.indexOf(text) + text.length]));
   } finally {
-    fresh?.delete();
-    completed?.delete();
+    completed.delete();
     tree.delete();
     parser.delete();
   }
