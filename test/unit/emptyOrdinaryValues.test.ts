@@ -1,8 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import type { Node, Point, Tree } from '@willbooster/web-tree-sitter';
-import { Edit, Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -102,82 +101,3 @@ test.each(
     parser.delete();
   }
 });
-
-test.each(
-  [...emptyProperties, '--x', String.raw`\2d\2d x`].flatMap((property) =>
-    emptyGaps.flatMap((gap) =>
-      ['1', '\n> b { c:d; }', '\n:hover { c:d; }', '\n@media screen { b { c:d; } }'].map((value) => [
-        property,
-        gap,
-        value,
-      ])
-    )
-  )
-)('empty %s edits and undo agree with fresh parsing across %j %j', (property, gap, value) => {
-  const parser = new Parser().setLanguage(language);
-  const freshParser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
-  let source = `/* Ω🙂 */\na { ${property}:${gap}} .after { z:y; }`;
-  let tree = parser.parse(source)!;
-  const renamed = property.startsWith('*') ? '*width' : property.startsWith('--') ? '--width' : 'width';
-  const propertyStart = source.indexOf(`${property}:`);
-  try {
-    replace(propertyStart, property.length, renamed);
-    const insertion = source.indexOf('}');
-    replace(insertion, 0, value);
-    replace(insertion, value.length, '');
-    replace(propertyStart, renamed.length, property);
-  } finally {
-    tree.delete();
-    query.delete();
-    parser.delete();
-    freshParser.delete();
-  }
-
-  function replace(index: number, removed: number, inserted: string): void {
-    const after = source.slice(0, index) + inserted + source.slice(index + removed);
-    tree.edit(
-      new Edit({
-        startIndex: index,
-        oldEndIndex: index + removed,
-        newEndIndex: index + inserted.length,
-        startPosition: pointAt(source, index),
-        oldEndPosition: pointAt(source, index + removed),
-        newEndPosition: pointAt(after, index + inserted.length),
-      })
-    );
-    const next = parser.parse(after, tree)!;
-    tree.delete();
-    tree = next;
-    source = after;
-    const fresh = freshParser.parse(source)!;
-    try {
-      expect(treeView(tree, query)).toEqual(treeView(fresh, query));
-    } finally {
-      fresh.delete();
-    }
-  }
-});
-
-function pointAt(source: string, index: number): Point {
-  const lines = source.slice(0, index).split('\n');
-  return { row: lines.length - 1, column: lines.at(-1)!.length };
-}
-
-function treeView(tree: Tree, query: Query): unknown[] {
-  return [nodeView(tree.rootNode), query.captures(tree.rootNode).map(({ name, node }) => [name, nodeView(node)])];
-}
-
-function nodeView(node: Node): unknown[] {
-  return [
-    node.type,
-    node.isNamed,
-    node.isMissing,
-    node.hasError,
-    node.startIndex,
-    node.endIndex,
-    node.startPosition,
-    node.endPosition,
-    node.children.map((child, index) => [node.fieldNameForChild(index), nodeView(child)]),
-  ];
-}

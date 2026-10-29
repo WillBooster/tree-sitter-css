@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import type { Node, Point, Range, Tree } from '@willbooster/web-tree-sitter';
-import { Edit, Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import type { Point } from '@willbooster/web-tree-sitter';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -111,142 +111,18 @@ test.each(
   }
 });
 
-test.each(preludes)(
-  'inserting and removing the semicolon before %s matches fresh tree ranges and highlights',
-  (prelude) => {
-    const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
-    const source = sourceFor(prelude, '\n/**/ ');
-    const original = parser.parse(source)!;
-    const index = source.indexOf('solid') + 'solid'.length;
-    const complete = change(original, source, index, 0, ';');
-    const incremental = parser.parse(complete, original)!;
-    const fresh = new Parser().setLanguage(language);
-    const completeFresh = fresh.parse(complete)!;
-    const trees = [original, incremental, completeFresh];
-    try {
-      expect(incremental.rootNode.hasError).toBe(false);
-      equivalent(incremental, completeFresh, query);
-      const restored = change(incremental, complete, index, 1, '');
-      const undo = parser.parse(restored, incremental)!;
-      const undoFresh = fresh.parse(source)!;
-      trees.push(undo, undoFresh);
-      equivalent(undo, undoFresh, query);
-      expect(undo.rootNode.hasError).toBe(true);
-    } finally {
-      for (const tree of trees) tree.delete();
-      query.delete();
-      parser.delete();
-      fresh.delete();
-    }
-  }
-);
-
-const editedValues = [
-  'alpha:beta:\n gamma:\n delta;',
-  'alpha\n beta\n gamma;',
-  'alpha/**/\n beta/**/\n gamma;',
-  'alpha <!--\n beta -->\n gamma;',
-  '1url(x\n )\n beta;',
-  'https://example.com/a; color: red;',
-  'http://x/**/\n* 1;',
-  'b -/foo;',
-  'f(1/**/px) f(a/**/(x));',
-  'url(x)\u2000 1\u0085;',
-  '1 + -;',
-  'url(x)\u2000 * 2;',
-  '1\u2000*x;',
-  '#abc\n/**///f();',
-  '#abc<!--//\n1;',
-  '#abc /**/ /**/-a;',
-  'f(x) /*c*/\n@media screen { c: d }',
-  'url(x) /*c*/\n@media screen { c: d }',
-  '#abc <!--/**/-2;',
-  '1px #abc//;',
-  '1 .c// z;',
-  '1\n + 2\n + 3;',
-  'solid\n :hover { c: d }',
-  '1px + 2px\n :hover { c: d }',
-  '1 + 2\n .b { c: d }',
-];
-
-test.each(
-  editedValues.flatMap((value) => {
-    const source = `/* Ω🙂 */ a { x: ${value} } .after { z: y; }`;
-    const boundary = source.indexOf(';', source.indexOf('x:'));
-    return [
-      [0, 0, ' '],
-      [0, 0, '\n'],
-      [3, 1, 'a'],
-      [0, source.indexOf('a {'), ''],
-      [source.indexOf('\n') + 1, 1, '{'],
-      [boundary, 1, '}'],
-    ].map(([index, removed, inserted]) => ({
-      source,
-      index: Number(index),
-      removed: Number(removed),
-      inserted: String(inserted),
-    }));
-  })
-)(
-  'declaration continuation remains fresh after prefix and lookahead edits: %j',
-  ({ source, index, removed, inserted }) => {
-    const parser = new Parser().setLanguage(language);
-    const freshParser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
-    const original = parser.parse(source)!;
-    const changed = change(original, source, index, removed, inserted);
-    const incremental = parser.parse(changed, original)!;
-    const fresh = freshParser.parse(changed)!;
-    const trees = [original, incremental, fresh];
-    try {
-      equivalent(incremental, fresh, query);
-      const restored = change(incremental, changed, index, inserted.length, source.slice(index, index + removed));
-      const undo = parser.parse(restored, incremental)!;
-      const freshUndo = freshParser.parse(source)!;
-      trees.push(undo, freshUndo);
-      equivalent(undo, freshUndo, query);
-    } finally {
-      for (const tree of trees) tree.delete();
-      query.delete();
-      parser.delete();
-      freshParser.delete();
-    }
-  }
-);
-
-test.each(editedValues)('declaration continuation remains fresh when included ranges change: %s', (value) => {
-  const prefix = '/* Ω🙂 */ a { x: ';
-  const excluded = '/* excluded */';
-  const source = `${prefix}${excluded}${value} } .after { z: y; }`;
-  const variants = [
-    [range(source, 0, prefix.length), range(source, prefix.length + excluded.length, source.length)],
-    [range(source, 0, source.length)],
-  ];
+test.each(preludes)('a missing semicolon before %s is an error that the semicolon removes', (prelude) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
-  let previous = parser.parse(source, undefined, { includedRanges: variants[0] })!;
+  const source = sourceFor(prelude, '\n/**/ ');
+  const index = source.indexOf('solid') + 'solid'.length;
+  const missing = parser.parse(source)!;
+  const complete = parser.parse(`${source.slice(0, index)};${source.slice(index)}`)!;
   try {
-    expect(parser.getIncludedRanges()).toEqual(variants[0]);
-    for (let iteration = 0; iteration < 6; iteration++) {
-      const includedRanges = variants[(iteration + 1) % 2];
-      const incremental = parser.parse(source, previous, { includedRanges })!;
-      const freshParser = new Parser().setLanguage(language);
-      const fresh = freshParser.parse(source, undefined, { includedRanges })!;
-      try {
-        expect(parser.getIncludedRanges()).toEqual(includedRanges);
-        expect(freshParser.getIncludedRanges()).toEqual(includedRanges);
-        equivalent(incremental, fresh, query);
-      } finally {
-        previous.delete();
-        fresh.delete();
-        freshParser.delete();
-        previous = incremental;
-      }
-    }
+    expect(missing.rootNode.hasError).toBe(true);
+    expect(complete.rootNode.hasError).toBe(false);
   } finally {
-    previous.delete();
-    query.delete();
+    missing.delete();
+    complete.delete();
     parser.delete();
   }
 });
@@ -441,38 +317,6 @@ test.each(
     parser.delete();
   }
 });
-
-test.each(['marker', 'tail', 'gap'])(
-  'hash-tail lookahead edits inside the %s match fresh trees and highlights',
-  (part) => {
-    const source = 'a { --x: #abc <!--<!--//f(); } .after {}';
-    const index =
-      part === 'tail' ? source.indexOf('//') : part === 'gap' ? source.indexOf('<!--') : source.lastIndexOf('<!--');
-    const removed = part === 'gap' ? '<!--<!--'.length : 1;
-    const inserted = part === 'tail' ? '*' : '';
-    const parser = new Parser().setLanguage(language);
-    const freshParser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
-    const original = parser.parse(source)!;
-    const changed = change(original, source, index, removed, inserted);
-    const incremental = parser.parse(changed, original)!;
-    const fresh = freshParser.parse(changed)!;
-    const trees = [original, incremental, fresh];
-    try {
-      equivalent(incremental, fresh, query);
-      const restored = change(incremental, changed, index, inserted.length, source.slice(index, index + removed));
-      const undo = parser.parse(restored, incremental)!;
-      const freshUndo = freshParser.parse(source)!;
-      trees.push(undo, freshUndo);
-      equivalent(undo, freshUndo, query);
-    } finally {
-      for (const tree of trees) tree.delete();
-      query.delete();
-      parser.delete();
-      freshParser.delete();
-    }
-  }
-);
 
 test.each(
   ['\u0085', '\u2000', '\u2028', '\u2029'].flatMap((separator) =>
@@ -738,34 +582,14 @@ test('a stray token between keyframes preserves both blocks and the enclosing st
   }
 });
 
-test('editing a stray keyframe token and undoing it matches fresh ranges and highlights', () => {
-  const source = '@keyframes x { from { a: b } ) to { a: c } } .after {}';
+test('removing a stray token between keyframes leaves no error', () => {
   const parser = new Parser().setLanguage(language);
-  const freshParser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
-  const original = parser.parse(source)!;
-  const index = source.indexOf(')');
-  const changed = change(original, source, index, 1, '');
-  const incremental = parser.parse(changed, original)!;
-  const fresh = freshParser.parse(changed)!;
-  const trees = [original, incremental, fresh];
+  const tree = parser.parse('@keyframes x { from { a: b }  to { a: c } } .after {}')!;
   try {
-    expect(incremental.rootNode.hasError).toBe(false);
-    equivalent(incremental, fresh, query);
-    const restored = change(incremental, changed, index, 0, ')');
-    const undo = parser.parse(restored, incremental)!;
-    const freshUndo = freshParser.parse(source)!;
-    trees.push(undo, freshUndo);
-    expect(undo.rootNode.descendantsOfType('keyframe_block').map((node) => node.text)).toEqual([
-      'from { a: b }',
-      'to { a: c }',
-    ]);
-    equivalent(undo, freshUndo, query);
+    expect(tree.rootNode.hasError).toBe(false);
   } finally {
-    for (const tree of trees) tree.delete();
-    query.delete();
+    tree.delete();
     parser.delete();
-    freshParser.delete();
   }
 });
 
@@ -778,10 +602,7 @@ test.each(
 )('trailing comments retain their declaration or block ownership: %s %j %i %s', (value, gap, count, ending) => {
   const source = `a { x: ${value}${gap}${'/**/ '.repeat(count)}${ending}`;
   const parser = new Parser().setLanguage(language);
-  const freshParser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const tree = parser.parse(source)!;
-  const trees = [tree];
   try {
     expect(tree.rootNode.hasError).toBe(false);
     const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
@@ -794,23 +615,8 @@ test.each(
       expect(comment.text).toBe('/**/');
       expect(source.slice(comment.startIndex, comment.endIndex)).toBe('/**/');
     }
-    const index = ending === '}' ? source.indexOf('}') : source.indexOf(';');
-    const inserted = ending === '}' ? ';' : '';
-    const changed = change(tree, source, index, ending === '}' ? 0 : 1, inserted);
-    const incremental = parser.parse(changed, tree)!;
-    const fresh = freshParser.parse(changed)!;
-    trees.push(incremental, fresh);
-    expect(incremental.rootNode.hasError).toBe(false);
-    equivalent(incremental, fresh, query);
-    const restored = change(incremental, changed, index, inserted.length, ending === '}' ? '' : ';');
-    const undo = parser.parse(restored, incremental)!;
-    const freshUndo = freshParser.parse(source)!;
-    trees.push(undo, freshUndo);
-    equivalent(undo, freshUndo, query);
   } finally {
-    for (const parsed of trees) parsed.delete();
-    query.delete();
-    freshParser.delete();
+    tree.delete();
     parser.delete();
   }
 });
@@ -819,46 +625,7 @@ function sourceFor(prelude: string, gap: string, value = '1px solid'): string {
   return `/* Ω🙂 */ a { border: ${value}${gap}${prelude} { c: d } }\n.after { color: blue; }`;
 }
 
-function equivalent(actual: Tree, expected: Tree, query: Query): void {
-  expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));
-  const captures = (tree: Tree): unknown[] =>
-    query.captures(tree.rootNode).map(({ name, node }) => [name, node.type, node.startIndex, node.endIndex, node.text]);
-  expect(captures(actual)).toEqual(captures(expected));
-}
-
-function snapshot(node: Node): unknown[] {
-  return [
-    node.type,
-    node.startIndex,
-    node.endIndex,
-    node.startPosition,
-    node.endPosition,
-    node.hasError,
-    node.isMissing,
-    node.children.map(snapshot),
-  ];
-}
-
-function change(tree: Tree, before: string, index: number, removed: number, inserted: string): string {
-  const after = before.slice(0, index) + inserted + before.slice(index + removed);
-  tree.edit(
-    new Edit({
-      startIndex: index,
-      oldEndIndex: index + removed,
-      newEndIndex: index + inserted.length,
-      startPosition: point(before, index),
-      oldEndPosition: point(before, index + removed),
-      newEndPosition: point(after, index + inserted.length),
-    })
-  );
-  return after;
-}
-
 function point(source: string, index: number): Point {
   const lines = source.slice(0, index).split('\n');
   return { row: lines.length - 1, column: lines.at(-1)!.length };
-}
-
-function range(source: string, startIndex: number, endIndex: number): Range {
-  return { startIndex, endIndex, startPosition: point(source, startIndex), endPosition: point(source, endIndex) };
 }

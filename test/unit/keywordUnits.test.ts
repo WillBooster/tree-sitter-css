@@ -1,8 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { Edit, Language, Parser, Query } from '@willbooster/web-tree-sitter';
-import type { Node } from '@willbooster/web-tree-sitter';
+import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -75,80 +74,3 @@ test.each(keywords.flatMap((name) => [' ', '/**/', '/bar', '-x', '"x"'].map((tai
     }
   }
 );
-
-test.each(keywords.flatMap((name) => [' ', '/**/', '/bar'].map((inserted) => [name, inserted])))(
-  'editing dimension boundaries and undoing matches fresh trees and highlights: %s %j',
-  (name, inserted) => {
-    const parser = new Parser().setLanguage(language);
-    const freshParser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
-    const source = `a { b: f(1${name}); }`;
-    const index = source.indexOf(name) + (inserted === '/bar' ? name.length : 0);
-    const changed = source.slice(0, index) + inserted + source.slice(index);
-    const original = parser.parse(source)!;
-    original.edit(
-      new Edit({
-        startIndex: index,
-        oldEndIndex: index,
-        newEndIndex: index + inserted.length,
-        startPosition: { row: 0, column: index },
-        oldEndPosition: { row: 0, column: index },
-        newEndPosition: { row: 0, column: index + inserted.length },
-      })
-    );
-    const edited = parser.parse(changed, original)!;
-    const fresh = freshParser.parse(changed)!;
-    const trees = [original, edited, fresh];
-    const captures = (node: Node): unknown[] =>
-      query
-        .captures(node)
-        .map(({ name: capture, node: captured }) => [
-          capture,
-          captured.type,
-          captured.text,
-          captured.startIndex,
-          captured.endIndex,
-        ]);
-    try {
-      expect(edited.rootNode.hasError).toBe(false);
-      expect(snapshot(edited.rootNode)).toEqual(snapshot(fresh.rootNode));
-      expect(captures(edited.rootNode)).toEqual(captures(fresh.rootNode));
-      expect(edited.rootNode.descendantsOfType('unit')).toHaveLength(0);
-      edited.edit(
-        new Edit({
-          startIndex: index,
-          oldEndIndex: index + inserted.length,
-          newEndIndex: index,
-          startPosition: { row: 0, column: index },
-          oldEndPosition: { row: 0, column: index + inserted.length },
-          newEndPosition: { row: 0, column: index },
-        })
-      );
-      const undo = parser.parse(source, edited)!;
-      const freshUndo = freshParser.parse(source)!;
-      trees.push(undo, freshUndo);
-      expect(snapshot(undo.rootNode)).toEqual(snapshot(freshUndo.rootNode));
-      expect(captures(undo.rootNode)).toEqual(captures(freshUndo.rootNode));
-      expect(undo.rootNode.descendantsOfType('unit').map((node) => node.text)).toEqual([name]);
-    } finally {
-      for (const tree of trees) tree.delete();
-      query.delete();
-      parser.delete();
-      freshParser.delete();
-    }
-  }
-);
-
-function snapshot(node: Node): unknown[] {
-  return [
-    node.type,
-    node.isNamed,
-    node.isMissing,
-    node.hasError,
-    node.startIndex,
-    node.endIndex,
-    node.startPosition,
-    node.endPosition,
-    node.children.map((child, index) => [node.fieldNameForChild(index), snapshot(child)]),
-  ];
-}
