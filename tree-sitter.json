@@ -7,7 +7,6 @@
       "scope": "source.css",
       "path": ".",
       "file-types": ["css"],
-      "highlights": "queries/highlights.scm",
       "injection-regex": "^css$"
     }
   ],

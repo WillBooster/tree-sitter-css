@@ -5,7 +5,7 @@
 [![Test](https://github.com/WillBooster/tree-sitter-css/actions/workflows/test.yml/badge.svg)](https://github.com/WillBooster/tree-sitter-css/actions/workflows/test.yml)
 [![Test rust](https://github.com/WillBooster/tree-sitter-css/actions/workflows/test-rust.yml/badge.svg)](https://github.com/WillBooster/tree-sitter-css/actions/workflows/test-rust.yml)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![wbfy](https://img.shields.io/badge/wbfy-20.49.0-1e90ff.svg)](https://github.com/WillBooster/shared/tree/main/packages/wbfy)
+[![wbfy](https://img.shields.io/badge/wbfy-21.0.0-1e90ff.svg)](https://github.com/WillBooster/shared/tree/main/packages/wbfy)
 [![crates.io](https://img.shields.io/crates/v/willbooster-tree-sitter-css.svg)](https://crates.io/crates/willbooster-tree-sitter-css)
 
 CSS grammar for [tree-sitter](https://github.com/tree-sitter/tree-sitter), forked from
@@ -41,6 +41,13 @@ error roots during editing; recovery structure is not guaranteed for arbitrary i
 Braces and semicolons inside comments do not change whether a construct is a declaration or a selector.
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
+
+## Support Scope
+
+This fork maintains only full parsing: valid input yields a correct tree, and invalid input yields `ERROR` or `MISSING`
+nodes without crashing, hanging, or taking more than linear time. Incremental parsing works as in upstream tree-sitter
+but is not tested here, and no queries (highlights, locals, injections, tags) are shipped. Node types, field names, and
+the trees that error recovery produces may change; such changes are released as new major versions.
 
 ## Usage
 
@@ -84,7 +91,7 @@ const parser = new Parser();
 parser.setLanguage(await Language.load(css));
 ```
 
-The package also ships `grammar.js`, the queries in `queries/`, and the node types in `src/node-types.json`.
+The package also ships `grammar.js` and the node types in `src/node-types.json`.
 
 In Rust, depend on the [crate](https://crates.io/crates/willbooster-tree-sitter-css) and on
 [willbooster-tree-sitter](https://crates.io/crates/willbooster-tree-sitter), the runtime this package is tested and
@@ -93,7 +100,7 @@ fuzzed with:
 ```toml
 [dependencies]
 tree-sitter = { package = "willbooster-tree-sitter", version = "=15.0.0" }
-tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "10" }
+tree-sitter-css = { package = "willbooster-tree-sitter-css", version = "11" }
 ```
 
 ```rust
