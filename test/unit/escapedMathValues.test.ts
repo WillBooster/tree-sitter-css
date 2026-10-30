@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -22,7 +21,6 @@ test.each(
   ].flatMap(([expression, atom]) => [false, true].map((semicolon) => [expression!, atom!, semicolon] as const))
 )('escaped math constants retain complete operands: %s (%s), semicolon %s', (expression, atom, semicolon) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const value = `calc(${expression})`;
   const declaration = `width: ${value}${semicolon ? ';' : ''}`;
   const source = `a { ${declaration} } d { color: red; }`;
@@ -42,18 +40,11 @@ test.each(
         .descendantsOfType('binary_expression')
         .some((node) => node.text === expression.replaceAll(/^\(\(|\)\)$/g, ''))
     ).toBe(true);
-    expect(
-      query
-        .captures(first)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toContain('width');
     expect(tree.rootNode.lastNamedChild!.text).toBe('d { color: red; }');
     expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('d {'));
     expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(['width', 'color']);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

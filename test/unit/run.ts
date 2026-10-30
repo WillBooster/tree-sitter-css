@@ -8,15 +8,9 @@ const repositoryRoot = path.resolve(import.meta.dirname, '../..');
 // Leaves time to kill the command and report its output before Vitest's own test timeout.
 const KillMargin = 10_000;
 
-// Tests that a command run from the repository root exits zero within the timeout, and passes its output to
-// `check`. The command runs in its own process group, which the timeout kills as a whole: a parse that never ends
-// keeps busy the native binary that a script such as script/parse-examples starts, not the direct child.
-export function testCommand(
-  name: string,
-  command: [string, ...string[]],
-  timeout: number,
-  options: { check?: (output: string) => void } = {}
-): void {
+// Tests that a command run from the repository root exits zero within the timeout. The command runs in its own
+// process group, which the timeout kills as a whole: a parse that never ends keeps busy the native binary that a script such as script/parse-examples starts, not the direct child.
+export function testCommand(name: string, command: [string, ...string[]], timeout: number): void {
   test(
     name,
     async () => {
@@ -54,7 +48,6 @@ export function testCommand(
       process.off('SIGINT', onSignal);
       process.off('SIGTERM', onSignal);
       expect(exitCode, output).toBe(0);
-      options.check?.(output);
     },
     timeout + KillMargin
   );

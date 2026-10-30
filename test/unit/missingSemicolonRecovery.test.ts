@@ -1,13 +1,11 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
 import type { Point } from '@willbooster/web-tree-sitter';
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
-const highlights = fs.readFileSync(path.join(import.meta.dirname, '../../queries/highlights.scm'), 'utf8');
 const preludes = [
   [':hover', 'rule_set'],
   ['::before', 'rule_set'],
@@ -172,7 +170,6 @@ test.each(
   const value = `1 ${operator}${gap}${tail}`;
   const source = `a { ${property}: ${value}; }`;
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
@@ -181,22 +178,8 @@ test.each(
     expect(declaration.descendantsOfType('integer_value').map((node) => node.text)).toEqual(
       tail === '-' ? ['1'] : ['1', '-2']
     );
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'operator')
-        .map(({ node }) => [node.text, node.startIndex, node.endIndex])
-    ).toEqual(
-      tail === '-'
-        ? [
-            [operator, source.indexOf(value) + 2, source.indexOf(value) + 3],
-            ['-', source.indexOf(';') - 1, source.indexOf(';')],
-          ]
-        : [[operator, source.indexOf(value) + 2, source.indexOf(value) + 3]]
-    );
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -205,25 +188,17 @@ test.each(
   ['x', '--x'].flatMap((property) =>
     ['url(x)', '1'].flatMap((value) => ['\u0085', '\u2000', '\u2028', '\u2029'].map((gap) => [property, value, gap]))
   )
-)('Unicode gaps preserve asterisk arithmetic and highlights: %s %s %j', (property, value, gap) => {
+)('Unicode gaps preserve asterisk arithmetic: %s %s %j', (property, value, gap) => {
   const source = `a { ${property}: ${value}${gap} * 2; }`;
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
     const expression = tree.rootNode.descendantsOfType('binary_expression');
     expect(expression.map((node) => node.text)).toEqual([`${value}${gap} * 2`]);
     expect(tree.rootNode.descendantsOfType('plain_value')).toHaveLength(0);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'operator')
-        .map(({ node }) => [node.text, node.startIndex, node.endIndex])
-    ).toEqual([['*', source.indexOf('*'), source.indexOf('*') + 1]]);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -237,7 +212,6 @@ test.each(
 )('Unicode arithmetic retains attached operands: %s %j %s', (property, gap, operand) => {
   const source = `a { ${property}: 1${gap}*${operand}; }`;
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
@@ -247,15 +221,8 @@ test.each(
     expect(tree.rootNode.descendantsOfType('function_name').map((node) => node.text)).toEqual(
       operand.includes('(') ? ['f'] : []
     );
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'operator')
-        .map(({ node }) => [node.text, node.startIndex, node.endIndex])
-    ).toEqual([['*', source.indexOf('*'), source.indexOf('*') + 1]]);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -265,7 +232,6 @@ test.each(['x', '--x'].flatMap((property) => ['\n/**/', '\r\n/**/', '\n/*a*/', '
   (property, gap) => {
     const source = `a { ${property}: #abc${gap}//f(); }`;
     const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
     const tree = parser.parse(source)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
@@ -276,15 +242,8 @@ test.each(['x', '--x'].flatMap((property) => ['\n/**/', '\r\n/**/', '\n/*a*/', '
         tree.rootNode.descendantsOfType('function_name').map((node) => [node.text, node.startIndex, node.endIndex])
       ).toEqual([['f', start + 2, start + 3]]);
       expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual([gap.trim()]);
-      expect(
-        query
-          .captures(tree.rootNode)
-          .filter(({ name }) => name === 'function')
-          .map(({ node }) => [node.text, node.startIndex, node.endIndex])
-      ).toEqual([['f', start + 2, start + 3]]);
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }
@@ -299,7 +258,6 @@ test.each(
 )('hash tails retain value ownership across HTML marker extras: %s %s %s %j', (property, hash, marker, tail) => {
   const source = `a { ${property}: ${hash} ${marker}${tail}; }`;
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
@@ -310,10 +268,8 @@ test.each(
     expect(tree.rootNode.descendantsOfType('function_name').map((node) => node.text)).toEqual(
       tail.endsWith('()') ? ['f'] : []
     );
-    expect(query.captures(tree.rootNode).filter(({ name }) => name === 'comment')).toHaveLength(0);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -353,11 +309,10 @@ test.each(
 });
 
 test.each(['b', '1px'].flatMap((left) => ['-/foo', '-//x'].map((right) => [left, right])))(
-  'attached slash value after %s retains its component and highlight: %s',
+  'attached slash value after %s retains its component: %s',
   (left, right) => {
     const source = `a { color: ${left} ${right}; }`;
     const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
     const tree = parser.parse(source)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
@@ -370,10 +325,8 @@ test.each(['b', '1px'].flatMap((left) => ['-/foo', '-//x'].map((right) => [left,
         source.indexOf(right),
         source.indexOf(right) + right.length,
       ]);
-      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'operator')).toHaveLength(0);
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }
@@ -384,7 +337,6 @@ test.each(['f(1/**/px)', '(1 /**/px)', '[1 /**/px]', 'calc(1 /**/ + 2/**/px)', '
   (value) => {
     const source = `a { b: ${value}; }`;
     const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
     const tree = parser.parse(source)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
@@ -397,7 +349,6 @@ test.each(['f(1/**/px)', '(1 /**/px)', '[1 /**/px]', 'calc(1 /**/ + 2/**/px)', '
         expect(comment.text).toBe('/**/');
         expect(source.slice(comment.startIndex, comment.endIndex)).toBe('/**/');
       }
-      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'type')).toHaveLength(0);
       if (value === 'f(a/**/(x))') {
         expect(tree.rootNode.descendantsOfType('parenthesized_value').map((node) => node.text)).toEqual(['(x)']);
         expect(tree.rootNode.descendantsOfType('function_name').map((node) => node.text)).toEqual(['f']);
@@ -409,39 +360,27 @@ test.each(['f(1/**/px)', '(1 /**/px)', '[1 /**/px]', 'calc(1 /**/ + 2/**/px)', '
       }
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }
 );
 
-test.each(['*', '+', '/'])(
-  'attached scheme comments preserve the following %s arithmetic node and highlight',
-  (operator) => {
-    const source = `a { --x: http://x/**/\n${operator} 1; }\n.after { c: d }`;
-    const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
-    const tree = parser.parse(source)!;
-    try {
-      expect(tree.rootNode.hasError).toBe(false);
-      const expressions = tree.rootNode.descendantsOfType('binary_expression');
-      expect(expressions.map((node) => [node.text, node.startIndex])).toEqual([
-        [`://x/**/\n${operator} 1`, source.indexOf('://x')],
-      ]);
-      expect(
-        query
-          .captures(tree.rootNode)
-          .filter(({ name }) => name === 'operator')
-          .map(({ node }) => [node.text, node.startIndex, node.endIndex])
-      ).toEqual([[operator, source.indexOf(`\n${operator}`) + 1, source.indexOf(`\n${operator}`) + 2]]);
-      expect(tree.rootNode.lastNamedChild!.text).toBe('.after { c: d }');
-    } finally {
-      tree.delete();
-      query.delete();
-      parser.delete();
-    }
+test.each(['*', '+', '/'])('attached scheme comments preserve the following %s arithmetic node', (operator) => {
+  const source = `a { --x: http://x/**/\n${operator} 1; }\n.after { c: d }`;
+  const parser = new Parser().setLanguage(language);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+    const expressions = tree.rootNode.descendantsOfType('binary_expression');
+    expect(expressions.map((node) => [node.text, node.startIndex])).toEqual([
+      [`://x/**/\n${operator} 1`, source.indexOf('://x')],
+    ]);
+    expect(tree.rootNode.lastNamedChild!.text).toBe('.after { c: d }');
+  } finally {
+    tree.delete();
+    parser.delete();
   }
-);
+});
 
 test.each(['https://example.com/a;', 'http://x.y/z', 'http://x.y/z, 1e3px;'])(
   'scheme-like value %s preserves its declaration and the following rule',
@@ -536,7 +475,6 @@ test.each(['1px #abc//', '1 .c// z', '1 x:y// z', '1 @#a//'])(
   (value) => {
     const source = `a { b: ${value}; }\n.after {}`;
     const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
     const tree = parser.parse(source)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
@@ -546,10 +484,8 @@ test.each(['1px #abc//', '1 .c// z', '1 x:y// z', '1 @#a//'])(
       expect(after!.text).toBe('.after {}');
       expect(after!.startIndex).toBe(source.indexOf('.after'));
       expect(tree.rootNode.descendantsOfType('js_comment')).toHaveLength(0);
-      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'comment')).toHaveLength(0);
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }

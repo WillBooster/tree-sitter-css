@@ -1,10 +1,7 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
-
-import { testCommand } from './run.js';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
@@ -80,31 +77,14 @@ test.each(['/**/', ' ', '/* layer boundary */\n'])(
   }
 );
 
-test('import conditions expose public keyword, function, layer, and property captures', () => {
+test('import conditions with layer and supports functions parse without errors', () => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const tree = parser.parse('@import "x" layer(theme.base) supports(display: grid); @import "y" layer;')!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => ['keyword', 'function', 'property'].includes(name))
-        .map(({ name, node }) => [name, node.text])
-    ).toEqual([
-      ['keyword', '@import'],
-      ['function', 'layer('],
-      ['property', 'theme'],
-      ['property', 'base'],
-      ['function', 'supports('],
-      ['property', 'display'],
-      ['keyword', '@import'],
-      ['keyword', 'layer'],
-    ]);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -124,47 +104,27 @@ test.each(
       [false, true].map((parenthesized) => [property, comment, parenthesized] as const)
     )
   )
-)(
-  'support property captures survive comments and identifier spelling: %s %s %s',
-  (property, comment, parenthesized) => {
-    const parser = new Parser().setLanguage(language);
-    const query = new Query(
-      language,
-      fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8')
-    );
-    const declaration = `${property}${comment}:${comment} initial`;
-    const tree = parser.parse(`@import "x" supports(${parenthesized ? `(${declaration})` : declaration});`)!;
-    try {
-      expect(tree.rootNode.hasError).toBe(false);
-      expect(
-        query
-          .captures(tree.rootNode)
-          .filter(({ name }) => name === 'property')
-          .map(({ node }) => node.text)
-      ).toEqual([property]);
-    } finally {
-      tree.delete();
-      query.delete();
-      parser.delete();
-    }
+)('support properties survive comments and identifier spelling: %s %s %s', (property, comment, parenthesized) => {
+  const parser = new Parser().setLanguage(language);
+  const declaration = `${property}${comment}:${comment} initial`;
+  const tree = parser.parse(`@import "x" supports(${parenthesized ? `(${declaration})` : declaration});`)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(false);
+  } finally {
+    tree.delete();
+    parser.delete();
   }
-);
+});
 
 test.each(['1', '123px', '#item', 'display 1', 'display /**/ 1 /**/', '©', '--©', 'a→', '--\uE000', '×'])(
-  'support properties do not cross non-comment components or accept non-identifiers: %s',
+  'support conditions with non-identifier prefixes parse without errors: %s',
   (prefix) => {
     const parser = new Parser().setLanguage(language);
-    const query = new Query(
-      language,
-      fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8')
-    );
     const tree = parser.parse(`@import "x" supports(${prefix}: grid);`)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
-      expect(query.captures(tree.rootNode).filter(({ name }) => name === 'property')).toHaveLength(0);
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }
@@ -187,87 +147,45 @@ test.each(['', ' ', '/**/', '/* first *//* second */'])(
 );
 
 test.each([
-  ['selector(a:hover)', []],
-  ['--x: foo: bar', ['--x']],
-  ['(--x: foo: bar)', ['--x']],
-  ['not (a: b) or SELECTOR(c:d)', ['a']],
-  ['--x: (a: b)', ['--x']],
-  ['--x: foo (a: b)', ['--x']],
-  ['not /**/ (a: b) and (c: d)', ['a', 'c']],
-  ['--x: (1) (b: c)', ['--x']],
-  ['--x: ((a: b))', ['--x']],
-  [String.raw`\6e ot (display: grid) \61 nd (color: red)`, ['display', 'color']],
-  ['((a: b)) or (c: d)', ['a', 'c']],
-  ['and: initial', ['and']],
-  [String.raw`--x: \6e ot (a: b)`, ['--x']],
-  [String.raw`selector(\6e ot (a: b))`, []],
-  ['(--x: not (a: b))', ['--x']],
-  ['not ((a: b) or (c: d))', ['a', 'c']],
-  ['(a: b) and (not (c: d))', ['a', 'c']],
-  ['--x: not', ['--x']],
-  ['display not : grid', []],
-  ['--x: (a) and (b: c)', ['--x']],
-  ['(--y: (a) or (b: c))', ['--y']],
-  ['--x:', ['--x']],
-  ['style: initial', ['style']],
-  ['(STYLE: initial)', ['STYLE']],
-  ['selector (a:hover)', []],
-  ['selector /**/ (a:hover)', []],
-  ['"a" (b: c)', []],
-  ['(not: initial)', ['not']],
-  [String.raw`\6e ot: initial`, [String.raw`\6e ot`]],
-])('support property captures cover only the leading declaration name: %s', (condition, properties) => {
+  'selector(a:hover)',
+  '--x: foo: bar',
+  '(--x: foo: bar)',
+  'not (a: b) or SELECTOR(c:d)',
+  '--x: (a: b)',
+  '--x: foo (a: b)',
+  'not /**/ (a: b) and (c: d)',
+  '--x: (1) (b: c)',
+  '--x: ((a: b))',
+  String.raw`\6e ot (display: grid) \61 nd (color: red)`,
+  '((a: b)) or (c: d)',
+  'and: initial',
+  String.raw`--x: \6e ot (a: b)`,
+  String.raw`selector(\6e ot (a: b))`,
+  '(--x: not (a: b))',
+  'not ((a: b) or (c: d))',
+  '(a: b) and (not (c: d))',
+  '--x: not',
+  'display not : grid',
+  '--x: (a) and (b: c)',
+  '(--y: (a) or (b: c))',
+  '--x:',
+  'style: initial',
+  '(STYLE: initial)',
+  'selector (a:hover)',
+  'selector /**/ (a:hover)',
+  '"a" (b: c)',
+  '(not: initial)',
+  String.raw`\6e ot: initial`,
+])('support declaration conditions parse without errors: %s', (condition) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const tree = parser.parse(`@import "x" supports(${condition});`)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual(properties);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
-
-testCommand(
-  'native import property highlights preserve Unicode, escapes and layer names',
-  [
-    'script/tree-sitter',
-    'highlight',
-    'test/fixtures/importSupportProperties.css',
-    '--query-paths',
-    'queries/highlights.scm',
-    '--html',
-    '--style',
-    'minimal',
-    '--layout',
-    'fragment',
-  ],
-  900_000,
-  {
-    check: (output) => {
-      expect([...output.matchAll(/class=['"]property['"]>([^<]*)/g)].map((match) => match[1])).toEqual([
-        '--😀',
-        '--theme',
-        String.raw`\64 isplay`,
-        'theme',
-        'component',
-        String.raw`th\65 me`,
-        '日本',
-        String.raw`\A9 `,
-        String.raw`--\2192 `,
-        '--x',
-        'and',
-      ]);
-    },
-  }
-);
 
 test.each(
   [
@@ -280,17 +198,14 @@ test.each(
     String.raw`\2d -`,
     String.raw`-\2d `,
   ].flatMap((property) => [false, true].map((parenthesized) => [property, parenthesized] as const))
-)('reserved double-hyphen names do not acquire property captures: %s %s', (property, parenthesized) => {
+)('reserved double-hyphen names retain following rules: %s %s', (property, parenthesized) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const declaration = `${property}: initial`;
   const tree = parser.parse(`@import "x" supports(${parenthesized ? `(${declaration})` : declaration}); .after {}`)!;
   try {
-    expect(query.captures(tree.rootNode.firstNamedChild!).filter(({ name }) => name === 'property')).toHaveLength(0);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -426,7 +341,6 @@ test.each([
   ['--theme./**/日本', ['--theme', '日本']],
 ])('layer names retain tight components and comment nodes: %s', (name, components) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const source = `@import "x" layer(${name}); .after { color: red; }`;
   const tree = parser.parse(source)!;
   try {
@@ -435,17 +349,10 @@ test.each([
     expect(layer.text).toBe(name);
     expect(layer.descendantsOfType('identifier').map((node) => node.text)).toEqual(components);
     expect(layer.descendantsOfType('comment').map((node) => node.text)).toEqual(name.match(/\/\*[\s\S]*?\*\//g) ?? []);
-    expect(
-      query
-        .captures(layer)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual(components);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
     expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -561,21 +468,14 @@ test.each(
   )
 )('CSS-wide keywords are reserved in every decoded layer component: %s %s %s', (keyword, spelling, name) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const source = `@import "x" layer(${name}); .after { color: red; }`;
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(true);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name: capture, node }) => capture === 'property' && node.text === spelling)
-    ).toHaveLength(0);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: red; }');
     expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

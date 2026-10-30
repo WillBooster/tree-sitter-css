@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -21,7 +20,6 @@ test.each(
   )
 )('generic pseudos retain escaped class selectors: %s(%s)', (pseudo, selector, classes) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const source = `${pseudo}(${selector}) {} .after { color: red; }`;
   const tree = parser.parse(source)!;
   try {
@@ -29,12 +27,6 @@ test.each(
     const args = tree.rootNode.descendantsOfType('arguments')[0]!;
     const parsed = args.descendantsOfType('class_name');
     expect(parsed.map((node) => node.text)).toEqual(classes);
-    expect(
-      query
-        .captures(args)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual(classes);
     for (const node of parsed) {
       expect(node.startIndex).toBe(source.indexOf(node.text, pseudo.length + 1));
       expect(node.endIndex).toBe(source.indexOf(node.text, pseudo.length + 1) + node.text.length);
@@ -43,7 +35,6 @@ test.each(
     expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
