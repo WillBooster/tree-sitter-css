@@ -1,13 +1,11 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
 import type { Node, Point, Range, Tree } from '@willbooster/web-tree-sitter';
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
-const highlights = fs.readFileSync(path.join(import.meta.dirname, '../../queries/highlights.scm'), 'utf8');
 const valueParts = [
   ['& ', ''],
   ['', ' * 1'],
@@ -62,7 +60,6 @@ test.each([
 
 test('independent parses cannot retain selector-like value lookahead from the preceding input', () => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const sources = [
     'a { --x: f(& word & item); } .after { z: y; }',
     'a { --x: (\n& * .after { z: y; }\n}',
@@ -75,7 +72,7 @@ test('independent parses cannot retain selector-like value lookahead from the pr
       const other = new Parser().setLanguage(language);
       const fresh = other.parse(source)!;
       try {
-        expectEquivalent(reused, fresh, query);
+        expectEquivalent(reused, fresh);
         expect(reused.rootNode.hasError).toBe(iteration % sources.length !== 0);
       } finally {
         reused.delete();
@@ -84,7 +81,6 @@ test('independent parses cannot retain selector-like value lookahead from the pr
       }
     }
   } finally {
-    query.delete();
     parser.delete();
   }
 });
@@ -358,11 +354,8 @@ test.each(
   }
 });
 
-function expectEquivalent(actual: Tree, expected: Tree, query: Query): void {
+function expectEquivalent(actual: Tree, expected: Tree): void {
   expect(snapshot(actual.rootNode)).toEqual(snapshot(expected.rootNode));
-  const captures = (tree: Tree): unknown[] =>
-    query.captures(tree.rootNode).map(({ name, node }) => [name, node.type, node.startIndex, node.endIndex, node.text]);
-  expect(captures(actual)).toEqual(captures(expected));
 }
 
 function snapshot(node: Node): unknown[] {

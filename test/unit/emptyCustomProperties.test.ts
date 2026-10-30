@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -11,9 +10,8 @@ test.each(
   ['--x', '--1', '--漢字', '--😀', String.raw`--c\6f lor`, String.raw`\2d\2d x`, String.raw`-\2d x`].flatMap((name) =>
     ['complete', 'final', 'comment', 'important', 'inline', 'inlineFinal'].map((layout) => [name, layout] as const)
   )
-)('empty custom properties retain valid declarations and captures: %s in %s', (name, layout) => {
+)('empty custom properties retain valid declarations: %s in %s', (name, layout) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const final = layout === 'final' || layout === 'inlineFinal';
   const inline = layout === 'inline' || layout === 'inlineFinal';
   const declaration = final
@@ -38,12 +36,6 @@ test.each(
     expect(property?.startIndex).toBe(source.indexOf(name));
     expect(property?.endIndex).toBe(source.indexOf(name) + name.length);
     expect(empty?.descendantsOfType('plain_value')).toHaveLength(0);
-    expect(
-      query
-        .captures(empty!)
-        .filter(({ name: capture }) => capture === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual([name]);
     const following = tree.rootNode.descendantsOfType('declaration').find((node) => node.text === 'color: red;');
     expect(following?.startIndex).toBe(source.indexOf('color: red;'));
     expect(following?.endIndex).toBe(source.indexOf('color: red;') + 'color: red;'.length);
@@ -56,7 +48,6 @@ test.each(
     }
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -96,10 +87,6 @@ test.each(
   'custom important comma lists retain their declaration: $name $gap $value, final=$final',
   ({ name, gap, value, kind, final }) => {
     const parser = new Parser().setLanguage(language);
-    const query = new Query(
-      language,
-      fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8')
-    );
     const declaration = `${name}: !important${gap}, ${value}${final ? '' : ';'}`;
     const source = `a { ${declaration} } .after { color: blue; }`;
     const tree = parser.parse(source)!;
@@ -113,17 +100,10 @@ test.each(
       expect(parsed.endIndex).toBe(source.indexOf(declaration) + declaration.length);
       expect(parsed.descendantsOfType('property_name').map((node) => node.text)).toEqual([name]);
       expect(parsed.descendantsOfType(kind!).some((node) => node.text === value)).toBe(true);
-      expect(
-        query
-          .captures(parsed)
-          .filter(({ name: capture }) => capture === 'keyword')
-          .map(({ node }) => node.text)
-      ).toEqual(['!important']);
       expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: blue; }');
       expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }

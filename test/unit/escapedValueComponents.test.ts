@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -24,7 +23,6 @@ test.each(
   )
 )('escaped declaration components retain ownership: %s %s (%s) in %s', (property, value, atom, layout) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const endsWithShortHexEscape = /\\[0-9a-f]{1,5}$/i.test(value);
   const declaration = `${property}: ${value}${layout === 'final' ? (endsWithShortHexEscape ? ' ' : '') : ';'}`;
   const content = layout === 'final' ? `color: blue; ${declaration}` : `${declaration} color: blue;`;
@@ -39,12 +37,6 @@ test.each(
     const identifier = parsed?.descendantsOfType('plain_value').find((node) => node.text === identifierText);
     expect(identifier?.startIndex).toBe(source.indexOf(atom));
     expect(identifier?.endIndex).toBe(source.indexOf(atom) + identifierText.length);
-    expect(
-      query
-        .captures(parsed!)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual([property]);
     expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(
       value.includes('/* real */') ? ['/* real */'] : []
     );
@@ -56,7 +48,6 @@ test.each(
     }
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

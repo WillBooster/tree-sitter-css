@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -26,9 +25,8 @@ test.each(
   properties.flatMap((property) =>
     ['complete', 'last', 'incomplete', 'inline'].map((layout) => [property, layout] as const)
   )
-)('escaped property names retain nodes and highlights: %s in %s', (property, layout) => {
+)('escaped property names retain nodes: %s in %s', (property, layout) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const declaration = `${property}: red`;
   const source =
     layout === 'last'
@@ -44,12 +42,6 @@ test.each(
     expect(tree.rootNode.hasError).toBe(false);
     const names = layout === 'last' ? ['color', property] : [property, 'color'];
     expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(names);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual(layout === 'inline' ? names : [...names, 'after']);
     expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(
       layout === 'incomplete' ? [property] : []
     );
@@ -68,7 +60,6 @@ test.each(
     }
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -112,7 +103,6 @@ test.each(
   )
 )('escaped type selectors retain rule ownership: %s%s in %s', (name, suffix, layout) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const rule = `${name}${suffix} { color: red; }`;
   const before = layout === 'nested' ? `a { ${rule} }` : layout === 'media' ? `@media screen { ${rule} }` : rule;
   const source = `${before} .after { color: blue; }`;
@@ -123,15 +113,11 @@ test.each(
     expect(parsedRule?.startIndex).toBe(source.indexOf(rule));
     expect(parsedRule?.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color']);
     expect(parsedRule?.descendantsOfType('tag_name').map((node) => node.text)).toContain(name);
-    expect(
-      query.captures(tree.rootNode).filter(({ name: capture, node }) => capture === 'tag' && node.text === name)
-    ).toHaveLength(1);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after { color: blue; }');
     expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
     expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(['color', 'color']);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

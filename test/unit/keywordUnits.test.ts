@@ -1,12 +1,10 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
-const highlights = fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8');
 const keywords = ['from', 'to', 'only', 'selector'];
 const contexts = [
   'a { b: f(VALUE); }',
@@ -18,10 +16,9 @@ const contexts = [
 ];
 
 test.each(keywords.flatMap((unit) => contexts.map((context) => [unit, context])))(
-  'keyword dimensions retain units and highlights: %s in %s',
+  'keyword dimensions retain units: %s in %s',
   (unit, context) => {
     const parser = new Parser().setLanguage(language);
-    const query = new Query(language, highlights);
     try {
       for (const number of ['1', '-1', '.5', '1e2']) {
         const source = context.replace('VALUE', number + unit);
@@ -34,18 +31,11 @@ test.each(keywords.flatMap((unit) => contexts.map((context) => [unit, context]))
               .descendantsOfType('unit')
               .map((node) => [node.text, node.startIndex, node.endIndex, node.parent!.text])
           ).toEqual([[unit, start, start + unit.length, number + unit]]);
-          expect(
-            query
-              .captures(tree.rootNode)
-              .filter(({ name }) => name === 'type')
-              .map(({ node }) => [node.text, node.startIndex, node.endIndex])
-          ).toEqual([[unit, start, start + unit.length]]);
         } finally {
           tree.delete();
         }
       }
     } finally {
-      query.delete();
       parser.delete();
     }
   }

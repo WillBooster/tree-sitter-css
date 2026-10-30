@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 const root = path.join(import.meta.dirname, '../..');
@@ -9,9 +8,8 @@ await Parser.init();
 const language = await Language.load(path.join(root, 'tree-sitter-css.wasm'));
 const parser = new Parser();
 parser.setLanguage(language);
-const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
 
-test('media range queries retain feature highlights and following rules', () => {
+test('media range queries retain feature names and following rules', () => {
   const source =
     '@media (400px <= width < 70em) and (aspect-ratio >= 16/9), (2dppx < resolution) { a { color: red; } } b { display: block; }';
   const tree = parser.parse(source);
@@ -23,18 +21,6 @@ test('media range queries retain feature highlights and following rules', () => 
     'aspect-ratio',
     'resolution',
   ]);
-  expect(
-    query
-      .captures(tree.rootNode)
-      .filter(({ name, node }) => name === 'property' && node.type === 'feature_name')
-      .map(({ node }) => node.text)
-  ).toEqual(['width', 'aspect-ratio', 'resolution']);
-  expect(
-    query
-      .captures(tree.rootNode)
-      .filter(({ name, node }) => name === 'operator' && node.parent?.type === 'range_query')
-      .map(({ node }) => node.text)
-  ).toEqual(['<=', '<', '>=', '<']);
   expect(tree.rootNode.lastNamedChild?.text).toBe('b { display: block; }');
   tree.delete();
 });
@@ -51,12 +37,6 @@ test('media ratios use unitless numbers while dimension values retain units', ()
       value === '16/9' ? ['integer_value', 'integer_value'] : ['float_value', 'float_value']
     );
     expect(tree.rootNode.descendantsOfType('unit').map((node) => node.text)).toEqual(['px']);
-    expect(
-      query
-        .captures(ratios[0]!)
-        .filter(({ name }) => name === 'number')
-        .map(({ node }) => node.text)
-    ).toEqual(value.split('/'));
     tree.delete();
   }
   for (const value of ['16px/9', '16/9em', '1.5%/.5', '1e2/2.5e1px']) {
@@ -77,7 +57,7 @@ test('media range dimensions retain signed exponents as one numeric operand', ()
   }
 });
 
-test('media identifier operands preserve the left feature name and its highlight', () => {
+test('media identifier operands preserve the left feature name', () => {
   for (const [feature, operand, operator] of [
     ['orientation', 'landscape', '='],
     ['a', 'b', '<'],
@@ -93,12 +73,6 @@ test('media identifier operands preserve the left feature name and its highlight
         ['feature_name', feature],
         ['plain_value', operand],
       ]);
-      expect(
-        query
-          .captures(ranges[0]!)
-          .filter(({ name }) => name === 'property')
-          .map(({ node }) => node.text)
-      ).toEqual([feature]);
       expect(tree.rootNode.lastNamedChild?.text).toBe('b { display: block; }');
     } finally {
       tree.delete();

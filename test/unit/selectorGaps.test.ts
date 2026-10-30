@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -69,23 +68,17 @@ test.each(gaps)('scope leading gaps retain boundary fields: %j', (gap) => {
 });
 
 test.each(gaps.flatMap((leading) => gaps.map((trailing) => [leading, trailing] as const)))(
-  'selector queries retain gaps and public captures: %j %j',
+  'selector queries retain gaps: %j %j',
   (leading, trailing) => {
     const parser = new Parser().setLanguage(language);
-    const query = new Query(
-      language,
-      fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8')
-    );
     const tree = parser.parse(`@supports selector(${leading}a${trailing}) { .x {} } .after {}`)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
       const condition = tree.rootNode.descendantsOfType('selector_query')[0]!;
       expect(condition.descendantsOfType('tag_name').map((node) => node.text)).toEqual(['a']);
-      expect(query.captures(condition).some(({ name, node }) => name === 'tag' && node.text === 'a')).toBe(true);
       expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }

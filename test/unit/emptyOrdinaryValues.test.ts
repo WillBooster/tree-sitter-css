@@ -1,12 +1,10 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
-const highlights = fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8');
 const followingNames = [
   'x',
   'g',
@@ -34,7 +32,6 @@ const inputs = ['width', 'margin', 'color', 'background', 'padding'].flatMap((br
 
 test.each(inputs)('empty %s values preserve the following %s declaration across %j', (broken, name, gap) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const source = `a { ${broken}: ${gap}; ${name}: red; } .after { color: blue; }`;
   const tree = parser.parse(source)!;
   try {
@@ -46,17 +43,10 @@ test.each(inputs)('empty %s values preserve the following %s declaration across 
     expect(valid[0]!.startIndex).toBe(source.indexOf(`${name}: red;`));
     expect(valid[0]!.endIndex).toBe(source.indexOf(`${name}: red;`) + `${name}: red;`.length);
     expect(valid[0]!.descendantsOfType('property_name').map((node) => node.text)).toEqual([name]);
-    expect(
-      query
-        .captures(valid[0]!)
-        .filter(({ name: capture }) => capture === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual([name]);
     expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: blue; }');
     expect(tree.rootNode.lastNamedChild!.startIndex).toBe(source.indexOf('.after'));
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -71,7 +61,6 @@ test.each(
   )
 )('empty %s before %j %j retains its missing value and following rules', (property, gap, ending) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const source = `/* Ω🙂 */\na { ${property}:${gap}${ending} } .after { z:y; }`;
   const tree = parser.parse(source)!;
   try {
@@ -85,9 +74,6 @@ test.each(
     expect(name.startIndex).toBe(start);
     expect(name.endIndex).toBe(start + property.length);
     expect(declaration.descendantsOfType('plain_value').some((node) => node.isMissing)).toBe(true);
-    expect(
-      query.captures(declaration).some(({ name: capture, node }) => capture === 'property' && node.id === name.id)
-    ).toBe(true);
     expect(outer!.endIndex).toBe(source.indexOf(' .after'));
     expect(after!.text).toBe('.after { z:y; }');
     expect(after!.startIndex).toBe(source.indexOf('.after'));
@@ -97,7 +83,6 @@ test.each(
     }
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

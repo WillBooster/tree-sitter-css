@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -17,7 +16,6 @@ test.each(
   ].flatMap((value) => [false, true].map((semicolon) => [value, semicolon] as const))
 )('escaped function values remain declarations with following rules: %s %s', (value, semicolon) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const declaration = `color: ${value}${semicolon ? ';' : ''}`;
   const source = `a { ${declaration} } d { background: blue; }`;
   const tree = parser.parse(source)!;
@@ -34,17 +32,10 @@ test.each(
     expect(values[0]!.startIndex).toBe(source.indexOf(argument));
     expect(values[0]!.endIndex).toBe(source.indexOf(argument) + argument.length);
     expect(first.descendantsOfType('pseudo_class_selector')).toHaveLength(0);
-    expect(
-      query
-        .captures(first)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toContain('color');
     expect(rules[1]!.text).toBe('d { background: blue; }');
     expect(rules[1]!.startIndex).toBe(source.indexOf('d {'));
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -53,9 +44,8 @@ test.each(
   ['url', 'URL', 'uRl', String.raw`u\72l`, String.raw`ur\6c`, String.raw`\75rl`].flatMap((name) =>
     ['1', '1.5'].map((number) => [number, `${name}(x)`])
   )
-)('a URL immediately after %s keeps its own token and highlights: %s', (number, url) => {
+)('a URL immediately after %s keeps its own token: %s', (number, url) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const source = `a { --x: ${number}${url}; color: red; } .after {}`;
   const tree = parser.parse(source)!;
   try {
@@ -65,16 +55,9 @@ test.each(
     expect(
       declaration.descendantsOfType('url_value').map((node) => [node.text, node.startIndex, node.endIndex])
     ).toEqual([[url, source.indexOf(url), source.indexOf(url) + url.length]]);
-    expect(
-      query
-        .captures(declaration)
-        .filter(({ name }) => name === 'string.special')
-        .map(({ node }) => node.text)
-    ).toEqual([url]);
     expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

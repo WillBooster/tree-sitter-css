@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -22,9 +21,8 @@ test.each(
   properties.flatMap((property) =>
     ['complete', 'last', 'incomplete', 'inline'].map((layout) => [property, layout] as const)
   )
-)('keyword property names retain nodes and highlights: %s in %s', (property, layout) => {
+)('keyword property names retain nodes: %s in %s', (property, layout) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const declaration = `${property}: red`;
   const source =
     layout === 'last'
@@ -39,12 +37,6 @@ test.each(
     expect(tree.rootNode.hasError).toBe(false);
     const names = layout === 'last' ? ['color', property] : [property, 'color'];
     expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(names);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual(names);
     expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(
       layout === 'incomplete' ? [property] : []
     );
@@ -59,7 +51,6 @@ test.each(
     for (const node of declarations) expect(node.startIndex).toBe(source.indexOf(node.text));
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

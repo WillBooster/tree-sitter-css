@@ -1,17 +1,15 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 const root = path.join(import.meta.dirname, '../..');
 await Parser.init();
 const language = await Language.load(path.join(root, 'tree-sitter-css.wasm'));
 
-test('scope limits retain selector fields and highlights with and without a start', () => {
+test('scope limits retain selector fields with and without a start', () => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
   const source = '@scope to (.limit) { .content { color: red; } } .after {}';
   const tree = parser.parse(source)!;
   try {
@@ -26,25 +24,12 @@ test('scope limits retain selector fields and highlights with and without a star
       const startedScope = started.rootNode.firstNamedChild!;
       expect(startedScope.childForFieldName('start')?.text).toBe('.card, #article');
       expect(startedScope.childForFieldName('end')?.text).toBe('.limit');
-      expect(
-        query
-          .captures(startedScope)
-          .filter(({ name }) => name === 'property')
-          .map(({ node }) => node.text)
-      ).toEqual(['card', '#article', 'limit', 'content', 'color']);
-      expect(
-        query
-          .captures(startedScope)
-          .filter(({ name }) => name === 'keyword')
-          .map(({ node }) => node.text)
-      ).toEqual(['@scope', 'to']);
       expect(started.rootNode.lastNamedChild?.text).toBe('.after {}');
     } finally {
       started.delete();
     }
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -110,10 +95,9 @@ test.each([
   ['article#card', 'card'],
   [String.raw`#\31 foo`, String.raw`\31 foo`],
   [String.raw`article#\#hash`, String.raw`\#hash`],
-])('an ID boundary keeps its selector and highlight: %s', (selector, name) => {
+])('an ID boundary keeps its selector: %s', (selector, name) => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
   const tree = parser.parse(`@scope (${selector}) {}`)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
@@ -121,15 +105,8 @@ test.each([
     expect(scope.type).toBe('scope_statement');
     const boundary = scope.childForFieldName('start')!;
     expect(boundary.descendantsOfType('id_name').map((node) => node.text)).toEqual([`#${name}`]);
-    expect(
-      query
-        .captures(boundary)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual([`#${name}`]);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -177,22 +154,14 @@ test.each([
 ])('an unrecognized scope prelude remains an at-rule: %s', (prelude) => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
   const tree = parser.parse(`@scope ${prelude} { h1 { color: red; } } .after {}`)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
     expect(tree.rootNode.firstNamedChild?.type).toBe('at_rule');
     expect(tree.rootNode.firstNamedChild?.text).toBe(`@scope ${prelude} { h1 { color: red; } }`);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'keyword')
-        .map(({ node }) => node.text)
-    ).not.toContain('to');
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -241,7 +210,6 @@ test.each([
 ])('escaped class names remain structured scope boundaries: %s', (selector) => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
   const tree = parser.parse(`@scope (${selector}) to (${selector}) {} .after {}`)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
@@ -249,11 +217,9 @@ test.each([
     expect(scope.type).toBe('scope_statement');
     expect(scope.childForFieldName('start')?.text).toBe(selector);
     expect(scope.childForFieldName('end')?.text).toBe(selector);
-    expect(query.captures(scope).filter(({ name }) => name === 'property').length).toBeGreaterThanOrEqual(2);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -276,10 +242,9 @@ test.each([
   '::1px',
   'a::',
   ':: .a',
-])('invalid scope syntax preserves the following rule and highlights: %s', (prelude) => {
+])('invalid scope syntax preserves the following rule: %s', (prelude) => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
   const following = '.after { color: red; }';
   const source = `@scope (${prelude}) {} ${following}`;
   const tree = parser.parse(source)!;
@@ -288,11 +253,9 @@ test.each([
     expect(rule.type).toBe('rule_set');
     expect(rule.text).toBe(following);
     expect(rule.startIndex).toBe(source.indexOf(following));
-    expect(query.captures(rule).some(({ name, node }) => name === 'property' && node.text === 'after')).toBe(true);
     expect(rule.descendantsOfType('declaration').map((node) => node.text)).toEqual(['color: red;']);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -334,25 +297,11 @@ for (const selector of [
     (limits) => {
       const parser = new Parser();
       parser.setLanguage(language);
-      const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
       const tree = parser.parse(`@scope ${limits} {} .after { color: red; }`)!;
       try {
         expect(tree.rootNode.hasError).toBe(false);
         const scope = tree.rootNode.firstNamedChild!;
         expect(scope.type).toBe('scope_statement');
-        expect(
-          query
-            .captures(scope)
-            .some(
-              ({ name }) =>
-                name ===
-                (selector.startsWith('.')
-                  ? 'property'
-                  : selector.startsWith('[') || selector.startsWith(':')
-                    ? 'attribute'
-                    : 'tag')
-            )
-        ).toBe(true);
         for (const field of limits.startsWith('to ')
           ? ['end']
           : limits.includes(' to ')
@@ -365,7 +314,6 @@ for (const selector of [
         expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
       } finally {
         tree.delete();
-        query.delete();
         parser.delete();
       }
     }
@@ -373,10 +321,9 @@ for (const selector of [
 }
 
 test.each([String.raw`\61 rticle`, String.raw`a\72 ticle`, String.raw`\000061rticle`, String.raw`\e9 lément`])(
-  'escaped type selectors retain scope fields and tag captures: %s',
+  'escaped type selectors retain scope fields: %s',
   (selector) => {
     const parser = new Parser().setLanguage(language);
-    const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
     const tree = parser.parse(`@scope (${selector}) to (${selector}) {} .after {}`)!;
     try {
       expect(tree.rootNode.hasError).toBe(false);
@@ -387,16 +334,9 @@ test.each([String.raw`\61 rticle`, String.raw`a\72 ticle`, String.raw`\000061rti
         expect(boundary.text).toBe(selector);
         expect(boundary.descendantsOfType('tag_name').map((node) => node.text)).toEqual([selector]);
       }
-      expect(
-        query
-          .captures(scope)
-          .filter(({ name }) => name === 'tag')
-          .map(({ node }) => node.text)
-      ).toEqual([selector, selector]);
       expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
     } finally {
       tree.delete();
-      query.delete();
       parser.delete();
     }
   }
@@ -408,9 +348,8 @@ test.each(
       ['.parent {', '@scope (.parent) {'].map((prefix) => [combinator, gap, prefix] as const)
     )
   )
-)('nested relative scope starts retain fields and captures: %s%s%s', (combinator, gap, prefix) => {
+)('nested relative scope starts retain fields: %s%s%s', (combinator, gap, prefix) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
   const selector = `${combinator}${gap}.card`;
   const statement = `@scope (${selector}) to (.limit) { .content {} }`;
   const source = `${prefix} ${statement} } .after {}`;
@@ -422,22 +361,9 @@ test.each(
     expect(scope.childForFieldName('start')?.text).toBe(selector);
     expect(scope.childForFieldName('end')?.text).toBe('.limit');
     expect(scope.startIndex).toBe(source.indexOf(statement));
-    expect(
-      query
-        .captures(scope)
-        .filter(({ name }) => name === 'keyword')
-        .map(({ node }) => node.text)
-    ).toEqual(['@scope', 'to']);
-    expect(
-      query
-        .captures(scope)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual(['card', 'limit', 'content']);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

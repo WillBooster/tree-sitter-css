@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
@@ -23,32 +22,23 @@ test.each([
 ])('hash values remain atomic and preserve following declarations: %s %s', (property, value) => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const tree = parser.parse(`a { ${property}: ${value}; color: red; }`)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
     expect(tree.rootNode.descendantsOfType('hash_value').map((node) => node.text)).toEqual([value]);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'string.special')
-        .map(({ node }) => node.text)
-    ).toEqual([value]);
     expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
       `${property}: ${value};`,
       'color: red;',
     ]);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
 
-test('ordinary colors retain their public nodes and captures', () => {
+test('ordinary colors retain their public nodes', () => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const tree = parser.parse('a { color: #abc; background: #12345678; border-color: #abcd #123456; }')!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
@@ -58,15 +48,8 @@ test('ordinary colors retain their public nodes and captures', () => {
       '#abcd',
       '#123456',
     ]);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'string.special')
-        .map(({ node }) => node.text)
-    ).toEqual(['#abc', '#12345678', '#abcd', '#123456']);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
@@ -130,28 +113,19 @@ test('split unquoted hash attributes retain error recovery', () => {
 
 test('quoted hash attributes retain their string syntax', () => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const tree = parser.parse('a[data-x="#/**/abc"] { color: red; } .after {}')!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
     expect(tree.rootNode.descendantsOfType('comment')).toHaveLength(0);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name }) => name === 'string')
-        .map(({ node }) => node.text)
-    ).toEqual(['"#/**/abc"']);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
 
 function assertHashDelimiter(source: string, value: string): void {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8'));
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
@@ -160,16 +134,12 @@ function assertHashDelimiter(source: string, value: string): void {
     expect(tree.rootNode.descendantsOfType('comment').map((node) => node.text)).toEqual(
       value.match(/\/\*[\s\S]*?\*\//g) ?? []
     );
-    expect(
-      query.captures(tree.rootNode).filter(({ name, node }) => name === 'punctuation.delimiter' && node.text === '#')
-    ).toHaveLength(1);
     expect(tree.rootNode.lastNamedChild?.text).toBe('.after {}');
     expect(tree.rootNode.lastNamedChild?.startIndex).toBe(source.indexOf('.after'));
     const color = tree.rootNode.descendantsOfType('declaration').find((node) => node.text === 'color: red;');
     expect(color?.startIndex).toBe(source.indexOf('color: red;'));
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 }

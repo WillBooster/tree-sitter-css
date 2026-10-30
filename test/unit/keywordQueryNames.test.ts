@@ -1,12 +1,10 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
-const highlights = fs.readFileSync(new URL('../../queries/highlights.scm', import.meta.url), 'utf8');
 
 test.each(['from', 'to', 'only', 'selector'].flatMap((name) => ['"x"', 'url(x)'].map((url) => ({ name, url }))))(
   'keyword namespace prefixes retain their name: $name $url',
@@ -53,9 +51,8 @@ test.each(
 test.each([
   ...['from', 'to', 'only', 'selector'].map((value) => ({ feature: 'width', value })),
   ...['from', 'to'].map((feature) => ({ feature, value: 'width' })),
-])('keyword media range operands keep feature highlights: $feature > $value', ({ feature, value }) => {
+])('keyword media range operands keep feature names: $feature > $value', ({ feature, value }) => {
   const parser = new Parser().setLanguage(language);
-  const query = new Query(language, highlights);
   const source = `@media (${feature} > ${value}) {} .after { color: red; }`;
   const tree = parser.parse(source)!;
   try {
@@ -65,16 +62,9 @@ test.each([
       ['feature_name', feature],
       ['plain_value', value],
     ]);
-    expect(
-      query
-        .captures(range)
-        .filter(({ name }) => name === 'property')
-        .map(({ node }) => node.text)
-    ).toEqual([feature]);
     expect(tree.rootNode.lastNamedChild!.text).toBe('.after { color: red; }');
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });

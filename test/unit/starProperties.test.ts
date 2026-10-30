@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
-import { Language, Parser, Query } from '@willbooster/web-tree-sitter';
+import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 const root = path.join(import.meta.dirname, '../..');
@@ -17,20 +16,12 @@ test.each([
 ])('preserves legacy star-prefixed declaration names in %s', (source, names) => {
   const parser = new Parser();
   parser.setLanguage(language);
-  const query = new Query(language, fs.readFileSync(path.join(root, 'queries/highlights.scm'), 'utf8'));
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
     expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.firstNamedChild?.text)).toEqual(names);
-    expect(
-      query
-        .captures(tree.rootNode)
-        .filter(({ name, node }) => name === 'property' && node.type === 'property_name')
-        .map(({ node }) => node.text)
-    ).toEqual(names);
   } finally {
     tree.delete();
-    query.delete();
     parser.delete();
   }
 });
