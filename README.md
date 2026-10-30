@@ -42,6 +42,13 @@ Braces and semicolons inside comments do not change whether a construct is a dec
 A NUL character inside a token such as a string or a comment is part of that token, where upstream's lexer
 reports an error.
 
+## Support Scope
+
+This fork maintains only full parsing: valid input yields a correct tree, and invalid input yields `ERROR` or `MISSING`
+nodes without crashing, hanging, or taking more than linear time. Incremental parsing works as in upstream tree-sitter
+but is not tested here, and no queries (highlights, locals, injections, tags) are shipped. Node types, field names, and
+the trees that error recovery produces may change; such changes are released as new major versions.
+
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
@@ -84,7 +91,7 @@ const parser = new Parser();
 parser.setLanguage(await Language.load(css));
 ```
 
-The package also ships `grammar.js`, the queries in `queries/`, and the node types in `src/node-types.json`.
+The package also ships `grammar.js` and the node types in `src/node-types.json`.
 
 In Rust, depend on the [crate](https://crates.io/crates/willbooster-tree-sitter-css) and on
 [willbooster-tree-sitter](https://crates.io/crates/willbooster-tree-sitter), the runtime this package is tested and
