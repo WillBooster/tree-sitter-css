@@ -117,7 +117,7 @@ test.each(
 });
 
 test.each(['1', '123px', '#item', 'display 1', 'display /**/ 1 /**/', '©', '--©', 'a→', '--\uE000', '×'])(
-  'support properties do not cross non-comment components or accept non-identifiers: %s',
+  'support conditions with non-identifier prefixes parse without errors: %s',
   (prefix) => {
     const parser = new Parser().setLanguage(language);
     const tree = parser.parse(`@import "x" supports(${prefix}: grid);`)!;
