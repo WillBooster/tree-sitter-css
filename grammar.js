@@ -374,8 +374,11 @@ module.exports = grammar({
 
     keyframes_statement: $ => seq(
       choice(
-        '@keyframes',
-        alias(/@[-a-z]+keyframes/, $.at_keyword),
+        alias(cssKeyword('@keyframes'), '@keyframes'),
+        alias(choice(
+          cssKeyword('@-webkit-keyframes'),
+          /@[-a-zA-Z]+[kK][eE][yY][fF][rR][aA][mM][eE][sS]/,
+        ), $.at_keyword),
       ),
       alias($.identifier, $.keyframes_name),
       $.keyframe_block_list,
@@ -392,8 +395,8 @@ module.exports = grammar({
       $.block,
     ),
 
-    from: _ => 'from',
-    to: _ => 'to',
+    from: _ => cssKeyword('from'),
+    to: _ => cssKeyword('to'),
 
     supports_statement: $ => seq(
       '@supports',
@@ -1322,18 +1325,17 @@ function cssKeywordPattern(word, escapedOnly = false) {
   );
   const code = `(?:${codes.join('|')})`;
   const whitespace = String.raw`(?:[ \t\n\f]|\r\n?)`;
-  const alternatives = escapedOnly ? [] : [`${letters}${suffix}`];
-  if (!/[a-f]/.test(character)) alternatives.push(String.raw`\\${letters}${suffix}`);
+  const alternatives = escapedOnly ? [] : [letters];
+  if (!/[a-f]/.test(character)) alternatives.push(String.raw`\\${letters}`);
   if (rest && /[a-f]/.test(rest[0])) {
     alternatives.push(
-      String.raw`\\0{4}${code}${whitespace}?${suffix}`,
-      String.raw`\\0{0,3}${code}${whitespace}${suffix}`,
-      String.raw`\\0{0,3}${code}${cssKeywordPattern(rest, true)}`,
+      String.raw`\\0{4}${code}${whitespace}?`,
+      String.raw`\\0{0,3}${code}${whitespace}`,
     );
-  } else {
-    alternatives.push(String.raw`\\0{0,4}${code}${whitespace}?${suffix}`);
+    return String.raw`(?:(?:${alternatives.join('|')})${suffix}|\\0{0,3}${code}${cssKeywordPattern(rest, true)})`;
   }
-  return `(?:${alternatives.join('|')})`;
+  alternatives.push(String.raw`\\0{0,4}${code}${whitespace}?`);
+  return `(?:${alternatives.join('|')})${suffix}`;
 }
 
 /** @param {RuleOrLiteral} prefix */
