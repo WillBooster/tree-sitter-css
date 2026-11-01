@@ -75,6 +75,7 @@ a { *display: inline; * { color: red; } b * { width: 1px; } }
 
 ==================
 Unfinished star property before another star declaration
+:error
 ==================
 
 a { *padding
@@ -82,10 +83,4 @@ a { *padding
 
 ---
 
-(stylesheet
-  (rule_set
-    (selectors (tag_name))
-    (block
-      (incomplete_declaration (property_name))
-      (declaration (property_name) (plain_value))
-      (declaration (property_name) (plain_value)))))
+(ERROR)

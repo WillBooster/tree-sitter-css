@@ -30,6 +30,7 @@ A comment before an explicit combinator keeps both operands, as in `b /* c */ > 
 Attribute names accept CSS escape sequences, including namespace prefixes and local names.
 Values accept angle-bracket type names such as `attr(size type(<number>), 0)`, including `+` and `#` list multipliers.
 Declaration property names accept CSS escape sequences, including custom-property names (`\63 olor`, `co\6c or`, `--\63 olor`).
+A declaration requires a colon after its property name; a missing colon produces an error.
 Generic pseudo arguments keep compound and namespaced selectors, as in `:matches(a.b:hover)` and `:foo(svg|a)`.
 Legacy star-prefixed declaration names, such as `*display`, remain single property names.
 Blocks, inline declaration lists, and stylesheets accept empty semicolon statements, including between top-level rules.
@@ -45,9 +46,9 @@ reports an error.
 ## Support Scope
 
 This fork maintains only full parsing: valid input yields a correct tree, and invalid input yields `ERROR` or `MISSING`
-nodes without crashing, hanging, or taking more than linear time. Incremental parsing works as in upstream tree-sitter
-but is not tested here, and no queries (highlights, locals, injections, tags) are shipped. Node types, field names, and
-the trees that error recovery produces may change; such changes are released as new major versions.
+nodes without crashing, hanging, or taking more than linear time. No queries (highlights, locals, injections, tags) are
+shipped. Node types, field names, and the trees that error recovery produces may change; such changes are released as
+new major versions.
 
 ## Usage
 

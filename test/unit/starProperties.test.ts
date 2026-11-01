@@ -80,17 +80,12 @@ test.each([
   }
 });
 
-test.each(['display', '*display'])('an unfinished star property preserves the next declaration %s', (nextProperty) => {
+test.each(['display', '*display'])('reports a missing colon before the next declaration %s', (nextProperty) => {
   const parser = new Parser();
   parser.setLanguage(language);
   const tree = parser.parse(`a { *padding\n ${nextProperty}: flex; color: red; }`)!;
   try {
-    expect(tree.rootNode.hasError).toBe(false);
-    expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(['*padding']);
-    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual([
-      `${nextProperty}: flex;`,
-      'color: red;',
-    ]);
+    expect(tree.rootNode.hasError).toBe(true);
   } finally {
     tree.delete();
     parser.delete();
@@ -103,7 +98,6 @@ test.each(['*', '*:hover', '*|div'])('recovery lookahead preserves a nested univ
   const tree = parser.parse(`a { padding\n ${selector} { color: red; } }`)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
-    expect(tree.rootNode.descendantsOfType('incomplete_declaration')).toHaveLength(0);
     expect(tree.rootNode.descendantsOfType('universal_selector')).toHaveLength(1);
     expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.text)).toEqual(['color: red;']);
   } finally {

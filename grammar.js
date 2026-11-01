@@ -195,9 +195,6 @@ module.exports = grammar({
     [$.range_query, $._range_start_value],
     [$._selector, $._missing_declaration, $.declaration],
     [$._selector, $._missing_declaration, $.declaration, $.last_declaration],
-    [$._selector, $.incomplete_declaration, $._missing_declaration, $.declaration, $.last_declaration],
-    [$._selector, $.incomplete_declaration, $._missing_declaration, $.declaration],
-    [$._descendant_combinator, $.incomplete_declaration],
   ],
 
   rules: {
@@ -210,7 +207,6 @@ module.exports = grammar({
 
     _top_level_item: $ => choice(
       $.declaration,
-      $.incomplete_declaration,
       alias($._missing_declaration, $.declaration),
       $.rule_set,
       $.import_statement,
@@ -556,7 +552,6 @@ module.exports = grammar({
 
     _block_item: $ => choice(
       $.declaration,
-      $.incomplete_declaration,
       alias($._missing_declaration, $.declaration),
       $.rule_set,
       $.import_statement,
@@ -766,11 +761,6 @@ module.exports = grammar({
     ),
 
     _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end, $._operator_gap),
-
-    incomplete_declaration: $ => seq(
-      alias(propertyIdentifier($), $.property_name),
-      $._incomplete_declaration_end,
-    ),
 
     _missing_declaration: $ => seq(
       alias(propertyIdentifier($), $.property_name),

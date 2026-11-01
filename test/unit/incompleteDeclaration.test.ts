@@ -11,39 +11,33 @@ test.each(
   ['\n', '\r\n', '\f'].flatMap((newline) =>
     ['display', String.raw`--\61`].flatMap((property) => [' ', ''].map((gap) => [newline, property, gap]))
   )
-)(
-  'an incomplete declaration preserves following properties across %j before %s with gap %j',
-  (newline, property, gap) => {
-    const parser = new Parser();
-    parser.setLanguage(language);
-    const source = `div {${newline}  padding${newline}  ${property}:${gap}flex;${newline}  color: red;${newline}}`;
-    const tree = parser.parse(source)!;
-    try {
-      expect(tree.rootNode.hasError).toBe(false);
-      expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(['padding']);
-      const block = tree.rootNode.firstNamedChild!.namedChildren.find((node) => node.type === 'block')!;
-      const declarations = block.namedChildren.filter((node) => node.type === 'declaration');
-      expect(declarations.map((node) => node.text)).toEqual([`${property}:${gap}flex;`, 'color: red;']);
-      expect(declarations.every((node) => !node.hasError)).toBe(true);
-    } finally {
-      tree.delete();
-      parser.delete();
-    }
+)('reports a missing colon across %j before %s with gap %j', (newline, property, gap) => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const source = `div {${newline}  padding${newline}  ${property}:${gap}flex;${newline}  color: red;${newline}}`;
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.endIndex).toBe(source.length);
+  } finally {
+    tree.delete();
+    parser.delete();
   }
-);
+});
 
 test.each([
-  'div { padding\n: 1px; display: flex; }',
-  'div { padding: 1px\n 2px; display: flex; }',
-  'div { padding\n display:hover { color: red; } }',
-  'div { padding\n display { color: red; } }',
-])('valid multiline declarations and nested selectors stay complete: %s', (source) => {
+  ['div { padding\n: 1px; display: flex; }', 'display: flex;'],
+  ['div { padding: 1px\n 2px; display: flex; }', 'display: flex;'],
+  ['div { padding\n display:hover { color: red; } }', 'color: red;'],
+  ['div { padding\n display { color: red; } }', 'color: red;'],
+])('valid multiline declarations and nested selectors stay complete: %s', (source, lastDeclaration) => {
   const parser = new Parser();
   parser.setLanguage(language);
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
-    expect(tree.rootNode.descendantsOfType('incomplete_declaration')).toHaveLength(0);
+    expect(tree.rootNode.endIndex).toBe(source.length);
+    expect(tree.rootNode.descendantsOfType('declaration').at(-1)?.text).toBe(lastDeclaration);
   } finally {
     tree.delete();
     parser.delete();
@@ -56,16 +50,13 @@ test.each([
   'div { padding /* comment */\n display:/* value */flex; }',
   'div { padding\n // comment\n display:flex; }',
   'div { padding\n display/**/:flex; }',
-])('comments and top-level snippets preserve following declarations: %s', (source) => {
+])('reports missing colons in commented declarations and inline snippets: %s', (source) => {
   const parser = new Parser();
   parser.setLanguage(language);
   const tree = parser.parse(source)!;
   try {
-    expect(tree.rootNode.hasError).toBe(false);
-    expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(['padding']);
-    expect(tree.rootNode.descendantsOfType('declaration').map((node) => node.firstNamedChild?.text)).toEqual([
-      'display',
-    ]);
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.endIndex).toBe(source.length);
   } finally {
     tree.delete();
     parser.delete();
