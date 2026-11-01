@@ -96,6 +96,7 @@ module.exports = grammar({
     $._declaration_comma_gap,
     $._declaration_value_start,
     $._missing_declaration_value,
+    $._keyframes_name,
   ],
 
   inline: $ => [
@@ -380,7 +381,7 @@ module.exports = grammar({
           /@[-a-zA-Z]+[kK][eE][yY][fF][rR][aA][mM][eE][sS]/,
         ), $.at_keyword),
       ),
-      alias($.identifier, $.keyframes_name),
+      alias($._keyframes_name, $.keyframes_name),
       $.keyframe_block_list,
     ),
 

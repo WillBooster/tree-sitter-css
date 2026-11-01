@@ -1166,7 +1166,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "identifier"
+            "name": "_keyframes_name"
           },
           "named": true,
           "value": "keyframes_name"
@@ -15002,6 +15002,10 @@
     {
       "type": "SYMBOL",
       "name": "_missing_declaration_value"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_keyframes_name"
     }
   ],
   "inline": [
