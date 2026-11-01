@@ -1,8 +1,10 @@
+import path from 'node:path';
+
 import { Language, Parser } from '@willbooster/web-tree-sitter';
 import { expect, test } from 'vitest';
 
 await Parser.init();
-const language = await Language.load('tree-sitter-css.wasm');
+const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 const names = ['日本語', 'écho', 'naïve', 'a日本語', '-日本語', '--日本語', '𐐀name', 'a💩'];
 
 test.each(names.flatMap((name) => ['top', 'nested', 'group'].map((layout) => [name, layout] as const)))(
