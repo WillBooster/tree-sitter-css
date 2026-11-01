@@ -68,7 +68,6 @@ module.exports = grammar({
     $._descendant_operator,
     $.__error_recovery,
     $._at_rule_slash,
-    $._incomplete_declaration_end,
     $._value_dot,
     $._invalid_value_dot,
     $._value_ampersand,
@@ -760,7 +759,7 @@ module.exports = grammar({
       ')',
     ),
 
-    _descendant_combinator: $ => choice($._descendant_operator, $._incomplete_declaration_end, $._operator_gap),
+    _descendant_combinator: $ => choice($._descendant_operator, $._operator_gap),
 
     _missing_declaration: $ => seq(
       alias(propertyIdentifier($), $.property_name),
