@@ -8,6 +8,7 @@ static bool scan_keyframes_identifier(TSLexer *lexer);
 static bool scan_keyframes_identifier_prefix(TSLexer *lexer, bool *hyphen);
 static bool scan_keyframes_string(TSLexer *lexer);
 static bool scan_keyframes_string_escape(TSLexer *lexer, bool *content);
+static int32_t keyframes_name_character(TSLexer *lexer);
 
 static bool scan_keyframes_name(TSLexer *lexer) {
     while (is_regex_whitespace(lexer->lookahead)) skip(lexer);
@@ -20,8 +21,8 @@ static bool scan_keyframes_identifier(TSLexer *lexer) {
     unsigned length = 0;
     bool hyphen;
     if (!scan_keyframes_identifier_prefix(lexer, &hyphen)) return false;
-    while (is_name_character(lexer->lookahead) || lexer->lookahead == '\\') {
-        int32_t character = lexer->lookahead;
+    while (is_name_character(keyframes_name_character(lexer)) || lexer->lookahead == '\\') {
+        int32_t character = keyframes_name_character(lexer);
         if (character == '\\') {
             if (!scan_decoded_escape(lexer, &character)) return false;
         } else {
@@ -37,7 +38,7 @@ static bool scan_keyframes_identifier(TSLexer *lexer) {
 static bool scan_keyframes_identifier_prefix(TSLexer *lexer, bool *hyphen) {
     *hyphen = lexer->lookahead == '-';
     if (*hyphen) advance(lexer);
-    return lexer->lookahead == '\\' || is_name_start(lexer->lookahead) || (*hyphen && lexer->lookahead == '-');
+    return lexer->lookahead == '\\' || is_name_start(keyframes_name_character(lexer)) || (*hyphen && lexer->lookahead == '-');
 }
 
 static bool scan_keyframes_string(TSLexer *lexer) {
@@ -70,6 +71,10 @@ static bool scan_keyframes_string_escape(TSLexer *lexer, bool *content) {
     advance(lexer);
     if (newline == '\r' && lexer->lookahead == '\n') advance(lexer);
     return true;
+}
+
+static int32_t keyframes_name_character(TSLexer *lexer) {
+    return lexer->lookahead == 0 && !lexer->eof(lexer) ? 0xFFFD : lexer->lookahead;
 }
 
 #endif

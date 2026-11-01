@@ -318,7 +318,7 @@ static bool scan_import_component_list(TSLexer *lexer, int32_t terminator) {
     return valid;
 }
 
-// code-gauge-allow functionCognitiveComplexity 20 -- Existing delimiter-stack transitions are separate from keyframe names; splitting this loop would obscure their order.
+// code-gauge-allow functionCognitiveComplexity 20 -- Delimiter-stack transitions must preserve the order of cursor updates.
 static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator) {
     bool component = false;
     while (!lexer->eof(lexer)) {

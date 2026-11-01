@@ -7,6 +7,13 @@ await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 const reserved = ['none', 'initial', 'inherit', 'unset', 'revert', 'revert-layer', 'revert-rule', 'default'];
 const validNames = [
+  ...reserved.flatMap((name) => [
+    name + String.fromCodePoint(0),
+    name + String.fromCodePoint(92, 0),
+    name + String.raw`\0`,
+  ]),
+  String.fromCodePoint(0) + 'lead',
+  '-' + String.fromCodePoint(0) + 'x',
   'MixedCase',
   '--',
   '--1',
@@ -35,7 +42,7 @@ const validNames = [
 test.each(validNames.flatMap((name) => ['top', 'group'].map((layout) => [name, layout] as const)))(
   'parses keyframe name %s in %s context',
   (name, layout) => {
-    const animation = `@keyframes ${name} { 0% { opacity: 0; } 100% { opacity: 1; } }`;
+    const animation = `@keyframes ${name}{ 0% { opacity: 0; } 100% { opacity: 1; } }`;
     const source = (layout === 'group' ? `@media all { ${animation} }` : animation) + ' .after { color: blue; }';
     const parser = new Parser().setLanguage(language);
     const tree = parser.parse(source)!;

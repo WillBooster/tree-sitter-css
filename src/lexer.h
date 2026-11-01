@@ -254,7 +254,7 @@ static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded) {
         return false;
     }
     if (!is_hex_digit(lexer->lookahead)) {
-        if (decoded) *decoded = lexer->lookahead;
+        if (decoded) *decoded = lexer->lookahead == 0 ? 0xFFFD : lexer->lookahead;
         advance(lexer);
         return true;
     }
