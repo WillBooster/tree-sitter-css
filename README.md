@@ -14,7 +14,7 @@ to its authors and contributors. This is not an official release of that project
 
 This fork is based on upstream's version 0.23.2 grammar and generates the parser with the
 [WillBooster/tree-sitter](https://github.com/WillBooster/tree-sitter) generator. The parser carries that fork's own ABI
-number (`0x5742000b`) and is tested with that fork's runtime 15.5.4. Upstream's tree-sitter runtime
+number (`0x5742000b`) and is tested with that fork's runtime 16.0.2. Upstream's tree-sitter runtime
 rejects it; newer fork runtimes with a different minimum grammar ABI also require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
 Imports expose optional layer assignment and support conditions before media queries.
@@ -53,7 +53,7 @@ new major versions.
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
-[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 15.5.4), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
+[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 16.0.2), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
 
 ```js
 import { fileURLToPath } from 'node:url';
@@ -99,7 +99,7 @@ In Rust, depend on the [crate](https://crates.io/crates/willbooster-tree-sitter-
 fuzzed with:
 
 ```sh
-cargo add willbooster-tree-sitter@=15.5.4 --rename tree-sitter
+cargo add willbooster-tree-sitter@=16.0.2 --rename tree-sitter
 cargo add willbooster-tree-sitter-css --rename tree-sitter-css
 ```
 
