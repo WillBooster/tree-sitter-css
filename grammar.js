@@ -14,13 +14,6 @@ const valueSlash = token(prec(-2, '/'));
 const openingBracket = token(prec(1, '['));
 const attributeMatchOperator = choice('=', '~=', '^=', '|=', '*=', '$=');
 const cssEscape = /\\(?:[0-9a-fA-F]{1,6}(?:[ \t\n\f]|\r\n?)?|[^0-9a-fA-F\n\r\f])/;
-const atKeywordName = seq(
-  choice('--', seq(optional('-'), choice(/[a-zA-Z_]/, cssEscape))),
-  repeat(choice(/[-a-zA-Z0-9_]/, cssEscape)),
-);
-// A lone `@` token would be the only conflict-free `@` token, which drops at-keywords from the error-recovery lexer
-// so that an at-rule after an error is swallowed; spanning the at-keyword name and losing to it keeps them there.
-const valueAt = token(prec(-1, seq('@', optional(atKeywordName))));
 const genericNameCharacter = choice(/[-\w\u0080-\u{10FFFF}]/u, cssEscape);
 const genericName = repeat1(genericNameCharacter);
 
@@ -36,6 +29,10 @@ const idName = seq(
   choice('--', seq(optional('-'), choice(nameStart, cssEscape))),
   repeat(choice(nameContinue, cssEscape)),
 );
+
+// A lone `@` token would be the only conflict-free `@` token, which drops at-keywords from the error-recovery lexer
+// so that an at-rule after an error is swallowed; spanning the at-keyword name and losing to it keeps them there.
+const valueAt = token(prec(-1, seq('@', optional(idName))));
 
 const escapedName = escapedIdentifier(optional(choice(
   '-',
@@ -1130,7 +1127,7 @@ module.exports = grammar({
       )), 1), $.identifier),
     ),
 
-    at_keyword: _ => token(seq('@', atKeywordName)),
+    at_keyword: _ => token(seq('@', idName)),
 
     js_comment: _ => token(prec(-1, seq('//', /.*/))),
 
