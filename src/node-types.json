@@ -1282,6 +1282,11 @@
     }
   },
   {
+    "type": "function_name",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "general_enclosed_query",
     "named": true,
     "fields": {},
@@ -1740,6 +1745,11 @@
     }
   },
   {
+    "type": "keyword_query",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "layer_name",
     "named": true,
     "fields": {},
@@ -1815,6 +1825,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "namespace_name",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "namespace_selector",
@@ -2055,6 +2070,11 @@
   },
   {
     "type": "plain_value",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "property_name",
     "named": true,
     "fields": {}
   },
@@ -2743,6 +2763,21 @@
     }
   },
   {
+    "type": "tag_name",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "to",
+    "named": false,
+    "fields": {}
+  },
+  {
+    "type": "to",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "unary_query",
     "named": true,
     "fields": {},
@@ -2968,10 +3003,6 @@
     "named": true
   },
   {
-    "type": "function_name",
-    "named": true
-  },
-  {
     "type": "hash_value",
     "named": true
   },
@@ -2997,20 +3028,12 @@
     "named": true
   },
   {
-    "type": "keyword_query",
-    "named": true
-  },
-  {
     "type": "layer",
     "named": false
   },
   {
     "type": "layer(",
     "named": false
-  },
-  {
-    "type": "namespace_name",
-    "named": true
   },
   {
     "type": "not",
@@ -3029,10 +3052,6 @@
     "named": false
   },
   {
-    "type": "property_name",
-    "named": true
-  },
-  {
     "type": "selector",
     "named": false
   },
@@ -3047,18 +3066,6 @@
   {
     "type": "supports(",
     "named": false
-  },
-  {
-    "type": "tag_name",
-    "named": true
-  },
-  {
-    "type": "to",
-    "named": false
-  },
-  {
-    "type": "to",
-    "named": true
   },
   {
     "type": "unit",
