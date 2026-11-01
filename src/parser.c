@@ -5748,19 +5748,13 @@ static const uint32_t ts_lex_ascii_set_3[] = {0xffffffff, 0x8000007f, 0x00000000
 static const uint32_t ts_lex_ascii_set_4[] = {0xffffffff, 0xffffffff, 0x40000000, 0xf0000001};
 static const uint32_t ts_lex_ascii_set_5[] = {0xffffffff, 0xfffffc7f, 0x40000000, 0x80000001};
 static const uint32_t ts_lex_ascii_set_6[] = {0xffffffff, 0x8000003f, 0x00000000, 0x80000001};
-static const uint32_t ts_lex_ascii_set_7[] = {0x00000000, 0x00002000, 0x87fffffe, 0x07fffffe};
-static const uint32_t ts_lex_ascii_set_8[] = {0xffffc9ff, 0x00000384, 0x00000000, 0x80000000};
-static const uint32_t ts_lex_ascii_set_9[] = {0xffffffff, 0x00000385, 0x00000000, 0x80000000};
-static const uint32_t ts_lex_ascii_set_10[] = {0xfffffbff, 0x00000385, 0x00000000, 0x80000000};
-static const uint32_t ts_lex_ascii_set_11[] = {0x00000000, 0x03ff2000, 0x87fffffe, 0x07fffffe};
-static const uint32_t ts_lex_ascii_set_12[] = {0x00000000, 0x00002000, 0x87ffff80, 0x07ffff80};
-static const uint32_t ts_lex_ascii_set_13[] = {0x00001600, 0x00002001, 0x87ffff80, 0x07ffff80};
-static const uint32_t ts_lex_ascii_set_14[] = {0x00000400, 0x03ff2000, 0x87fffffe, 0x07fffffe};
-static const uint32_t ts_lex_ascii_set_15[] = {0x00000000, 0x03ff2000, 0x87fffffc, 0x07fffffc};
-static const uint32_t ts_lex_ascii_set_16[] = {0x00003a00, 0x08001385, 0x38000000, 0x28000000};
-static const uint32_t ts_lex_ascii_set_17[] = {0x00003a00, 0x0c001703, 0x28000000, 0x28000000};
-static const uint32_t ts_lex_ascii_set_18[] = {0x00003a00, 0x4c005f0b, 0x28000000, 0x78000000};
-static const uint32_t ts_lex_ascii_set_19[] = {0x00000a00, 0x4c005b0b, 0x28000000, 0x78000000};
+static const uint32_t ts_lex_ascii_set_7[] = {0xffffc9ff, 0x00000384, 0x00000000, 0x80000000};
+static const uint32_t ts_lex_ascii_set_8[] = {0xffffffff, 0x00000385, 0x00000000, 0x80000000};
+static const uint32_t ts_lex_ascii_set_9[] = {0xfffffbff, 0x00000385, 0x00000000, 0x80000000};
+static const uint32_t ts_lex_ascii_set_10[] = {0x00003a00, 0x08001385, 0x38000000, 0x28000000};
+static const uint32_t ts_lex_ascii_set_11[] = {0x00003a00, 0x0c001703, 0x28000000, 0x28000000};
+static const uint32_t ts_lex_ascii_set_12[] = {0x00003a00, 0x4c005f0b, 0x28000000, 0x78000000};
+static const uint32_t ts_lex_ascii_set_13[] = {0x00000a00, 0x4c005b0b, 0x28000000, 0x78000000};
 static inline bool ts_lex_ascii_contains(const uint32_t *bits, int32_t lookahead) {
   return (uint32_t)lookahead < 128 && ((bits[lookahead / 32] >> (lookahead % 32)) & 1);
 }
@@ -5799,12 +5793,6 @@ static const TSCharacterRange ts_lex_sym_at_rule_url_character_set_1[] = {
 static const uint32_t ts_lex_aux_sym_pseudo_class_arguments_token1_character_set_1_ascii[] = {0x00003600, 0x03ff2001, 0x97fffffe, 0x07fffffe};
 static const TSCharacterRange ts_lex_aux_sym_pseudo_class_arguments_token1_character_set_1[] = {
   {0x80, 0x10ffff},
-};
-
-static const uint32_t ts_lex_aux_sym__pseudo_operand_token1_character_set_1_ascii[] = {0x00003600, 0x03ff2001, 0x97fffffe, 0x07fffffe};
-static const TSCharacterRange ts_lex_aux_sym__pseudo_operand_token1_character_set_1[] = {
-  {0, 0},
-
 };
 
 static const uint32_t ts_lex_aux_sym__pseudo_operand_token2_character_set_1_ascii[] = {0x00000000, 0x00000000, 0x00000000, 0x00000000};
@@ -9562,8 +9550,7 @@ static uint8_t ts_lex_0(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
     case 160:
       TS_LEX_ADVANCE_MAP_SORTED(ts_lex_advance_map_2);
       if (('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 161:
       TS_LEX_ADVANCE_MAP_SORTED(ts_lex_advance_map_3);
@@ -11451,8 +11438,7 @@ static uint8_t ts_lex_1(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 394:
       if (lookahead == '\\') ADVANCE(344);
@@ -11467,7 +11453,7 @@ static uint8_t ts_lex_1(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       END_STATE();
     case 396:
       if (lookahead == '\\') ADVANCE(462);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_7, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_1_ascii, ts_lex_sym__star_property_name_character_set_1, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 397:
       if (lookahead == '\\') ADVANCE(345);
@@ -11949,9 +11935,7 @@ static uint8_t ts_lex_1(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 488:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -12564,7 +12548,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(553);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_7, lookahead))) ADVANCE(157);
       if (lookahead > 0x08) ADVANCE(558);
       END_STATE();
     case 549:
@@ -12576,7 +12560,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(548);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_7, lookahead))) ADVANCE(157);
       if (lookahead > 0x08) ADVANCE(558);
       END_STATE();
     case 550:
@@ -12588,7 +12572,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(549);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_7, lookahead))) ADVANCE(157);
       if (lookahead > 0x08) ADVANCE(558);
       END_STATE();
     case 551:
@@ -12600,7 +12584,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(550);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_7, lookahead))) ADVANCE(157);
       if (lookahead > 0x08) ADVANCE(558);
       END_STATE();
     case 552:
@@ -12612,7 +12596,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(551);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_7, lookahead))) ADVANCE(157);
       if (lookahead > 0x08) ADVANCE(558);
       END_STATE();
     case 553:
@@ -12621,7 +12605,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == '\r') ADVANCE(557);
       if (lookahead == '*') ADVANCE(556);
       if (lookahead == '\\') ADVANCE(158);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_7, lookahead))) ADVANCE(157);
       if (lookahead > 0x08) ADVANCE(558);
       END_STATE();
     case 554:
@@ -12651,7 +12635,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == '*') TS_LEX_REPEAT(false, ts_lex_state_556);
       if (lookahead == '/') ADVANCE(564);
       if (lookahead == '\\') ADVANCE(158);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_9, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
       if (lookahead > ' ') ADVANCE(558);
       END_STATE();
     case 557:
@@ -12659,7 +12643,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       ACCEPT_TOKEN(aux_sym__import_url_arguments_token1);
       if (lookahead == '*') ADVANCE(556);
       if (lookahead == '\\') ADVANCE(158);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_10, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_9, lookahead))) ADVANCE(157);
       if (lookahead > '\t') ADVANCE(558);
       END_STATE();
     case 558:
@@ -12668,7 +12652,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       ACCEPT_TOKEN(aux_sym__import_url_arguments_token1);
       if (lookahead == '*') ADVANCE(556);
       if (lookahead == '\\') ADVANCE(158);
-      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_9, lookahead))) ADVANCE(157);
+      if ((!eof && ts_lex_ascii_contains(ts_lex_ascii_set_8, lookahead))) ADVANCE(157);
       if (lookahead > ' ') TS_LEX_REPEAT(false, ts_lex_state_558);
       END_STATE();
     case 559:
@@ -12748,9 +12732,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 567:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -12759,9 +12741,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 568:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -12770,9 +12750,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 569:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -12951,9 +12929,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 582:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -12962,9 +12938,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 583:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -13151,16 +13125,14 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 598:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym__container_keyword);
       if (lookahead == '\n') ADVANCE(605);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 599:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -13174,7 +13146,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 600:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -13188,7 +13160,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 601:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -13202,7 +13174,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 602:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -13216,7 +13188,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 603:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -13227,7 +13199,7 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(605);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 604:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -13236,15 +13208,13 @@ static uint8_t ts_lex_2(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 605:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym__container_keyword);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 606:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17273,7 +17243,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       ACCEPT_TOKEN(sym__layer_keyword);
       if (lookahead == '\n') ADVANCE(811);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 805:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17287,7 +17257,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 806:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17301,7 +17271,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 807:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17315,7 +17285,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 808:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17329,7 +17299,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 809:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17340,7 +17310,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(811);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 810:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17349,22 +17319,20 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 811:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym__layer_keyword);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 812:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym__scope_keyword);
       if (lookahead == '\n') ADVANCE(819);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 813:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17378,7 +17346,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 814:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17392,7 +17360,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 815:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17406,7 +17374,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 816:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17420,7 +17388,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 817:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17431,7 +17399,7 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(819);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 818:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -17440,15 +17408,13 @@ static uint8_t ts_lex_3(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 819:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym__scope_keyword);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 820:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -37917,7 +37883,7 @@ static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1997);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 1993:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -37927,7 +37893,7 @@ static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1992);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 1994:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -37937,7 +37903,7 @@ static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1993);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 1995:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -37947,7 +37913,7 @@ static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1994);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 1996:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -37957,44 +37923,41 @@ static uint8_t ts_lex_7(TSLexer *lexer, TSStateId *state_out, bool *result_out, 
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1995);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 1997:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(aux_sym__pseudo_operand_token1);
       if (lookahead == '\r') ADVANCE(2001);
       if (lookahead == '\\') ADVANCE(462);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token1_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token1_character_set_1, 0, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_2_ascii, ts_lex_sym__custom_property_component_character_set_2, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 1998:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(aux_sym__pseudo_operand_token1);
       TS_LEX_ADVANCE_MAP_SORTED(ts_lex_advance_map_2);
       if (('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 1999:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(aux_sym__pseudo_operand_token1);
       if (lookahead == '-') ADVANCE(396);
       if (lookahead == '\\') ADVANCE(462);
-      if (('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_' ||
-          ('a' <= lookahead && lookahead <= 'z')) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__escaped_identifier_token1_character_set_1_ascii, ts_lex_aux_sym__escaped_identifier_token1_character_set_1, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 2000:
       ts_lex_state_2000:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(aux_sym__pseudo_operand_token1);
       if (lookahead == '\\') ADVANCE(462);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) TS_LEX_REPEAT(false, ts_lex_state_2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) TS_LEX_REPEAT(false, ts_lex_state_2000);
       END_STATE();
     case 2001:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(aux_sym__pseudo_operand_token1);
       if (lookahead == '\\') ADVANCE(462);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_14, lookahead)) ADVANCE(2000);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_4_ascii, ts_lex_sym__custom_property_component_character_set_4, 13, lookahead)) ADVANCE(2000);
       END_STATE();
     case 2002:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54912,7 +54875,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(192);
       if (lookahead == 'O' ||
           lookahead == 'o') ADVANCE(3415);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3138:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54921,7 +54884,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(208);
       if (lookahead == 'A' ||
           lookahead == 'a') ADVANCE(3421);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_15, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3139:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54930,7 +54893,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(222);
       if (lookahead == 'C' ||
           lookahead == 'c') ADVANCE(3422);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3140:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54939,7 +54902,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(233);
       if (lookahead == 'N' ||
           lookahead == 'n') ADVANCE(3417);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3141:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54948,7 +54911,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(193);
       if (lookahead == 'Y' ||
           lookahead == 'y') ADVANCE(3472);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3142:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54957,7 +54920,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(209);
       if (lookahead == 'T' ||
           lookahead == 't') ADVANCE(3473);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3143:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54966,7 +54929,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(261);
       if (lookahead == 'E' ||
           lookahead == 'e') ADVANCE(3423);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3144:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54975,7 +54938,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(223);
       if (lookahead == 'P' ||
           lookahead == 'p') ADVANCE(3474);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3145:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54984,7 +54947,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(244);
       if (lookahead == 'R' ||
           lookahead == 'r') ADVANCE(811);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3146:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -54993,7 +54956,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(293);
       if (lookahead == 'I' ||
           lookahead == 'i') ADVANCE(3418);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3147:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55002,7 +54965,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(334);
       if (lookahead == 'O' ||
           lookahead == 'o') ADVANCE(3413);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3148:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55011,7 +54974,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(278);
       if (lookahead == 'A' ||
           lookahead == 'a') ADVANCE(3414);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_15, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3149:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55020,7 +54983,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(299);
       if (lookahead == 'N' ||
           lookahead == 'n') ADVANCE(3475);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3150:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55029,7 +54992,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(288);
       if (lookahead == 'E' ||
           lookahead == 'e') ADVANCE(819);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3151:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55038,7 +55001,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(271);
       if (lookahead == 'R' ||
           lookahead == 'r') ADVANCE(605);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3152:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55047,7 +55010,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(337);
       if (lookahead == 'E' ||
           lookahead == 'e') ADVANCE(3471);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3153:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55061,7 +55024,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3154:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55074,7 +55037,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3155:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55087,7 +55050,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3156:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55101,7 +55064,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3157:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55114,7 +55077,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3158:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55127,7 +55090,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3159:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55138,7 +55101,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3160:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55151,7 +55114,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3161:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55164,7 +55127,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3162:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55177,7 +55140,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3163:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55190,7 +55153,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3164:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55203,7 +55166,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3165:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55216,7 +55179,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3166:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55229,7 +55192,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3167:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55242,7 +55205,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3168:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55255,7 +55218,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3169:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55268,7 +55231,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3170:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55281,7 +55244,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3171:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55294,7 +55257,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3172:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55307,7 +55270,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3173:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55318,7 +55281,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3174:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55331,7 +55294,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3175:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55344,7 +55307,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3176:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55357,7 +55320,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3177:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55370,7 +55333,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3178:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55383,7 +55346,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3179:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55396,7 +55359,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3180:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55409,7 +55372,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3181:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55422,7 +55385,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3182:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55433,7 +55396,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3183:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55446,7 +55409,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3184:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55459,7 +55422,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3185:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55470,7 +55433,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3186:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55483,7 +55446,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3187:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55496,7 +55459,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3188:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55509,7 +55472,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3189:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55522,7 +55485,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3190:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55535,7 +55498,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3191:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55549,7 +55512,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3192:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55562,7 +55525,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3193:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55575,7 +55538,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3194:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55588,7 +55551,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3195:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55601,7 +55564,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3196:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55614,7 +55577,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3197:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55627,7 +55590,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3198:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55640,7 +55603,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3199:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55653,7 +55616,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3200:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55666,7 +55629,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3201:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55679,7 +55642,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3202:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55692,7 +55655,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3203:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55705,7 +55668,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3204:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55716,7 +55679,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3205:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55729,7 +55692,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3206:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55742,7 +55705,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3207:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55755,7 +55718,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3208:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55768,7 +55731,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3209:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55779,7 +55742,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3210:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55790,7 +55753,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3211:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55801,7 +55764,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3212:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55812,7 +55775,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3213:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55823,7 +55786,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3214:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55834,7 +55797,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3215:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55845,7 +55808,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3216:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55856,7 +55819,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3217:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55867,7 +55830,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3218:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55878,7 +55841,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3219:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55889,7 +55852,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3220:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55900,7 +55863,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3221:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55911,7 +55874,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3222:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55922,7 +55885,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3223:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55933,7 +55896,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3224:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55944,7 +55907,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3225:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55955,7 +55918,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3226:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55966,7 +55929,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3227:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55977,7 +55940,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3228:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -55988,7 +55951,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3229:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56001,7 +55964,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3230:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56014,7 +55977,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3231:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56025,7 +55988,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3232:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56036,7 +55999,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3233:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56047,7 +56010,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3234:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56058,7 +56021,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3235:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56071,7 +56034,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3236:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56082,7 +56045,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3237:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56095,7 +56058,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3238:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56106,7 +56069,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3239:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56117,7 +56080,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3240:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56128,7 +56091,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3241:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56141,7 +56104,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3242:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56152,7 +56115,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3243:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56163,7 +56126,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3244:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56174,7 +56137,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3245:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56185,7 +56148,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3246:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56196,7 +56159,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3247:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56207,7 +56170,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3248:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56218,7 +56181,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3249:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56229,7 +56192,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3250:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56240,7 +56203,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3251:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56251,7 +56214,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3252:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56262,7 +56225,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3253:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56273,7 +56236,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3254:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56284,7 +56247,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3255:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56295,7 +56258,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3256:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56306,7 +56269,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3257:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56317,7 +56280,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3258:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56328,7 +56291,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3259:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56339,7 +56302,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3260:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56350,7 +56313,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3261:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56361,7 +56324,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3262:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56372,7 +56335,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3263:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56383,7 +56346,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3264:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56394,7 +56357,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3265:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56405,7 +56368,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3266:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56416,7 +56379,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3267:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56427,7 +56390,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3268:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56438,7 +56401,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3269:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56449,7 +56412,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3270:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56460,7 +56423,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3271:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56471,7 +56434,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3272:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56482,7 +56445,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3273:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56493,7 +56456,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '8') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3274:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56506,7 +56469,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3275:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56518,7 +56481,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3276:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56530,7 +56493,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3277:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56542,7 +56505,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3278:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56554,7 +56517,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3279:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56566,7 +56529,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3280:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56578,7 +56541,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3281:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56590,7 +56553,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3282:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56602,7 +56565,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3283:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56614,7 +56577,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3284:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56626,7 +56589,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3285:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56638,7 +56601,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3286:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56650,7 +56613,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3287:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56662,7 +56625,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3288:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56674,7 +56637,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3289:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56686,7 +56649,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3290:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56698,7 +56661,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3291:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56710,7 +56673,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3292:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56722,7 +56685,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3293:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56734,7 +56697,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3294:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56746,7 +56709,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3295:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56758,7 +56721,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3296:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56770,7 +56733,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3297:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56782,7 +56745,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3298:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56794,7 +56757,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3299:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56806,7 +56769,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3300:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56818,7 +56781,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3301:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56830,7 +56793,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3302:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56842,7 +56805,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3303:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56854,7 +56817,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3304:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56866,7 +56829,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3305:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56878,7 +56841,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3306:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56890,7 +56853,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3307:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56902,7 +56865,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3308:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56914,7 +56877,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3309:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56926,7 +56889,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3310:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56938,7 +56901,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'E') ||
           ('a' <= lookahead && lookahead <= 'e')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3311:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56948,7 +56911,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3312:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56958,7 +56921,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3313:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56968,7 +56931,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3314:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56978,7 +56941,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3315:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -56988,14 +56951,14 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3314);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_3_ascii, ts_lex_sym__custom_property_component_character_set_3, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3316:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_at_keyword);
       if (lookahead == '\r') ADVANCE(3470);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_set_contains_with_ascii(ts_lex_aux_sym__pseudo_operand_token1_character_set_1_ascii, ts_lex_aux_sym__pseudo_operand_token1_character_set_1, 0, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_2_ascii, ts_lex_sym__custom_property_component_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3317:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57011,7 +56974,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3318:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57027,7 +56990,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3319:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57043,7 +57006,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3320:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57059,7 +57022,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3321:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57072,7 +57035,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3419);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3322:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57085,7 +57048,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3416);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_15, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3323:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57099,7 +57062,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3324:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57113,7 +57076,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3325:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57127,7 +57090,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3326:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57141,7 +57104,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3327:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57154,7 +57117,7 @@ static uint8_t ts_lex_12(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3420);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     default:
       *state_out = state;
@@ -57190,7 +57153,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3329:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57204,7 +57167,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3330:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57218,7 +57181,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3331:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57232,7 +57195,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3332:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57248,7 +57211,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3333:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57264,7 +57227,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3334:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57280,7 +57243,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3335:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57296,7 +57259,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3336:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57309,7 +57272,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3415);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3337:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57325,7 +57288,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3338:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57341,7 +57304,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3339:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57357,7 +57320,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3340:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57373,7 +57336,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3341:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57386,7 +57349,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3421);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3342:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57402,7 +57365,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3343:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57418,7 +57381,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3344:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57434,7 +57397,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3345:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57450,7 +57413,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3346:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57463,7 +57426,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3417);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3347:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57476,7 +57439,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3472);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3348:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57490,7 +57453,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3349:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57504,7 +57467,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3350:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57518,7 +57481,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3351:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57532,7 +57495,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3352:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57548,7 +57511,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3353:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57564,7 +57527,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3354:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57580,7 +57543,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3355:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57596,7 +57559,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3356:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57609,7 +57572,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3413);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3357:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57625,7 +57588,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3358:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57641,7 +57604,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3359:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57657,7 +57620,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3360:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57673,7 +57636,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3361:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57686,7 +57649,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3423);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3362:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57702,7 +57665,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3363:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57718,7 +57681,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3364:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57734,7 +57697,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3365:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57750,7 +57713,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3366:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57763,7 +57726,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3414);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3367:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57779,7 +57742,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3368:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57795,7 +57758,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3369:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57811,7 +57774,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3370:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57827,7 +57790,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3371:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57840,7 +57803,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3422);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3372:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57853,7 +57816,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3473);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_15, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3373:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57867,7 +57830,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3374:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57881,7 +57844,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3375:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57895,7 +57858,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3376:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57909,7 +57872,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3377:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57925,7 +57888,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3378:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57941,7 +57904,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3379:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57957,7 +57920,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3380:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57973,7 +57936,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3381:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57986,7 +57949,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3418);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3382:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -57999,7 +57962,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3474);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3383:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58013,7 +57976,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3384:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58027,7 +57990,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3385:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58041,7 +58004,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3386:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58055,7 +58018,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3387:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58071,7 +58034,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3388:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58087,7 +58050,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3389:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58103,7 +58066,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3390:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58119,7 +58082,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3391:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58132,7 +58095,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3471);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3392:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58145,7 +58108,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '\n' ||
           lookahead == '\f' ||
           lookahead == ' ') ADVANCE(3475);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3393:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58159,7 +58122,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3316);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3394:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58173,7 +58136,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3311);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3395:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58187,7 +58150,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3312);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3396:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58201,7 +58164,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(3313);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3397:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58212,9 +58175,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('B' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3398:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58225,9 +58186,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('B' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3399:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58239,9 +58198,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'u') ADVANCE(3452);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3400:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58252,9 +58209,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3401:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58265,9 +58220,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3402:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58278,9 +58231,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3403:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58291,9 +58242,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3404:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58304,9 +58253,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'n') ADVANCE(3411);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3405:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58317,9 +58264,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'n') ADVANCE(3402);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3406:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58331,9 +58276,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'o') ADVANCE(3404);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3407:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58344,9 +58287,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'o') ADVANCE(3408);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3408:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58357,9 +58298,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'p') ADVANCE(3401);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3409:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58370,9 +58309,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'r') ADVANCE(810);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3410:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58383,9 +58320,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'r') ADVANCE(604);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3411:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58396,9 +58331,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 't') ADVANCE(3398);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3412:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58409,9 +58342,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'y') ADVANCE(3400);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3413:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58419,7 +58350,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(223);
       if (lookahead == 'P' ||
           lookahead == 'p') ADVANCE(3474);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3414:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58427,7 +58358,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(293);
       if (lookahead == 'I' ||
           lookahead == 'i') ADVANCE(3418);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3415:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58435,7 +58366,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(233);
       if (lookahead == 'N' ||
           lookahead == 'n') ADVANCE(3417);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3416:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58443,7 +58374,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(208);
       if (lookahead == 'A' ||
           lookahead == 'a') ADVANCE(3421);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_15, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3417:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58451,7 +58382,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(209);
       if (lookahead == 'T' ||
           lookahead == 't') ADVANCE(3473);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3418:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58459,7 +58390,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(299);
       if (lookahead == 'N' ||
           lookahead == 'n') ADVANCE(3475);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3419:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58467,7 +58398,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(192);
       if (lookahead == 'O' ||
           lookahead == 'o') ADVANCE(3415);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3420:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58475,7 +58406,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(222);
       if (lookahead == 'C' ||
           lookahead == 'c') ADVANCE(3422);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3421:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58483,7 +58414,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(193);
       if (lookahead == 'Y' ||
           lookahead == 'y') ADVANCE(3472);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3422:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58491,7 +58422,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(334);
       if (lookahead == 'O' ||
           lookahead == 'o') ADVANCE(3413);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3423:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58499,7 +58430,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(244);
       if (lookahead == 'R' ||
           lookahead == 'r') ADVANCE(811);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3424:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58509,9 +58440,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3425:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58521,9 +58450,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3426:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58533,9 +58460,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3427:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58545,9 +58470,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3428:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58557,9 +58480,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3429:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58569,9 +58490,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('b' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3430:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58581,9 +58500,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3431:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58593,9 +58510,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3432:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58605,9 +58520,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3433:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58617,9 +58530,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3434:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58629,9 +58540,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3435:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58641,9 +58550,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3436:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58653,9 +58560,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3437:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58665,9 +58570,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3438:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58677,9 +58580,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3439:
       ts_lex_state_3439:
@@ -58690,9 +58591,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') TS_LEX_REPEAT(false, ts_lex_state_3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3440:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58702,9 +58601,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3441:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58714,9 +58611,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3442:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58726,9 +58621,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3443:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58738,9 +58631,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'm') ADVANCE(3449);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3444:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58750,9 +58641,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'm') ADVANCE(3435);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3445:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58762,9 +58651,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'm') ADVANCE(3437);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3446:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58774,9 +58661,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'm') ADVANCE(3438);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3447:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58786,9 +58671,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'o') ADVANCE(3454);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3448:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58798,9 +58681,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'o') ADVANCE(3455);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3449:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58810,9 +58691,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'p') ADVANCE(3447);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3450:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58822,9 +58701,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'p') ADVANCE(3426);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3451:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58834,9 +58711,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'p') ADVANCE(3448);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3452:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58846,9 +58721,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'p') ADVANCE(3451);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3453:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58858,9 +58731,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'r') ADVANCE(3462);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3454:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58870,9 +58741,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'r') ADVANCE(3463);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3455:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58882,9 +58751,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'r') ADVANCE(3465);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3456:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58894,9 +58761,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'r') ADVANCE(3428);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3457:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58906,9 +58771,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'r') ADVANCE(3429);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3458:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58918,9 +58781,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 's') ADVANCE(597);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3459:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58930,9 +58791,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 's') ADVANCE(581);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3460:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58942,9 +58801,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 's') ADVANCE(582);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3461:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58954,9 +58811,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 's') ADVANCE(3450);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3462:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58966,9 +58821,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 's') ADVANCE(3436);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3463:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58978,9 +58831,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 't') ADVANCE(487);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3464:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -58990,9 +58841,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 't') ADVANCE(567);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3465:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59002,9 +58851,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 't') ADVANCE(3458);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3466:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59014,9 +58861,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'y') ADVANCE(3440);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3467:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59026,9 +58871,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'y') ADVANCE(3441);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3468:
       ts_lex_state_3468:
@@ -59038,22 +58881,20 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == 'k') ADVANCE(3439);
       if (lookahead == '-' ||
           ('a' <= lookahead && lookahead <= 'z')) TS_LEX_REPEAT(false, ts_lex_state_3468);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
-          lookahead == '_') ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3469:
       ts_lex_state_3469:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_at_keyword);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) TS_LEX_REPEAT(false, ts_lex_state_3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) TS_LEX_REPEAT(false, ts_lex_state_3469);
       END_STATE();
     case 3470:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_at_keyword);
       if (lookahead == '\\') ADVANCE(457);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_14, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__custom_property_component_character_set_4_ascii, ts_lex_sym__custom_property_component_character_set_4, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3471:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59061,7 +58902,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(271);
       if (lookahead == 'R' ||
           lookahead == 'r') ADVANCE(605);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3472:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59069,7 +58910,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(261);
       if (lookahead == 'E' ||
           lookahead == 'e') ADVANCE(3423);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3473:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59077,7 +58918,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(278);
       if (lookahead == 'A' ||
           lookahead == 'a') ADVANCE(3414);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_15, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3474:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59085,7 +58926,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(288);
       if (lookahead == 'E' ||
           lookahead == 'e') ADVANCE(819);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3475:
       lexer->mark_start(lexer, &start_tags[0]);
@@ -59093,7 +58934,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '\\') ADVANCE(337);
       if (lookahead == 'E' ||
           lookahead == 'e') ADVANCE(3471);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3469);
+      if (ts_lex_set_contains_with_ascii(ts_lex_sym__star_property_name_character_set_2_ascii, ts_lex_sym__star_property_name_character_set_2, 13, lookahead)) ADVANCE(3469);
       END_STATE();
     case 3476:
       ts_lex_state_3476:
@@ -59133,35 +58974,35 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
     case 3479:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_js_comment);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_16, lookahead)) ADVANCE(3484);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_10, lookahead)) ADVANCE(3484);
       if (!eof &&
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(944);
       END_STATE();
     case 3480:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_js_comment);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_17, lookahead)) ADVANCE(3484);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3484);
       if (!eof &&
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(3477);
       END_STATE();
     case 3481:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_js_comment);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_17, lookahead)) ADVANCE(3484);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_11, lookahead)) ADVANCE(3484);
       if (!eof &&
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(3502);
       END_STATE();
     case 3482:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_js_comment);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_18, lookahead)) ADVANCE(3484);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3484);
       if (!eof &&
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(3476);
       END_STATE();
     case 3483:
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym_js_comment);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_18, lookahead)) ADVANCE(3484);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_12, lookahead)) ADVANCE(3484);
       if (!eof &&
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(3519);
       END_STATE();
@@ -59350,7 +59191,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '6') ADVANCE(1147);
       if (lookahead == 'N' ||
           lookahead == 'n') ADVANCE(1888);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59366,7 +59207,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '7') ADVANCE(1090);
       if (lookahead == 'R' ||
           lookahead == 'r') ADVANCE(750);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59382,7 +59223,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '6') ADVANCE(1136);
       if (lookahead == 'L' ||
           lookahead == 'l') ADVANCE(1867);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59398,7 +59239,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '7') ADVANCE(1100);
       if (lookahead == 'T' ||
           lookahead == 't') ADVANCE(1889);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59414,7 +59255,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '6') ADVANCE(1151);
       if (lookahead == 'O' ||
           lookahead == 'o') ADVANCE(1891);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59430,7 +59271,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '7') ADVANCE(1102);
       if (lookahead == 'T' ||
           lookahead == 't') ADVANCE(798);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59444,7 +59285,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '0') ADVANCE(1069);
       if (lookahead == '4' ||
           lookahead == '6') ADVANCE(1101);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59460,7 +59301,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '7') ADVANCE(1120);
       if (lookahead == 'Y' ||
           lookahead == 'y') ADVANCE(1893);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59476,7 +59317,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '6') ADVANCE(1141);
       if (lookahead == 'L' ||
           lookahead == 'l') ADVANCE(1892);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59490,7 +59331,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       if (lookahead == '0') ADVANCE(1087);
       if (lookahead == '4' ||
           lookahead == '6') ADVANCE(1115);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59506,7 +59347,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
           lookahead == '7') ADVANCE(1091);
       if (lookahead == 'R' ||
           lookahead == 'r') ADVANCE(1890);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('1' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59517,7 +59358,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym__pseudo_plain_value);
       if (lookahead == '/') ADVANCE(1909);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(1915);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(1915);
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(1160);
@@ -59528,7 +59369,7 @@ static uint8_t ts_lex_13(TSLexer *lexer, TSStateId *state_out, bool *result_out,
       lexer->mark_start(lexer, &start_tags[0]);
       ACCEPT_TOKEN(sym__pseudo_plain_value);
       if (lookahead == '/') ADVANCE(937);
-      if (ts_lex_ascii_contains(ts_lex_ascii_set_19, lookahead)) ADVANCE(939);
+      if (ts_lex_ascii_contains(ts_lex_ascii_set_13, lookahead)) ADVANCE(939);
       if (('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'F') ||
           ('a' <= lookahead && lookahead <= 'f')) ADVANCE(909);
