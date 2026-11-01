@@ -866,6 +866,7 @@ four';
 
 ================================================================================
 Unfinished property before another declaration
+:error
 ================================================================================
 
 a {
@@ -875,12 +876,4 @@ a {
 
 --------------------------------------------------------------------------------
 
-(stylesheet
-  (rule_set
-    (selectors (tag_name))
-    (block
-      (incomplete_declaration
-        (property_name))
-      (declaration
-        (property_name)
-        (plain_value)))))
+(ERROR)

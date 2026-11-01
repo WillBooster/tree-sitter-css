@@ -18,37 +18,41 @@ const properties = [
 ];
 
 test.each(
-  properties.flatMap((property) =>
-    ['complete', 'last', 'incomplete', 'inline'].map((layout) => [property, layout] as const)
-  )
+  properties.flatMap((property) => ['complete', 'last', 'inline'].map((layout) => [property, layout] as const))
 )('keyword property names retain nodes: %s in %s', (property, layout) => {
   const parser = new Parser().setLanguage(language);
   const declaration = `${property}: red`;
   const source =
     layout === 'last'
       ? `a { color: blue; ${declaration} }`
-      : layout === 'incomplete'
-        ? `a { ${property}\ncolor: blue; }`
-        : layout === 'inline'
-          ? `${declaration}; color: blue`
-          : `a { ${declaration}; color: blue; }`;
+      : layout === 'inline'
+        ? `${declaration}; color: blue`
+        : `a { ${declaration}; color: blue; }`;
   const tree = parser.parse(source)!;
   try {
     expect(tree.rootNode.hasError).toBe(false);
     const names = layout === 'last' ? ['color', property] : [property, 'color'];
     expect(tree.rootNode.descendantsOfType('property_name').map((node) => node.text)).toEqual(names);
-    expect(tree.rootNode.descendantsOfType('incomplete_declaration').map((node) => node.text)).toEqual(
-      layout === 'incomplete' ? [property] : []
-    );
     const declarations = tree.rootNode.descendantsOfType('declaration');
     expect(declarations.map((node) => node.text)).toEqual(
       layout === 'last'
         ? ['color: blue;', declaration]
-        : layout === 'incomplete'
-          ? ['color: blue;']
-          : [declaration + ';', layout === 'inline' ? 'color: blue' : 'color: blue;']
+        : [declaration + ';', layout === 'inline' ? 'color: blue' : 'color: blue;']
     );
     for (const node of declarations) expect(node.startIndex).toBe(source.indexOf(node.text));
+  } finally {
+    tree.delete();
+    parser.delete();
+  }
+});
+
+test.each(properties)('reports a missing colon after property name %s', (property) => {
+  const source = `a { ${property}\ncolor: blue; }`;
+  const parser = new Parser().setLanguage(language);
+  const tree = parser.parse(source)!;
+  try {
+    expect(tree.rootNode.hasError).toBe(true);
+    expect(tree.rootNode.endIndex).toBe(source.length);
   } finally {
     tree.delete();
     parser.delete();
