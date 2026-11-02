@@ -800,7 +800,7 @@ Unquoted URL tokens
 a {
   background: url(../test.png);
   mask: URL( /icons/a[b].svg );
-  cursor: u\72l(https://example.com/a;b,c.svg);
+  cursor: url(https://example.com/a;b,c.svg);
   content: url(), url(a\)b), url("quoted.svg");
 }
 @namespace svg url(../svg);

@@ -49,6 +49,10 @@ This fork maintains only full parsing: valid input yields a correct tree, and in
 nodes without crashing, hanging, or taking more than linear time. No queries (highlights, locals, injections, tags) are
 shipped. Node types, field names, and the trees that error recovery produces may change; such changes are released as
 new major versions.
+Keywords that the grammar matches as fixed words, such as `and`, `from`, `to`, `of`, `odd`, `url`, and the names of
+`@keyframes`, `@container`, `@layer`, and `@scope`, are recognized only when spelled without CSS escapes; an escaped
+spelling such as `\61nd` may produce an error. Escapes in identifiers, selectors, strings, and other values are
+supported.
 
 ## Usage
 

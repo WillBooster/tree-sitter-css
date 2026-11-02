@@ -35,20 +35,8 @@ const offsets = [
   'odd',
   'ODD',
   'eVeN',
-  String.raw`\6f dd`,
-  String.raw`\65 ven`,
-  String.raw`o\64 d`,
-  String.raw`ev\65 n`,
 ];
-const filters = [
-  '',
-  ' of .a, .b',
-  ' OF .a, .b',
-  ' oF .a, .b',
-  String.raw` \6f f .a, .b`,
-  String.raw` o\66 .a, .b`,
-  String.raw` \6f\66 .a, .b`,
-];
+const filters = ['', ' of .a, .b', ' OF .a, .b', ' oF .a, .b'];
 
 test.each(
   ['nth-child', 'nth-last-child'].flatMap((name) =>

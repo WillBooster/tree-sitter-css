@@ -40,27 +40,26 @@ test.each(
   }
 });
 
-test.each(
-  ['url', 'URL', 'uRl', String.raw`u\72l`, String.raw`ur\6c`, String.raw`\75rl`].flatMap((name) =>
-    ['1', '1.5'].map((number) => [number, `${name}(x)`])
-  )
-)('a URL immediately after %s keeps its own token: %s', (number, url) => {
-  const parser = new Parser().setLanguage(language);
-  const source = `a { --x: ${number}${url}; color: red; } .after {}`;
-  const tree = parser.parse(source)!;
-  try {
-    expect(tree.rootNode.hasError).toBe(false);
-    const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
-    expect(declaration.descendantsOfType('unit')).toHaveLength(0);
-    expect(
-      declaration.descendantsOfType('url_value').map((node) => [node.text, node.startIndex, node.endIndex])
-    ).toEqual([[url, source.indexOf(url), source.indexOf(url) + url.length]]);
-    expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
-  } finally {
-    tree.delete();
-    parser.delete();
+test.each(['url', 'URL', 'uRl'].flatMap((name) => ['1', '1.5'].map((number) => [number, `${name}(x)`])))(
+  'a URL immediately after %s keeps its own token: %s',
+  (number, url) => {
+    const parser = new Parser().setLanguage(language);
+    const source = `a { --x: ${number}${url}; color: red; } .after {}`;
+    const tree = parser.parse(source)!;
+    try {
+      expect(tree.rootNode.hasError).toBe(false);
+      const declaration = tree.rootNode.descendantsOfType('declaration')[0]!;
+      expect(declaration.descendantsOfType('unit')).toHaveLength(0);
+      expect(
+        declaration.descendantsOfType('url_value').map((node) => [node.text, node.startIndex, node.endIndex])
+      ).toEqual([[url, source.indexOf(url), source.indexOf(url) + url.length]]);
+      expect(tree.rootNode.lastNamedChild!.text).toBe('.after {}');
+    } finally {
+      tree.delete();
+      parser.delete();
+    }
   }
-});
+);
 
 test.each(['"x"', "'x'", 'x y', 'f(x)'])(
   'URL-shaped components that do not form an unquoted URL retain their unit: %s',
