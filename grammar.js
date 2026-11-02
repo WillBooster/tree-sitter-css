@@ -1250,7 +1250,7 @@ function arithmeticOperator($) {
 }
 
 function valueSequence($) {
-  return sep(choice(',', ';'), repeat1($._value));
+  return repeat(choice(',', ';', $._value));
 }
 
 function pseudoArgument($) {
