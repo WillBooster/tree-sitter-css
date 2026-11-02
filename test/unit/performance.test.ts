@@ -38,6 +38,9 @@ test.each([
   ['generic pseudo-argument name runs', 'a ', ':foo(', ') {}', false],
   ['function name runs in a declaration', 'a ', 'a { x: f(', '); }', false],
   ['generic pseudo-argument universal descendants', 'a * ', ':foo(', 'a) {}', false],
+  ['a nested selector name after a declaration without a semicolon', 'd', 'a { b:c\n', ' {} }', false],
+  ['a name before a malformed escape', 'd', 'a { b:c\n', '\\\n {} }', true],
+  ['a name before a backslash at the end', 'd', 'a { b:c\n', '\\', true],
 ])('parses %s in linear time', { timeout: 60_000 }, (_name, source, prefix, suffix, hasError) => {
   const small = prefix + source.repeat(2000) + suffix;
   const large = prefix + source.repeat(20_000) + suffix;

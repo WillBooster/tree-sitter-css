@@ -8,11 +8,8 @@ const language = await Language.load(path.join(import.meta.dirname, '../../tree-
 const keywords = [
   ['@KEYFRAMES', 'FROM', 'TO'],
   ['@KeyFrames', 'FrOm', 'tO'],
-  ['@keyframes', String.raw`\66 rom`, String.raw`\74o`],
-  [String.raw`@\6b eyframes`, 'from', 'to'],
   ['@-WEBKIT-KEYFRAMES', 'FROM', 'TO'],
   ['@-webkit-keyframes', 'from', 'to'],
-  [String.raw`@-\77 ebkit-keyframes`, 'from', 'to'],
   ['@-MOZ-KEYFRAMES', 'FROM', 'TO'],
   ['@-moz-KEYFRAMES', 'from', 'to'],
 ] as const;

@@ -41,9 +41,7 @@ const escapedName = escapedIdentifier(optional(choice(
 )));
 
 const unquotedUrl = seq(
-  /(?:[uU]|\\(?:[uU]|0{0,4}[57]5(?:[ \t\n\f]|\r\n?)?))/,
-  /(?:[rR]|\\(?:[rR]|0{0,4}[57]2(?:[ \t\n\f]|\r\n?)?))/,
-  /(?:[lL]|\\(?:[lL]|0{0,4}[46][cC](?:[ \t\n\f]|\r\n?)?))/,
+  /[uU][rR][lL]/,
   '(',
   /[ \t\n\r\f]*/,
   repeat(choice(
@@ -96,6 +94,7 @@ module.exports = grammar({
     $._declaration_value_start,
     $._missing_declaration_value,
     $._keyframes_name,
+    $._recovery_name,
   ],
 
   inline: $ => [
@@ -1300,32 +1299,7 @@ function plainValue(selectorDelimiters = '') {
 }
 
 function cssKeyword(word) {
-  return token(new RegExp(cssKeywordPattern(word)));
-}
-
-function cssKeywordPattern(word, escapedOnly = false) {
-  if (!word) return '';
-  const character = word[0];
-  const rest = word.slice(1);
-  const suffix = cssKeywordPattern(rest);
-  if (character === '@') return `@${suffix}`;
-  const letters = `[${character}${character.toUpperCase()}]`;
-  const codes = [character, character.toUpperCase()].map(value =>
-    value.charCodeAt(0).toString(16).replace(/[a-f]/g, digit => `[${digit}${digit.toUpperCase()}]`),
-  );
-  const code = `(?:${codes.join('|')})`;
-  const whitespace = String.raw`(?:[ \t\n\f]|\r\n?)`;
-  const alternatives = escapedOnly ? [] : [letters];
-  if (!/[a-f]/.test(character)) alternatives.push(String.raw`\\${letters}`);
-  if (rest && /[a-f]/.test(rest[0])) {
-    alternatives.push(
-      String.raw`\\0{4}${code}${whitespace}?`,
-      String.raw`\\0{0,3}${code}${whitespace}`,
-    );
-    return String.raw`(?:(?:${alternatives.join('|')})${suffix}|\\0{0,3}${code}${cssKeywordPattern(rest, true)})`;
-  }
-  alternatives.push(String.raw`\\0{0,4}${code}${whitespace}?`);
-  return `(?:${alternatives.join('|')})${suffix}`;
+  return token(new RegExp(word.replace(/[a-z]/g, letter => `[${letter}${letter.toUpperCase()}]`)));
 }
 
 /** @param {RuleOrLiteral} prefix */

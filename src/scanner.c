@@ -1,4 +1,4 @@
-// code-gauge-allow-file fileNcss 966 -- Shared scanner state and memoized probes stay together to preserve their cursor invariants.
+// code-gauge-allow-file fileNcss 985 -- Shared scanner state and memoized probes stay together to preserve their cursor invariants.
 #include "tree_sitter/parser.h"
 #include "tree_sitter/array.h"
 #include "lexer.h"
@@ -59,15 +59,22 @@ enum TokenType {
     DECLARATION_VALUE_START,
     MISSING_DECLARATION_VALUE,
     KEYFRAMES_NAME,
+    RECOVERY_NAME,
 };
 
 typedef Array(char) SupportsDelimiters;
 typedef enum { DECLARATION_COMPONENT, DECLARATION_PREFIX, DECLARATION_HASH_TAIL, DECLARATION_EXTRA } DeclarationGap;
 typedef enum { NO_HASH_GAP, HASH_GAP_START, HASH_GAP_TAIL } HashGapContext;
+// A truncated name ends before a malformed escape.
+#define RECOVERY_NAME_CAPACITY (sizeof("layer") + 1)
+typedef enum { NO_NAME, PLAIN_NAME, CUSTOM_NAME, KEYWORD_NAME, TRUNCATED_NAME } RecoveryName;
 
 static bool can_scan_recovery_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_recovery_identifier(TSLexer *lexer, bool recovering);
-static bool scan_recovery_name(TSLexer *lexer, bool *custom);
+static RecoveryName scan_recovery_name(TSLexer *lexer);
+static unsigned scan_recovery_name_hyphens(TSLexer *lexer, char *name);
+static RecoveryName recovery_name_kind(const char *name, unsigned length, bool escaped);
+static bool is_recovery_keyword(const char *name);
 static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
 static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_import_layer_body_end(TSLexer *lexer);
@@ -207,12 +214,16 @@ static bool can_scan_recovery_identifier(TSLexer *lexer, const bool *valid_symbo
 
 static bool scan_recovery_identifier(TSLexer *lexer, bool recovering) {
     while (iswspace(lexer->lookahead)) skip(lexer);
-    bool custom = false;
-    if (!scan_recovery_name(lexer, &custom)) return false;
+    RecoveryName name = scan_recovery_name(lexer);
+    if (name == NO_NAME) return false;
+    // The keyword tokens leave name tokens out of the error-recovery lexer, so a name that is no keyword is skipped
+    // whole here; skipping it a character at a time would rescan the rest of it each time.
+    lexer->result_symbol = RECOVERY_NAME;
+    if (name == TRUNCATED_NAME) return recovering;
+    if (!scan_property_colon(lexer)) return recovering && name != KEYWORD_NAME;
     lexer->result_symbol = RECOVERY_IDENTIFIER;
-    if (!scan_property_colon(lexer)) return false;
     if (recovering) return true;
-    if (custom) return false;
+    if (name == CUSTOM_NAME) return false;
     advance(lexer);
     bool newline = false;
     bool arithmetic = false;
@@ -223,29 +234,47 @@ static bool scan_recovery_identifier(TSLexer *lexer, bool recovering) {
          lexer->lookahead == '>' || lexer->lookahead == '@' || (lexer->lookahead == ':' && newline));
 }
 
-static bool scan_recovery_name(TSLexer *lexer, bool *custom) {
-    int32_t prefix[2] = {0};
-    unsigned length = 0;
-    if (lexer->lookahead == '-') {
-        prefix[length++] = '-';
-        advance(lexer);
-        if (lexer->lookahead == '-') {
-            prefix[length++] = '-';
-            advance(lexer);
-        } else if (!is_name_start(lexer->lookahead) && lexer->lookahead != '\\') {
-            return false;
-        }
-    } else if (!is_name_start(lexer->lookahead) && lexer->lookahead != '\\') {
-        return false;
-    }
-    int32_t character;
+static RecoveryName scan_recovery_name(TSLexer *lexer) {
+    char name[RECOVERY_NAME_CAPACITY] = {0};
+    unsigned length = scan_recovery_name_hyphens(lexer, name);
+    if (length < 2 && !is_name_start(lexer->lookahead) && lexer->lookahead != '\\') return NO_NAME;
+    bool escaped = false;
     while (is_name_character(lexer->lookahead) || lexer->lookahead == '\\') {
-        if (!scan_name_character(lexer, &character)) return false;
-        if (length < 2) prefix[length++] = character;
+        int32_t character;
+        if (lexer->lookahead == '\\') {
+            lexer->mark_end(lexer);
+            escaped = true;
+        }
+        if (!scan_name_character(lexer, &character)) return length ? TRUNCATED_NAME : NO_NAME;
+        if (length < RECOVERY_NAME_CAPACITY - 1) name[length] = keyword_character(character);
+        length++;
     }
     lexer->mark_end(lexer);
-    *custom = prefix[0] == '-' && prefix[1] == '-';
-    return true;
+    return recovery_name_kind(name, length, escaped);
+}
+
+static unsigned scan_recovery_name_hyphens(TSLexer *lexer, char *name) {
+    unsigned length = 0;
+    while (length < 2 && lexer->lookahead == '-') {
+        name[length++] = '-';
+        advance(lexer);
+    }
+    return length;
+}
+
+static RecoveryName recovery_name_kind(const char *name, unsigned length, bool escaped) {
+    if (name[0] == '-' && name[1] == '-') return CUSTOM_NAME;
+    return !escaped && length < RECOVERY_NAME_CAPACITY && is_recovery_keyword(name) ? KEYWORD_NAME : PLAIN_NAME;
+}
+
+// The words of the cssKeyword tokens in grammar.js other than at-rule names, which the error-recovery lexer reads.
+static const char *const RECOVERY_KEYWORDS[] = {"and", "even", "from", "layer", "not", "odd", "of", "or", "src", "style", "to", "url"};
+
+static bool is_recovery_keyword(const char *name) {
+    for (unsigned i = 0; i < sizeof(RECOVERY_KEYWORDS) / sizeof(RECOVERY_KEYWORDS[0]); i++) {
+        if (!strcmp(name, RECOVERY_KEYWORDS[i])) return true;
+    }
+    return false;
 }
 
 static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols) {

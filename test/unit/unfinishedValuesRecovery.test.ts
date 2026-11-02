@@ -123,11 +123,10 @@ test.each([
   'src("x.css")',
   'src(var(--stylesheet) type("text/css"))',
   'src(attr(data-style type(<string>), "fallback.css"))',
-  String.raw`s\72 c(var(--stylesheet))`,
   'URL("x.css" modifier type("text/css"))',
-  String.raw`u\72 l("x.css" \6d odifier)`,
+  String.raw`url("x.css" \6d odifier)`,
   String.raw`url("x.css" \74 ype("text/css"))`,
-  String.raw`u\72l(https://example.test/a;b,c.css)`,
+  'url(https://example.test/a;b,c.css)',
 ])('import URL syntax retains modifiers and following rules: %s', (url) => {
   const parser = new Parser().setLanguage(language);
   const source = `@import ${url} screen; .after { color: red; }`;
