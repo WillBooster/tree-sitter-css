@@ -20,6 +20,32 @@ a {
           (integer_value)
           (float_value)))))))
 
+==========================
+Empty variable fallbacks
+==========================
+
+a {
+  b: var(--x,);
+  c: var(--x, );
+  d: var(--x,/*!*/ /*!*/);
+  e: var(--x, var(--y,));
+  --z: var(--x,);
+}
+
+---
+
+(stylesheet
+  (rule_set
+    (selectors (tag_name))
+    (block
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value) (comment) (comment))))
+      (declaration (property_name) (call_expression (function_name) (arguments
+        (plain_value)
+        (call_expression (function_name) (arguments (plain_value))))))
+      (declaration (property_name) (call_expression (function_name) (arguments (plain_value)))))))
+
 =============================================
 Calls where each argument has multiple values
 =============================================
@@ -351,7 +377,8 @@ Important keyword whitespace and case
 
 a {
   color: red ! important;
-  margin: 0 !	IMPORTANT;
+  margin: 0 !	
+IMPORTANT;
   padding: 1px !
     ImPoRtAnT
 }

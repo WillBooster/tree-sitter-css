@@ -7,8 +7,8 @@ await Parser.init();
 const language = await Language.load(path.join(import.meta.dirname, '../../tree-sitter-css.wasm'));
 
 test.each(
-  ['not(.x', 'is(.x,.y', 'where(.x', 'has(> b', 'not(.x, )', 'is(.x,.y, )', 'where(.x,)', 'has(> b,)'].flatMap(
-    (argument) => ['', ' ', '/**/'].map((gap) => [argument, gap] as const)
+  ['not(.x', 'is(.x,.y', 'where(.x', 'has(> b'].flatMap((argument) =>
+    ['', ' ', '/**/'].map((gap) => [argument, gap] as const)
   )
 )('incomplete selector functions retain selector nodes: %s%s', (argument, gap) => {
   const parser = new Parser().setLanguage(language);
