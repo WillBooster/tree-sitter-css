@@ -1,4 +1,4 @@
-// code-gauge-allow-file fileNcss 966 -- Shared scanner state and memoized probes stay together to preserve their cursor invariants.
+// code-gauge-allow-file fileNcss 976 -- Shared scanner state and memoized probes stay together to preserve their cursor invariants.
 #include "tree_sitter/parser.h"
 #include "tree_sitter/array.h"
 #include "lexer.h"
@@ -59,6 +59,7 @@ enum TokenType {
     DECLARATION_VALUE_START,
     MISSING_DECLARATION_VALUE,
     KEYFRAMES_NAME,
+    RECOVERY_NAME,
 };
 
 typedef Array(char) SupportsDelimiters;
@@ -67,7 +68,8 @@ typedef enum { NO_HASH_GAP, HASH_GAP_START, HASH_GAP_TAIL } HashGapContext;
 
 static bool can_scan_recovery_identifier(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_recovery_identifier(TSLexer *lexer, bool recovering);
-static bool scan_recovery_name(TSLexer *lexer, bool *custom);
+static bool scan_recovery_name(TSLexer *lexer, bool *custom, bool *keyword);
+static bool is_recovery_keyword(const char *name);
 static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
 static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols);
 static bool scan_import_layer_body_end(TSLexer *lexer);
@@ -208,9 +210,15 @@ static bool can_scan_recovery_identifier(TSLexer *lexer, const bool *valid_symbo
 static bool scan_recovery_identifier(TSLexer *lexer, bool recovering) {
     while (iswspace(lexer->lookahead)) skip(lexer);
     bool custom = false;
-    if (!scan_recovery_name(lexer, &custom)) return false;
+    bool keyword = false;
+    if (!scan_recovery_name(lexer, &custom, &keyword)) return false;
     lexer->result_symbol = RECOVERY_IDENTIFIER;
-    if (!scan_property_colon(lexer)) return false;
+    if (!scan_property_colon(lexer)) {
+        // The keyword tokens leave name tokens out of the error-recovery lexer, so a name that is no keyword is skipped
+        // whole here; skipping it a character at a time would rescan the rest of it each time.
+        lexer->result_symbol = RECOVERY_NAME;
+        return recovering && !keyword;
+    }
     if (recovering) return true;
     if (custom) return false;
     advance(lexer);
@@ -223,29 +231,41 @@ static bool scan_recovery_identifier(TSLexer *lexer, bool recovering) {
          lexer->lookahead == '>' || lexer->lookahead == '@' || (lexer->lookahead == ':' && newline));
 }
 
-static bool scan_recovery_name(TSLexer *lexer, bool *custom) {
-    int32_t prefix[2] = {0};
+static bool scan_recovery_name(TSLexer *lexer, bool *custom, bool *keyword) {
+    char name[sizeof("layer") + 1] = {0};
     unsigned length = 0;
+    bool escaped = false;
     if (lexer->lookahead == '-') {
-        prefix[length++] = '-';
+        name[length++] = '-';
         advance(lexer);
-        if (lexer->lookahead == '-') {
-            prefix[length++] = '-';
-            advance(lexer);
-        } else if (!is_name_start(lexer->lookahead) && lexer->lookahead != '\\') {
-            return false;
-        }
+    }
+    if (length && lexer->lookahead == '-') {
+        name[length++] = '-';
+        advance(lexer);
     } else if (!is_name_start(lexer->lookahead) && lexer->lookahead != '\\') {
         return false;
     }
-    int32_t character;
     while (is_name_character(lexer->lookahead) || lexer->lookahead == '\\') {
+        int32_t character;
+        escaped = escaped || lexer->lookahead == '\\';
         if (!scan_name_character(lexer, &character)) return false;
-        if (length < 2) prefix[length++] = character;
+        if (length < sizeof(name) - 1) name[length] = keyword_character(character);
+        length++;
     }
     lexer->mark_end(lexer);
-    *custom = prefix[0] == '-' && prefix[1] == '-';
+    *custom = name[0] == '-' && name[1] == '-';
+    *keyword = !escaped && length < sizeof(name) && is_recovery_keyword(name);
     return true;
+}
+
+// The words of the cssKeyword tokens in grammar.js other than at-rule names, which the error-recovery lexer reads.
+static const char *const RECOVERY_KEYWORDS[] = {"and", "even", "from", "layer", "not", "odd", "of", "or", "src", "style", "to", "url"};
+
+static bool is_recovery_keyword(const char *name) {
+    for (unsigned i = 0; i < sizeof(RECOVERY_KEYWORDS) / sizeof(RECOVERY_KEYWORDS[0]); i++) {
+        if (!strcmp(name, RECOVERY_KEYWORDS[i])) return true;
+    }
+    return false;
 }
 
 static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols) {

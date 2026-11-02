@@ -14662,6 +14662,10 @@
     {
       "type": "SYMBOL",
       "name": "_keyframes_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_recovery_name"
     }
   ],
   "inline": [

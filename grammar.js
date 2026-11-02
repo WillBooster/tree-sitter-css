@@ -94,6 +94,7 @@ module.exports = grammar({
     $._declaration_value_start,
     $._missing_declaration_value,
     $._keyframes_name,
+    $._recovery_name,
   ],
 
   inline: $ => [
