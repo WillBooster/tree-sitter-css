@@ -4,7 +4,6 @@
 #include "lexer.h"
 #include "keyframeNames.h"
 
-#include <wctype.h>
 #include <stdlib.h>
 #include <stdatomic.h>
 #include <string.h>
@@ -196,10 +195,10 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
             : scan_declaration_continuation(scanner, lexer, valid_symbols);
     }
     if (valid_symbols[DESCENDANT_OP] && !valid_symbols[AT_RULE_SLASH] &&
-        (iswspace(lexer->lookahead) || lexer->lookahead == '/')) {
+        (is_unicode_whitespace(lexer->lookahead) || lexer->lookahead == '/')) {
         return scan_selector_gap(lexer, valid_symbols);
     }
-    if (valid_symbols[AT_RULE_SLASH] || (iswspace(lexer->lookahead) &&
+    if (valid_symbols[AT_RULE_SLASH] || (is_unicode_whitespace(lexer->lookahead) &&
         (valid_symbols[DESCENDANT_OP] || valid_symbols[OPERATOR_GAP] || valid_symbols[VALUE_DOT] ||
             valid_symbols[VALUE_AMPERSAND] || valid_symbols[VALUE_ASTERISK]))) {
         return scan_rule_gap(scanner, lexer, valid_symbols);
@@ -209,11 +208,11 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
 
 static bool can_scan_recovery_identifier(TSLexer *lexer, const bool *valid_symbols) {
     return valid_symbols[RECOVERY_IDENTIFIER] &&
-        (iswspace(lexer->lookahead) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\');
+        (is_unicode_whitespace(lexer->lookahead) || is_name_start(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '\\');
 }
 
 static bool scan_recovery_identifier(TSLexer *lexer, bool recovering) {
-    while (iswspace(lexer->lookahead)) skip(lexer);
+    while (is_unicode_whitespace(lexer->lookahead)) skip(lexer);
     RecoveryName name = scan_recovery_name(lexer);
     if (name == NO_NAME) return false;
     // The keyword tokens leave name tokens out of the error-recovery lexer, so a name that is no keyword is skipped
@@ -230,8 +229,8 @@ static bool scan_recovery_identifier(TSLexer *lexer, bool recovering) {
     bool consumed_prefix = false;
     DeclarationGap gap = scan_declaration_gap(lexer, &newline, &arithmetic, &consumed_prefix, NO_HASH_GAP, false);
     return gap == DECLARATION_COMPONENT && !consumed_prefix &&
-        (lexer->eof(lexer) || lexer->lookahead == '}' || lexer->lookahead == ';' ||
-         lexer->lookahead == '>' || lexer->lookahead == '@' || (lexer->lookahead == ':' && newline));
+        (lexer->lookahead == '}' || lexer->lookahead == ';' ||
+         lexer->lookahead == '>' || lexer->lookahead == '@' || (lexer->lookahead == ':' && newline) || lexer->eof(lexer));
 }
 
 static RecoveryName scan_recovery_name(TSLexer *lexer) {
@@ -523,7 +522,7 @@ static bool is_at_rule_url_character(int32_t character) {
 // The generic at-rule fallback after `@layer` shares these states, so a slash keeps its at-rule scan.
 static bool scan_layer_name_or_slash(TSLexer *lexer, const bool *valid_symbols) {
     bool whitespace = false;
-    while (iswspace(lexer->lookahead)) {
+    while (is_unicode_whitespace(lexer->lookahead)) {
         whitespace = true;
         skip(lexer);
     }
@@ -606,7 +605,7 @@ static bool scan_component_gap(TSLexer *lexer, bool *whitespace) {
 
 static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     bool whitespace = false;
-    while (iswspace(lexer->lookahead)) {
+    while (is_unicode_whitespace(lexer->lookahead)) {
         whitespace = true;
         skip(lexer);
     }
@@ -722,7 +721,7 @@ static bool scan_declaration_continuation_from(Scanner *scanner, TSLexer *lexer,
     lexer->get_position(lexer, &component);
     newline |= component.row != start.row;
     bool operand_operator = consumed_prefix && arithmetic;
-    if (!consumed_prefix && iswspace(lexer->lookahead) && !is_regex_whitespace(lexer->lookahead)) {
+    if (!consumed_prefix && is_unicode_whitespace(lexer->lookahead) && !is_regex_whitespace(lexer->lookahead)) {
         consumed_prefix = true;
         arithmetic = scan_unicode_value_gap(lexer, &newline);
     }
@@ -748,7 +747,7 @@ static bool scan_declaration_continuation_from(Scanner *scanner, TSLexer *lexer,
 
 static TSSymbol declaration_delimiter_token(TSLexer *lexer) {
     if (lexer->lookahead == ',') return DECLARATION_COMMA_GAP;
-    return lexer->eof(lexer) || lexer->lookahead == ';' || lexer->lookahead == '}' ? DECLARATION_TERMINATOR_GAP : 0;
+    return lexer->lookahead == ';' || lexer->lookahead == '}' || is_eof(lexer) ? DECLARATION_TERMINATOR_GAP : 0;
 }
 
 static HashGapContext declaration_hash_context(const bool *valid_symbols) {
@@ -781,7 +780,7 @@ static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline) {
     do {
         line_break |= lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f';
         advance(lexer);
-    } while (iswspace(lexer->lookahead));
+    } while (is_unicode_whitespace(lexer->lookahead));
     bool arithmetic = lexer->lookahead == '*';
     *newline |= arithmetic && line_break;
     return arithmetic;
@@ -853,7 +852,7 @@ static DeclarationGap scan_declaration_slash_tail(TSLexer *lexer, bool *arithmet
         *arithmetic = true;
         return DECLARATION_PREFIX;
     }
-    while (!lexer->eof(lexer) && lexer->lookahead != '\n') advance(lexer);
+    while (lexer->lookahead != '\n' && !is_eof(lexer)) advance(lexer);
     return DECLARATION_EXTRA;
 }
 
@@ -900,9 +899,9 @@ static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t b
     scanner->pending = SIZE_MAX;
     scanner->probe_origin = byte;
     record_probe_prefix(scanner, byte, 0);
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         int32_t character = lexer->lookahead;
-        bool cursor = is_probe_cursor(character);
+        bool cursor = is_probe_cursor(context, character);
         TSLexerPosition position;
         if (cursor) lexer->get_position(lexer, &position);
         ProbeContext memo_context = is_plain_value_character(character) ? context : PROBE_GAP;
@@ -987,8 +986,8 @@ static void grow_memo(Scanner *scanner) {
 }
 
 static bool scan_dot_following_gap(TSLexer *lexer) {
-    while (iswspace(lexer->lookahead) || lexer->lookahead == '/') {
-        if (iswspace(lexer->lookahead)) {
+    while (is_unicode_whitespace(lexer->lookahead) || lexer->lookahead == '/') {
+        if (lexer->lookahead != '/') {
             advance(lexer);
             continue;
         }
@@ -1048,7 +1047,7 @@ static bool finish_selector_gap(TSLexer *lexer, const bool *valid_symbols, bool 
     bool allow_gap = valid_symbols[OPERATOR_GAP];
     bool whitespace = false;
     for (;;) {
-        if (iswspace(lexer->lookahead)) {
+        if (is_unicode_whitespace(lexer->lookahead)) {
             whitespace = true;
             advance(lexer);
         } else if (lexer->lookahead == '/') {
@@ -1096,7 +1095,7 @@ static bool scan_property_colon(TSLexer *lexer) {
             return false;
         }
     }
-    while (iswspace(lexer->lookahead) || lexer->lookahead == '/') {
+    while (is_unicode_whitespace(lexer->lookahead) || lexer->lookahead == '/') {
         if (lexer->lookahead != '/') {
             advance(lexer);
             continue;
@@ -1123,8 +1122,8 @@ static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow
         if (!allow_descendant || !scan_comment_body(lexer)) {
             return false;
         }
-        while (iswspace(lexer->lookahead) || lexer->lookahead == '/') {
-            if (iswspace(lexer->lookahead)) {
+        while (is_unicode_whitespace(lexer->lookahead) || lexer->lookahead == '/') {
+            if (lexer->lookahead != '/') {
                 advance(lexer);
             } else if (!scan_separator_comment(lexer)) {
                 return false;

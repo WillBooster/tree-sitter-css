@@ -11,7 +11,7 @@ static bool scan_probe_component(TSLexer *lexer, bool *stop, ProbeContext *conte
 static void scan_probe_slash(TSLexer *lexer, ProbeContext *context, ProbeContext *memo_context);
 static bool scan_probe_marker(TSLexer *lexer, ProbeContext *context);
 static void scan_quoted_component(TSLexer *lexer);
-static bool is_probe_cursor(int32_t character);
+static bool is_probe_cursor(ProbeContext context, int32_t character);
 static ProbeContext probe_character_context(ProbeContext context, int32_t character);
 static bool scan_plain_slash_prefix(TSLexer *lexer);
 static bool scan_comment_body(TSLexer *lexer);
@@ -31,16 +31,18 @@ static void scan_escape_terminator(TSLexer *lexer);
 static bool is_unit_character(int32_t character);
 static bool is_css_whitespace(int32_t character);
 static bool is_regex_whitespace(int32_t character);
+static inline bool is_unicode_whitespace(int32_t character);
 static char keyword_character(int32_t character);
 static bool is_hex_digit(int32_t character);
 static bool is_digit(int32_t character);
+static inline bool is_eof(const TSLexer *lexer);
 static void advance(TSLexer *lexer);
 static void skip(TSLexer *lexer);
 
 static void scan_value_start_gap(TSLexer *lexer) {
     ProbeContext context = PROBE_GAP;
     ProbeContext memo_context = PROBE_GAP;
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         if (is_regex_whitespace(lexer->lookahead)) advance(lexer);
         else if (lexer->lookahead == '/') scan_probe_slash(lexer, &context, &memo_context);
         else if (is_html_marker_prefix(lexer->lookahead)) scan_probe_marker(lexer, &context);
@@ -83,7 +85,7 @@ static void scan_probe_slash(TSLexer *lexer, ProbeContext *context, ProbeContext
         scan_plain_slash_tail(lexer);
         *context = PROBE_PLAIN;
     } else if (line_comment && *context != PROBE_PLAIN && *context != PROBE_HASH) {
-        while (!lexer->eof(lexer) && lexer->lookahead != '\n') advance(lexer);
+        while (lexer->lookahead != '\n' && !is_eof(lexer)) advance(lexer);
         *context = PROBE_GAP;
         *memo_context = PROBE_GAP;
     } else {
@@ -106,16 +108,19 @@ static bool scan_probe_marker(TSLexer *lexer, ProbeContext *context) {
 static void scan_quoted_component(TSLexer *lexer) {
     int32_t quote = lexer->lookahead;
     advance(lexer);
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         int32_t character = lexer->lookahead;
         advance(lexer);
         if (character == quote) return;
-        if (character == '\\' && !lexer->eof(lexer)) advance(lexer);
+        if (character == '\\' && !is_eof(lexer)) advance(lexer);
     }
 }
 
-static bool is_probe_cursor(int32_t character) {
-    return iswspace(character) || is_selector_prefix(character) || character == '/' || is_html_marker_prefix(character);
+static bool is_probe_cursor(ProbeContext context, int32_t character) {
+    if (character == '/') return context != PROBE_HASH;
+    if (is_html_marker_prefix(character)) return context != PROBE_PLAIN && context != PROBE_HASH;
+    if (context != PROBE_GAP && is_plain_value_character(character)) return false;
+    return is_unicode_whitespace(character) || is_selector_prefix(character);
 }
 
 static ProbeContext probe_character_context(ProbeContext context, int32_t character) {
@@ -145,7 +150,7 @@ static bool scan_plain_slash_prefix(TSLexer *lexer) {
 
 static bool scan_comment_body(TSLexer *lexer) {
     if (lexer->lookahead == '/') {
-        while (!lexer->eof(lexer) && lexer->lookahead != '\n' && lexer->lookahead != '\r') {
+        while (lexer->lookahead != '\n' && lexer->lookahead != '\r' && !is_eof(lexer)) {
             advance(lexer);
         }
         return true;
@@ -154,7 +159,7 @@ static bool scan_comment_body(TSLexer *lexer) {
         return false;
     }
     advance(lexer);
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         bool star = lexer->lookahead == '*';
         advance(lexer);
         if (star && lexer->lookahead == '/') {
@@ -182,7 +187,7 @@ static bool is_name_character(int32_t character) {
 }
 
 static bool is_name_start(int32_t character) {
-    static const int32_t ranges[][2] = {
+    static const TSCharacterRange ranges[] = {
         {0xB7, 0xB7}, {0xC0, 0xD6}, {0xD8, 0xF6}, {0xF8, 0x37D}, {0x37F, 0x1FFF},
         {0x200C, 0x200D}, {0x203F, 0x2040}, {0x2070, 0x218F}, {0x2C00, 0x2FEF},
         {0x3001, 0xD7FF}, {0xF900, 0xFDCF}, {0xFDF0, 0xFFFD}, {0x10000, 0x10FFFF},
@@ -190,18 +195,14 @@ static bool is_name_start(int32_t character) {
     if ((character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || character == '_') {
         return true;
     }
-    for (unsigned i = 0; i < sizeof(ranges) / sizeof(ranges[0]); i++) {
-        if (character >= ranges[i][0] && character <= ranges[i][1]) {
-            return true;
-        }
-    }
-    return false;
+    if (character < 0xB7) return false;
+    return set_contains(ranges, sizeof(ranges) / sizeof(ranges[0]), character);
 }
 
 static bool scan_unquoted_url_tail(TSLexer *lexer) {
     advance(lexer);
     while (is_css_whitespace(lexer->lookahead)) advance(lexer);
-    while (!lexer->eof(lexer) && lexer->lookahead != ')' && !is_css_whitespace(lexer->lookahead)) {
+    while (lexer->lookahead != ')' && !is_css_whitespace(lexer->lookahead) && !is_eof(lexer)) {
         if (lexer->lookahead <= 0x20 || lexer->lookahead == 0x7F || lexer->lookahead == '\'' ||
             lexer->lookahead == '"' || lexer->lookahead == '(') return false;
         if (lexer->lookahead != '\\') {
@@ -224,7 +225,7 @@ static bool scan_plain_value_tail(TSLexer *lexer) {
 }
 
 static bool scan_plain_slash_tail(TSLexer *lexer) {
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         if (lexer->lookahead == '/') {
             advance(lexer);
             if (lexer->eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
@@ -294,6 +295,12 @@ static bool is_regex_whitespace(int32_t character) {
     return (character >= '\t' && character <= '\r') || character == ' ';
 }
 
+static inline bool is_unicode_whitespace(int32_t character) {
+    if (character < 0) return false;
+    if (character < 0x80) return character == ' ' || (uint32_t)(character - '\t') < 5;
+    return iswspace((wint_t)character) != 0;
+}
+
 static char keyword_character(int32_t character) {
     if (character >= 'A' && character <= 'Z') return (char)(character + 'a' - 'A');
     return character < 0x80 ? (char)character : '?';
@@ -304,6 +311,10 @@ static bool is_hex_digit(int32_t character) {
 }
 
 static bool is_digit(int32_t character) { return character >= '0' && character <= '9'; }
+
+static inline bool is_eof(const TSLexer *lexer) {
+    return lexer->lookahead == 0 && lexer->eof(lexer);
+}
 
 static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
