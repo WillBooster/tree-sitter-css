@@ -47,7 +47,7 @@ test.each([
   const parser = new Parser().setLanguage(language);
   const start = source.indexOf(gap);
   const end = start + gap.length;
-  const tree = parser.parse(source, undefined, {
+  const tree = parser.parse(source, {
     includedRanges: [range(source, 0, start), range(source, end, source.length)],
   })!;
   try {
