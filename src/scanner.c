@@ -5,16 +5,14 @@
 #include "keyframeNames.h"
 
 #include <stdlib.h>
-#include <stdatomic.h>
 #include <string.h>
 #include <limits.h>
 
+#define NO_PROBE_ORIGIN UINT32_MAX
+
 typedef struct { uint32_t byte; uint32_t origin; bool used; bool result; } Memo;
 typedef struct { uint32_t byte; unsigned depth; size_t previous; bool result; } ProbePrefix;
-static atomic_uint_fast64_t next_parse_cookie = 1;
 typedef struct {
-    uint64_t cookie;
-    uint64_t active_cookie;
     uint32_t active_origin;
     uint32_t probe_origin;
     size_t pending;
@@ -135,8 +133,7 @@ static bool scan_operator_gap(TSLexer *lexer, bool allow_gap);
 
 void *tree_sitter_css_external_scanner_create() {
     Scanner *scanner = calloc(1, sizeof(Scanner));
-    scanner->cookie = atomic_fetch_add_explicit(&next_parse_cookie, 1, memory_order_relaxed);
-    if (!scanner->cookie) abort();
+    scanner->active_origin = NO_PROBE_ORIGIN;
     return scanner;
 }
 
@@ -147,21 +144,18 @@ void tree_sitter_css_external_scanner_destroy(void *payload) {
     free(scanner);
 }
 
-// A memo hit must inherit a recorded full probe's lookahead dependency through the external-token chain.
+// GLR branches share scanner->memo; each branch restores the probe origin whose entries are valid on its path.
 unsigned tree_sitter_css_external_scanner_serialize(void *payload, char *buffer) {
     Scanner *scanner = payload;
-    memcpy(buffer, &scanner->active_cookie, sizeof(uint64_t));
-    memcpy(buffer + sizeof(uint64_t), &scanner->active_origin, sizeof(uint32_t));
-    return sizeof(uint64_t) + sizeof(uint32_t);
+    memcpy(buffer, &scanner->active_origin, sizeof(uint32_t));
+    return sizeof(uint32_t);
 }
 
 void tree_sitter_css_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
     Scanner *scanner = payload;
-    scanner->active_cookie = 0;
-    scanner->active_origin = 0;
-    if (length != sizeof(uint64_t) + sizeof(uint32_t)) return;
-    memcpy(&scanner->active_cookie, buffer, sizeof(uint64_t));
-    memcpy(&scanner->active_origin, buffer + sizeof(uint64_t), sizeof(uint32_t));
+    scanner->active_origin = NO_PROBE_ORIGIN;
+    if (length != sizeof(uint32_t)) return;
+    memcpy(&scanner->active_origin, buffer, sizeof(uint32_t));
 }
 
 // code-gauge-allow functionCognitiveComplexity 29 -- Ordered token dispatch preserves precedence; splitting it only moves these conditions.
@@ -756,7 +750,7 @@ static HashGapContext declaration_hash_context(const bool *valid_symbols) {
 }
 
 static Memo *find_probe(Scanner *scanner, uint32_t byte) {
-    if (!scanner->capacity || scanner->active_cookie != scanner->cookie) return NULL;
+    if (!scanner->capacity || scanner->active_origin == NO_PROBE_ORIGIN) return NULL;
     Memo *memo = memo_slot(scanner, byte);
     return memo->used && memo->origin == scanner->active_origin ? memo : NULL;
 }
@@ -939,7 +933,6 @@ static bool remember_probe(Scanner *scanner, bool result, unsigned brace_depth, 
         prefix->result = prefix->depth < brace_depth;
         scanner->pending = prefix->previous;
     }
-    scanner->active_cookie = scanner->cookie;
     scanner->active_origin = scanner->probe_origin;
     for (size_t i = 0; i < scanner->prefix_count; i++) {
         ProbePrefix prefix = scanner->prefixes[i];

@@ -242,7 +242,7 @@ module.exports = grammar({
       alias($._layer_name_identifier, $.identifier),
     ),
 
-    // Mirrors the generic at-rule components with own nodes, so that queries can tell support conditions from generic
+    // Mirrors the generic at-rule components with own nodes, so that callers can tell support conditions from generic
     // at-rule preludes. A body that starts with a name and `:` is a declaration; groups in condition position may hold
     // declarations, while groups in a declaration value or after a value hold plain components.
     import_supports: $ => seq(
