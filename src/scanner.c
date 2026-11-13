@@ -933,7 +933,6 @@ static bool remember_probe(Scanner *scanner, bool result, unsigned brace_depth, 
         prefix->result = prefix->depth < brace_depth;
         scanner->pending = prefix->previous;
     }
-    if (scanner->probe_origin == NO_PROBE_ORIGIN) return result;
     scanner->active_origin = scanner->probe_origin;
     for (size_t i = 0; i < scanner->prefix_count; i++) {
         ProbePrefix prefix = scanner->prefixes[i];
