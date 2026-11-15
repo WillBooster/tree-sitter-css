@@ -19,11 +19,8 @@ const genericName = repeat1(genericNameCharacter);
 
 const nonAsciiNameStart = /[\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{10FFFF}]/u;
 const nameStart = choice(/[a-zA-Z_]/, nonAsciiNameStart);
-// The non-ASCII code points that `nonAsciiNameStart` excludes, which CSS tokenizes as delimiters. The noncharacters
-// U+FFFE and U+FFFF form a token of their own because, in one set with the others, the generator emits an empty C
-// condition (WillBooster/tree-sitter#234).
-const nonAsciiDelimiter = /[\u0080-\u00B6\u00B8-\u00BF\u00D7\u00F7\u037E\u2000-\u200B\u200E-\u203E\u2041-\u206F\u2190-\u2BFF\u2FF0-\u3000\uE000-\uF8FF\uFDD0-\uFDEF]/u;
-const nonAsciiNoncharacterDelimiter = /[\uFFFE\uFFFF]/u;
+// The non-ASCII code points that `nonAsciiNameStart` excludes, which CSS tokenizes as delimiters.
+const nonAsciiDelimiter = /[\u0080-\u00B6\u00B8-\u00BF\u00D7\u00F7\u037E\u2000-\u200B\u200E-\u203E\u2041-\u206F\u2190-\u2BFF\u2FF0-\u3000\uE000-\uF8FF\uFDD0-\uFDEF\uFFFE\uFFFF]/u;
 const nameContinue = choice(nameStart, /[0-9-]/);
 const idName = seq(
   choice('--', seq(optional('-'), choice(nameStart, cssEscape))),
@@ -33,12 +30,6 @@ const idName = seq(
 // A lone `@` token would be the only conflict-free `@` token, which drops at-keywords from the error-recovery lexer
 // so that an at-rule after an error is swallowed; spanning the at-keyword name and losing to it keeps them there.
 const valueAt = token(prec(-1, seq('@', optional(idName))));
-
-const escapedName = escapedIdentifier(optional(choice(
-  '-',
-  seq('--', repeat(nameContinue)),
-  seq(optional('-'), nameStart, repeat(nameContinue)),
-)));
 
 const unquotedUrl = seq(
   /[uU][rR][lL]/,
@@ -99,7 +90,6 @@ module.exports = grammar({
 
   inline: $ => [
     $._range_comparison,
-    $._escaped_identifier,
     $._top_level_item,
     $._block_item,
     $._binary_combinator_gap,
@@ -123,7 +113,6 @@ module.exports = grammar({
     [$.attribute_selector, $._value],
     [$.selectors, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
     [$.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector, $.pseudo_class_with_selector_arguments],
-    [$._escaped_attribute_namespace, $.child_selector, $.descendant_selector, $.sibling_selector, $.adjacent_sibling_selector],
     [$.at_rule_bracketed, $._selector, $.attribute_selector],
     [$._selector, $.attribute_selector, $._query_identifier],
     [$._at_rule_component, $._selector, $.attribute_selector],
@@ -144,8 +133,6 @@ module.exports = grammar({
     [$._at_rule_component, $.attribute_selector],
     [$.at_rule_bracketed, $._selector],
     [$.at_rule_bracketed, $.attribute_selector],
-    [$._at_rule_component, $._escaped_attribute_namespace],
-    [$.at_rule_bracketed, $._escaped_attribute_namespace],
     [$._at_rule_component, $.child_selector],
     [$._at_rule_component, $.sibling_selector],
     [$._at_rule_component, $.adjacent_sibling_selector],
@@ -638,7 +625,7 @@ module.exports = grammar({
       optional($._selector),
       openingBracket,
       optional($._descendant_combinator),
-      alias(choice(selectorIdentifier($), $._escaped_identifier, $.namespace_selector, $._escaped_attribute_namespace), $.attribute_name),
+      alias(choice(selectorIdentifier($), $.namespace_selector), $.attribute_name),
       optional(seq(
         optional($._descendant_combinator),
         attributeMatchOperator,
@@ -647,19 +634,6 @@ module.exports = grammar({
       )),
       optional($._descendant_combinator),
       ']',
-    ),
-
-    _escaped_attribute_namespace: $ => choice(
-      seq(
-        alias($._escaped_identifier, $.tag_name),
-        '|',
-        choice($._selector, alias($._escaped_identifier, $.tag_name)),
-      ),
-      seq(
-        optional($._selector),
-        '|',
-        alias($._escaped_identifier, $.tag_name),
-      ),
     ),
 
     attribute_flag: _ => /[iIsS]/,
@@ -730,7 +704,7 @@ module.exports = grammar({
       pseudoValue($),
       pseudoEscapedValue($),
       '#',
-      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
+      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter))), $.plain_value)),
       alias(token(prec(-1, ':')), $.plain_value),
     ),
 
@@ -775,15 +749,11 @@ module.exports = grammar({
 
     _star_property_name: _ => token(seq('*', choice('--', seq(optional('-'), nameStart)), repeat(nameContinue))),
 
-    _custom_property_name: _ => escapedIdentifier(seq('--', repeat(nameContinue))),
-
-    _escaped_identifier: $ => choice(
-      $._custom_property_name,
-      escapedIdentifier(optional(choice(
-        '-',
-        seq(optional('-'), nameStart, repeat(nameContinue)),
-      ))),
-    ),
+    _escaped_identifier: _ => escapedIdentifier(optional(choice(
+      '-',
+      seq('--', repeat(nameContinue)),
+      seq(optional('-'), nameStart, repeat(nameContinue)),
+    ))),
 
     important: _ => /![ \t\n\r\f]*[iI][mM][pP][oO][rR][tT][aA][nN][tT]/,
 
@@ -1111,12 +1081,7 @@ module.exports = grammar({
 
     class_name: $ => choice(
       $.identifier,
-      alias(choice(queryKeyword($), $._custom_property_component), $.identifier),
-      alias(escapedIdentifier(optional(choice(
-        '-',
-        seq('--', repeat(nameContinue)),
-        seq(optional('-'), nameStart, repeat(nameContinue)),
-      )), 1), $.identifier),
+      alias(choice(queryKeyword($), $._custom_property_component, $._escaped_identifier), $.identifier),
     ),
 
     at_keyword: _ => token(seq('@', idName)),
@@ -1176,7 +1141,7 @@ function declarationValue($, final = false) {
 }
 
 function propertyIdentifier($) {
-  return choice(selectorIdentifier($), $._recovery_identifier, $._custom_property_name, $._star_property_name);
+  return choice(selectorIdentifier($), $._recovery_identifier, $._star_property_name);
 }
 
 function selectorIdentifier($) {
@@ -1184,7 +1149,7 @@ function selectorIdentifier($) {
     valueIdentifier($),
     'and',
     'or',
-    escapedName,
+    $._escaped_identifier,
     selectorFunctionName,
     queryKeyword($),
     $._custom_property_component,
@@ -1227,15 +1192,15 @@ function value($, binaryExpression, declaration = false) {
       declaration ? alias($._declaration_call_expression, $.call_expression) : $.call_expression,
       declaration ? prec.dynamic(4, $.url_value) : $.url_value,
       $.important,
-      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter)), token(prec(-1, nonAsciiNoncharacterDelimiter))), $.plain_value)),
+      prec.dynamic(-1, alias(choice($._value_dot, $._value_ampersand, $._value_asterisk, '=', '?', valueAt, '|', '^', '$', '~', '<', '>', '+', valueSlash, '`', token(prec(-1, nonAsciiDelimiter))), $.plain_value)),
       alias(token(prec(-1, '%')), $.plain_value),
       alias(token(prec(-1, ':')), $.plain_value),
     )),
     ...(declaration ? [prec.dynamic(4, seq(
-      alias(choice($._escaped_identifier, escapedName), $.plain_value),
+      alias($._escaped_identifier, $.plain_value),
       $._value_call_start,
     ))] : []),
-    alias(choice($._escaped_identifier, escapedName), $.plain_value),
+    alias($._escaped_identifier, $.plain_value),
   );
 }
 
@@ -1282,7 +1247,7 @@ function pseudoValue($) {
 }
 
 function pseudoEscapedValue($) {
-  return alias(choice($._escaped_identifier, escapedName), $.plain_value);
+  return alias($._escaped_identifier, $.plain_value);
 }
 
 function plainValue(selectorDelimiters = '') {
@@ -1303,8 +1268,8 @@ function cssKeyword(word) {
 }
 
 /** @param {RuleOrLiteral} prefix */
-function escapedIdentifier(prefix, precedence = 0) {
-  return token(prec(precedence, seq(
+function escapedIdentifier(prefix) {
+  return token(seq(
     prefix,
     repeat1(seq(
       '\\',
@@ -1314,7 +1279,7 @@ function escapedIdentifier(prefix, precedence = 0) {
       ),
       repeat(nameContinue),
     )),
-  )));
+  ));
 }
 
 /**

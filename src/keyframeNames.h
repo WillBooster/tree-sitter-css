@@ -45,7 +45,7 @@ static bool scan_keyframes_string(TSLexer *lexer) {
     int32_t quote = lexer->lookahead;
     advance(lexer);
     bool content = false;
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         if (lexer->lookahead == quote) {
             advance(lexer);
             return content;

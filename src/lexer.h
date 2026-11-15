@@ -135,12 +135,12 @@ static ProbeContext probe_character_context(ProbeContext context, int32_t charac
 }
 
 static bool scan_plain_slash_prefix(TSLexer *lexer) {
-    if (lexer->eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
+    if (is_eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
     advance(lexer);
     while (lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == '/') {
         if (lexer->lookahead == '/') {
             advance(lexer);
-            if (lexer->eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
+            if (is_eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
         }
         advance(lexer);
     }
@@ -216,10 +216,10 @@ static bool scan_unquoted_url_tail(TSLexer *lexer) {
 }
 
 static bool scan_plain_value_tail(TSLexer *lexer) {
-    if (lexer->eof(lexer)) return false;
+    if (is_eof(lexer)) return false;
     if (lexer->lookahead == '/') {
         advance(lexer);
-        return !lexer->eof(lexer) && lexer->lookahead != '*' && is_plain_value_character(lexer->lookahead);
+        return !is_eof(lexer) && lexer->lookahead != '*' && is_plain_value_character(lexer->lookahead);
     }
     return is_plain_value_character(lexer->lookahead);
 }
@@ -228,7 +228,7 @@ static bool scan_plain_slash_tail(TSLexer *lexer) {
     while (!is_eof(lexer)) {
         if (lexer->lookahead == '/') {
             advance(lexer);
-            if (lexer->eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
+            if (is_eof(lexer) || lexer->lookahead == '*' || !is_plain_value_character(lexer->lookahead)) return false;
         } else if (!is_plain_value_character(lexer->lookahead)) {
             return true;
         }
@@ -251,7 +251,7 @@ static bool scan_escape(TSLexer *lexer) {
 
 static bool scan_decoded_escape(TSLexer *lexer, int32_t *decoded) {
     advance(lexer);
-    if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f') {
+    if (is_eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == '\f') {
         return false;
     }
     if (!is_hex_digit(lexer->lookahead)) {
