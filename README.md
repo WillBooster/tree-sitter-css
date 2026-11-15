@@ -14,9 +14,8 @@ to its authors and contributors. This is not an official release of that project
 
 This fork is based on upstream's version 0.23.2 grammar and generates the parser with the
 [WillBooster/tree-sitter](https://github.com/WillBooster/tree-sitter) generator. The parser carries that fork's own ABI
-number (`0x5742000c`) and requires that fork's runtime 20.0.0 or newer compatible `20.x` releases. Upstream's tree-sitter
-runtime rejects the ABI, pre-19.0 fork runtimes that accept ABI `0x5742000c` crash when reading omitted `TSLanguage` tables
-instead of rejecting the language, and newer fork runtimes with a different minimum grammar ABI require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
+number (`0x5742000d`) and requires that fork's runtime 23.0.0 or newer compatible `23.x` releases. Upstream's tree-sitter
+runtime and WillBooster runtimes prior to 22.0.0 reject the ABI, and newer fork runtimes with a different minimum grammar ABI require a regenerated grammar. This grammar accepts keyframe selectors with fractional percentages or comma-separated lists, which upstream 0.23.2
 rejects. Attribute selectors accept the case-insensitive `i`/`I` and case-sensitive `s`/`S` flags.
 Imports expose optional layer assignment and support conditions before media queries.
 `@layer` statements expose their names as `layer_name` nodes, as imports do; a prelude that is not a list of layer names, such as `@layer initial;`, stays a generic `at_rule`.
@@ -58,7 +57,7 @@ supported.
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
-[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 20.0.0), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
+[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 23.0.0), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
 
 ```js
 import { fileURLToPath } from 'node:url';
@@ -100,11 +99,11 @@ parser.setLanguage(await Language.load(css));
 The package also ships `grammar.js` and the node types in `src/node-types.json`.
 
 In Rust, depend on the [crate](https://crates.io/crates/willbooster-tree-sitter-css) and upgrade
-[willbooster-tree-sitter](https://crates.io/crates/willbooster-tree-sitter) to `20.0.0` in the same change. Because the
+[willbooster-tree-sitter](https://crates.io/crates/willbooster-tree-sitter) to `23.0.0` in the same change. Because the
 grammar crate depends only on `tree-sitter-language`, Cargo does not constrain the runtime version automatically:
 
 ```sh
-cargo add willbooster-tree-sitter@=20.0.0 --rename tree-sitter
+cargo add willbooster-tree-sitter@=23.0.0 --rename tree-sitter
 cargo add willbooster-tree-sitter-css --rename tree-sitter-css
 ```
 

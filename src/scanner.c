@@ -1,15 +1,16 @@
 // code-gauge-allow-file fileNcss 985 -- Shared scanner state and memoized probes stay together to preserve their cursor invariants.
 #include "tree_sitter/parser.h"
+#include "tree_sitter/alloc.h"
 #include "tree_sitter/array.h"
 #include "lexer.h"
 #include "keyframeNames.h"
 
-#include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 
 #define NO_PROBE_ORIGIN UINT32_MAX
 
+typedef Array(char) SupportsDelimiters;
 typedef struct { uint32_t byte; uint32_t origin; bool used; bool result; } Memo;
 typedef struct { uint32_t byte; unsigned depth; size_t previous; bool result; } ProbePrefix;
 typedef struct {
@@ -22,6 +23,7 @@ typedef struct {
     ProbePrefix *prefixes;
     size_t prefix_count;
     size_t prefix_capacity;
+    SupportsDelimiters delimiters;
 } Scanner;
 
 enum TokenType {
@@ -59,7 +61,6 @@ enum TokenType {
     RECOVERY_NAME,
 };
 
-typedef Array(char) SupportsDelimiters;
 typedef enum { DECLARATION_COMPONENT, DECLARATION_PREFIX, DECLARATION_HASH_TAIL, DECLARATION_EXTRA } DeclarationGap;
 typedef enum { NO_HASH_GAP, HASH_GAP_START, HASH_GAP_TAIL } HashGapContext;
 // A truncated name ends before a malformed escape.
@@ -73,16 +74,16 @@ static unsigned scan_recovery_name_hyphens(TSLexer *lexer, char *name);
 static RecoveryName recovery_name_kind(const char *name, unsigned length, bool escaped);
 static bool is_recovery_keyword(const char *name);
 static bool scan_rule_gap(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
-static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols);
-static bool scan_import_layer_body_end(TSLexer *lexer);
+static bool scan_import_condition_start(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols);
+static bool scan_import_layer_body_end(Scanner *scanner, TSLexer *lexer);
 static void scan_invalid_import_end(TSLexer *lexer);
 static bool scan_invalid_import_delimiter(TSLexer *lexer);
-static bool scan_import_component_list(TSLexer *lexer, int32_t terminator);
-static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator);
+static bool scan_import_component_list(Scanner *scanner, TSLexer *lexer, int32_t terminator);
+static bool scan_import_components(Scanner *scanner, TSLexer *lexer, int32_t terminator);
 static bool is_import_components_end(int32_t character, int32_t terminator);
 static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator, bool *component);
-static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed);
-static bool scan_layer_tail(TSLexer *lexer);
+static bool scan_supports_body_end(Scanner *scanner, TSLexer *lexer, bool supports_allowed);
+static bool scan_layer_tail(Scanner *scanner, TSLexer *lexer);
 static bool is_import_tail_start(int32_t character);
 static bool scan_supports_word(TSLexer *lexer);
 static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsigned *length);
@@ -131,17 +132,18 @@ static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow
 static bool scan_descendant_operator(TSLexer *lexer, bool allow_descendant, bool allow_gap);
 static bool scan_operator_gap(TSLexer *lexer, bool allow_gap);
 
-void *tree_sitter_css_external_scanner_create() {
-    Scanner *scanner = calloc(1, sizeof(Scanner));
+void *tree_sitter_css_external_scanner_create(void) {
+    Scanner *scanner = ts_calloc(1, sizeof(Scanner));
     scanner->active_origin = NO_PROBE_ORIGIN;
     return scanner;
 }
 
 void tree_sitter_css_external_scanner_destroy(void *payload) {
     Scanner *scanner = payload;
-    free(scanner->memo);
-    free(scanner->prefixes);
-    free(scanner);
+    ts_free(scanner->memo);
+    ts_free(scanner->prefixes);
+    array_delete(&scanner->delimiters);
+    ts_free(scanner);
 }
 
 // GLR branches share scanner->memo; each branch restores the probe origin whose entries are valid on its path.
@@ -170,7 +172,7 @@ bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const 
         return scan_keyframes_name(lexer);
     }
     if (valid_symbols[IMPORT_SUPPORTS_START] || valid_symbols[IMPORT_LAYER_START]) {
-        return scan_import_condition_start(lexer, valid_symbols);
+        return scan_import_condition_start(scanner, lexer, valid_symbols);
     }
     if (valid_symbols[LAYER_NAME_IDENTIFIER] || valid_symbols[LAYER_NAME_PREFIX]) {
         return scan_layer_name_or_slash(lexer, valid_symbols);
@@ -224,7 +226,7 @@ static bool scan_recovery_identifier(TSLexer *lexer, bool recovering) {
     DeclarationGap gap = scan_declaration_gap(lexer, &newline, &arithmetic, &consumed_prefix, NO_HASH_GAP, false);
     return gap == DECLARATION_COMPONENT && !consumed_prefix &&
         (lexer->lookahead == '}' || lexer->lookahead == ';' ||
-         lexer->lookahead == '>' || lexer->lookahead == '@' || (lexer->lookahead == ':' && newline) || lexer->eof(lexer));
+         lexer->lookahead == '>' || lexer->lookahead == '@' || (lexer->lookahead == ':' && newline) || is_eof(lexer));
 }
 
 static RecoveryName scan_recovery_name(TSLexer *lexer) {
@@ -270,7 +272,7 @@ static bool is_recovery_keyword(const char *name) {
     return false;
 }
 
-static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbols) {
+static bool scan_import_condition_start(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     while (is_css_whitespace(lexer->lookahead)) skip(lexer);
     char name[9] = {0};
     unsigned length = 0;
@@ -281,7 +283,7 @@ static bool scan_import_condition_start(TSLexer *lexer, const bool *valid_symbol
     advance(lexer);
     lexer->mark_end(lexer);
     lexer->result_symbol = layer ? IMPORT_LAYER_START : IMPORT_SUPPORTS_START;
-    if (layer ? scan_import_layer_body_end(lexer) : scan_import_component_list(lexer, ')')) return true;
+    if (layer ? scan_import_layer_body_end(scanner, lexer) : scan_import_component_list(scanner, lexer, ')')) return true;
     scan_invalid_import_end(lexer);
     lexer->result_symbol = layer ? INVALID_IMPORT_LAYER : INVALID_IMPORT_SUPPORTS;
     return true;
@@ -294,7 +296,7 @@ static void scan_invalid_import_end(TSLexer *lexer) {
         bool whitespace = false;
         if (!scan_component_gap(lexer, &whitespace)) {
             lexer->mark_end(lexer);
-            if (lexer->eof(lexer)) return;
+            if (is_eof(lexer)) return;
             continue;
         }
         lexer->mark_end(lexer);
@@ -314,13 +316,13 @@ static bool scan_invalid_import_delimiter(TSLexer *lexer) {
     return true;
 }
 
-static bool scan_import_layer_body_end(TSLexer *lexer) {
+static bool scan_import_layer_body_end(Scanner *scanner, TSLexer *lexer) {
     for (;;) {
         bool whitespace = false;
         if (!scan_component_gap(lexer, &whitespace)) return false;
-        if (lexer->eof(lexer)) return false;
+        if (is_eof(lexer)) return false;
         switch (lexer->lookahead) {
-            case ')': return scan_supports_body_end(lexer, true);
+            case ')': return scan_supports_body_end(scanner, lexer, true);
             case '\'': case '"': return false;
             case ';': case '{': case '}': return true;
             default: {
@@ -331,21 +333,20 @@ static bool scan_import_layer_body_end(TSLexer *lexer) {
     }
 }
 
-static bool scan_import_component_list(TSLexer *lexer, int32_t terminator) {
-    SupportsDelimiters delimiters = array_new();
-    bool valid = scan_import_components(lexer, &delimiters, terminator);
-    array_delete(&delimiters);
-    return valid;
+static bool scan_import_component_list(Scanner *scanner, TSLexer *lexer, int32_t terminator) {
+    array_clear(&scanner->delimiters);
+    return scan_import_components(scanner, lexer, terminator);
 }
 
 // code-gauge-allow functionCognitiveComplexity 20 -- Delimiter-stack transitions must preserve the order of cursor updates.
-static bool scan_import_components(TSLexer *lexer, SupportsDelimiters *delimiters, int32_t terminator) {
+static bool scan_import_components(Scanner *scanner, TSLexer *lexer, int32_t terminator) {
+    SupportsDelimiters *delimiters = &scanner->delimiters;
     bool component = false;
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         int32_t character = lexer->lookahead;
         if (!delimiters->size) {
             if (is_import_components_end(character, terminator)) {
-                return terminator == ';' || (component && scan_supports_body_end(lexer, false));
+                return terminator == ';' || (component && scan_supports_body_end(scanner, lexer, false));
             }
             if (character == ')' || character == ']' || character == '}' || character == ';') return false;
             if (terminator == ';' && (character == '\'' || character == '"')) return false;
@@ -383,12 +384,12 @@ static bool scan_import_component(TSLexer *lexer, SupportsDelimiters *delimiters
     return true;
 }
 
-static bool scan_supports_body_end(TSLexer *lexer, bool supports_allowed) {
+static bool scan_supports_body_end(Scanner *scanner, TSLexer *lexer, bool supports_allowed) {
     advance(lexer);
     bool whitespace = false;
     if (!scan_component_gap(lexer, &whitespace)) return false;
-    if (!lexer->eof(lexer) && !is_import_tail_start(lexer->lookahead)) return false;
-    return supports_allowed ? scan_layer_tail(lexer) : scan_import_component_list(lexer, ';');
+    if (!is_eof(lexer) && !is_import_tail_start(lexer->lookahead)) return false;
+    return supports_allowed ? scan_layer_tail(scanner, lexer) : scan_import_component_list(scanner, lexer, ';');
 }
 
 // Besides media queries, a tail may start the rule, at-rule or block end that follows an import missing its `;`. `[`
@@ -404,16 +405,16 @@ static bool is_import_tail_start(int32_t character) {
 
 // Scans a supports() after a layer with the body rules of a direct supports() lookahead, so a malformed body recovers
 // at the same position with or without a preceding layer.
-static bool scan_layer_tail(TSLexer *lexer) {
+static bool scan_layer_tail(Scanner *scanner, TSLexer *lexer) {
     char name[9] = {0};
     unsigned length = 0;
     if (!scan_import_word(lexer, name, sizeof(name), &length)) return false;
     if (lexer->lookahead == '(' && length == 8 && !strcmp(name, "supports")) {
         advance(lexer);
-        return scan_import_component_list(lexer, ')');
+        return scan_import_component_list(scanner, lexer, ')');
     }
     if (lexer->lookahead == '(' && length == 3 && !strcmp(name, "url") && !scan_supports_url(lexer)) return false;
-    return scan_import_component_list(lexer, ';');
+    return scan_import_component_list(scanner, lexer, ';');
 }
 
 static bool scan_supports_word(TSLexer *lexer) {
@@ -440,7 +441,7 @@ static bool scan_import_word(TSLexer *lexer, char *name, unsigned capacity, unsi
 
 static bool scan_supports_url(TSLexer *lexer) {
     advance(lexer);
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         if (lexer->lookahead == '\\') {
             if (!scan_escape(lexer)) return false;
         } else if (lexer->lookahead == '\'' || lexer->lookahead == '"') {
@@ -458,12 +459,12 @@ static bool scan_supports_url(TSLexer *lexer) {
 static bool scan_supports_string(TSLexer *lexer) {
     int32_t quote = lexer->lookahead;
     advance(lexer);
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         int32_t character = lexer->lookahead;
         if (character == '\n' || character == '\r' || character == '\f') return false;
         advance(lexer);
         if (character == quote) return true;
-        if (character == '\\' && !lexer->eof(lexer)) {
+        if (character == '\\' && !is_eof(lexer)) {
             bool carriage_return = lexer->lookahead == '\r';
             advance(lexer);
             if (carriage_return && lexer->lookahead == '\n') advance(lexer);
@@ -481,7 +482,7 @@ static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowe
     }
     if (lexer->lookahead != '*') { *component = true; return true; }
     advance(lexer);
-    while (!lexer->eof(lexer)) {
+    while (!is_eof(lexer)) {
         bool star = lexer->lookahead == '*';
         advance(lexer);
         if (star && lexer->lookahead == '/') {
@@ -494,8 +495,8 @@ static bool scan_supports_slash(TSLexer *lexer, bool *component, bool url_allowe
 
 static bool scan_double_slash(TSLexer *lexer, bool url_allowed) {
     // Mirrors grammar.js: the at_rule_url token outranks the lower-precedence js_comment extra.
-    bool url = url_allowed && !lexer->eof(lexer) && is_at_rule_url_character(lexer->lookahead);
-    while (!lexer->eof(lexer)) {
+    bool url = url_allowed && !is_eof(lexer) && is_at_rule_url_character(lexer->lookahead);
+    while (!is_eof(lexer)) {
         bool line_end = lexer->lookahead == '\n' || lexer->lookahead == '\r';
         bool inside = url ? is_at_rule_url_character(lexer->lookahead) : !line_end;
         if (!inside) break;
@@ -955,7 +956,7 @@ static void finish_probe_level(Scanner *scanner, unsigned depth) {
 static void record_probe_prefix(Scanner *scanner, uint32_t byte, unsigned depth) {
     if (scanner->prefix_count == scanner->prefix_capacity) {
         scanner->prefix_capacity = scanner->prefix_capacity ? scanner->prefix_capacity * 2 : 64;
-        scanner->prefixes = realloc(scanner->prefixes, scanner->prefix_capacity * sizeof(ProbePrefix));
+        scanner->prefixes = ts_realloc(scanner->prefixes, scanner->prefix_capacity * sizeof(ProbePrefix));
     }
     scanner->prefixes[scanner->prefix_count] = (ProbePrefix) {byte, depth, scanner->pending, false};
     scanner->pending = scanner->prefix_count++;
@@ -971,11 +972,11 @@ static void grow_memo(Scanner *scanner) {
     Memo *old = scanner->memo;
     size_t old_capacity = scanner->capacity;
     scanner->capacity = old_capacity ? old_capacity * 2 : 64;
-    scanner->memo = calloc(scanner->capacity, sizeof(Memo));
+    scanner->memo = ts_calloc(scanner->capacity, sizeof(Memo));
     for (size_t i = 0; i < old_capacity; i++) {
         if (old[i].used) *memo_slot(scanner, old[i].byte) = old[i];
     }
-    free(old);
+    ts_free(old);
 }
 
 static bool scan_dot_following_gap(TSLexer *lexer) {
@@ -987,7 +988,7 @@ static bool scan_dot_following_gap(TSLexer *lexer) {
         advance(lexer);
         bool block = lexer->lookahead == '*';
         if (!scan_comment_body(lexer)) {
-            if (block && lexer->eof(lexer)) {
+            if (block && is_eof(lexer)) {
                 lexer->mark_end(lexer);
                 lexer->result_symbol = INVALID_VALUE_DOT;
             }
