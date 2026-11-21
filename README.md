@@ -57,7 +57,7 @@ supported.
 ## Usage
 
 The npm package ships `tree-sitter-css.wasm` for
-[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 23.0.0), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
+[@willbooster/web-tree-sitter](https://www.npmjs.com/package/@willbooster/web-tree-sitter) (tested with version 23.0.2), which runs in Node.js, Bun, browsers, and Cloudflare Workers. In Node.js and Bun, load the grammar from its path:
 
 ```js
 import { fileURLToPath } from 'node:url';
@@ -99,11 +99,11 @@ parser.setLanguage(await Language.load(css));
 The package also ships `grammar.js` and the node types in `src/node-types.json`.
 
 In Rust, depend on the [crate](https://crates.io/crates/willbooster-tree-sitter-css) and upgrade
-[willbooster-tree-sitter](https://crates.io/crates/willbooster-tree-sitter) to `23.0.0` in the same change. Because the
+[willbooster-tree-sitter](https://crates.io/crates/willbooster-tree-sitter) to `23.0.2` in the same change. Because the
 grammar crate depends only on `tree-sitter-language`, Cargo does not constrain the runtime version automatically:
 
 ```sh
-cargo add willbooster-tree-sitter@=23.0.0 --rename tree-sitter
+cargo add willbooster-tree-sitter@=23.0.2 --rename tree-sitter
 cargo add willbooster-tree-sitter-css --rename tree-sitter-css
 ```
 
