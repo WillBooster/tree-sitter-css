@@ -1,4 +1,4 @@
-// code-gauge-allow-file fileNcss 985 -- Shared scanner state and memoized probes stay together to preserve their cursor invariants.
+// code-gauge-allow-file fileNcss -- Shared scanner state and memoized probes stay together to preserve their cursor invariants.
 #include "tree_sitter/parser.h"
 #include "tree_sitter/alloc.h"
 #include "tree_sitter/array.h"
@@ -160,8 +160,8 @@ void tree_sitter_css_external_scanner_deserialize(void *payload, const char *buf
     memcpy(&scanner->active_origin, buffer, sizeof(uint32_t));
 }
 
-// code-gauge-allow functionCognitiveComplexity 29 -- Ordered token dispatch preserves precedence; splitting it only moves these conditions.
-// code-gauge-allow functionNcss 32 -- The dispatcher keeps each token's precedence visible in one place.
+// code-gauge-allow functionCognitiveComplexity -- Ordered token dispatch preserves precedence; splitting it only moves these conditions.
+// code-gauge-allow functionNcss -- The dispatcher keeps each token's precedence visible in one place.
 bool tree_sitter_css_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     Scanner *scanner = payload;
     if (valid_symbols[ERROR_RECOVERY]) {
@@ -338,7 +338,7 @@ static bool scan_import_component_list(Scanner *scanner, TSLexer *lexer, int32_t
     return scan_import_components(scanner, lexer, terminator);
 }
 
-// code-gauge-allow functionCognitiveComplexity 20 -- Delimiter-stack transitions must preserve the order of cursor updates.
+// code-gauge-allow functionCognitiveComplexity -- Delimiter-stack transitions must preserve the order of cursor updates.
 static bool scan_import_components(Scanner *scanner, TSLexer *lexer, int32_t terminator) {
     SupportsDelimiters *delimiters = &scanner->delimiters;
     bool component = false;
@@ -682,8 +682,8 @@ static bool scan_declaration_continuation(Scanner *scanner, TSLexer *lexer, cons
     return scan_declaration_continuation_from(scanner, lexer, valid_symbols, start, false);
 }
 
-// code-gauge-allow functionCognitiveComplexity 29 -- Declaration probes share cursor restoration and memo state; splitting them would scatter those invariants.
-// code-gauge-allow functionNcss 48 -- Cursor restoration and memo decisions remain together in the existing declaration probe.
+// code-gauge-allow functionCognitiveComplexity -- Declaration probes share cursor restoration and memo state; splitting them would scatter those invariants.
+// code-gauge-allow functionNcss -- Cursor restoration and memo decisions remain together in the existing declaration probe.
 static bool scan_declaration_continuation_from(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols, TSLexerPosition start, bool after_slash) {
     bool terminator_only = !valid_symbols[DECLARATION_CONTINUATION] && !valid_symbols[DECLARATION_OPERATOR_GAP] &&
         !valid_symbols[DECLARATION_BOUNDARY] && !valid_symbols[DECLARATION_OPERAND_GAP] && !valid_symbols[HASH_TAIL_GAP] && !valid_symbols[DECLARATION_COMMA_GAP];
@@ -781,8 +781,8 @@ static bool scan_unicode_value_gap(TSLexer *lexer, bool *newline) {
     return arithmetic;
 }
 
-// code-gauge-allow functionCognitiveComplexity 28 -- Gap transitions update coupled cursor and token context in one pass.
-// code-gauge-allow functionNcss 34 -- The existing gap loop keeps its cursor transitions together.
+// code-gauge-allow functionCognitiveComplexity -- Gap transitions update coupled cursor and token context in one pass.
+// code-gauge-allow functionNcss -- The existing gap loop keeps its cursor transitions together.
 static DeclarationGap scan_declaration_gap(TSLexer *lexer, bool *newline, bool *arithmetic, bool *consumed_prefix, HashGapContext hash_context, bool after_slash) {
     DeclarationGap initial = after_slash ? scan_declaration_slash_tail(lexer, arithmetic, hash_context, false) : DECLARATION_EXTRA;
     if (initial != DECLARATION_EXTRA) return initial;
@@ -885,8 +885,8 @@ static bool scan_value_selector_prefix(Scanner *scanner, TSLexer *lexer, TSSymbo
     return result || binary_allowed;
 }
 
-// code-gauge-allow functionCognitiveComplexity 21 -- Selector probes share memo and brace-depth state; splitting them would scatter those invariants.
-// code-gauge-allow functionNcss 47 -- Memo and brace-depth transitions remain together in the existing selector probe.
+// code-gauge-allow functionCognitiveComplexity -- Selector probes share memo and brace-depth state; splitting them would scatter those invariants.
+// code-gauge-allow functionNcss -- Memo and brace-depth transitions remain together in the existing selector probe.
 static bool probe_selector_boundary(Scanner *scanner, TSLexer *lexer, uint32_t byte, bool witness) {
     unsigned depth = 0;
     ProbeContext context = PROBE_GAP;
@@ -1106,7 +1106,7 @@ static bool scan_separator_comment(TSLexer *lexer) {
     return scan_comment_body(lexer);
 }
 
-// code-gauge-allow functionCognitiveComplexity 16 -- Existing slash lookahead distinguishes comments and combinators in order; splitting it only moves these conditions.
+// code-gauge-allow functionCognitiveComplexity -- Existing slash lookahead distinguishes comments and combinators in order; splitting it only moves these conditions.
 static bool scan_at_rule_slash(TSLexer *lexer, bool allow_descendant, bool allow_combinator) {
     if (lexer->lookahead != '/') {
         return false;
